@@ -16,6 +16,7 @@ native_edges = [
     "movement.cross",
     "movement.climb",
     "motion.entity_location",
+    "structure.change",
     "interaction.use",
     "interaction.drag",
     "interaction.container",

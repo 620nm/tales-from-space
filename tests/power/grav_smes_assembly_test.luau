@@ -93,7 +93,7 @@ bench.hold(p, "glass", NEAR)
 t.click(p, 4, 5, t.target_at(p, 4, 5, "grav_smes"))
 t.run_seconds(4)
 assert(
-    bench.told(p, "The glass panel only fits the south emitter."),
+    bench.told(p, "Wrong Section"),
     "a corner cell refuses the glass"
 )
 assert(assert(t.structure_at(5, 4)).state == "cased", "the machine is still cased")

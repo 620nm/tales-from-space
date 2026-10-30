@@ -3,6 +3,8 @@
 -- Facing is the way the nozzle points; the weld wants it pointing at the
 -- centre. It turns with Alt+click loose or bolted down. No recipe makes
 -- one: a map places it, like the heavy parts of tg's machinery.
+local grav_smes = require("@lib/grav_smes")
+
 local FACINGS = { "north", "east", "south", "west" }
 
 -- The picture for facing F is the pillar of the opposite slot.
@@ -41,6 +43,8 @@ return {
     facing_sprites = { displaced = pictures, anchored = pictures },
     loose = { "displaced" },
     rotates = { "displaced", "anchored" },
+    hint_flags = { grav_smes.ASSEMBLY_READY },
+    actions = { grav_smes.weld_row() },
     transitions = {
         {
             sound = "ratchet",

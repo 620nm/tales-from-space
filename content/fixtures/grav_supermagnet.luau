@@ -15,5 +15,6 @@ if sim ~= nil then
         { kind = "react", route = "interact" },
         grav_smes.set_ring_refused
     )
+    grav_smes.track(definition)
 end
 return content

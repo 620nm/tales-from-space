@@ -11,6 +11,11 @@ import { gesture, order } from "../gesture";
 import * as S from "../strings";
 import { actionStyles } from "./actions";
 
+/** Past this many, a busy target's card stops offering. */
+const MAX_SUGGESTIONS = 4;
+/** A reason this short reads inline after its label. */
+const MAX_INLINE_REASON = 24;
+
 /** What the cursor is over, with the verbs it answers to. */
 function actionText(label: ActionLabel): string {
   if (label.text !== undefined && label.text !== null) return label.text;
@@ -27,8 +32,10 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>,
   const cells: UiNode[] = [];
   let previousGroup = "";
   let previousPresentation = "";
+  let suggestions = 0;
   for (const hint of rows) {
-    if (hint.group === "suggestion" && previousGroup !== "suggestion")
+    if (hint.group === "suggestion" && ++suggestions > MAX_SUGGESTIONS) continue;
+    if (hint.group === "suggestion" && previousGroup !== "suggestion" && !hint.presentation_group)
       cells.push(text("hover/group/suggestion", S.tfs("ui.look.other"), ["hover-group"],
         { gridColumn: { start: 1, span: 2 } }));
     previousGroup = hint.group;
@@ -46,14 +53,17 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>,
     const style = hint.style ? actionStyles[hint.style] : undefined;
     const cls = ["hover-description", ...(style ? [style] : []),
       ...(hint.available ? [] : ["hover-unavailable"])];
+    const label = actionText(hint.label);
+    const reason = hint.detail ? actionText(hint.detail) : undefined;
+    const inline = !hint.available && reason !== undefined && reason.length <= MAX_INLINE_REASON;
     cells.push(keys, panel(`hover/hint/${hint.id}`, [
-      text(`hover/label/${hint.id}`, actionText(hint.label), cls),
+      text(`hover/label/${hint.id}`, inline ? `${label} (${reason})` : label, cls),
       ...(hint.requirements ?? []).map((requirement, index) => text(`hover/requirement/${hint.id}/${index}`,
         S.tfs(requirement.count > 1 ? "ui.look.requires_quantity" : "ui.look.requires", {
           item: actionText(requirement.label), quantity: String(requirement.count),
         }), ["hover-requirement"])),
-      ...(hint.detail
-        ? [text(`hover/detail/${hint.id}`, actionText(hint.detail), ["hover-requirement"])] : []),
+      ...(reason !== undefined && !inline
+        ? [text(`hover/detail/${hint.id}`, reason, ["hover-requirement"])] : []),
     ], { cls: ["hover-row"] }));
   }
   // The header's image and every hint's key cell are both the first

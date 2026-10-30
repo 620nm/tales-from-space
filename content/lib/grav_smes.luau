@@ -1,27 +1,29 @@
 -- The gravity battery's assembly rules: where the eight parts must stand
--- and face, the wrench that sets a packed ring between two emitters, the
--- torch weld that fuses the parts into one 3x3 machine, and the glass panel
--- that only fits the south cell.
+-- and face, the wrench that sets a packed ring between two emitters, and the
+-- torch weld that fuses the parts into one 3x3 machine.
 --
 -- Layout, centre C, north up:  ring emitter ring / emitter C emitter /
 -- ring emitter ring. An emitter's facing is the way its nozzle points, so
 -- the north emitter faces south. A ring's facing names the corner arc it
 -- draws: north is the north-west arc, then clockwise.
 
-local grav_smes_run = require("@lib/grav_smes_run")
-
 local grav_smes = {}
 
 local WELDER = "welder"
-local GLASS = "glass"
 local BODY = "grav_smes"
 local EMITTER = "grav_emitter"
 local PACKED_RING = "grav_supermagnet"
 local RING = "grav_supermagnet_ring"
 local ANCHORED = "anchored"
 local WELDED = "welded"
-local CASED = "cased"
 local LIT = "lit"
+-- Hint flags: whether this part's assembly would weld, and whether this
+-- cart would set where it stands. The click inspects again, so a flag a
+-- missed event left stale only misleads a tooltip.
+grav_smes.ASSEMBLY_READY = "assembly_ready"
+grav_smes.RING_FITS = "ring_fits"
+-- Far enough to reach every part of an assembly from any one of them.
+local REFRESH_TILES = 3
 
 -- The welder's reservoir substance (items/tools/welder.luau `fuel`).
 local FUEL = "naphtha"
@@ -29,13 +31,7 @@ local FUEL = "naphtha"
 -- times a tank-frame seam's fuel (tank.dm:675-697 spends 0.3).
 local WELD_FUEL_MOLES = 0.9
 local WELD_SECONDS = 6.0
-local GLAZE_SECONDS = 3.0
 local RING_SECONDS = 1.0
-local STANDBY = "standby"
-
--- Footprint cell of the south emitter, as `interaction.use` reports it
--- (1-based, row-major over the 3x3 footprint).
-grav_smes.SOUTH_CELL = 8
 
 type PartSpec = {
     position: string,
@@ -71,7 +67,7 @@ function grav_smes.message_keys(): { string }
         MESSAGE .. "welded_fast",
         MESSAGE .. "glass_wrong_cell",
         MESSAGE .. "glass_start",
-        MESSAGE .. "glass_stopped",
+        MESSAGE .. "stop_first",
         MESSAGE .. "glass_done",
         MESSAGE .. "ring_too_few",
         MESSAGE .. "ring_too_many",
@@ -103,8 +99,10 @@ local function part_at(tile: TileAddress, prototype: string): Handle?
     return nil
 end
 
+-- Nil past the map's edge, which a part drifting in open space can reach.
 local function tile_beside(centre: TileAddress, dx: number, dy: number): TileAddress?
-    return sim.map_tile(centre, centre.x + dx, centre.y + dy, centre.z)
+    local ok, at = pcall(sim.map_tile, centre, centre.x + dx, centre.y + dy, centre.z)
+    return if ok then at else nil
 end
 
 -- The centre a standing part implies: the tile it would stand beside.
@@ -116,7 +114,7 @@ local function implied_centre(part: Handle): TileAddress?
     local facing = part.facing or "north"
     for _, spec in ipairs(PARTS) do
         if spec.prototype == part.prototype and spec.facing == facing then
-            return sim.map_tile(tile, tile.x - spec.dx, tile.y - spec.dy, tile.z)
+            return tile_beside(tile, -spec.dx, -spec.dy)
         end
     end
     return nil
@@ -270,6 +268,81 @@ function grav_smes.set_ring_refused(ev: InteractionUseRefusedPayload)
     end
 end
 
+-- The row every anchored emitter and set ring shares. Both reasons are
+-- `hint_only`: `weld` says exactly what is wrong when it is clicked.
+function grav_smes.weld_row(): { [string]: any }
+    return {
+        id = "weld",
+        gesture = "primary",
+        route = "receiver",
+        label = "lunatic/tfs:ui.affordance.weld_assembly",
+        target = { fact = "target.state", value = ANCHORED },
+        held = { fact = "held.proto", value = WELDER },
+        uses_held = true,
+        suggest_implement = { item = WELDER },
+        refuse = {
+            {
+                when = { ["not"] = { fact = "target.flag", value = grav_smes.ASSEMBLY_READY } },
+                label = MESSAGE .. "weld_incomplete",
+                hint_only = true,
+            },
+            {
+                when = {
+                    all = {
+                        { fact = "held.proto", value = WELDER },
+                        { ["not"] = { fact = "held.state", value = LIT } },
+                    },
+                },
+                label = MESSAGE .. "torch_unlit",
+                hint_only = true,
+            },
+        },
+    }
+end
+
+local function mark(part: Handle): ()
+    if part.prototype == EMITTER or part.prototype == RING then
+        sim.hints.set_flag({
+            entity = part,
+            flag = grav_smes.ASSEMBLY_READY,
+            on = inspect(part).refusal == nil,
+        })
+    elseif part.prototype == PACKED_RING then
+        local tile = part.tile
+        sim.hints.set_flag({
+            entity = part,
+            flag = grav_smes.RING_FITS,
+            on = tile ~= nil and ring_fit(tile).refusal == nil,
+        })
+    end
+end
+
+local function refresh_around(part: Handle): ()
+    local tile = if part.alive then part.tile else nil
+    if tile == nil then
+        return
+    end
+    for _, near in ipairs(sim.query.range(tile, REFRESH_TILES, {})) do
+        if near.alive then
+            mark(near)
+        end
+    end
+end
+
+-- Keeps a part's hint flags, and those of the parts around it, in step
+-- with anything that stands, moves or changes state.
+function grav_smes.track(definition: any): ()
+    definition:handle("entity.initialize.done", { kind = "react" }, function(ev)
+        refresh_around(ev.entity)
+    end)
+    definition:handle("entity.location.changed", { kind = "react" }, function(ev)
+        refresh_around(ev.entity)
+    end)
+    definition:handle("structure.changed", { kind = "react" }, function(ev)
+        refresh_around(ev.structure)
+    end)
+end
+
 local function fuel_moles(torch: Handle): number
     local read = sim.matter_read(torch)
     if read == nil then
@@ -356,50 +429,6 @@ function grav_smes.weld(ev: InteractionUsePayload): boolean | { replaced: boolea
         send(actor, MESSAGE .. "weld_done")
     end)
     return true
-end
-
--- Glass on the cased body's south cell: fit the status panel, spending
--- one sheet. Any other cell refuses it.
-local function glaze(body: Handle, actor: Handle, glass: Handle, cell: number?): boolean
-    if cell ~= grav_smes.SOUTH_CELL then
-        send(actor, MESSAGE .. "glass_wrong_cell")
-        return true
-    end
-    send(actor, MESSAGE .. "glass_start")
-    sim.spawn_task(actor, function()
-        if sim.do_after(actor, sim.ticks(GLAZE_SECONDS), {}) ~= "ok" then
-            if actor.alive then
-                send(actor, MESSAGE .. "glass_stopped")
-            end
-            return
-        end
-        if not actor.alive or not body.alive or not glass.alive or body.state ~= CASED then
-            return
-        end
-        glass:consume()
-        -- A machine just glazed wears its glyph before any store report.
-        sim.appearance.set_state({ entity = body, state = grav_smes_run.settled(body, STANDBY) })
-        sim.sound.play({ asset = "lunatic/tfs:sound/smash", at = body.tile })
-        send(actor, MESSAGE .. "glass_done")
-    end)
-    return true
-end
-
--- Clicks on the finished body that no native step answers: glass belongs
--- to the south cell alone, and welded joints do not come apart.
-function grav_smes.body_use(ev: InteractionUsePayload): boolean | { replaced: boolean }
-    local body, actor, implement = ev.subject, ev.actor, ev.implement
-    if implement == nil or not implement.alive then
-        return { replaced = false }
-    end
-    if implement.prototype == GLASS and body.state == CASED then
-        return glaze(body, actor, implement, ev.cell)
-    end
-    if implement.prototype == WELDER and body.state == WELDED then
-        send(actor, MESSAGE .. "welded_fast")
-        return true
-    end
-    return { replaced = false }
 end
 
 return grav_smes

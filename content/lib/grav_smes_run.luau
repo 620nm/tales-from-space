@@ -179,6 +179,14 @@ function grav_smes_run.act(ev: InteractionActPayload): boolean | { replaced: boo
     return { replaced = false }
 end
 
+-- `structure.changed`: a machine just glazed wears its glyph before any
+-- store report.
+function grav_smes_run.on_changed(ev: StructureChangedPayload): ()
+    if ev.previous == "cased" and ev.state == STANDBY then
+        grav_smes_run.show_status(ev.structure, nil)
+    end
+end
+
 -- `flow.store.done`: the glyph follows the store.
 function grav_smes_run.on_store(ev: FlowStoreDonePayload): ()
     if ev.subject.prototype ~= BODY then

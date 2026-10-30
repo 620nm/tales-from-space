@@ -84,12 +84,26 @@ test("pack group, style, requirements and order stay data-driven", () => {
   assert(nodes.some((node) => node.id === "hover/requirement/wire_frame/0"));
   assert.equal(nodes.find((node) => node.id.startsWith("hover/hint/")).id, "hover/hint/wire_frame");
 });
-test("disabled role actions render their authoritative reason", () => {
-  const nodes = render([descriptor("role", { available: false, style: "role",
+test("disabled actions render their authoritative reason, short ones inline", () => {
+  const short = render([descriptor("role", { available: false, style: "role",
     detail: { key: "", text: "Permission needed" },
   })]);
-  assert.equal(nodes.find((node) => node.id === "hover/detail/role").text, "Permission needed");
-  assert(!nodes.some((node) => node.text?.includes("out_of_range")));
+  assert.equal(short.find((node) => node.id === "hover/label/role").text.endsWith(" (Permission needed)"), true);
+  assert(!short.some((node) => node.id === "hover/detail/role"));
+  assert(!short.some((node) => node.text?.includes("out_of_range")));
+  const long = "The whole assembly has to be bolted down first";
+  const nodes = render([descriptor("role", { available: false, detail: { key: "", text: long } })]);
+  assert.equal(nodes.find((node) => node.id === "hover/detail/role").text, long);
+});
+test("next and back steps stand under their own headings, and suggestions are capped", () => {
+  const suggestion = (id, extras = {}) => descriptor(id, { available: false, group: "suggestion", ...extras });
+  const nodes = render([
+    suggestion("next", { presentation_group: "lunatic/tfs:ui.look.next" }),
+    suggestion("back", { presentation_group: "lunatic/tfs:ui.look.back", order: 1 }),
+    ...["a", "b", "c", "d"].map((id) => suggestion(id)),
+  ]);
+  assert(nodes.some((node) => node.id === "hover/group/next"));
+  assert.equal(nodes.filter((node) => node.id.startsWith("hover/hint/")).length, 4);
 });
 test("tool requirements receive one Requires prefix and one quantity", async () => {
   const catalog = JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url)));

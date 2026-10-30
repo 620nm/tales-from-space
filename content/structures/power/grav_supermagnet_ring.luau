@@ -4,6 +4,8 @@
 -- Its facing names the corner arc it draws (north is the north-west arc,
 -- then clockwise) and comes from the two emitters it was set between, so it
 -- does not turn by hand. A wrench packs it back onto its cart.
+local grav_smes = require("@lib/grav_smes")
+
 local CORNERS = { "north", "east", "south", "west" }
 
 return {
@@ -30,6 +32,8 @@ return {
         },
     },
     rotates = {},
+    hint_flags = { grav_smes.ASSEMBLY_READY },
+    actions = { grav_smes.weld_row() },
     transitions = {
         {
             sound = "ratchet",

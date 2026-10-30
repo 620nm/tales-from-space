@@ -4,6 +4,8 @@
 -- A wrench sets it between two bolted emitters, where it unfolds into
 -- `grav_supermagnet_ring` (lib/grav_smes.luau). No recipe makes one: a map
 -- places it.
+local grav_smes = require("@lib/grav_smes")
+
 return {
     id = "grav_supermagnet",
     -- Large and loose, so it draws over items (large_object in content/compositions.luau).
@@ -38,6 +40,7 @@ return {
         },
     },
     rotates = {},
+    hint_flags = { grav_smes.RING_FITS },
     actions = {
         {
             id = "set_ring",
@@ -46,8 +49,14 @@ return {
             label = "lunatic/tfs:ui.affordance.anchor",
             held = { fact = "held.proto", value = "wrench" },
             uses_held = true,
-            suggest = true,
             suggest_implement = { item = "wrench" },
+            refuse = {
+                {
+                    when = { ["not"] = { fact = "target.flag", value = grav_smes.RING_FITS } },
+                    label = "lunatic/tfs:lib.grav_smes.ring_unfit",
+                    hint_only = true,
+                },
+            },
         },
     },
 }

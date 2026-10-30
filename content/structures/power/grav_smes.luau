@@ -8,9 +8,9 @@
 -- ASSEMBLY, pack-tuned (tg has no such machine): welded, then metal for the
 -- yoke clamps, one coil of cable, nine lengths of pipe, metal for the
 -- casing, and glass for the status panel. Each step runs backwards with
--- the opposite tool and returns what it cost. Welded joints are
--- permanent; the weld and the glazing are scripts (lib/grav_smes.luau),
--- the glazing because a native step cannot tell one cell from another.
+-- the opposite tool and returns what it cost. Welded joints are permanent,
+-- and the screen stays in while the machine runs: both are steps that
+-- only refuse. The weld is a script (lib/grav_smes.luau).
 --
 -- RUNNING STATES are a script's (lib/grav_smes_run.luau) and
 -- `scripted_states` hands them over: the disc over the centre tile rides
@@ -36,6 +36,22 @@ local CLAMP_METAL = 8
 local CABLE_COILS = 30
 local PIPE_LENGTHS = 9
 local CASING_METAL = 16
+local SCREEN_GLASS = 1
+
+local MESSAGE = "lunatic/tfs:lib.grav_smes."
+
+local function next_step(label: string): { [string]: any }
+    return { label = label, group = "lunatic/tfs:ui.look.next" }
+end
+
+local function back_step(label: string): { [string]: any }
+    return { label = label, group = "lunatic/tfs:ui.look.back", order = 1 }
+end
+
+-- A step this machine never takes, for the reason `key` says.
+local function refused(key: string): { { [string]: any } }
+    return { { when = true, label = MESSAGE .. key } }
+end
 
 local footprint = {}
 for row = 0, 2 do
@@ -94,16 +110,14 @@ end
 
 -- The steady states wear a status glyph on the south cell.
 local standby_dresses = { "standby" }
--- `cased` is listed so the glazing script may move the casing to standby.
-local scripted_states = { "cased", "standby", "startup", "active", "shutdown" }
+local running_dresses = { "startup", "active", "shutdown" }
+local scripted_states = { "standby", "startup", "active", "shutdown" }
 for _, phase in ipairs({ "standby", "active" }) do
     for _, status in ipairs(STATUSES) do
         local state = `{phase}_{status}`
         table.insert(states, state)
         table.insert(scripted_states, state)
-        if phase == "standby" then
-            table.insert(standby_dresses, state)
-        end
+        table.insert(if phase == "standby" then standby_dresses else running_dresses, state)
         local cells: { any } = {}
         for index, picture in ipairs(state_sprites[phase]) do
             cells[index] = picture
@@ -157,6 +171,7 @@ local entry: { [string]: any } = {
             sound = "smash",
             at = "welded",
             with = { metal = CLAMP_METAL },
+            hint = next_step("Fit Clamps"),
             secs = 4.0,
             to = "clamped",
             start = "You start fitting the yoke clamps.",
@@ -166,6 +181,7 @@ local entry: { [string]: any } = {
             sound = "smash",
             at = "clamped",
             with = { cable_coil = CABLE_COILS },
+            hint = next_step("Wire"),
             secs = 6.0,
             to = "wired",
             start = "You start wiring the machine.",
@@ -175,6 +191,7 @@ local entry: { [string]: any } = {
             sound = "ratchet",
             at = "wired",
             with = { pipe = PIPE_LENGTHS },
+            hint = next_step("Run Pipes"),
             secs = 6.0,
             to = "piped",
             start = "You start running the coolant pipes.",
@@ -184,15 +201,39 @@ local entry: { [string]: any } = {
             sound = "smash",
             at = "piped",
             with = { metal = CASING_METAL },
+            hint = next_step("Fit Casing"),
             secs = 8.0,
             to = "cased",
             start = "You start fitting the casing plates.",
             done = "The casing is on.",
         },
         {
+            sound = "smash",
+            at = "cased",
+            with = { glass = SCREEN_GLASS },
+            hint = next_step("Install Screen"),
+            refuse = {
+                {
+                    when = { ["not"] = { fact = "target.cell", value = tostring(SOUTH_CELL) } },
+                    label = MESSAGE .. "glass_wrong_cell",
+                },
+            },
+            secs = 3.0,
+            to = "standby",
+            start = MESSAGE .. "glass_start",
+            done = MESSAGE .. "glass_done",
+        },
+        {
+            at = "welded",
+            tool = "welder",
+            hint = back_step("Cut Welds"),
+            refuse = refused("welded_fast"),
+        },
+        {
             sound = "crowbar",
             at = "cased",
             tool = "crowbar",
+            hint = back_step("Pry Off Casing"),
             secs = 8.0,
             yields = { metal = CASING_METAL },
             to = "piped",
@@ -203,6 +244,7 @@ local entry: { [string]: any } = {
             sound = "ratchet",
             at = "piped",
             tool = "wrench",
+            hint = back_step("Unbolt Pipes"),
             secs = 6.0,
             yields = { pipe = PIPE_LENGTHS },
             to = "wired",
@@ -213,6 +255,7 @@ local entry: { [string]: any } = {
             sound = "wirecutter",
             at = "wired",
             tool = "cutters",
+            hint = back_step("Cut Wiring"),
             secs = 6.0,
             yields = { cable_coil = CABLE_COILS },
             to = "clamped",
@@ -223,6 +266,7 @@ local entry: { [string]: any } = {
             sound = "smash",
             at = "clamped",
             tool = "screwdriver",
+            hint = back_step("Remove Clamps"),
             secs = 4.0,
             yields = { metal = CLAMP_METAL },
             to = "welded",
@@ -238,11 +282,22 @@ for _, state in ipairs(standby_dresses) do
         sound = "crowbar",
         at = state,
         tool = "crowbar",
+        hint = back_step("Pry Out Screen"),
         secs = 3.0,
-        yields = { glass = 1 },
+        yields = { glass = SCREEN_GLASS },
         to = "cased",
         start = "You start prying out the glass panel.",
         done = "The glass panel comes out.",
+    })
+end
+
+-- A running machine keeps its screen until it is stopped.
+for _, state in ipairs(running_dresses) do
+    table.insert(entry.transitions, {
+        at = state,
+        tool = "crowbar",
+        hint = back_step("Pry Out Screen"),
+        refuse = refused("stop_first"),
     })
 end
 

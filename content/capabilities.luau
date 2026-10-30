@@ -12,6 +12,20 @@ return {
         body = true,
         poke = true,
         hover = "lift",
+        -- What a construction step nobody named is called. `{item}` is what
+        -- the step takes.
+        verbs = {
+            tools = {
+                wrench = "lunatic/tfs:ui.verb.wrench",
+                crowbar = "lunatic/tfs:ui.verb.crowbar",
+                screwdriver = "lunatic/tfs:ui.verb.screwdriver",
+                welder = "lunatic/tfs:ui.verb.welder",
+                cutters = "lunatic/tfs:ui.verb.cutters",
+            },
+            material = "lunatic/tfs:ui.verb.material",
+            part = "lunatic/tfs:ui.verb.part",
+            board = "lunatic/tfs:ui.verb.board",
+        },
     },
     simulation = {
         atmosphere = true,
