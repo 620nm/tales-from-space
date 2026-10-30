@@ -1,4 +1,3 @@
-local action_rules = require("@lib/action_rules")
 -- A cadaver chamber (tg's morgue): the thing medbay keeps the dead
 -- in until somebody fetches them. The engine owns the mechanism — a
 -- dense cabinet that slides a dense tray onto the tile it faces,
@@ -35,7 +34,6 @@ local action_rules = require("@lib/action_rules")
 -- the nearest truthful reading is "still going".
 return {
     id = "cadaver_chamber",
-    actions = action_rules.open_close(),
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.cadaver_chamber.name",

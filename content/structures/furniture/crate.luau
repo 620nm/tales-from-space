@@ -1,4 +1,3 @@
-local action_rules = require("@lib/action_rules")
 -- Tg crate names, descriptions and art:
 -- `code/game/objects/structures/crates_lockers/crates.dm:1-5,226-236,352-356,379-382,411-415`;
 -- secure art: `code/game/objects/structures/crates_lockers/crates/secure.dm:1-5`.
@@ -11,7 +10,6 @@ local closet_data = require("@lib/closets/data")
 
 return {
     id = "crate",
-    actions = action_rules.open_close(),
     script = "crate",
     visual_layer = "low_object",
     name_label = "lunatic/tfs:entity.crate.name",

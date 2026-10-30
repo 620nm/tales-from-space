@@ -25,6 +25,9 @@ return {
             material = "lunatic/tfs:ui.verb.material",
             part = "lunatic/tfs:ui.verb.part",
             board = "lunatic/tfs:ui.verb.board",
+            open = "lunatic/tfs:action.open",
+            close = "lunatic/tfs:action.close",
+            place = "lunatic/tfs:ui.verb.place",
         },
     },
     simulation = {

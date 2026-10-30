@@ -1,4 +1,3 @@
-local action_rules = require("@lib/action_rules")
 -- A flush floor socket with a removable cap over three independent
 -- cable-layer lamps. The cap hides the lamps and never changes electrical
 -- delivery. Each lamp folds the engine's five layer states into this
@@ -23,7 +22,24 @@ return {
     },
     fixture = "Outlet",
     script = "utility_outlet_port",
-    actions = action_rules.open_close(),
+    actions = {
+        {
+            id = "open",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:action.open",
+            target = { fact = "target.state", value = "closed" },
+            visible = { fact = "held.present", value = "false" },
+        },
+        {
+            id = "close",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:action.close",
+            target = { fact = "target.state", value = "open" },
+            visible = { fact = "held.present", value = "false" },
+        },
+    },
     hover_connections = {
         relation = "energy_consumers",
         state = "open",

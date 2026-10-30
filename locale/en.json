@@ -1619,6 +1619,7 @@
   "lunatic/tfs:ui.verb.cutters": "Cut",
   "lunatic/tfs:ui.verb.material": "Add {item}",
   "lunatic/tfs:ui.verb.part": "Fit {item}",
+  "lunatic/tfs:ui.verb.place": "Place",
   "lunatic/tfs:ui.verb.board": "Install {item}",
   "lunatic/tfs:action.grav_smes.start": "Start the gravity field",
   "lunatic/tfs:action.grav_smes.stop": "Stop the gravity field",
