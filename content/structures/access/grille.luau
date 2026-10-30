@@ -203,7 +203,6 @@ return {
             hint = {
                 id = "heat_reinforced_glass",
                 label = "lunatic/tfs:ui.affordance.heat_reinforced_glass",
-                suggest = true,
             },
             to = "heated",
             start = "You start heating the security screws.",
@@ -217,7 +216,6 @@ return {
             hint = {
                 id = "remove_reinforced_glass_screws",
                 label = "lunatic/tfs:ui.affordance.remove_reinforced_glass_screws",
-                suggest = true,
             },
             to = "unscrewed",
             start = "You dig into the heated screws.",
@@ -231,7 +229,6 @@ return {
             hint = {
                 id = "pry_reinforced_glass",
                 label = "lunatic/tfs:ui.affordance.pry_reinforced_glass",
-                suggest = true,
             },
             to = "popped",
             start = "You wedge the crowbar into the gap and pry.",
@@ -245,7 +242,6 @@ return {
             hint = {
                 id = "cut_reinforced_glass_bars",
                 label = "lunatic/tfs:ui.affordance.cut_reinforced_glass_bars",
-                suggest = true,
             },
             to = "cut",
             start = "You start cutting the exposed bars.",
@@ -259,7 +255,6 @@ return {
             hint = {
                 id = "unbolt_reinforced_glass",
                 label = "lunatic/tfs:ui.affordance.unbolt_reinforced_glass",
-                suggest = true,
             },
             yields = { rglass = 2 },
             to = "bolted",
@@ -280,7 +275,6 @@ return {
             hint = {
                 id = "repair_reinforced_glass",
                 label = "lunatic/tfs:ui.affordance.repair_reinforced_glass",
-                suggest = true,
             },
             to = "reinforced",
             start = "You start securing the heated security screws.",
@@ -294,7 +288,6 @@ return {
             hint = {
                 id = "replace_reinforced_glass_screws",
                 label = "lunatic/tfs:ui.affordance.replace_reinforced_glass_screws",
-                suggest = true,
             },
             to = "heated",
             start = "You start replacing the security screws.",
@@ -308,7 +301,6 @@ return {
             hint = {
                 id = "reseat_reinforced_glass",
                 label = "lunatic/tfs:ui.affordance.reseat_reinforced_glass",
-                suggest = true,
             },
             to = "unscrewed",
             start = "You start levering the panel back into the frame.",
@@ -323,7 +315,6 @@ return {
             hint = {
                 id = "weld_reinforced_glass_bars",
                 label = "lunatic/tfs:ui.affordance.weld_reinforced_glass_bars",
-                suggest = true,
             },
             to = "popped",
             start = "You start welding the security bars back together.",

@@ -42,7 +42,6 @@ return {
             hint = {
                 id = "dismantle",
                 label = "lunatic/tfs:ui.affordance.dismantle_frame",
-                suggest = true,
             },
             secs = 4.0,
             fuel = 0.3,
