@@ -21,12 +21,16 @@ local function turn(x: number, y: number, id: string, clockwise: boolean)
 end
 
 -- A bolted-down emitter turns through the declared facings, wearing its
--- anchored picture. The pointer turns clockwise only, so three more
--- quarter-turns bring it home.
-assert(sprite(5, 3) == "grav_emitter_anchored_south", "the north emitter points south: " .. sprite(5, 3))
-turn(5, 3, "grav_emitter", true)
-assert(sprite(5, 3) == "grav_emitter_anchored_west", "clockwise from south is west: " .. sprite(5, 3))
-for _ = 1, 3 do
+-- anchored picture. The pointer turns clockwise only, so four quarter-turns
+-- step through every anchored picture and bring it home.
+local anchored_order = {
+    "grav_emitter_anchored_south",
+    "grav_emitter_anchored_west",
+    "grav_emitter_anchored_north",
+    "grav_emitter_anchored_east",
+}
+for _, want in ipairs(anchored_order) do
+    assert(sprite(5, 3) == want, "bolted emitter wears " .. want .. ": " .. sprite(5, 3))
     turn(5, 3, "grav_emitter", true)
 end
 assert(sprite(5, 3) == "grav_emitter_anchored_south", "and round again: " .. sprite(5, 3))

@@ -56,10 +56,22 @@ t.run_ticks(2)
 weld_says("The east emitter must face the centre.")
 turn(6, 4, "grav_emitter", 2)
 
--- Unanchored emitter.
+-- Unanchored emitter: wears its loose picture until bolted down.
+assert(
+    assert(t.structure_at(4, 4)).sprite == "grav_emitter_east",
+    "loose west emitter wears its unbolted picture"
+)
 bench.hold(p, "welder", NEAR)
 weld_says("The west emitter must be bolted down.")
 wrench(4, 4, "grav_emitter")
+assert(
+    assert(t.structure_at(4, 4)).sprite == "grav_emitter_anchored_east",
+    "bolted west emitter wears its anchored picture"
+)
+assert(
+    assert(t.structure_at(5, 5)).sprite == "grav_emitter_anchored_north",
+    "bolted south emitter wears anchored_south (grav_emitter_anchored_north)"
+)
 
 -- A ring still on its cart.
 bench.hold(p, "welder", NEAR)
