@@ -82,6 +82,7 @@ end
 t.world(
     [==[(
     name: "rpd bench",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
@@ -452,6 +453,7 @@ assert(shows(p, MODE) == before, "no window, no acts")
 t.world(
     [==[(
     name: "rpd occupancy",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
@@ -549,6 +551,7 @@ end
 t.world(
     [==[(
     name: "rpd unary occupancy",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),

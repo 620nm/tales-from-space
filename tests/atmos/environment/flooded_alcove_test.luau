@@ -21,6 +21,9 @@ local atmos_cell = require("@helpers/atmos_cell")
 -- lint-assets).
 
 t.world_file("flooded_alcove.ron", 7)
+-- The map asks for weight; the sunless sky that once gave it is weightless
+-- now, so the alcove keeps that sky's cold and dark by hand.
+t.set_environment({ sink_k = 2.7, insolation = 0 })
 local p = t.join()
 t.tick()
 local spawn_x, spawn_y = t.pos(p)

@@ -37,6 +37,7 @@ end
 t.world(
     [==[(
     name: "air supply",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
@@ -203,6 +204,7 @@ assert(assert(can_after) < full, "the reading dropped: " .. assert(full) .. " ->
 t.world(
     [==[(
     name: "spent",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
@@ -375,6 +377,7 @@ assert(
 t.world(
     [==[(
     name: "portable",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -624,6 +627,7 @@ assert(
 t.world(
     [==[(
     name: "across the kit",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),

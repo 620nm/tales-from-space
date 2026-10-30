@@ -41,6 +41,7 @@ end
 t.world(
     [==[(
     name: "assembly bench",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),

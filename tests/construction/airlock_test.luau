@@ -32,6 +32,7 @@ local composition = require("@helpers/composition")
 -- airlock, and space. Chamber column x = 6, doors at (5, 2) and (7, 2).
 local VESTIBULE = [==[(
     name: "eva vestibule",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -282,6 +283,7 @@ assert(
 -- floor -- the fourteen seconds tg charges for a plain pane.
 local VIEWPORT = [==[(
     name: "viewport",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
