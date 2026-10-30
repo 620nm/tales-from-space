@@ -12,9 +12,11 @@
 // `<stage>_<row>_<column>`, row-major from the top-left. The cell at
 // row r, column c is the footprint cell r * 3 + c + 1 of `grav_smes`.
 //
-// PARTS. `gravity-pillar` tags name the SLOT a pillar sits in; its
-// nozzle points the other way. `grav_emitter_<facing>` is named for the
-// way the nozzle points, so it wears the tag of the opposite slot.
+// PARTS. `gravity-pillar` tags name the SLOT a pillar sits in (`north`..`west`
+// loose, `anchored_north`..`anchored_west` bolted down); its nozzle points the
+// other way. `grav_emitter_<facing>` and `grav_emitter_anchored_<facing>` are
+// named for the way the nozzle points, so each wears the tag of the opposite
+// slot.
 // `gravity-ring` holds the four corner arcs of `02_rings`, 32x32 each, tagged
 // by the facing that wears them: north is the north-west arc, then clockwise.
 //
@@ -30,6 +32,10 @@
         ("grav_emitter_east", Ase("art/machines/gravity/gravity-pillar.aseprite", "west")),
         ("grav_emitter_south", Ase("art/machines/gravity/gravity-pillar.aseprite", "north")),
         ("grav_emitter_west", Ase("art/machines/gravity/gravity-pillar.aseprite", "east")),
+        ("grav_emitter_anchored_north", Ase("art/machines/gravity/gravity-pillar.aseprite", "anchored_south")),
+        ("grav_emitter_anchored_east", Ase("art/machines/gravity/gravity-pillar.aseprite", "anchored_west")),
+        ("grav_emitter_anchored_south", Ase("art/machines/gravity/gravity-pillar.aseprite", "anchored_north")),
+        ("grav_emitter_anchored_west", Ase("art/machines/gravity/gravity-pillar.aseprite", "anchored_east")),
 
         // Supermagnets: packed on a cart, set as one corner arc of the ring.
         ("grav_supermagnet_loose", Ase("art/machines/gravity/gravity-ring-cart.aseprite", "ring_cart")),

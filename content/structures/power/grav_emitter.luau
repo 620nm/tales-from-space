@@ -5,12 +5,19 @@
 -- one: a map places it, like the heavy parts of tg's machinery.
 local FACINGS = { "north", "east", "south", "west" }
 
--- The picture for facing F is the pillar of the opposite slot.
-local pictures = {
+-- The picture for facing F is the pillar of the opposite slot, loose or
+-- bolted down.
+local displaced_pictures = {
     north = "grav_emitter_north",
     south = "grav_emitter_south",
     east = "grav_emitter_east",
     west = "grav_emitter_west",
+}
+local anchored_pictures = {
+    north = "grav_emitter_anchored_north",
+    south = "grav_emitter_anchored_south",
+    east = "grav_emitter_anchored_east",
+    west = "grav_emitter_anchored_west",
 }
 
 return {
@@ -38,7 +45,7 @@ return {
     -- Loose leads; the bolted-down preset is in its palette flyout.
     palette_states = { "displaced", "anchored" },
     facings = FACINGS,
-    facing_sprites = { displaced = pictures, anchored = pictures },
+    facing_sprites = { displaced = displaced_pictures, anchored = anchored_pictures },
     loose = { "displaced" },
     rotates = { "displaced", "anchored" },
     transitions = {

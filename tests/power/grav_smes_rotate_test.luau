@@ -4,7 +4,10 @@ local bench = require("@helpers/grav_bench")
 -- packed, because its corner comes from the emitters beside it. Each
 -- accepted quarter-turn is a ledger row; a refused one writes none.
 
-bench.world('(5, 4, "player_spawn"), ' .. bench.part_rows({ ne = { packed = true } }), "")
+bench.world(
+    '(5, 4, "player_spawn"), ' .. bench.part_rows({ ne = { packed = true }, w = { state = "displaced" } }),
+    ""
+)
 local p = t.join()
 t.tick()
 
@@ -17,15 +20,21 @@ local function turn(x: number, y: number, id: string, clockwise: boolean)
     t.tick()
 end
 
--- A bolted-down emitter turns through the declared facings. The pointer
--- turns clockwise only, so three more quarter-turns bring it home.
-assert(sprite(5, 3) == "grav_emitter_south", "the north emitter points south: " .. sprite(5, 3))
+-- A bolted-down emitter turns through the declared facings, wearing its
+-- anchored picture. The pointer turns clockwise only, so three more
+-- quarter-turns bring it home.
+assert(sprite(5, 3) == "grav_emitter_anchored_south", "the north emitter points south: " .. sprite(5, 3))
 turn(5, 3, "grav_emitter", true)
-assert(sprite(5, 3) == "grav_emitter_west", "clockwise from south is west: " .. sprite(5, 3))
+assert(sprite(5, 3) == "grav_emitter_anchored_west", "clockwise from south is west: " .. sprite(5, 3))
 for _ = 1, 3 do
     turn(5, 3, "grav_emitter", true)
 end
-assert(sprite(5, 3) == "grav_emitter_south", "and round again: " .. sprite(5, 3))
+assert(sprite(5, 3) == "grav_emitter_anchored_south", "and round again: " .. sprite(5, 3))
+
+-- A loose emitter wears its unbolted picture and turns the same way.
+assert(sprite(4, 4) == "grav_emitter_east", "the loose west emitter points east: " .. sprite(4, 4))
+turn(4, 4, "grav_emitter", true)
+assert(sprite(4, 4) == "grav_emitter_south", "clockwise from east is south: " .. sprite(4, 4))
 
 -- A set ring wears its arc and stays there.
 assert(
@@ -38,4 +47,4 @@ assert(sprite(4, 3) == "grav_supermagnet_ring_north", "a set ring does not turn:
 -- Nor does a packed one.
 turn(6, 3, "grav_supermagnet", true)
 assert(sprite(6, 3) == "grav_supermagnet_loose", "the cart shows no facing: " .. sprite(6, 3))
-assert(#t.ledger_rows("Rotated") == 4, "a refused turn writes no row")
+assert(#t.ledger_rows("Rotated") == 5, "a refused turn writes no row")
