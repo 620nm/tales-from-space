@@ -43,7 +43,7 @@ t.world(
     ],
 )]==],
     0,
-    "free_build"
+    "space_station"
 )
 assert(t.environment().kind == "space", "the map rolls a space environment: " .. t.environment().id)
 
@@ -83,7 +83,7 @@ t.world(
     ],
 )]==],
     0,
-    "free_build"
+    "space_station"
 )
 local walker = t.join()
 t.run_ticks(4)

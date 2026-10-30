@@ -20,7 +20,7 @@ t.world([==[(
             structures: [(7, 7, "player_spawn"), (11, 7, "canister"), (6, 3, "canister")],
         ),
     ],
-)]==], 0, "free_build")
+)]==], 0, "space_station")
 
 local p = t.join()
 t.tick()

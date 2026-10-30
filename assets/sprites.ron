@@ -255,4 +255,8 @@
         "light_glow_e",
         "light_glow_w",
     ],
+    // The running gravity battery's field disc bends the scene slightly
+    // about its centre tile: pack-tuned, a subtle pull (radius in tiles,
+    // strength as a fresh Lens; the engine's docs/assets/rosters.md).
+    lens: [(sprite: "grav_disc_active", radius: 2.5, strength: 0.12)],
 )

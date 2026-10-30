@@ -166,7 +166,6 @@
   "lunatic/tfs:entity.girder.name": "girder",
   "lunatic/tfs:entity.glass.name": "glass sheets",
   "lunatic/tfs:entity.glass_floor.name": "glass floor",
-  "lunatic/tfs:entity.gravity_generator.name": "gravitational generator",
   "lunatic/tfs:entity.grille.name": "grille",
   "lunatic/tfs:entity.ground.name": "ground",
   "lunatic/tfs:entity.hazard_diamond.name": "hazard diamond",
@@ -1615,5 +1614,12 @@
   "lunatic/tfs:lib.grav_smes.facing.se": "The south-east supermagnet must be turned to fit its corner.",
   "lunatic/tfs:lib.grav_smes.missing.sw": "The south-west supermagnet is missing.",
   "lunatic/tfs:lib.grav_smes.loose.sw": "The south-west supermagnet must be bolted down.",
-  "lunatic/tfs:lib.grav_smes.facing.sw": "The south-west supermagnet must be turned to fit its corner."
+  "lunatic/tfs:lib.grav_smes.facing.sw": "The south-west supermagnet must be turned to fit its corner.",
+  "lunatic/tfs:action.grav_smes.start": "Start the gravity field",
+  "lunatic/tfs:action.grav_smes.stop": "Stop the gravity field",
+  "lunatic/tfs:lib.grav_smes_run.not_standby": "The gravity battery can only be started from standby.",
+  "lunatic/tfs:lib.grav_smes_run.no_charge": "The gravity battery holds too little charge to start.",
+  "lunatic/tfs:lib.grav_smes_run.starting": "The gravity battery begins to spin up.",
+  "lunatic/tfs:lib.grav_smes_run.not_running": "The gravity battery is not running.",
+  "lunatic/tfs:lib.grav_smes_run.stopping": "The gravity battery begins to spin down."
 }
