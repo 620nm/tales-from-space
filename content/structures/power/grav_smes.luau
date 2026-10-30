@@ -11,10 +11,22 @@
 -- the opposite tool and returns what it cost. Welded joints are
 -- permanent; the weld itself is a script (lib/grav_smes.luau).
 --
--- RUNNING STATES have sprites only: the disc over the centre tile rides
+-- RUNNING STATES are a script's (lib/grav_smes_run.luau) and
+-- `scripted_states` hands them over: the disc over the centre tile rides
 -- the centre cell's stack on a layer above standing things, and the
 -- south cell wears one status glyph per `<run state>_<status>` state.
-local STATUSES = { "charging", "discharging", "fault", "unpowered" }
+--
+-- POWER. One store, one bridge, four cable cells: the middle of each
+-- edge, the tiles the emitters stood on, each keeping the SMES's line
+-- roles (power/smes.luau: output, input, output). The store takes the
+-- SMES's numbers, five plain batteries (power.dm:32, battery.dm:17) in
+-- and out at 200 kW (smes.dm:26, :37), and bills tg's gravity generator
+-- draw while the field runs (lib/grav_smes_run.luau `SELF_DRAW_W`).
+-- The field is 30 tiles of connected deck at standard gravity, and only
+-- while that draw is met.
+local run = require("@lib/grav_smes_run")
+
+local STATUSES = run.STATUSES
 local ANCHOR_CELL = 5
 local SOUTH_CELL = 8
 local DISC_LAYER = "overhead_entities"
@@ -28,6 +40,26 @@ local footprint = {}
 for row = 0, 2 do
     for column = 0, 2 do
         footprint[row * 3 + column + 1] = { at = { column - 1, row - 1 } }
+    end
+end
+
+-- The port cells, as `bridge.ports.cells` counts them (from 0 over the
+-- footprint above), with the compass key that qualifies each one's
+-- slot properties.
+local PORTS = {
+    { cell = 1, key = "engine.cell.north" },
+    { cell = 5, key = "engine.cell.east" },
+    { cell = 7, key = "engine.cell.south" },
+    { cell = 3, key = "engine.cell.west" },
+}
+local PORT_ROLES = { l1 = "output", l2 = "input", l3 = "output" }
+
+local port_cells = {}
+local default_props: { [string]: string } = {}
+for _, port in ipairs(PORTS) do
+    table.insert(port_cells, port.cell)
+    for channel, role in pairs(PORT_ROLES) do
+        default_props[`{port.key}.{channel}`] = role
     end
 end
 
@@ -60,12 +92,18 @@ for _, animation in ipairs({ "startup", "active", "shutdown" }) do
 end
 
 -- The steady states wear a status glyph on the south cell.
-for _, run in ipairs({ "standby", "active" }) do
+local standby_dresses = { "standby" }
+local scripted_states = { "standby", "startup", "active", "shutdown" }
+for _, phase in ipairs({ "standby", "active" }) do
     for _, status in ipairs(STATUSES) do
-        local state = `{run}_{status}`
+        local state = `{phase}_{status}`
         table.insert(states, state)
+        table.insert(scripted_states, state)
+        if phase == "standby" then
+            table.insert(standby_dresses, state)
+        end
         local cells: { any } = {}
-        for index, picture in ipairs(state_sprites[run]) do
+        for index, picture in ipairs(state_sprites[phase]) do
             cells[index] = picture
         end
         cells[SOUTH_CELL] = { cells[SOUTH_CELL], `grav_led_{status}` }
@@ -73,9 +111,10 @@ for _, run in ipairs({ "standby", "active" }) do
     end
 end
 
-return {
+local entry: { [string]: any } = {
     id = "grav_smes",
     visual_layer = "fixture",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.grav_smes.name",
     name = "gravity battery",
     sprite = "grav_smes_standby_1_1",
@@ -90,6 +129,29 @@ return {
     states = states,
     palette_states = { "standby", "active" },
     state_sprites = state_sprites,
+    scripted_states = scripted_states,
+    default_props = default_props,
+    store = {
+        capacity_j = 5000000,
+        charge_w = 200000,
+        discharge_w = 200000,
+        report = true,
+        self_draw_w = run.SELF_DRAW_W,
+    },
+    bridge = { throttles = true, ports = { cells = port_cells } },
+    gravity_source = {
+        radius_tiles = 30,
+        acceleration_m_s2 = 9.80665,
+        spreads_through = "receives_gravity",
+        powered_by = "internal_load",
+    },
+    ui = {
+        modules = { "store", "throttles", "ports", "actions" },
+        actions = {
+            { key = "start", label = "lunatic/tfs:action.grav_smes.start" },
+            { key = "stop", label = "lunatic/tfs:action.grav_smes.stop" },
+        },
+    },
     transitions = {
         {
             sound = "smash",
@@ -140,16 +202,6 @@ return {
         },
         {
             sound = "crowbar",
-            at = "standby",
-            tool = "crowbar",
-            secs = 3.0,
-            yields = { glass = 1 },
-            to = "cased",
-            start = "lunatic/tfs:entity.grav_smes.unglaze.start",
-            done = "lunatic/tfs:entity.grav_smes.unglaze.done",
-        },
-        {
-            sound = "crowbar",
             at = "cased",
             tool = "crowbar",
             secs = 8.0,
@@ -190,3 +242,19 @@ return {
         },
     },
 }
+
+-- The glass comes out of a standing machine in any of its standby dresses.
+for _, state in ipairs(standby_dresses) do
+    table.insert(entry.transitions, {
+        sound = "crowbar",
+        at = state,
+        tool = "crowbar",
+        secs = 3.0,
+        yields = { glass = 1 },
+        to = "cased",
+        start = "lunatic/tfs:entity.grav_smes.unglaze.start",
+        done = "lunatic/tfs:entity.grav_smes.unglaze.done",
+    })
+end
+
+return entry

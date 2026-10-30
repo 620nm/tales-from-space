@@ -84,7 +84,12 @@ assert(t.count_items("glass") == glass, "no glass was spent")
 t.click(p, 5, 5, t.target_at(p, 5, 5, "grav_smes"))
 t.run_seconds(4)
 local finished = assert(t.structure_at(5, 4))
-assert(finished.state == "standby", "the south cell takes the glass: " .. tostring(finished.state))
+-- A standing machine wears a status glyph, so its state is `standby` or a
+-- `standby_<status>` dress.
+assert(
+    string.find(tostring(finished.state), "^standby") ~= nil,
+    "the south cell takes the glass: " .. tostring(finished.state)
+)
 assert(
     finished.sprite == "grav_smes_standby_1_1",
     "the standing machine wears its picture: " .. tostring(finished.sprite)

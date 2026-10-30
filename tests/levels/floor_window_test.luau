@@ -197,7 +197,7 @@ t.world(
     ],
 )]==],
     0,
-    "free_build"
+    "space_station"
 )
 local orbiter = t.join()
 t.run_ticks(4)

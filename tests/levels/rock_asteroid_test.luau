@@ -47,7 +47,7 @@ t.world(
     ],
 )]==],
     0,
-    "free_build"
+    "space_station"
 )
 
 local p = t.join()
@@ -137,7 +137,7 @@ t.world(
     ],
 )]==],
     0,
-    "free_build"
+    "space_station"
 )
 local ROOF = 1
 assert(t.set_composition(2, 1, "rock", ROOF), "the rock preset replaces the station base under the crowbar")
@@ -188,7 +188,7 @@ t.world(
     ],
 )]==],
     0,
-    "free_build"
+    "space_station"
 )
 local walker = t.join()
 t.run_ticks(2)
@@ -222,7 +222,7 @@ t.world(
     ],
 )]==],
     0,
-    "free_build"
+    "space_station"
 )
 t.join()
 t.run_ticks(2)

@@ -88,24 +88,30 @@ for _, mode in ipairs({ "space_station", "free_build" }) do
     end
 end
 
--- An exact zero-gravity preference leaves only the microgravity profile in
--- both modes.
+-- An exact zero-gravity preference leaves only the two weightless skies
+-- (`dead_space` and `microgravity`) in both modes.
 for _, mode in ipairs({ "space_station", "free_build" }) do
     t.world(ZERO_GRAVITY_MAP, 7, mode)
     local zero = t.environment()
     local zero_profile = assert(zero.profile)
-    assert(zero.id == "microgravity", "an Exact(0) map selects microgravity")
+    assert(
+        zero.id == "microgravity" or zero.id == "dead_space",
+        "an Exact(0) map selects a weightless sky: " .. zero.id
+    )
     assert(zero_profile.gravity_m_s2 == 0, "the selected profile is exactly zero")
     assert(zero_profile.background == "space_backdrop", "zero gravity still has a space backdrop")
 end
 
 -- A narrow range and a named backdrop are the same physical filter: both
--- modes still have exactly one matching profile.
+-- modes leave only the two weightless skies.
 for _, mode in ipairs({ "space_station", "free_build" }) do
     t.world(MICROGRAVITY_FILTER_MAP, 7, mode)
     local filtered = t.environment()
     local filtered_profile = assert(filtered.profile)
-    assert(filtered.id == "microgravity", "the range and backdrop select microgravity")
+    assert(
+        filtered.id == "microgravity" or filtered.id == "dead_space",
+        "the range and backdrop select a weightless sky: " .. filtered.id
+    )
     assert(filtered_profile.gravity_m_s2 == 0, "the range includes only zero gravity here")
     assert(filtered_profile.background == "space_backdrop", "the exact backdrop is preserved")
 end
