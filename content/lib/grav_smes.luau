@@ -1,0 +1,248 @@
+-- The gravity battery's assembly rules: where the eight loose parts must
+-- stand and face, the torch weld that fuses them into one 3x3 machine, and
+-- the glass panel that only fits the south cell.
+--
+-- Layout, centre C, north up:  ring emitter ring / emitter C emitter /
+-- ring emitter ring. An emitter's facing is the way its nozzle points, so
+-- the north emitter faces south. A ring's facing names the corner arc it
+-- draws: north is the north-west arc, then clockwise.
+
+local grav_smes = {}
+
+local WELDER = "welder"
+local GLASS = "glass"
+local BODY = "grav_smes"
+local EMITTER = "grav_emitter"
+local RING = "grav_supermagnet"
+local ANCHORED = "anchored"
+local WELDED = "welded"
+local CASED = "cased"
+local LIT = "lit"
+
+-- The welder's reservoir substance (items/tools/welder.luau `fuel`).
+local FUEL = "naphtha"
+-- Pack-tuned: tg has no machine like this one. The weld takes three
+-- times a tank-frame seam's fuel (tank.dm:675-697 spends 0.3).
+local WELD_FUEL_MOLES = 0.9
+local WELD_SECONDS = 6.0
+
+-- Footprint cell of the south emitter, as `interaction.use` reports it
+-- (1-based, row-major over the 3x3 footprint).
+grav_smes.SOUTH_CELL = 8
+
+type PartSpec = {
+    position: string,
+    prototype: string,
+    facing: string,
+    dx: number,
+    dy: number,
+}
+
+-- Fixed report order: emitters, then rings.
+local PARTS: { PartSpec } = {
+    { position = "n", prototype = EMITTER, facing = "south", dx = 0, dy = -1 },
+    { position = "e", prototype = EMITTER, facing = "west", dx = 1, dy = 0 },
+    { position = "s", prototype = EMITTER, facing = "north", dx = 0, dy = 1 },
+    { position = "w", prototype = EMITTER, facing = "east", dx = -1, dy = 0 },
+    { position = "nw", prototype = RING, facing = "north", dx = -1, dy = -1 },
+    { position = "ne", prototype = RING, facing = "east", dx = 1, dy = -1 },
+    { position = "se", prototype = RING, facing = "south", dx = 1, dy = 1 },
+    { position = "sw", prototype = RING, facing = "west", dx = -1, dy = 1 },
+}
+
+local MESSAGE = "lunatic/tfs:lib.grav_smes."
+
+-- Every message key this module speaks, for the roster file to define.
+function grav_smes.message_keys(): { string }
+    local keys = {
+        MESSAGE .. "torch_unlit",
+        MESSAGE .. "torch_empty",
+        MESSAGE .. "blocked",
+        MESSAGE .. "weld_start",
+        MESSAGE .. "weld_stopped",
+        MESSAGE .. "weld_done",
+        MESSAGE .. "welded_fast",
+        MESSAGE .. "glass_wrong_cell",
+    }
+    for _, part in ipairs(PARTS) do
+        table.insert(keys, MESSAGE .. "missing." .. part.position)
+        table.insert(keys, MESSAGE .. "loose." .. part.position)
+        table.insert(keys, MESSAGE .. "facing." .. part.position)
+    end
+    return keys
+end
+
+local function send(actor: Handle, key: string): ()
+    sim.message.send({ recipient = actor, message = sim.msg(key, {}) })
+end
+
+local function part_at(tile: TileAddress, prototype: string): Handle?
+    for _, candidate in ipairs(sim.query.range(tile, 0, {})) do
+        if candidate.alive and candidate.prototype == prototype then
+            return candidate
+        end
+    end
+    return nil
+end
+
+local function tile_beside(centre: TileAddress, dx: number, dy: number): TileAddress?
+    return sim.map_tile(centre, centre.x + dx, centre.y + dy, centre.z)
+end
+
+-- The centre a standing part implies: the tile it would stand beside.
+local function implied_centre(part: Handle): TileAddress?
+    local tile = part.tile
+    if tile == nil then
+        return nil
+    end
+    local facing = part.facing or "north"
+    for _, spec in ipairs(PARTS) do
+        if spec.prototype == part.prototype and spec.facing == facing then
+            return sim.map_tile(tile, tile.x - spec.dx, tile.y - spec.dy, tile.z)
+        end
+    end
+    return nil
+end
+
+type Inspection = {
+    centre: TileAddress?,
+    parts: { Handle },
+    refusal: string?,
+}
+
+-- Walks the eight positions around the centre `part` implies and names the
+-- first thing wrong, in the player's words.
+local function inspect(part: Handle): Inspection
+    local result: Inspection = { centre = implied_centre(part), parts = {}, refusal = nil }
+    local centre = result.centre
+    if centre == nil then
+        result.refusal = MESSAGE .. "blocked"
+        return result
+    end
+    for _, spec in ipairs(PARTS) do
+        local at = tile_beside(centre, spec.dx, spec.dy)
+        local found = if at ~= nil then part_at(at, spec.prototype) else nil
+        if found == nil then
+            result.refusal = MESSAGE .. "missing." .. spec.position
+            return result
+        end
+        if found.state ~= ANCHORED then
+            result.refusal = MESSAGE .. "loose." .. spec.position
+            return result
+        end
+        if found.facing ~= spec.facing then
+            result.refusal = MESSAGE .. "facing." .. spec.position
+            return result
+        end
+        table.insert(result.parts, found)
+    end
+    return result
+end
+
+local function fuel_moles(torch: Handle): number
+    local read = sim.matter_read(torch)
+    if read == nil then
+        return 0
+    end
+    local fuel = read.contents[FUEL]
+    return if fuel then (fuel.liquid or 0) + (fuel.gas or 0) + (fuel.solid or 0) else 0
+end
+
+-- A torch problem, as a message key.
+local function torch_refusal(torch: Handle): string?
+    if torch.state ~= LIT then
+        return MESSAGE .. "torch_unlit"
+    end
+    if fuel_moles(torch) < WELD_FUEL_MOLES then
+        return MESSAGE .. "torch_empty"
+    end
+    return nil
+end
+
+local function replacement(centre: TileAddress)
+    return { definition = BODY, at = centre, state = WELDED }
+end
+
+-- A lit welder on any anchored emitter or ring: fuses the eight parts
+-- standing around the implied centre into the machine.
+function grav_smes.weld(ev: InteractionUsePayload): boolean | { replaced: boolean }
+    local part, actor, torch = ev.subject, ev.actor, ev.implement
+    if torch == nil or not torch.alive or torch.prototype ~= WELDER then
+        return { replaced = false }
+    end
+    local torch_key = torch_refusal(torch)
+    if torch_key ~= nil then
+        send(actor, torch_key)
+        return true
+    end
+    local inspection = inspect(part)
+    if inspection.refusal ~= nil then
+        send(actor, inspection.refusal)
+        return true
+    end
+    local centre = assert(inspection.centre)
+    local request = { remove = inspection.parts, spawn = replacement(centre) }
+    if not sim.structure.can_replace(request).ok then
+        send(actor, MESSAGE .. "blocked")
+        return true
+    end
+    send(actor, MESSAGE .. "weld_start")
+    sim.spawn_task(actor, function()
+        if sim.do_after(actor, sim.ticks(WELD_SECONDS), {}) ~= "ok" then
+            if actor.alive then
+                send(actor, MESSAGE .. "weld_stopped")
+            end
+            return
+        end
+        if not actor.alive or not part.alive or not torch.alive then
+            return
+        end
+        -- A second look: the work took time, and the torch and the parts
+        -- are as free to change as the actor is.
+        local torch_again = torch_refusal(torch)
+        if torch_again ~= nil then
+            send(actor, torch_again)
+            return
+        end
+        local again = inspect(part)
+        if again.refusal ~= nil then
+            send(actor, again.refusal)
+            return
+        end
+        local centre_again = assert(again.centre)
+        local fresh = { remove = again.parts, spawn = replacement(centre_again) }
+        if not sim.structure.can_replace(fresh).ok then
+            send(actor, MESSAGE .. "blocked")
+            return
+        end
+        sim.structure.replace(fresh)
+        sim.matter.extract({
+            owner = torch,
+            amount = WELD_FUEL_MOLES,
+            phases = { "liquid", "gas", "solid" },
+            substance = FUEL,
+        })
+        send(actor, MESSAGE .. "weld_done")
+    end)
+    return true
+end
+
+-- Clicks on the finished body that no native step answers: glass belongs
+-- to the south cell alone, and welded joints do not come apart.
+function grav_smes.body_use(ev: InteractionUsePayload): boolean | { replaced: boolean }
+    local body, actor, implement = ev.subject, ev.actor, ev.implement
+    if implement == nil or not implement.alive then
+        return { replaced = false }
+    end
+    if implement.prototype == GLASS and body.state == CASED and ev.cell ~= grav_smes.SOUTH_CELL then
+        send(actor, MESSAGE .. "glass_wrong_cell")
+        return true
+    end
+    if implement.prototype == WELDER and body.state == WELDED then
+        send(actor, MESSAGE .. "welded_fast")
+        return true
+    end
+    return { replaced = false }
+end
+
+return grav_smes

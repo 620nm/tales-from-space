@@ -1,0 +1,151 @@
+// The gravity battery: a 3x3 machine built from four emitters and four
+// supermagnet rings, and the loose parts it is welded out of.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order, so
+// the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+//
+// WHY LITERAL `Cut` ROWS. The grouped `Slice` form looks an Aseprite tag
+// up as `<state>-<dir>`; these tags are authored bare (`03_welding`),
+// so each cell is spelled as the `Cut` the group form would mint, named
+// `<stage>_<row>_<column>`, row-major from the top-left. The cell at
+// row r, column c is the footprint cell r * 3 + c + 1 of `grav_smes`.
+//
+// PARTS. `gravity-pillar` tags name the SLOT a pillar sits in; its
+// nozzle points the other way. `grav_emitter_<facing>` is named for the
+// way the nozzle points, so it wears the tag of the opposite slot.
+// `grav_supermagnet_<facing>` is the corner arc of `02_rings` that
+// facing implies: north is the north-west arc, then clockwise.
+//
+// DISC. 48x48, centred on the centre tile (`Anchored(.., Center)`); it
+// is not a cell of the 96x96 sheet.
+//
+// STATUS LED. `led_display` frames 27..30 of its `03_status_glyphs`
+// layer: charging, discharging, fault, unpowered.
+(
+    sprites: [
+        // Emitters: facing F wears the pillar tag of the opposite slot.
+        ("grav_emitter_north", Ase("art/machines/gravity/gravity-pillar.aseprite", "south")),
+        ("grav_emitter_east", Ase("art/machines/gravity/gravity-pillar.aseprite", "west")),
+        ("grav_emitter_south", Ase("art/machines/gravity/gravity-pillar.aseprite", "north")),
+        ("grav_emitter_west", Ase("art/machines/gravity/gravity-pillar.aseprite", "east")),
+
+        // Supermagnets: loose on a cart, anchored as a corner arc of 02_rings.
+        ("grav_supermagnet_loose", Ase("art/machines/gravity/gravity-ring-cart.aseprite", "ring_cart")),
+        ("grav_supermagnet_north", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "02_rings"), cols: 3, rows: 3, column: 0, row: 0)),
+        ("grav_supermagnet_east", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "02_rings"), cols: 3, rows: 3, column: 2, row: 0)),
+        ("grav_supermagnet_south", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "02_rings"), cols: 3, rows: 3, column: 2, row: 2)),
+        ("grav_supermagnet_west", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "02_rings"), cols: 3, rows: 3, column: 0, row: 2)),
+
+        // 03_welding, nine cells.
+        ("grav_smes_welded_0_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "03_welding"), cols: 3, rows: 3, column: 0, row: 0)),
+        ("grav_smes_welded_0_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "03_welding"), cols: 3, rows: 3, column: 1, row: 0)),
+        ("grav_smes_welded_0_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "03_welding"), cols: 3, rows: 3, column: 2, row: 0)),
+        ("grav_smes_welded_1_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "03_welding"), cols: 3, rows: 3, column: 0, row: 1)),
+        ("grav_smes_welded_1_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "03_welding"), cols: 3, rows: 3, column: 1, row: 1)),
+        ("grav_smes_welded_1_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "03_welding"), cols: 3, rows: 3, column: 2, row: 1)),
+        ("grav_smes_welded_2_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "03_welding"), cols: 3, rows: 3, column: 0, row: 2)),
+        ("grav_smes_welded_2_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "03_welding"), cols: 3, rows: 3, column: 1, row: 2)),
+        ("grav_smes_welded_2_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "03_welding"), cols: 3, rows: 3, column: 2, row: 2)),
+
+        // 04_yoke_clamps, nine cells.
+        ("grav_smes_clamped_0_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "04_yoke_clamps"), cols: 3, rows: 3, column: 0, row: 0)),
+        ("grav_smes_clamped_0_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "04_yoke_clamps"), cols: 3, rows: 3, column: 1, row: 0)),
+        ("grav_smes_clamped_0_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "04_yoke_clamps"), cols: 3, rows: 3, column: 2, row: 0)),
+        ("grav_smes_clamped_1_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "04_yoke_clamps"), cols: 3, rows: 3, column: 0, row: 1)),
+        ("grav_smes_clamped_1_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "04_yoke_clamps"), cols: 3, rows: 3, column: 1, row: 1)),
+        ("grav_smes_clamped_1_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "04_yoke_clamps"), cols: 3, rows: 3, column: 2, row: 1)),
+        ("grav_smes_clamped_2_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "04_yoke_clamps"), cols: 3, rows: 3, column: 0, row: 2)),
+        ("grav_smes_clamped_2_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "04_yoke_clamps"), cols: 3, rows: 3, column: 1, row: 2)),
+        ("grav_smes_clamped_2_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "04_yoke_clamps"), cols: 3, rows: 3, column: 2, row: 2)),
+
+        // 05_wires, nine cells.
+        ("grav_smes_wired_0_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "05_wires"), cols: 3, rows: 3, column: 0, row: 0)),
+        ("grav_smes_wired_0_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "05_wires"), cols: 3, rows: 3, column: 1, row: 0)),
+        ("grav_smes_wired_0_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "05_wires"), cols: 3, rows: 3, column: 2, row: 0)),
+        ("grav_smes_wired_1_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "05_wires"), cols: 3, rows: 3, column: 0, row: 1)),
+        ("grav_smes_wired_1_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "05_wires"), cols: 3, rows: 3, column: 1, row: 1)),
+        ("grav_smes_wired_1_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "05_wires"), cols: 3, rows: 3, column: 2, row: 1)),
+        ("grav_smes_wired_2_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "05_wires"), cols: 3, rows: 3, column: 0, row: 2)),
+        ("grav_smes_wired_2_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "05_wires"), cols: 3, rows: 3, column: 1, row: 2)),
+        ("grav_smes_wired_2_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "05_wires"), cols: 3, rows: 3, column: 2, row: 2)),
+
+        // 06_coolant, nine cells.
+        ("grav_smes_piped_0_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "06_coolant"), cols: 3, rows: 3, column: 0, row: 0)),
+        ("grav_smes_piped_0_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "06_coolant"), cols: 3, rows: 3, column: 1, row: 0)),
+        ("grav_smes_piped_0_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "06_coolant"), cols: 3, rows: 3, column: 2, row: 0)),
+        ("grav_smes_piped_1_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "06_coolant"), cols: 3, rows: 3, column: 0, row: 1)),
+        ("grav_smes_piped_1_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "06_coolant"), cols: 3, rows: 3, column: 1, row: 1)),
+        ("grav_smes_piped_1_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "06_coolant"), cols: 3, rows: 3, column: 2, row: 1)),
+        ("grav_smes_piped_2_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "06_coolant"), cols: 3, rows: 3, column: 0, row: 2)),
+        ("grav_smes_piped_2_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "06_coolant"), cols: 3, rows: 3, column: 1, row: 2)),
+        ("grav_smes_piped_2_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "06_coolant"), cols: 3, rows: 3, column: 2, row: 2)),
+
+        // 07_shielding, nine cells.
+        ("grav_smes_cased_0_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "07_shielding"), cols: 3, rows: 3, column: 0, row: 0)),
+        ("grav_smes_cased_0_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "07_shielding"), cols: 3, rows: 3, column: 1, row: 0)),
+        ("grav_smes_cased_0_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "07_shielding"), cols: 3, rows: 3, column: 2, row: 0)),
+        ("grav_smes_cased_1_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "07_shielding"), cols: 3, rows: 3, column: 0, row: 1)),
+        ("grav_smes_cased_1_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "07_shielding"), cols: 3, rows: 3, column: 1, row: 1)),
+        ("grav_smes_cased_1_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "07_shielding"), cols: 3, rows: 3, column: 2, row: 1)),
+        ("grav_smes_cased_2_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "07_shielding"), cols: 3, rows: 3, column: 0, row: 2)),
+        ("grav_smes_cased_2_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "07_shielding"), cols: 3, rows: 3, column: 1, row: 2)),
+        ("grav_smes_cased_2_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "07_shielding"), cols: 3, rows: 3, column: 2, row: 2)),
+
+        // 08_standby, nine cells.
+        ("grav_smes_standby_0_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "08_standby"), cols: 3, rows: 3, column: 0, row: 0)),
+        ("grav_smes_standby_0_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "08_standby"), cols: 3, rows: 3, column: 1, row: 0)),
+        ("grav_smes_standby_0_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "08_standby"), cols: 3, rows: 3, column: 2, row: 0)),
+        ("grav_smes_standby_1_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "08_standby"), cols: 3, rows: 3, column: 0, row: 1)),
+        ("grav_smes_standby_1_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "08_standby"), cols: 3, rows: 3, column: 1, row: 1)),
+        ("grav_smes_standby_1_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "08_standby"), cols: 3, rows: 3, column: 2, row: 1)),
+        ("grav_smes_standby_2_0", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "08_standby"), cols: 3, rows: 3, column: 0, row: 2)),
+        ("grav_smes_standby_2_1", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "08_standby"), cols: 3, rows: 3, column: 1, row: 2)),
+        ("grav_smes_standby_2_2", Cut(inner: Ase("art/machines/gravity/gravity-battery.aseprite", "08_standby"), cols: 3, rows: 3, column: 2, row: 2)),
+
+        // 09_startup, nine cells.
+        ("grav_smes_startup_0_0", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "09_startup"), cols: 3, rows: 3, column: 0, row: 0)),
+        ("grav_smes_startup_0_1", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "09_startup"), cols: 3, rows: 3, column: 1, row: 0)),
+        ("grav_smes_startup_0_2", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "09_startup"), cols: 3, rows: 3, column: 2, row: 0)),
+        ("grav_smes_startup_1_0", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "09_startup"), cols: 3, rows: 3, column: 0, row: 1)),
+        ("grav_smes_startup_1_1", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "09_startup"), cols: 3, rows: 3, column: 1, row: 1)),
+        ("grav_smes_startup_1_2", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "09_startup"), cols: 3, rows: 3, column: 2, row: 1)),
+        ("grav_smes_startup_2_0", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "09_startup"), cols: 3, rows: 3, column: 0, row: 2)),
+        ("grav_smes_startup_2_1", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "09_startup"), cols: 3, rows: 3, column: 1, row: 2)),
+        ("grav_smes_startup_2_2", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "09_startup"), cols: 3, rows: 3, column: 2, row: 2)),
+
+        // 10_active, nine cells.
+        ("grav_smes_active_0_0", Cut(inner: AseAnim("art/machines/gravity/gravity-battery.aseprite", "10_active"), cols: 3, rows: 3, column: 0, row: 0)),
+        ("grav_smes_active_0_1", Cut(inner: AseAnim("art/machines/gravity/gravity-battery.aseprite", "10_active"), cols: 3, rows: 3, column: 1, row: 0)),
+        ("grav_smes_active_0_2", Cut(inner: AseAnim("art/machines/gravity/gravity-battery.aseprite", "10_active"), cols: 3, rows: 3, column: 2, row: 0)),
+        ("grav_smes_active_1_0", Cut(inner: AseAnim("art/machines/gravity/gravity-battery.aseprite", "10_active"), cols: 3, rows: 3, column: 0, row: 1)),
+        ("grav_smes_active_1_1", Cut(inner: AseAnim("art/machines/gravity/gravity-battery.aseprite", "10_active"), cols: 3, rows: 3, column: 1, row: 1)),
+        ("grav_smes_active_1_2", Cut(inner: AseAnim("art/machines/gravity/gravity-battery.aseprite", "10_active"), cols: 3, rows: 3, column: 2, row: 1)),
+        ("grav_smes_active_2_0", Cut(inner: AseAnim("art/machines/gravity/gravity-battery.aseprite", "10_active"), cols: 3, rows: 3, column: 0, row: 2)),
+        ("grav_smes_active_2_1", Cut(inner: AseAnim("art/machines/gravity/gravity-battery.aseprite", "10_active"), cols: 3, rows: 3, column: 1, row: 2)),
+        ("grav_smes_active_2_2", Cut(inner: AseAnim("art/machines/gravity/gravity-battery.aseprite", "10_active"), cols: 3, rows: 3, column: 2, row: 2)),
+
+        // 11_shutdown, nine cells.
+        ("grav_smes_shutdown_0_0", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "11_shutdown"), cols: 3, rows: 3, column: 0, row: 0)),
+        ("grav_smes_shutdown_0_1", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "11_shutdown"), cols: 3, rows: 3, column: 1, row: 0)),
+        ("grav_smes_shutdown_0_2", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "11_shutdown"), cols: 3, rows: 3, column: 2, row: 0)),
+        ("grav_smes_shutdown_1_0", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "11_shutdown"), cols: 3, rows: 3, column: 0, row: 1)),
+        ("grav_smes_shutdown_1_1", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "11_shutdown"), cols: 3, rows: 3, column: 1, row: 1)),
+        ("grav_smes_shutdown_1_2", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "11_shutdown"), cols: 3, rows: 3, column: 2, row: 1)),
+        ("grav_smes_shutdown_2_0", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "11_shutdown"), cols: 3, rows: 3, column: 0, row: 2)),
+        ("grav_smes_shutdown_2_1", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "11_shutdown"), cols: 3, rows: 3, column: 1, row: 2)),
+        ("grav_smes_shutdown_2_2", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "11_shutdown"), cols: 3, rows: 3, column: 2, row: 2)),
+
+        // The disc over the centre tile.
+        ("grav_disc_startup", Anchored(AseAnimOnce("art/machines/gravity/gravity-disc.aseprite", "01_startup"), Center)),
+        ("grav_disc_active", Anchored(AseAnim("art/machines/gravity/gravity-disc.aseprite", "02_active"), Center)),
+        ("grav_disc_shutdown", Anchored(AseAnimOnce("art/machines/gravity/gravity-disc.aseprite", "03_shutdown"), Center)),
+
+        // The south panel's status glyphs.
+        ("grav_led_charging", AseLayer("art/machines/gravity/led_display.aseprite", "03_status_glyphs", 27)),
+        ("grav_led_discharging", AseLayer("art/machines/gravity/led_display.aseprite", "03_status_glyphs", 28)),
+        ("grav_led_fault", AseLayer("art/machines/gravity/led_display.aseprite", "03_status_glyphs", 29)),
+        ("grav_led_unpowered", AseLayer("art/machines/gravity/led_display.aseprite", "03_status_glyphs", 30)),
+    ],
+)

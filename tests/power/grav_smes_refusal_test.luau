@@ -1,0 +1,78 @@
+local bench = require("@helpers/grav_bench")
+
+-- The weld says what is wrong, in words naming the position, and takes
+-- nothing apart while it refuses. One room, mended defect by defect from
+-- the centre tile (the only tile that reaches every part): an unlit torch,
+-- an emitter facing away, an unbolted emitter, an unbolted ring, a ring
+-- turned to the wrong corner, and finally a ring that is simply not there.
+
+bench.world(
+    '(5, 4, "player_spawn"), '
+        .. bench.part_rows({
+            e = { dir = "east" },
+            w = { state = "displaced" },
+            ne = { state = "displaced" },
+            se = { dir = "north" },
+            sw = { absent = true },
+        }),
+    '(5, 4, "welder"), (5, 4, "wrench")'
+)
+local p = t.join()
+t.tick()
+
+local NEAR = { { 5, 4 } }
+local SOUTH_EMITTER = { 5, 5 }
+
+-- Click the south emitter with the torch and report what the player heard.
+local function weld_says(line: string)
+    local _ = t.messages(p)
+    local x, y = SOUTH_EMITTER[1], SOUTH_EMITTER[2]
+    t.click(p, x, y, t.target_at(p, x, y, "grav_emitter"))
+    t.run_ticks(4)
+    assert(bench.told(p, line), "the torch should say: " .. line)
+    assert(t.structure_at(5, 4) == nil, "and nothing was welded")
+end
+
+-- Click a part with the wrench held and wait out the bolts.
+local function wrench(x: number, y: number, id: string)
+    bench.hold(p, "wrench", NEAR)
+    t.click(p, x, y, t.target_at(p, x, y, id))
+    t.run_seconds(1.5)
+end
+
+local function turn(x: number, y: number, id: string, quarter_turns: number)
+    for _ = 1, quarter_turns do
+        t.rotate(p, x, y, assert(t.target_at(p, x, y, id)), true)
+    end
+end
+
+-- A torch that is not lit welds nothing.
+bench.hold(p, "welder", NEAR)
+weld_says("Light the welding tool first.")
+t.use_self(p)
+t.run_ticks(2)
+
+-- Wrong facing: an emitter pointing away from the centre.
+weld_says("The east emitter must face the centre.")
+turn(6, 4, "grav_emitter", 2)
+
+-- Unanchored emitter.
+bench.hold(p, "welder", NEAR)
+weld_says("The west emitter must be bolted down.")
+wrench(4, 4, "grav_emitter")
+
+-- Unanchored ring.
+bench.hold(p, "welder", NEAR)
+weld_says("The north-east supermagnet must be bolted down.")
+wrench(6, 3, "grav_supermagnet")
+
+-- A ring turned to the wrong corner: north (north-west) where the
+-- south-east arc belongs.
+bench.hold(p, "welder", NEAR)
+weld_says("The south-east supermagnet must be turned to fit its corner.")
+turn(6, 5, "grav_supermagnet", 2)
+
+-- Everything standing is right now; the last ring is just not there.
+bench.hold(p, "welder", NEAR)
+weld_says("The south-west supermagnet is missing.")
+bench.assert_standing({ "n", "e", "s", "w", "nw", "ne", "se" })
