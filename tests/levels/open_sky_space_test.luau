@@ -6,8 +6,9 @@
 -- Level 0: room A (x 1..3) and room B (x 5..7), two sealed rooms of standard
 -- air. Level 1: a blank, `Inherit` roof over A, plating over B. Level 1 is a
 -- wall over every level-0 wall, so no sky tile touches a plated one sideways
--- and each roof is bounded by its own room's footprint. The kind and gravity
--- pin `dead_space`: deep space, no sunlight, so only the sky link acts on air.
+-- and each roof is bounded by its own room's footprint. The kind and zero
+-- gravity pin the sunless skies (`dead_space`, `microgravity`): deep space,
+-- no sunlight, so only the sky link acts on air.
 -- Bare `(x, y)` reads are level 0; the level-1 roof is edited with a level.
 local atmos_cell = require("@helpers/atmos_cell")
 
@@ -15,7 +16,7 @@ t.world(
     [==[(
     name: "open sky orbit",
     tags: ["space"],
-    environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
+    environment: (kind: Exact(space), gravity_m_s2: Exact(0.0)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -46,7 +47,10 @@ t.world(
     0,
     "free_build"
 )
-assert(t.environment().id == "dead_space", "the map pins deep space: " .. t.environment().id)
+assert(
+    t.environment().kind == "space" and t.environment().insolation == 0,
+    "the map pins sunless deep space: " .. t.environment().id
+)
 
 local ROOF_LEVEL = 1
 local ROOM_A = {

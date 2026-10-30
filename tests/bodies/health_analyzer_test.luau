@@ -9,6 +9,7 @@ local NORMAL_BLOOD = 14.0 -- 560 u x 0.025 mol/u: code/__DEFINES/mobs.dm:20
 local PATHOGENS_NONE = "No pathogens detected."
 local ARENA = [==[(
     name: "health analyzer ward",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),

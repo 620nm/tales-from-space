@@ -81,17 +81,31 @@ function readAtlas(text) {
   const perPage = columns * rowsPerPage;
   const offsets = shifts(text, "offsets");
   const wornOffsets = shifts(text, "worn_offsets");
+  // Oversized frames take the last cells and sit on large pages after the
+  // grid pages (`crates/lunatic-client-model/src/atlas/oversize.rs`).
+  const largePages = [...section(text, "large_pages").matchAll(/\((\d+), (\d+)\)/g)]
+    .map(([, width, height]) => ({ width: Number(width), height: Number(height) }));
+  const largeFrames = [...section(text, "large_frames")
+    .matchAll(/page: (\d+),\s*x: (\d+),\s*y: (\d+)/g)]
+    .map(([, page, x, y]) => ({ page: Number(page), x: Number(x), y: Number(y) }));
+  const gridCells = cells - largeFrames.length;
+  const gridPages = Math.ceil(Math.max(gridCells, 1) / perPage);
   return {
     tile, columns, pad, cells, index, anim, stride, perPage, offsets, wornOffsets,
-    pages: Math.ceil(Math.max(cells, 1) / perPage),
+    pages: gridPages + largePages.length,
     offset: (name) => at(tile, offsets.get(name)),
     wornOffset: (name) => at(tile, wornOffsets.get(name)),
     frameCount: (name) => anim.get(name)?.frames.length ?? 1,
     pageSize(page) {
-      const onPage = Math.min(Math.max(Math.max(cells, 1) - page * perPage, 0), perPage);
+      if (page >= gridPages) return largePages[page - gridPages];
+      const onPage = Math.min(Math.max(Math.max(gridCells, 1) - page * perPage, 0), perPage);
       return { width: columns * stride, height: Math.max(Math.ceil(onPage / columns), 1) * stride };
     },
     locate(atCell) {
+      if (atCell >= gridCells) {
+        const frame = largeFrames[atCell - gridCells];
+        return { page: gridPages + frame.page, x: frame.x, y: frame.y };
+      }
       const local = atCell % perPage;
       return {
         page: Math.floor(atCell / perPage),

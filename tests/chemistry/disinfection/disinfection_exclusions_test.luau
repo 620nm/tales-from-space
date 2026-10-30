@@ -21,6 +21,7 @@ type ContaminatedVessel = {
 t.world(
     [==[(
     name: "liquid disinfection exclusions",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),

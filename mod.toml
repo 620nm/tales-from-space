@@ -63,6 +63,7 @@ native_edges = [
     "flow.store",
     "flow.reserve",
     "flow.source",
+    "flow.load",
     "link.command",
     "link.service",
     "resources.transfer",

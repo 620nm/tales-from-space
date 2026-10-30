@@ -8,6 +8,7 @@ end
 t.world(
     [==[ (
         name: "closet welding",
+        environment: (gravity_m_s2: Exact(9.80665)),
         legend: {
             ' ': (composition: (substrate: Named("space"))),
             '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -188,6 +189,7 @@ assert(structure_state(3, 5) == "open", "an unwelded locker opens natively")
 t.world(
     [==[ (
         name: "closet interruption",
+        environment: (gravity_m_s2: Exact(9.80665)),
         legend: {
             ' ': (composition: (substrate: Named("space"))),
             '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),

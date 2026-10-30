@@ -1,5 +1,8 @@
 -- Gravity follows the surroundings and the installed deck; a handhold is
--- independently useful when the field supplies no gravity.
+-- independently useful when the field supplies no gravity. Standard gravity
+-- over open space rolls the station mode's lit skies, since the sunless one
+-- (`dead_space`) is weightless without a running gravity battery
+-- (power/grav_smes_power_test.luau).
 local function world(center: string, brace: string, terrestrial: boolean, microgravity: boolean): number
     local tags = if terrestrial then '["terrestrial"]' else '["space"]'
     local kind = if terrestrial then "terrestrial" else "space"
@@ -30,7 +33,7 @@ local function world(center: string, brace: string, terrestrial: boolean, microg
             "f"
         ),
         0,
-        "free_build"
+        if terrestrial or microgravity then "free_build" else "space_station"
     )
     local player = t.join()
     t.run_ticks(2)

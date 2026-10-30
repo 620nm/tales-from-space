@@ -1,22 +1,15 @@
 -- One machine on nine tiles, asked about the way a player would ask.
 --
--- The gravitational generator is this pack's only footprinted entry, so
--- this file is where "a body standing on several tiles" is proved: what
--- a corner answers, which cells you walk into and which you walk under,
--- and that a tool on a corner works the machine rather than the tile.
+-- The gravity battery is this pack's widest footprinted entry, so this
+-- file is where "a body standing on several tiles" is proved: what a
+-- corner answers, which cells you walk into, that a tool on a corner
+-- works the machine rather than the tile, and which cell wears the
+-- running disc. The walk-under cell mechanism is the engine's fixture
+-- test (no pack entry has a walk-under cell).
 --
--- The block is laid from the BOTTOM-MIDDLE tile, tg's part 8
--- (gravitygenerator.dm:179-198), so a generator anchored at (5, 6)
--- stands on (4..6, 4..6) and its walk-under head is the row at y = 4.
-
-local function has(list, want)
-    for _, v in ipairs(list) do
-        if v == want then
-            return true
-        end
-    end
-    return false
-end
+-- The battery is anchored on its centre tile, so one at (5, 5) stands on
+-- (4..6, 4..6); its south emitter cell is (5, 6).
+local bench = require("@helpers/grav_bench")
 
 local function line(look, want)
     for _, l in ipairs(look.lines) do
@@ -28,7 +21,8 @@ local function line(look, want)
 end
 
 local ROOM = [==[(
-    name: "generator bay",
+    name: "battery bay",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -49,11 +43,8 @@ local ROOM = [==[(
                 "#.........#",
                 "###########",
             ],
-            items: [
-                (7, 4, "screwdriver"), (7, 4, "welder"),
-                (7, 4, "plasteel"), (7, 4, "wrench"),
-            ],
-            structures: [(5, 8, "player_spawn"), (5, 6, "gravity_generator", "fix0")],
+            items: [(7, 4, "screwdriver")],
+            structures: [(5, 8, "player_spawn"), (5, 5, "grav_smes", "standby")],
         ),
     ],
 )]==]
@@ -65,19 +56,25 @@ t.tick()
 -- ---------------------------------------------------------------
 -- Every cell answers as the BODY.
 -- ---------------------------------------------------------------
-for _, at in ipairs({ { 5, 6 }, { 4, 4 }, { 6, 4 }, { 4, 6 }, { 6, 6 }, { 5, 5 } }) do
-    local it = t.structure_at(at[1], at[2])
-    assert(
-        it and it.id == "gravity_generator",
-        "(" .. at[1] .. ", " .. at[2] .. ") is the generator, got " .. tostring(it and it.id)
-    )
-    assert(it.state == "fix0", "and it is broken at the first rung, got " .. tostring(it.state))
+for dy = -1, 1 do
+    for dx = -1, 1 do
+        local x, y = 5 + dx, 5 + dy
+        local it = t.structure_at(x, y)
+        assert(
+            it and it.id == "grav_smes",
+            "(" .. x .. ", " .. y .. ") is the battery, got " .. tostring(it and it.id)
+        )
+        assert(
+            string.find(it.state or "", "^standby") ~= nil,
+            "and it stands finished, got " .. tostring(it.state)
+        )
+    end
 end
-assert(t.structure_at(3, 6) == nil, "the tile beside it is bare floor")
-assert(t.structure_at(5, 3) == nil, "and so is the tile above its head")
+assert(t.structure_at(3, 5) == nil, "the tile beside it is bare floor")
+assert(t.structure_at(5, 3) == nil, "and so is the tile above its top row")
 
 -- ---------------------------------------------------------------
--- Six cells you walk into, three you walk under.
+-- Nine cells you walk into.
 -- ---------------------------------------------------------------
 local function step(dir)
     t.move(p, dir)
@@ -112,164 +109,92 @@ local function blocked(dir, wx: number, wy: number, cell: string)
     )
 end
 
-walk("north", 5, 7, "the floor below the generator is floor")
-blocked("north", 5, 7, "8 (the anchor)")
+walk("north", 5, 7, "the floor below the battery is floor")
+blocked("north", 5, 7, "the south emitter")
 walk("west", 4, 7, "west along the bottom")
-blocked("north", 4, 7, "9")
+blocked("north", 4, 7, "the south-west ring")
 walk("west", 3, 7, "clear of the block")
 walk("north", 3, 6, "up the free column")
 walk("north", 3, 5, "still climbing")
-blocked("east", 3, 5, "6")
-walk("north", 3, 4, "level with the head")
-walk("east", 4, 4, "the head is walk-under")
-walk("east", 5, 4, "and you can cross the whole of it")
-blocked("south", 5, 4, "5 (the centre)")
-walk("east", 6, 4, "out the far side of the head")
-walk("east", 7, 4, "and off it")
-walk("south", 7, 5, "down the east flank")
-blocked("west", 7, 5, "4")
-walk("south", 7, 6, "further down")
-walk("south", 7, 7, "to the bottom row")
-walk("west", 6, 7, "under the corner")
-blocked("north", 6, 7, "7")
-
--- Back to the head, which is where the tools are.
-walk("east", 7, 7, "back out east")
-walk("north", 7, 6, "north")
-walk("north", 7, 5, "north")
-walk("north", 7, 4, "and up beside the far corner of the head")
+blocked("east", 3, 5, "the west emitter")
+walk("north", 3, 4, "level with the top row")
+blocked("east", 3, 4, "the north-west ring")
+walk("north", 3, 3, "above the block")
+walk("east", 4, 3, "along the top")
+walk("east", 5, 3, "above the north emitter")
+blocked("south", 5, 3, "the north emitter, a top row nobody walks under")
 
 -- ---------------------------------------------------------------
--- The head is drawn OVER whatever stands on it, and every cell says
--- whose it is.
+-- Every cell says whose it is, and draws its own part of the picture.
 -- ---------------------------------------------------------------
-local body = t.target_at(p, 5, 6, "gravity_generator")
-local cell1 = t.target_at(p, 6, 4, "gravity_generator")
+-- The standby centre is the empty well the disc fills, so a pointer finds
+-- nothing there; a corner names the body it belongs to instead.
+local corner = assert(t.target_at(p, 6, 4, "grav_smes"), "a corner is a target")
+local top = t.seen(p, corner)
+assert(top.kind == "machine", "a corner keeps machine identity, got " .. tostring(top.kind))
+local body = assert(top.extent_of, "and names the body it belongs to")
 assert(
-    body and cell1 and body ~= cell1,
+    not t.same_target(body, corner),
     "a corner has a wire id of its own, distinct from the body's"
 )
-
-local head = t.seen(p, cell1)
 assert(
-    head.kind == "machine",
-    "the head keeps machine identity while drawing over what stands on it, got " .. tostring(head.kind)
+    top.layers[1] and top.layers[1].sprite == "grav_smes_standby_0_2",
+    "wearing its own part's picture, got " .. tostring(top.layers[1] and top.layers[1].sprite)
 )
-assert(
-    t.same_target(assert(head.extent_of), body),
-    "and names the body it belongs to, got " .. tostring(head.extent_of)
-)
-assert(
-    head.layers[1] and head.layers[1].sprite == "gravgen_fix0_1",
-    "wearing its own part's picture, got " .. tostring(head.layers[1] and head.layers[1].sprite)
-)
-
-local flank = t.seen(p, t.target_at(p, 6, 5, "gravity_generator"))
-assert(flank.kind ~= "overhead", "the solid rows are not overhead")
-assert(t.same_target(assert(flank.extent_of), body), "but belong to the same body")
 
 -- ---------------------------------------------------------------
 -- Looking at a corner names the machine, not the tile.
 -- ---------------------------------------------------------------
-local look = t.examine(p, 6, 4, cell1)
+local look = t.examine(p, 6, 4, corner)
 assert(
-    look and look.title == "gravitational generator",
+    look and look.title == "gravity battery",
     "a look at the corner names the machine, got " .. tostring(look and look.title)
 )
 assert(
-    look.sprite == "gravgen_fix0_8",
+    look.sprite == "grav_smes_standby_1_1",
     "and shows the body's own picture, got " .. tostring(look.sprite)
 )
 assert(
-    line(look, "A device which produces a graviton field when set up."),
+    line(look, "Four emitters and four supermagnet rings, welded around a core."),
     "with the body's flavor: " .. table.concat(look.lines, " | ")
 )
 
 -- ---------------------------------------------------------------
--- The repair ladder, worked from the far corner of the head. Reach is
--- measured to the tile CLICKED, so standing beside a corner is enough
--- to work a machine whose own tile is two steps away.
+-- A RUNNING battery: the same nine cells, and the disc on the centre
+-- cell's stack alone.
 -- ---------------------------------------------------------------
-local function grab(id: string)
-    t.drop(p)
-    t.run_ticks(2)
-    t.click(p, 7, 4, t.target_at(p, 7, 4, id))
-    t.run_ticks(2)
-    assert(has(t.hands(p), id), "picked up the " .. id)
-    t.messages(p)
-end
-
-local function rung(tool: string, to: string, said: string)
-    grab(tool)
-    if tool == "welder" then
-        t.use_self(p)
-        t.run_ticks(2)
-    end
-    t.click(p, 6, 4, t.target_at(p, 6, 4, "gravity_generator"))
-    t.run_seconds(1.0)
-    local it = t.structure_at(5, 6)
-    assert(
-        it and it.state == to,
-        "the " .. tool .. " takes it to " .. to .. ", got " .. tostring(it and it.state)
-    )
-    assert(has(t.messages(p), said), "and says so: " .. said)
-    assert(
-        t.ledger_has("StructureStep", "gravity_generator", to),
-        "the round ledger carries the rung to " .. to
-    )
-    assert(
-        t.seen(p, cell1).layers[1].sprite == "gravgen_" .. to .. "_1",
-        "and the corner re-derives its own picture for "
-            .. to
-            .. ", got "
-            .. tostring(t.seen(p, cell1).layers[1].sprite)
-    )
-end
-
-rung("screwdriver", "fix1", "You secure the screws of the framework.")
-rung("welder", "fix2", "You mend the damaged framework.")
-
--- A wrench on the rung that wants plasteel is not a rung at all, and
--- the right shape of "no" is silence: tg's `wrench_act` returns NONE
--- unless `broken_state` is already GRAV_NEEDS_WRENCH
--- (gravitygenerator.dm:264-266), so the tool simply finds nothing to
--- say.
-grab("wrench")
-t.click(p, 6, 4, t.target_at(p, 6, 4, "gravity_generator"))
-t.run_seconds(1.0)
-assert(
-    assert(t.structure_at(5, 6)).state == "fix2",
-    "the wrong tool leaves the ladder where it was"
-)
-assert(#t.messages(p) == 0, "and says nothing: " .. table.concat(t.messages(p), " | "))
-
-rung("plasteel", "fix3", "You add the plating to the framework.")
-rung("wrench", "off", "You secure the plating to the framework.")
-
-assert(
-    assert(t.structure_at(5, 6)).sprite == "gravgen_off_8",
-    "a mended generator comes back shut down, got " .. tostring(assert(t.structure_at(5, 6)).sprite)
-)
-
--- ---------------------------------------------------------------
--- A RUNNING generator: the same nine cells, and the charge overlay on
--- the middle part alone (`center_part.add_overlay("activated")`,
--- gravitygenerator.dm:167).
--- ---------------------------------------------------------------
-t.world(ROOM:gsub('"fix0"', '"on"'), 7)
+t.world(ROOM:gsub('"standby"', '"active"'), 7)
 local q = t.join()
 t.run_ticks(4)
 
-assert(assert(t.structure_at(5, 6)).sprite == "gravgen_on_8", "it is running")
-local centre = t.seen(q, t.target_at(q, 5, 5, "gravity_generator"))
+local centre = t.seen(q, t.target_at(q, 5, 5, "grav_smes"))
 assert(#centre.layers == 2, "the centre wears two layers, got " .. #centre.layers)
 assert(
-    centre.layers[1].sprite == "gravgen_on_5" and centre.layers[2].sprite == "gravgen_activated",
-    "its own part under the charge overlay, got "
-        .. centre.layers[1].sprite
-        .. " + "
-        .. tostring(centre.layers[2].sprite)
+    centre.layers[2].sprite == "grav_disc_active",
+    "the disc over its own part, got " .. tostring(centre.layers[2].sprite)
 )
+local edge = t.seen(q, t.target_at(q, 4, 5, "grav_smes"))
+assert(#edge.layers == 1, "and no other cell wears it, got " .. #edge.layers)
 
-local off_centre = t.seen(q, t.target_at(q, 4, 5, "gravity_generator"))
-assert(#off_centre.layers == 1, "and no other cell wears it, got " .. #off_centre.layers)
+-- ---------------------------------------------------------------
+-- A tool on a corner works the machine. Reach is measured to the tile
+-- CLICKED, so standing beside a corner is enough to work a machine
+-- whose own tile is two steps away.
+-- ---------------------------------------------------------------
+t.world(ROOM:gsub('"standby"', '"clamped"'):gsub("%(5, 8, ", "(7, 4, "), 7)
+local r = t.join()
+t.run_ticks(4)
+bench.hold(r, "screwdriver", { { 7, 4 } })
+t.messages(r)
+t.click(r, 6, 4, t.target_at(r, 6, 4, "grav_smes"))
+t.run_seconds(4.5)
+local after = t.structure_at(5, 5)
+assert(
+    after and after.state == "welded",
+    "the screwdriver on a corner unscrews the clamps, got " .. tostring(after and after.state)
+)
+assert(
+    bench.told(r, "The yoke clamps come off."),
+    "and says so: " .. table.concat(t.messages(r), " | ")
+)
+assert(t.ledger_has("StructureStep", "grav_smes", "welded"), "the round ledger carries the step")

@@ -82,6 +82,7 @@ end
 t.world(
     [==[(
     name: "decals",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '_': (composition: (components: [(component: "station_base")])),

@@ -36,18 +36,36 @@ space_environment.ROSTER = {
     sunward = 2700.0,
 } :: { [string]: number }
 
--- Boot MAP under seeds `first`..`last`; every roll lands on the roster at
--- standard gravity. Returns how many distinct skies the range landed on.
+-- Each sky's own gravity, verbatim from content/environments: the sunless
+-- one is weightless without a running gravity battery.
+space_environment.GRAVITY = {
+    dead_space = 0.0,
+    microgravity = 0.0,
+    orbit = 9.80665,
+    sunward = 9.80665,
+} :: { [string]: number }
+
+-- MAP without its gravity preference, so a sweep rolls the whole roster.
+local SWEEP_MAP, unpinned = string.gsub(
+    space_environment.MAP,
+    "\n    environment: %(gravity_m_s2: Exact%(9%.80665%)%),",
+    "",
+    1
+)
+assert(unpinned == 1, "the sweep map drops MAP's gravity preference")
+
+-- Boot the sweep map under seeds `first`..`last`; every roll lands on the
+-- roster with its own gravity. Returns how many distinct skies it hit.
 function space_environment.roll_seeds(first: number, last: number): number
     local seen: { [string]: boolean } = {}
     local distinct = 0
     for seed = first, last do
-        t.world(space_environment.MAP, seed)
+        t.world(SWEEP_MAP, seed)
         local id = t.environment().id
         assert(space_environment.ROSTER[id] ~= nil, "every seed lands on the roster: " .. id)
         assert(
-            assert(t.environment().profile).gravity_m_s2 == space_environment.STANDARD_GRAVITY,
-            "the fixture filters zero gravity"
+            assert(t.environment().profile).gravity_m_s2 == space_environment.GRAVITY[id],
+            "each sky carries its own gravity: " .. id
         )
         if not seen[id] then
             seen[id] = true

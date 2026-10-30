@@ -141,9 +141,11 @@ entries are eligible.
 | `space_station` | `cold_outdoors` | `dead_space` 4, `orbit` 3, `sunward` 1, `microgravity` 1 |
 | `free_build` | `cold_outdoors` | `dead_space` 1, `microgravity` 1 |
 
-The space profiles use the `space_backdrop` atlas background. `dead_space`,
-`orbit`, and `sunward` retain standard gravity (`9.80665` m/s²); `microgravity`
-has zero gravity and the same cold vacuum as `dead_space`. Its weight is one in
+The space profiles use the `space_backdrop` atlas background. `orbit` and
+`sunward` retain standard gravity (`9.80665` m/s²); `dead_space` and
+`microgravity` have zero gravity and the same cold vacuum. Under `dead_space`
+weight comes only from a running gravity battery
+(`content/structures/power/grav_smes.luau`). `microgravity` has weight one in
 both modes, so it is available whenever the map leaves gravity unconstrained.
 
 Each roll entry is a filter as well as a weight. Every `required_tags` value

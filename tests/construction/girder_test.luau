@@ -27,6 +27,7 @@ end
 t.world(
     [==[(
     name: "site",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -126,6 +127,7 @@ assert(composition.matches(1, 3, { "station_base", "floor_tiles", "wall" }), "th
 t.world(
     [==[(
     name: "walkaway",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -191,6 +193,7 @@ assert(
 t.world(
     [==[(
     name: "torch",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
