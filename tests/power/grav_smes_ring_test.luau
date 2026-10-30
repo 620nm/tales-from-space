@@ -7,6 +7,7 @@ local bench = require("@helpers/grav_bench")
 local TOO_FEW = "The ring has to go between two bolted-down emitters."
 local TOO_MANY = "There are more than two emitters here; the ring only fits between two."
 local OPPOSITE = "The two emitters must meet at a corner for the ring to fit between them."
+local NEEDS_WRENCH = "The packed ring needs a wrench to set it between two emitters."
 
 local function emitter(x: number, y: number, state: string): string
     return string.format('(%d, %d, "grav_emitter", "%s", { "dir": "north" })', x, y, state)
@@ -73,6 +74,22 @@ for _, case in ipairs({
     )
     local cart = assert(t.structure_at(5, 4), "the cart stands")
     assert(cart.id == "grav_supermagnet", "packed again: " .. tostring(cart.id))
+end
+
+-- Any other tool is told what the cart wants; an empty hand hears nothing.
+for _, tool in ipairs({ "crowbar", "welder" }) do
+    bench.world('(4, 3, "player_spawn"), (5, 4, "grav_supermagnet")', string.format('(4, 3, "%s")', tool))
+    local p = t.join()
+    t.tick()
+    t.click(p, 5, 4, t.target_at(p, 5, 4, "grav_supermagnet"))
+    t.tick()
+    assert(not bench.told(p, NEEDS_WRENCH), "an empty hand says nothing")
+    bench.hold(p, tool, { { 4, 3 } })
+    local _ = t.messages(p)
+    t.click(p, 5, 4, t.target_at(p, 5, 4, "grav_supermagnet"))
+    t.tick()
+    assert(bench.told(p, NEEDS_WRENCH), tool .. " should hear what the cart wants")
+    assert((assert(t.structure_at(5, 4))).id == "grav_supermagnet", "and the cart stays packed")
 end
 
 refuses({}, TOO_FEW)

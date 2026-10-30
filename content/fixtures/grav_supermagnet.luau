@@ -10,5 +10,10 @@ if sim ~= nil then
         { kind = "replace", route = "interact" },
         grav_smes.set_ring
     )
+    definition:handle(
+        "interaction.use.refused",
+        { kind = "react", route = "interact" },
+        grav_smes.set_ring_refused
+    )
 end
 return content

@@ -13,7 +13,6 @@ local grav_smes_run = require("@lib/grav_smes_run")
 local grav_smes = {}
 
 local WELDER = "welder"
-local WRENCH = "wrench"
 local GLASS = "glass"
 local BODY = "grav_smes"
 local EMITTER = "grav_emitter"
@@ -78,6 +77,7 @@ function grav_smes.message_keys(): { string }
         MESSAGE .. "ring_too_many",
         MESSAGE .. "ring_opposite",
         MESSAGE .. "ring_blocked",
+        MESSAGE .. "ring_needs_wrench",
         MESSAGE .. "ring_start",
         MESSAGE .. "ring_stopped",
         MESSAGE .. "ring_done",
@@ -229,11 +229,10 @@ end
 
 -- A wrench on a packed ring: it unfolds into the corner arc between the two
 -- emitters beside it, and refuses without them.
-function grav_smes.set_ring(ev: InteractionUsePayload): boolean | { replaced: boolean }
-    local cart, actor, wrench = ev.subject, ev.actor, ev.implement
-    if wrench == nil or not wrench.alive or wrench.prototype ~= WRENCH then
-        return { replaced = false }
-    end
+function grav_smes.set_ring(ev: InteractionUsePayload): boolean
+    local cart, actor = ev.subject, ev.actor
+    -- The `set_ring` row admits only a wrench.
+    local wrench = assert(ev.implement)
     if set_ring_command(cart, actor) == nil then
         return true
     end
@@ -260,6 +259,15 @@ function grav_smes.set_ring(ev: InteractionUsePayload): boolean | { replaced: bo
         send(actor, MESSAGE .. "ring_done")
     end)
     return true
+end
+
+-- Another tool on a packed ring, when nothing else took the click: says
+-- what the cart wants. An empty hand stays quiet.
+function grav_smes.set_ring_refused(ev: InteractionUseRefusedPayload)
+    local refusal = ev.action_refusal
+    if refusal.action == "set_ring" and refusal.fact == "held.proto" and not refusal.resolved then
+        send(ev.actor, MESSAGE .. "ring_needs_wrench")
+    end
 end
 
 local function fuel_moles(torch: Handle): number

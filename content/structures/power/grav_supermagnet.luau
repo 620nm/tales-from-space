@@ -45,6 +45,7 @@ return {
             route = "receiver",
             label = "lunatic/tfs:ui.affordance.anchor",
             held = { fact = "held.proto", value = "wrench" },
+            uses_held = true,
             suggest = true,
             suggest_implement = { item = "wrench" },
         },

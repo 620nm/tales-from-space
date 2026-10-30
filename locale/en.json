@@ -1571,6 +1571,7 @@
   "lunatic/tfs:lib.grav_smes.ring_too_many": "There are more than two emitters here; the ring only fits between two.",
   "lunatic/tfs:lib.grav_smes.ring_opposite": "The two emitters must meet at a corner for the ring to fit between them.",
   "lunatic/tfs:lib.grav_smes.ring_blocked": "The ring cannot be set here; something is in the way.",
+  "lunatic/tfs:lib.grav_smes.ring_needs_wrench": "The packed ring needs a wrench to set it between two emitters.",
   "lunatic/tfs:lib.grav_smes.ring_start": "You start setting the supermagnet ring between the emitters.",
   "lunatic/tfs:lib.grav_smes.ring_stopped": "You stop setting the supermagnet ring.",
   "lunatic/tfs:lib.grav_smes.ring_done": "The supermagnet ring locks into the corner between the emitters.",
