@@ -20,12 +20,13 @@ local HAZARD_KPA = 20.0
 -- (open_sky_space_test.luau:VENT_SPAN_S).
 local VENT_SPAN_S = 8
 
--- 1. The hole on the lowest level.
+-- 1. The hole on the lowest level. Venting needs no weight, so the
+-- sandbox's sunless skies do, and no preparation countdown holds the air.
 t.world(
     [==[(
     name: "hole in the bottom",
     tags: ["space"],
-    environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
+    environment: (kind: Exact(space)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -43,7 +44,7 @@ t.world(
     ],
 )]==],
     0,
-    "space_station"
+    "free_build"
 )
 assert(t.environment().kind == "space", "the map rolls a space environment: " .. t.environment().id)
 

@@ -157,8 +157,8 @@ local entry: { [string]: any } = {
             with = { metal = CLAMP_METAL },
             secs = 4.0,
             to = "clamped",
-            start = "lunatic/tfs:entity.grav_smes.clamp.start",
-            done = "lunatic/tfs:entity.grav_smes.clamp.done",
+            start = "You start fitting the yoke clamps.",
+            done = "The yoke clamps are fitted.",
         },
         {
             sound = "smash",
@@ -166,8 +166,8 @@ local entry: { [string]: any } = {
             with = { cable_coil = CABLE_COILS },
             secs = 6.0,
             to = "wired",
-            start = "lunatic/tfs:entity.grav_smes.wire.start",
-            done = "lunatic/tfs:entity.grav_smes.wire.done",
+            start = "You start wiring the machine.",
+            done = "The machine is wired.",
         },
         {
             sound = "ratchet",
@@ -175,8 +175,8 @@ local entry: { [string]: any } = {
             with = { pipe = PIPE_LENGTHS },
             secs = 6.0,
             to = "piped",
-            start = "lunatic/tfs:entity.grav_smes.pipe.start",
-            done = "lunatic/tfs:entity.grav_smes.pipe.done",
+            start = "You start running the coolant pipes.",
+            done = "The coolant pipes are in.",
         },
         {
             sound = "smash",
@@ -184,8 +184,8 @@ local entry: { [string]: any } = {
             with = { metal = CASING_METAL },
             secs = 8.0,
             to = "cased",
-            start = "lunatic/tfs:entity.grav_smes.case.start",
-            done = "lunatic/tfs:entity.grav_smes.case.done",
+            start = "You start fitting the casing plates.",
+            done = "The casing is on.",
         },
         -- The glass fits the south cell alone; the other cells refuse it
         -- in the script before this step can see the click.
@@ -195,8 +195,8 @@ local entry: { [string]: any } = {
             with = { glass = 1 },
             secs = 3.0,
             to = "standby",
-            start = "lunatic/tfs:entity.grav_smes.glaze.start",
-            done = "lunatic/tfs:entity.grav_smes.glaze.done",
+            start = "You start fitting the glass panel.",
+            done = "The glass panel is fitted.",
         },
         {
             sound = "crowbar",
@@ -205,8 +205,8 @@ local entry: { [string]: any } = {
             secs = 8.0,
             yields = { metal = CASING_METAL },
             to = "piped",
-            start = "lunatic/tfs:entity.grav_smes.uncase.start",
-            done = "lunatic/tfs:entity.grav_smes.uncase.done",
+            start = "You start prying off the casing.",
+            done = "The casing comes away.",
         },
         {
             sound = "ratchet",
@@ -215,8 +215,8 @@ local entry: { [string]: any } = {
             secs = 6.0,
             yields = { pipe = PIPE_LENGTHS },
             to = "wired",
-            start = "lunatic/tfs:entity.grav_smes.unpipe.start",
-            done = "lunatic/tfs:entity.grav_smes.unpipe.done",
+            start = "You start unbolting the coolant pipes.",
+            done = "The coolant pipes come free.",
         },
         {
             sound = "wirecutter",
@@ -225,8 +225,8 @@ local entry: { [string]: any } = {
             secs = 6.0,
             yields = { cable_coil = CABLE_COILS },
             to = "clamped",
-            start = "lunatic/tfs:entity.grav_smes.unwire.start",
-            done = "lunatic/tfs:entity.grav_smes.unwire.done",
+            start = "You start cutting out the wiring.",
+            done = "The wiring comes free.",
         },
         {
             sound = "smash",
@@ -235,8 +235,8 @@ local entry: { [string]: any } = {
             secs = 4.0,
             yields = { metal = CLAMP_METAL },
             to = "welded",
-            start = "lunatic/tfs:entity.grav_smes.unclamp.start",
-            done = "lunatic/tfs:entity.grav_smes.unclamp.done",
+            start = "You start unscrewing the yoke clamps.",
+            done = "The yoke clamps come off.",
         },
     },
 }
@@ -250,8 +250,8 @@ for _, state in ipairs(standby_dresses) do
         secs = 3.0,
         yields = { glass = 1 },
         to = "cased",
-        start = "lunatic/tfs:entity.grav_smes.unglaze.start",
-        done = "lunatic/tfs:entity.grav_smes.unglaze.done",
+        start = "You start prying out the glass panel.",
+        done = "The glass panel comes out.",
     })
 end
 

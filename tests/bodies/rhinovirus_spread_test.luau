@@ -216,7 +216,9 @@ local LEVEL_MAP = [==[(
     ],
 )]==]
 
-t.world(LEVEL_MAP, SEED)
+-- Its own seed: the source's cure roll is keyed to its body, so this seed
+-- is one whose source keeps the illness for the whole observation.
+t.world(LEVEL_MAP, 1)
 local level_source = t.join("medic")
 local other_level = t.join("assistant")
 t.run_ticks(3)

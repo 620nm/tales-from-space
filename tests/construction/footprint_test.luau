@@ -22,6 +22,7 @@ end
 
 local ROOM = [==[(
     name: "battery bay",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -126,18 +127,15 @@ blocked("south", 5, 3, "the north emitter, a top row nobody walks under")
 -- ---------------------------------------------------------------
 -- Every cell says whose it is, and draws its own part of the picture.
 -- ---------------------------------------------------------------
-local body = t.target_at(p, 5, 5, "grav_smes")
-local corner = t.target_at(p, 6, 4, "grav_smes")
-assert(
-    body and corner and body ~= corner,
-    "a corner has a wire id of its own, distinct from the body's"
-)
-
+-- The standby centre is the empty well the disc fills, so a pointer finds
+-- nothing there; a corner names the body it belongs to instead.
+local corner = assert(t.target_at(p, 6, 4, "grav_smes"), "a corner is a target")
 local top = t.seen(p, corner)
 assert(top.kind == "machine", "a corner keeps machine identity, got " .. tostring(top.kind))
+local body = assert(top.extent_of, "and names the body it belongs to")
 assert(
-    t.same_target(assert(top.extent_of), body),
-    "and names the body it belongs to, got " .. tostring(top.extent_of)
+    not t.same_target(body, corner),
+    "a corner has a wire id of its own, distinct from the body's"
 )
 assert(
     top.layers[1] and top.layers[1].sprite == "grav_smes_standby_0_2",
