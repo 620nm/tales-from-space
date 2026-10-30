@@ -1,0 +1,212 @@
+GIMP Palette
+Name: Tales from Space
+Columns: 8
+# Unified Tales from Space palette (station materials, signals, leadership,
+# departments, and antagonists). Rules: docs/ART.md.
+# Sections cite their tgstation icons/ source; TfS marks this pack's own.
+# Swatch names use hyphenated tokens so Aseprite's .gpl parser retains the
+# full step and role identifier in the color bar tooltip.
+#
+# === STATION & MATERIALS ===
+# 1 - Structure steel: obj/tram/tram_structure.dmi; step 1 from
+#     obj/smooth_structures/platform/frame_faces/window_frame_iron.dmi
+ 38  38  44	structure-1-outline #26262c
+ 53  56  65	structure-2 #353841
+ 71  72  81	structure-3 #474851
+ 86  90  99	structure-4 #565a63
+119 123 131	structure-5 #777b83
+162 169 177	structure-6 #a2a9b1
+198 205 211	structure-7 #c6cdd3
+225 231 234	structure-8-highlight #e1e7ea
+# 2 - Machine steel, navy-tinted: obj/machines/lathes.dmi
+ 21  24  36	machine-1-outline #151824
+ 33  35  48	machine-2 #212330
+ 55  58  75	machine-3 #373a4b
+ 71  74  91	machine-4 #474a5b
+ 96  99 117	machine-5 #606375
+148 151 171	machine-6 #9497ab
+197 199 212	machine-7 #c5c7d4
+213 215 224	machine-8-highlight #d5d7e0
+# 3 - Neutral steel: turf/walls/wall.dmi and reinforced_wall.dmi,
+#     turf/floors.dmi and the station airlocks
+ 29  29  29	neutral-1-outline #1d1d1d
+ 43  43  43	neutral-2 #2b2b2b
+ 68  68  68	neutral-3-wall-face #444444
+ 98  98  98	neutral-4 #626262
+146 146 146	neutral-5 #929292
+170 170 170	neutral-6 #aaaaaa
+196 196 196	neutral-7 #c4c4c4
+217 217 217	neutral-8-highlight #d9d9d9
+# 4 - Industrial copper & brass (coils, busbars, heat exchangers) and
+#     dark rubber & polymer (tires, hoses, grips, gaskets):
+#     obj/pipes_n_cables/atmos.dmi, obj/machines/engine/other.dmi (TfS ramp)
+ 59  29  17	copper-1-outline #3b1d11
+110  55  30	copper-2 #6e371e
+164  87  41	copper-3 #a45729
+212 128  61	copper-4 #d4803d
+240 176 110	copper-5-highlight #f0b06e
+ 32  29  38	rubber-1-outline #201d26
+ 53  49  62	rubber-2 #35313e
+ 79  74  90	rubber-3-highlight #4f4a5a
+# 5 - Panel glass: obj/machines/lathes.dmi; black: platform frames
+#     (section 1's source); near white: obj/clothing/under/medical.dmi;
+#     white, paper and ink: TfS
+ 74 104 123	glass-1 #4a687b
+116 152 173	glass-2 #7498ad
+164 186 198	glass-3 #a4bac6
+ 10  10  13	black #0a0a0d
+238 238 238	near-white #eeeeee
+255 255 255	white-glint #ffffff
+241 234 212	paper #f1ead4
+ 32  44  45	paper-ink #202c2d
+# 6 - Wood: the wood airlock ramp and turf/floors.dmi; appliance beige /
+#     ceramic: obj/machines/kitchen/microwave.dmi and service.dmi (TfS)
+ 58  35  20	wood-1-outline #3a2314
+112  83  59	wood-2 #70533b
+128  95  68	wood-3 #805f44
+160 124  89	wood-4-light #a07c59
+107  93  77	ceramic-1 #6b5d4d
+150 132 113	ceramic-2 #968471
+191 176 156	ceramic-3-light #bfb09c
+# 7 - Safety paint: hazard stripes from turf/decals.dmi warningline;
+#     fire red from obj/wallmounts.dmi extinguisher cabinets
+ 27  27  27	stripe-dark-1 #1b1b1b
+ 38  38  38	stripe-dark-2 #262626
+181 185  43	caution-paint-1 #b5b92b
+210 213  61	caution-paint-2 #d2d53d
+ 79   1  28	fire-red-1-outline #4f011c
+140   5  34	fire-red-2 #8c0522
+173  41  49	fire-red-3 #ad2931
+198  19  38	fire-red-4-light #c61326
+# 8 - Signals & emissives: obj/doors/airlocks/station/overlays.dmi,
+#     obj/machines/computer.dmi, nuke_terminal.dmi, experimentator.dmi,
+#     and pipes_n_cables/atmos.dmi bluespace scrubber
+ 80 255  49	signal-open-green #50ff31
+255 214  14	signal-caution #ffd60e
+255 255  51	signal-lamp #ffff33
+255  68  27	signal-denied-fault #ff441b
+  0 204 255	screen-cyan #00ccff
+140 214 253	screen-cyan-light #8cd6fd
+128 255 255	screen-glow #80ffff
+201  60 255	plasma-glow-1 #c93cff
+240 140 255	plasma-glow-2 #f08cff
+ 38 103 209	bluespace-glow-1 #2667d1
+101 180 255	bluespace-glow-2 #65b4ff
+#
+# === LEADERSHIP & DEPARTMENTS ===
+# 9 - Leadership gold: obj/clothing/modsuit/mod_clothing.dmi magnate-*
+#     and corporate-*; step 1 and the glint TfS
+ 92  59  20	gold-1-outline #5c3b14
+140  90  28	gold-2 #8c5a1c
+186 125  48	gold-3 #ba7d30
+242 176  80	gold-4 #f2b050
+255 240 192	gold-5-glint #fff0c0
+# 10 - Command blue: COLOR_COMMAND_BLUE and the command airlock hue
+ 23  42  64	command-blue-1-outline #172a40
+ 31  70 112	command-blue-2 #1f4670
+ 27 103 165	command-blue-3 #1b67a5
+ 61 139 203	command-blue-4 #3d8bcb
+130 189 230	command-blue-5-highlight #82bde6
+# 11 - CentCom military green: obj/clothing/under/centcom.dmi hue,
+#      darkened (TfS)
+ 20  42  31	centcom-green-1-outline #142a1f
+ 31  68  48	centcom-green-2 #1f4430
+ 47 100  71	centcom-green-3 #2f6447
+ 72 131  95	centcom-green-4 #48835f
+120 168 136	centcom-green-5-highlight #78a888
+# 12 - Security navy and ice white (TfS), after obj/clothing/under/
+#      security.dmi officerblueclothes and blueshift
+ 19  22  50	security-navy-1-outline #131632
+ 29  39  82	security-navy-2 #1d2752
+ 43  61 117	security-navy-3 #2b3d75
+ 74  93 146	security-navy-4 #4a5d92
+125 143 181	security-navy-5-highlight #7d8fb5
+163 179 204	security-white-1 #a3b3cc
+216 225 238	security-white-2 #d8e1ee
+245 248 252	security-white-3 #f5f8fc
+# 13 - Medical blue, COLOR_JOB_MED_GENERIC moved toward cyan (TfS), and
+#      sterile white from obj/clothing/under/medical.dmi
+ 26  58  72	medical-blue-1-outline #1a3a48
+ 45 111 140	medical-blue-2 #2d6f8c
+ 78 163 196	medical-blue-3 #4ea3c4
+133 203 227	medical-blue-4 #85cbe3
+196 234 245	medical-blue-5-highlight #c4eaf5
+165 169 182	medical-white-1 #a5a9b6
+203 205 209	medical-white-2 #cbcdd1
+242 244 247	medical-white-3 #f2f4f7
+# 14 - Science violet, obj/clothing/under/rnd.dmi science trim
+#      hue-shifted (TfS), and orchid: COLOR_SCIENCE_PINK
+ 37  15  61	science-violet-1-outline #250f3d
+ 70  24 105	science-violet-2 #461869
+111  42 148	science-violet-3 #6f2a94
+160  85 194	science-violet-4 #a055c2
+215 154 227	science-violet-5-highlight #d79ae3
+154  74 142	science-orchid-1 #9a4a8e
+201 109 191	science-orchid-2 #c96dbf
+235 169 224	science-orchid-3 #eba9e0
+# 15 - Engineering hi-vis yellow, CIRCUIT_COLOR_ENGINEERING hue (TfS
+#      ramp); safety orange from obj/clothing/under/engineering.dmi
+#      engine; atmos teal from the atmospherics airlock
+ 62  53  16	engineering-yellow-1-outline #3e3510
+140 118  20	engineering-yellow-2 #8c7614
+217 194  26	engineering-yellow-3 #d9c21a
+245 224  74	engineering-yellow-4 #f5e04a
+255 243 166	engineering-yellow-5-highlight #fff3a6
+166  58  22	engineering-orange-1 #a63a16
+209  91  27	engineering-orange-2 #d15b1b
+240 138  69	engineering-orange-3 #f08a45
+ 42 107  98	atmos-teal-1 #2a6b62
+ 70 144 133	atmos-teal-2 #469085
+124 196 182	atmos-teal-3 #7cc4b6
+# 16 - Service leaf green after the public airlock stripe (TfS ramp) and
+#      linen (TfS); botany apron blue (TfS); janitor purple after
+#      obj/janitor.dmi and clothing/under/civilian.dmi janitor (TfS)
+ 31  51  18	service-green-1-outline #1f3312
+ 58  95  31	service-green-2 #3a5f1f
+ 94 143  50	service-green-3 #5e8f32
+140 193  82	service-green-4 #8cc152
+195 227 154	service-green-5-highlight #c3e39a
+181 166 133	service-linen-1 #b5a685
+227 213 184	service-linen-2 #e3d5b8
+247 240 226	service-linen-3 #f7f0e2
+ 26  47 143	botany-blue-1 #1a2f8f
+ 38  71 224	botany-blue-2 #2647e0
+112 136 240	botany-blue-3 #7088f0
+ 59  28  71	janitor-purple-1 #3b1c47
+104  50 122	janitor-purple-2 #68327a
+156  89 176	janitor-purple-3 #9c59b0
+# 17 - Cargo russet around COLOR_JOB_CARGO_GENERIC (step 3) and khaki
+#      (TfS), moved off the cargo uniform's gold-adjacent #b7793d
+ 46  24  16	cargo-brown-1-outline #2e1810
+ 87  48  31	cargo-brown-2 #57301f
+130  75  50	cargo-brown-3 #824b32
+168 105  74	cargo-brown-4 #a8694a
+207 156 128	cargo-brown-5-highlight #cf9c80
+ 99  92  63	cargo-khaki-1 #635c3f
+140 133  95	cargo-khaki-2 #8c855f
+184 178 142	cargo-khaki-3 #b8b28e
+# 18 - Clown motley: pink after COLOR_JOB_CLOWN (step 2), coral (TfS)
+213 138 213	clown-pink-1 #d58ad5
+255 190 255	clown-pink-2 #ffbeff
+200 106 100	clown-coral-1 #c86a64
+244 138 120	clown-coral-2 #f48a78
+#
+# === ANTAGONISTS (ENEMIES) ===
+# 19 - Void black, violet-tinted (TfS), after cult constructs #101010,
+#      xenomorphs #100a18 and the elite MOD #181719
+  6   5   8	void-1-reserved-outline #060508
+ 17  14  22	void-2-reserved #110e16
+ 34  30  41	void-3 #221e29
+ 54  49  62	void-4 #36313e
+ 76  70  86	void-5 #4c4656
+# 20 - Blood crimson: steps 1-3 from obj/clothing/modsuit/mod_clothing.dmi
+#      syndicate-*, steps 4-5 and hot crimson TfS; syndicate red is
+#      COLOR_SYNDIE_RED and cult red COLOR_CULT_RED
+ 63   1  13	crimson-1 #3f010d
+ 91   0  16	crimson-2 #5b0010
+130  10  22	crimson-3 #820a16
+163   8  44	crimson-4 #a3082c
+224  16  64	crimson-5-reserved #e01040
+241   3   3	syndicate-red-reserved #f10303
+255  51  85	hot-crimson-reserved-glow #ff3355
+150   0   0	cult-red #960000
