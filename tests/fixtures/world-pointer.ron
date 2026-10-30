@@ -21,5 +21,7 @@
             ],
         ),
     ],
+    // On the ground, since space in free_build is weightless.
+    tags: ["terrestrial"],
     environment: (gravity_m_s2: Exact(9.80665)),
 )
