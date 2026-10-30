@@ -142,8 +142,6 @@ local entry: { [string]: any } = {
     gravity_source = {
         radius_tiles = 30,
         acceleration_m_s2 = 9.80665,
-        spreads_through = "receives_gravity",
-        powered_by = "internal_load",
     },
     ui = {
         modules = { "store", "throttles", "ports", "actions" },
