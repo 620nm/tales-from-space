@@ -94,17 +94,32 @@ local function report_of(body: Handle): Report?
     return { charging = store.charging, fed = store.fed, level = store.level, tripped = false }
 end
 
+-- The dress a steady `base` wears for its report (the store's own when
+-- none is given), or nil with no store to read.
+local function dressed(body: Handle, base: string, report: Report?): string?
+    local seen = report or report_of(body)
+    if seen == nil then
+        return nil
+    end
+    return `{base}_{status_of(seen, base == ACTIVE)}`
+end
+
+-- The state a machine settling into `base` takes: dressed in its glyph
+-- at once, since a state set this tick is not yet the one `body` reads.
+function grav_smes_run.settled(body: Handle, base: string): string
+    return dressed(body, base, nil) or base
+end
+
 -- Dresses a steady machine in the glyph its report asks for.
 function grav_smes_run.show_status(body: Handle, report: Report?): ()
     local base = base_of(body.state)
-    if base == nil or (base ~= STANDBY and base ~= ACTIVE) then
+    if base ~= STANDBY and base ~= ACTIVE then
         return
     end
-    local seen = report or report_of(body)
-    if seen == nil then
-        return
+    local state = dressed(body, if base == ACTIVE then ACTIVE else STANDBY, report)
+    if state ~= nil then
+        set_state(body, state)
     end
-    set_state(body, `{base}_{status_of(seen, base == ACTIVE)}`)
 end
 
 -- Load and field off, the shutdown animation, then standby.
@@ -115,8 +130,7 @@ local function spin_down(body: Handle): ()
     sim.spawn_task(body, function()
         sim.sleep(sim.ticks(RAMP_SECONDS))
         if body.alive and body.state == SHUTDOWN then
-            set_state(body, STANDBY)
-            grav_smes_run.show_status(body, nil)
+            set_state(body, grav_smes_run.settled(body, STANDBY))
         end
     end)
 end
@@ -138,8 +152,7 @@ function grav_smes_run.start(body: Handle, actor: Handle?): ()
     sim.spawn_task(body, function()
         sim.sleep(sim.ticks(RAMP_SECONDS))
         if body.alive and body.state == STARTUP then
-            set_state(body, ACTIVE)
-            grav_smes_run.show_status(body, nil)
+            set_state(body, grav_smes_run.settled(body, ACTIVE))
         end
     end)
 end
@@ -177,14 +190,6 @@ function grav_smes_run.on_store(ev: FlowStoreDonePayload): ()
         level = ev.level,
         tripped = ev.tripped,
     })
-end
-
--- `interaction.use.done`: a machine just glazed has no glyph until a
--- store report arrives, so it asks for one now.
-function grav_smes_run.on_use_done(ev: InteractionUseDonePayload): ()
-    if ev.subject.prototype == BODY and ev.subject.state == STANDBY then
-        grav_smes_run.show_status(ev.subject, nil)
-    end
 end
 
 -- `flow.load.done`: a load the store cannot pay stops the field.

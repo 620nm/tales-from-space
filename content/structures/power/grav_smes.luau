@@ -9,7 +9,8 @@
 -- yoke clamps, one coil of cable, nine lengths of pipe, metal for the
 -- casing, and glass for the status panel. Each step runs backwards with
 -- the opposite tool and returns what it cost. Welded joints are
--- permanent; the weld itself is a script (lib/grav_smes.luau).
+-- permanent; the weld and the glazing are scripts (lib/grav_smes.luau),
+-- the glazing because a native step cannot tell one cell from another.
 --
 -- RUNNING STATES are a script's (lib/grav_smes_run.luau) and
 -- `scripted_states` hands them over: the disc over the centre tile rides
@@ -93,7 +94,8 @@ end
 
 -- The steady states wear a status glyph on the south cell.
 local standby_dresses = { "standby" }
-local scripted_states = { "standby", "startup", "active", "shutdown" }
+-- `cased` is listed so the glazing script may move the casing to standby.
+local scripted_states = { "cased", "standby", "startup", "active", "shutdown" }
 for _, phase in ipairs({ "standby", "active" }) do
     for _, status in ipairs(STATUSES) do
         local state = `{phase}_{status}`
@@ -186,17 +188,6 @@ local entry: { [string]: any } = {
             to = "cased",
             start = "You start fitting the casing plates.",
             done = "The casing is on.",
-        },
-        -- The glass fits the south cell alone; the other cells refuse it
-        -- in the script before this step can see the click.
-        {
-            sound = "smash",
-            at = "cased",
-            with = { glass = 1 },
-            secs = 3.0,
-            to = "standby",
-            start = "You start fitting the glass panel.",
-            done = "The glass panel is fitted.",
         },
         {
             sound = "crowbar",

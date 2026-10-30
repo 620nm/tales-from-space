@@ -64,23 +64,42 @@ assert(assert(t.structure_at(5, 4)).state == "welded", "and the machine is still
 step("metal", 4, 5, 5, "clamped")
 step("cable_coil", 6, 5, 7, "wired")
 assert(t.count_items("cable_coil") == 0, "thirty lengths of cable went into the machine")
-local pipes = t.count_items("pipe")
+-- `count_items` counts stacks, not lengths, so the pipe is weighed by its
+-- stack count before and after (dropped back where the player stands).
+local pipes = t.stack_count(assert(t.target_at(p, 5, 7, "pipe"), "the pipe stack lies south"))
 step("pipe", 5, 5, 7, "piped")
-assert(t.count_items("pipe") == pipes - 9, "nine pipes went in")
+t.drop(p)
+t.run_ticks(2)
+local left = t.target_at(p, 5, 6, "pipe")
+local remaining = if left ~= nil then t.stack_count(left) else 0
+assert(remaining == pipes - 9, ("nine pipes went in: %d of %d left"):format(remaining, pipes))
 step("metal", 4, 5, 9, "cased")
 
--- Glass fits the south cell alone.
-local glass = t.count_items("glass")
+-- Glass fits the south cell alone. Sheets are weighed as the pipes are:
+-- by stack count, dropped where the player stands.
+local function sheets_at(x: number, y: number): number
+    local stack = t.target_at(p, x, y, "glass")
+    return if stack ~= nil then t.stack_count(stack) else 0
+end
+local function drop_held()
+    if t.hands(p).held ~= nil then
+        t.drop(p)
+        t.run_ticks(2)
+    end
+end
+local glass = sheets_at(4, 6)
 _ = t.messages(p)
 bench.hold(p, "glass", NEAR)
 t.click(p, 4, 5, t.target_at(p, 4, 5, "grav_smes"))
-t.run_seconds(1)
+t.run_seconds(4)
 assert(
     bench.told(p, "The glass panel only fits the south emitter."),
     "a corner cell refuses the glass"
 )
 assert(assert(t.structure_at(5, 4)).state == "cased", "the machine is still cased")
-assert(t.count_items("glass") == glass, "no glass was spent")
+drop_held()
+assert(sheets_at(5, 6) == glass, "no glass was spent")
+bench.hold(p, "glass", NEAR)
 t.click(p, 5, 5, t.target_at(p, 5, 5, "grav_smes"))
 t.run_seconds(4)
 local finished = assert(t.structure_at(5, 4))
@@ -94,11 +113,13 @@ assert(
     finished.sprite == "grav_smes_standby_1_1",
     "the standing machine wears its picture: " .. tostring(finished.sprite)
 )
-assert(t.count_items("glass") == glass - 1, "one sheet of glass was spent")
+drop_held()
+assert(sheets_at(5, 6) == glass - 1, "one sheet of glass was spent")
 
 -- The panel comes back out with a crowbar and hands the sheet back.
 bench.hold(p, "crowbar", NEAR)
 t.click(p, 5, 5, t.target_at(p, 5, 5, "grav_smes"))
 t.run_seconds(4)
 assert(assert(t.structure_at(5, 4)).state == "cased", "the crowbar pries the glass out")
-assert(t.count_items("glass") == glass, "and the sheet is back")
+local back = sheets_at(5, 6) + sheets_at(5, 4)
+assert(back == glass, ("and the sheet is back: %d of %d"):format(back, glass))

@@ -7,6 +7,8 @@
 -- the north emitter faces south. A ring's facing names the corner arc it
 -- draws: north is the north-west arc, then clockwise.
 
+local grav_smes_run = require("@lib/grav_smes_run")
+
 local grav_smes = {}
 
 local WELDER = "welder"
@@ -25,6 +27,8 @@ local FUEL = "naphtha"
 -- times a tank-frame seam's fuel (tank.dm:675-697 spends 0.3).
 local WELD_FUEL_MOLES = 0.9
 local WELD_SECONDS = 6.0
+local GLAZE_SECONDS = 3.0
+local STANDBY = "standby"
 
 -- Footprint cell of the south emitter, as `interaction.use` reports it
 -- (1-based, row-major over the 3x3 footprint).
@@ -63,6 +67,9 @@ function grav_smes.message_keys(): { string }
         MESSAGE .. "weld_done",
         MESSAGE .. "welded_fast",
         MESSAGE .. "glass_wrong_cell",
+        MESSAGE .. "glass_start",
+        MESSAGE .. "glass_stopped",
+        MESSAGE .. "glass_done",
     }
     for _, part in ipairs(PARTS) do
         table.insert(keys, MESSAGE .. "missing." .. part.position)
@@ -227,6 +234,33 @@ function grav_smes.weld(ev: InteractionUsePayload): boolean | { replaced: boolea
     return true
 end
 
+-- Glass on the cased body's south cell: fit the status panel, spending
+-- one sheet. Any other cell refuses it.
+local function glaze(body: Handle, actor: Handle, glass: Handle, cell: number?): boolean
+    if cell ~= grav_smes.SOUTH_CELL then
+        send(actor, MESSAGE .. "glass_wrong_cell")
+        return true
+    end
+    send(actor, MESSAGE .. "glass_start")
+    sim.spawn_task(actor, function()
+        if sim.do_after(actor, sim.ticks(GLAZE_SECONDS), {}) ~= "ok" then
+            if actor.alive then
+                send(actor, MESSAGE .. "glass_stopped")
+            end
+            return
+        end
+        if not actor.alive or not body.alive or not glass.alive or body.state ~= CASED then
+            return
+        end
+        glass:consume()
+        -- A machine just glazed wears its glyph before any store report.
+        sim.appearance.set_state({ entity = body, state = grav_smes_run.settled(body, STANDBY) })
+        sim.sound.play({ asset = "lunatic/tfs:sound/smash", at = body.tile })
+        send(actor, MESSAGE .. "glass_done")
+    end)
+    return true
+end
+
 -- Clicks on the finished body that no native step answers: glass belongs
 -- to the south cell alone, and welded joints do not come apart.
 function grav_smes.body_use(ev: InteractionUsePayload): boolean | { replaced: boolean }
@@ -234,9 +268,8 @@ function grav_smes.body_use(ev: InteractionUsePayload): boolean | { replaced: bo
     if implement == nil or not implement.alive then
         return { replaced = false }
     end
-    if implement.prototype == GLASS and body.state == CASED and ev.cell ~= grav_smes.SOUTH_CELL then
-        send(actor, MESSAGE .. "glass_wrong_cell")
-        return true
+    if implement.prototype == GLASS and body.state == CASED then
+        return glaze(body, actor, implement, ev.cell)
     end
     if implement.prototype == WELDER and body.state == WELDED then
         send(actor, MESSAGE .. "welded_fast")
