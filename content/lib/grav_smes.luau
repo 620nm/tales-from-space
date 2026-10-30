@@ -159,7 +159,7 @@ local function torch_refusal(torch: Handle): string?
     return nil
 end
 
-local function replacement(centre: TileAddress)
+local function replacement(centre: TileAddress): StructureReplaceSpawn
     return { definition = BODY, at = centre, state = WELDED }
 end
 
@@ -181,7 +181,7 @@ function grav_smes.weld(ev: InteractionUsePayload): boolean | { replaced: boolea
         return true
     end
     local centre = assert(inspection.centre)
-    local request = { remove = inspection.parts, spawn = replacement(centre) }
+    local request: StructureReplaceRequest = { remove = inspection.parts, spawn = replacement(centre) }
     if not sim.structure.can_replace(request).ok then
         send(actor, MESSAGE .. "blocked")
         return true
@@ -210,7 +210,7 @@ function grav_smes.weld(ev: InteractionUsePayload): boolean | { replaced: boolea
             return
         end
         local centre_again = assert(again.centre)
-        local fresh = { remove = again.parts, spawn = replacement(centre_again) }
+        local fresh: StructureReplaceCommand = { remove = again.parts, spawn = replacement(centre_again) }
         if not sim.structure.can_replace(fresh).ok then
             send(actor, MESSAGE .. "blocked")
             return

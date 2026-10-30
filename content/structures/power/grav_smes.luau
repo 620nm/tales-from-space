@@ -52,7 +52,7 @@ local PORTS = {
     { cell = 7, key = "engine.cell.south" },
     { cell = 3, key = "engine.cell.west" },
 }
-local PORT_ROLES = { l1 = "output", l2 = "input", l3 = "output" }
+local PORT_ROLES: { [string]: string } = { l1 = "output", l2 = "input", l3 = "output" }
 
 local port_cells = {}
 local default_props: { [string]: string } = {}
