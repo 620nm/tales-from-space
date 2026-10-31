@@ -1,4 +1,5 @@
 local consume_followups = require("@lib/consume_followups")
+local ignition = require("@lib/ignition")
 local netmsg = require("@lib/netmsg")
 
 -- The ceiling light. It knows three things about itself, and they are
@@ -349,6 +350,10 @@ if sim ~= nil then
         end
         sim.set_light(self, { status = "broken" })
         sim.sound.play({ asset = "lunatic/tfs:sound/glass_break", at = self.tile })
+        -- Only a tube that was on sparks when it breaks (tg light.dm:690-702).
+        if l.lit then
+            ignition.spark(self.tile)
+        end
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:fixtures.light.you_smash_the_light_tube", {}),

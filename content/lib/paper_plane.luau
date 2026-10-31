@@ -5,6 +5,7 @@
 -- (paperplane.dm:4-6, :53, :71-81); the glide and the updraft below are
 -- this pack's own design, not a tg rule. A plane is the same sheet in a
 -- different appearance state, so it keeps its writing.
+local ignition = require("@lib/ignition")
 local residue_kinds = require("@lib/residue_kinds")
 
 local paper_plane = {}
@@ -202,6 +203,7 @@ local function ignite(item: Handle, at: TileAddress): ()
     set_heading(item, 0, 0)
     sim.appearance.set_state({ entity = item, state = paper_plane.ONFIRE_STATE })
     say(at, "lunatic/tfs:lib.paper_plane.ignites")
+    ignition.expose(at, ignition.FLAME_K)
     sim.spawn_task(item, function()
         sim.sleep(sim.ticks(BURN_SECONDS))
         local rest = if item.alive then item.tile else nil
