@@ -1,14 +1,14 @@
 # Utility Outlet Port artwork
 
 `utility_outlet_port.aseprite` is the editable 32×32 RGBA source, drawn
-through the Aseprite MCP. The fitting is a flush rounded-square floor plate
-with a round removable cap over a recessed socket, drawn straight from
-above with no perspective, side wall or cast shadow.
+through the Aseprite MCP. The fitting is a flush rectangular floor plate
+with a hinged stadium cover over a recessed socket, drawn straight from
+above with no cast shadow.
 
-The plate is a 16×16 footprint at `(8, 8)`. Opening it removes only the
-12×12 cap at `(10, 10)`, so the silhouette never changes. Both pictures
-keep the same floor anchor and transparent surroundings; no sprite offset
-is required.
+The closed plate occupies a 24×17 footprint at `(4, 8)`. Opening it hinges
+the 16×13 stadium cover northward into `y = 4..8` (`24×21` bounds at `(4, 4)`),
+revealing the recessed interior. Both pictures keep the same floor anchor
+and transparent surroundings; no sprite offset is required.
 
 ## Layers and frames
 
@@ -22,7 +22,7 @@ frame:
 | 1 / `disconnected` | Open socket | Blank | empty |
 | 2 / `connected` | Open socket | Dull cable color | empty |
 | 3 / `active` | Open socket | Bright cable color | empty |
-| 4 / `closed` | Open socket | empty | Closed cap, whole plate |
+| 4 / `closed` | empty | empty | Closed cover, whole plate |
 
 ## LEDs
 
@@ -31,9 +31,9 @@ cable's color. Together the layers give the nine LED pictures:
 
 | Layer | Cable | Pixels | `disconnected` | `connected` | `active` |
 | --- | --- | --- | --- | --- | --- |
-| `led_l1` | Red | `(12, 13)` `(13, 13)` | `#2b2b2b` | `#c61326` | `#ff441b` |
+| `led_l1` | Red | `(11, 13)` `(12, 13)` | `#2b2b2b` | `#c61326` | `#ff441b` |
 | `led_l2` | Yellow | `(15, 13)` `(16, 13)` | `#2b2b2b` | `#d9c21a` | `#ffff33` |
-| `led_l3` | Blue | `(18, 13)` `(19, 13)` | `#2b2b2b` | `#2667d1` | `#65b4ff` |
+| `led_l3` | Blue | `(19, 13)` `(20, 13)` | `#2b2b2b` | `#2667d1` | `#65b4ff` |
 
 The prototype folds the engine's five channel states into these three
 pictures: `disconnected` is itself, `inactive` and `starved` are `connected`,

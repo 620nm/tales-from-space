@@ -8,12 +8,19 @@ local grav_smes = require("@lib/grav_smes")
 
 local FACINGS = { "north", "east", "south", "west" }
 
--- The picture for facing F is the pillar of the opposite slot.
-local pictures = {
+-- The picture for facing F is the pillar of the opposite slot, loose or
+-- bolted down.
+local displaced_pictures = {
     north = "grav_emitter_north",
     south = "grav_emitter_south",
     east = "grav_emitter_east",
     west = "grav_emitter_west",
+}
+local anchored_pictures = {
+    north = "grav_emitter_anchored_north",
+    south = "grav_emitter_anchored_south",
+    east = "grav_emitter_anchored_east",
+    west = "grav_emitter_anchored_west",
 }
 
 local wrench_anchor, wrench_unanchor = anchorable.pair({
@@ -51,10 +58,14 @@ return {
         public_contacts = true,
     },
     states = { "displaced", "anchored" },
+    state_sprites = {
+        displaced = "grav_emitter_north",
+        anchored = "grav_emitter_anchored_north",
+    },
     -- Loose leads; the bolted-down preset is in its palette flyout.
     palette_states = { "displaced", "anchored" },
     facings = FACINGS,
-    facing_sprites = { displaced = pictures, anchored = pictures },
+    facing_sprites = { displaced = displaced_pictures, anchored = anchored_pictures },
     loose = { "displaced" },
     rotates = { "displaced", "anchored" },
     hint_flags = { grav_smes.ASSEMBLY_READY },
