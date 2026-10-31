@@ -192,16 +192,41 @@
     return j;
   }
 
-  function computeJunctionOnGrid(predFn, x, y) {
-    const n = inBounds(x, y - 1) && predFn(x, y - 1);
-    const s = inBounds(x, y + 1) && predFn(x, y + 1);
-    const e = inBounds(x + 1, y) && predFn(x + 1, y);
-    const w = inBounds(x - 1, y) && predFn(x - 1, y);
+  function wallAt(x, y) {
+    return inBounds(x, y) && state.grid[y][x].wall;
+  }
+
+  // Whether the link between two tiles seals: a bulkhead at either end closes it.
+  function linkSealed(ax, ay, bx, by) {
+    return wallAt(ax, ay) || wallAt(bx, by);
+  }
+
+  // The engine's edge rule (docs/looks/matter.md section 5), over the 10x8 grid.
+  // A side joins when the neighbour holds the shell (`predFn`), when the neighbour is past
+  // the grid (a tile the viewer was never told about, so no false edge), or, with `flush`
+  // (gas and liquid), when the link seals. A diagonal also joins when, flush, it seals both
+  // sides facing this tile or this tile seals both flanking sides. Solids and fire pass
+  // `flush = false` and stay soft against a bulkhead.
+  function computeJunctionOnGrid(predFn, x, y, flush = false) {
+    const side = (nx, ny) =>
+      !inBounds(nx, ny) || predFn(nx, ny) || (flush && linkSealed(x, y, nx, ny));
+    const corner = (dx, dy) => {
+      const cx = x + dx, cy = y + dy;
+      if (!inBounds(cx, cy) || predFn(cx, cy)) return true;
+      if (!flush) return false;
+      const facing = linkSealed(cx, cy, cx - dx, cy) && linkSealed(cx, cy, cx, cy - dy);
+      const flanking = linkSealed(x, y, x + dx, y) && linkSealed(x, y, x, y + dy);
+      return facing || flanking;
+    };
+    const n = side(x, y - 1);
+    const s = side(x, y + 1);
+    const e = side(x + 1, y);
+    const w = side(x - 1, y);
     let j = (n ? NORTH : 0) | (s ? SOUTH : 0) | (e ? EAST : 0) | (w ? WEST : 0);
-    if (n && e && inBounds(x + 1, y - 1) && predFn(x + 1, y - 1)) j |= NE;
-    if (s && e && inBounds(x + 1, y + 1) && predFn(x + 1, y + 1)) j |= SE;
-    if (s && w && inBounds(x - 1, y + 1) && predFn(x - 1, y + 1)) j |= SW;
-    if (n && w && inBounds(x - 1, y - 1) && predFn(x - 1, y - 1)) j |= NW;
+    if (n && e && corner(1, -1)) j |= NE;
+    if (s && e && corner(1, 1)) j |= SE;
+    if (s && w && corner(-1, 1)) j |= SW;
+    if (n && w && corner(-1, -1)) j |= NW;
     return j;
   }
 
@@ -288,57 +313,38 @@
       return [{ spriteId: sid, tint: liq.tint, junction: null, role: "0g Laplace spheres" }];
     }
 
-    // 1g Nested Wet Contour Shells:
-    // - Shell 1 (Puddle): drawn UNCONDITIONALLY on all wet tiles >= 260 mL (connects across >= 260 mL)
-    //   so shallow water/oil never drops out at the pool boundary!
-    // - Shell 2 (Pool): drawn ON TOP on deep tiles >= 2200 mL (connects across >= 2200 mL)
-    //   with a wide feathered alpha taper that deepens smoothly into the puddle below.
-    // - Peripheral (< 260 mL): discrete spill (140..259), splash (65..139), splatter (10..64).
+    // 1g, the engine's stack (docs/looks/matter.md section 5): the highest picture rung the
+    // amount reaches (splatter, splash, spill) draws first, then every shell rung it reaches
+    // draws over it, each joined to neighbours holding that rung. Liquid sits flush on seals.
     const draws = [];
-    if (v >= TH_LIQUID.puddle_min) {
-      const jPuddle = computeJunctionOnGrid(
-        (nx, ny) => {
-          const nl = state.grid[ny][nx].liquid;
-          return !!nl && nl.volumeMl >= TH_LIQUID.puddle_min && nl.tint === liq.tint;
-        },
-        x,
-        y
-      );
-      draws.push({
-        spriteId: "liquid_puddle_smooth_shimmer",
-        tint: liq.tint,
-        junction: jPuddle,
-        role: `1g shallow wet shell (>=${TH_LIQUID.puddle_min} mL)`,
-      });
-      if (v >= TH_LIQUID.pool_min) {
-        const jPool = computeJunctionOnGrid(
-          (nx, ny) => {
-            const nl = state.grid[ny][nx].liquid;
-            return !!nl && nl.volumeMl >= TH_LIQUID.pool_min && nl.tint === liq.tint;
-          },
-          x,
-          y
-        );
-        draws.push({
-          spriteId: "liquid_pool_smooth_ripple",
-          tint: liq.tint,
-          junction: jPool,
-          role: `1g ankle-deep+ pool shell (>=${TH_LIQUID.pool_min} mL)`,
-        });
-      }
-      return draws;
-    }
-
     if (v >= TH_LIQUID.spill_min) {
       const sid = pick2 === 0 ? "liquid_spill_1" : "liquid_spill_2";
-      return [{ spriteId: sid, tint: liq.tint, junction: null, role: "1g discrete spill" }];
-    }
-    if (v >= TH_LIQUID.splash_min) {
+      draws.push({ spriteId: sid, tint: liq.tint, junction: null, role: `1g discrete spill (>=${TH_LIQUID.spill_min} mL)` });
+    } else if (v >= TH_LIQUID.splash_min) {
       const sid = pick2 === 0 ? "liquid_splash_1" : "liquid_splash_2";
-      return [{ spriteId: sid, tint: liq.tint, junction: null, role: "1g droplet splash" }];
+      draws.push({ spriteId: sid, tint: liq.tint, junction: null, role: `1g droplet splash (>=${TH_LIQUID.splash_min} mL)` });
+    } else {
+      const sid = pick2 === 0 ? "liquid_splatter_1" : "liquid_splatter_2";
+      draws.push({ spriteId: sid, tint: liq.tint, junction: null, role: `1g peripheral splatter (>=${TH_LIQUID.splatter_min} mL)` });
     }
-    const sid = pick2 === 0 ? "liquid_splatter_1" : "liquid_splatter_2";
-    return [{ spriteId: sid, tint: liq.tint, junction: null, role: "1g peripheral splatter" }];
+    const shells = [
+      { min: TH_LIQUID.puddle_min, spriteId: "liquid_puddle_smooth_shimmer", role: "1g shallow wet shell" },
+      { min: TH_LIQUID.pool_min, spriteId: "liquid_pool_smooth_ripple", role: "1g ankle-deep+ pool shell" },
+    ];
+    for (const shell of shells) {
+      if (v < shell.min) continue;
+      const junction = computeJunctionOnGrid(
+        (nx, ny) => {
+          const nl = state.grid[ny][nx].liquid;
+          return !!nl && nl.volumeMl >= shell.min && nl.tint === liq.tint;
+        },
+        x,
+        y,
+        true
+      );
+      draws.push({ spriteId: shell.spriteId, tint: liq.tint, junction, role: `${shell.role} (>=${shell.min} mL)` });
+    }
+    return draws;
   }
 
   function resolveSolidDraws(x, y) {
@@ -388,56 +394,31 @@
     const g = state.grid[y][x].gas;
     if (!g || g.moles < TH_GAS.mist_min) return [];
     const ag = g.agitation || "gentle";
-    // Nested Gas Contour Shells:
-    // Mist (>=0.35 mol) runs unbroken beneath Smoke (>=2.5 mol), which runs unbroken beneath Cloud (>=8.0 mol).
-    // Each denser shell feathers smoothly into the continuous lower-density shell underneath!
+    // Nested gas shells, the pack's `cloud` ladder: mist runs unbroken beneath smoke, which
+    // runs unbroken beneath cloud, each joined to neighbours holding that rung. Gas sits
+    // flush on seals, so a plume fills against a bulkhead instead of rounding off.
+    const rungs = [
+      { min: TH_GAS.mist_min, family: "mist", role: "mist shell" },
+      { min: TH_GAS.smoke_min, family: "smoke", role: "smoke shell" },
+      { min: TH_GAS.cloud_min, family: "cloud", role: "dense cloud core" },
+    ];
     const draws = [];
-    const jMist = computeJunctionOnGrid(
-      (nx, ny) => {
-        const ng = state.grid[ny][nx].gas;
-        return !!ng && ng.moles >= TH_GAS.mist_min && ng.tint === g.tint;
-      },
-      x,
-      y
-    );
-    draws.push({
-      spriteId: `gas_mist_smooth_${ag}`,
-      tint: g.tint,
-      junction: jMist,
-      role: `mist shell (${ag})`,
-    });
-
-    if (g.moles >= TH_GAS.smoke_min) {
-      const jSmoke = computeJunctionOnGrid(
+    for (const rung of rungs) {
+      if (g.moles < rung.min) continue;
+      const junction = computeJunctionOnGrid(
         (nx, ny) => {
           const ng = state.grid[ny][nx].gas;
-          return !!ng && ng.moles >= TH_GAS.smoke_min && ng.tint === g.tint;
+          return !!ng && ng.moles >= rung.min && ng.tint === g.tint;
         },
         x,
-        y
+        y,
+        true
       );
       draws.push({
-        spriteId: `gas_smoke_smooth_${ag}`,
+        spriteId: `gas_${rung.family}_smooth_${ag}`,
         tint: g.tint,
-        junction: jSmoke,
-        role: `smoke shell (${ag})`,
-      });
-    }
-
-    if (g.moles >= TH_GAS.cloud_min) {
-      const jCloud = computeJunctionOnGrid(
-        (nx, ny) => {
-          const ng = state.grid[ny][nx].gas;
-          return !!ng && ng.moles >= TH_GAS.cloud_min && ng.tint === g.tint;
-        },
-        x,
-        y
-      );
-      draws.push({
-        spriteId: `gas_cloud_smooth_${ag}`,
-        tint: g.tint,
-        junction: jCloud,
-        role: `dense cloud core (${ag})`,
+        junction,
+        role: `${rung.role} (${ag})`,
       });
     }
     return draws;
@@ -518,9 +499,13 @@
         }
         const h = ((x * 73 + y * 137 + cx * 31 + cy * 59) >>> 0) % 100;
         if (maxAdj >= TH_LIQUID.puddle_min && added[y][x] < TH_LIQUID.spill_min) {
-          if (h < 28) added[y][x] = Math.max(added[y][x], 185);
-          else if (h < 56) added[y][x] = Math.max(added[y][x], 95);
-          else if (h < 80) added[y][x] = Math.max(added[y][x], 38);
+          // Mid-band amounts of the spill, splash and splatter rungs.
+          const spillMl = (TH_LIQUID.spill_min + TH_LIQUID.puddle_min) / 2;
+          const splashMl = (TH_LIQUID.splash_min + TH_LIQUID.spill_min) / 2;
+          const splatterMl = (TH_LIQUID.splatter_min + TH_LIQUID.splash_min) / 2;
+          if (h < 28) added[y][x] = Math.max(added[y][x], spillMl);
+          else if (h < 56) added[y][x] = Math.max(added[y][x], splashMl);
+          else if (h < 80) added[y][x] = Math.max(added[y][x], splatterMl);
         }
       }
     }
@@ -530,7 +515,7 @@
       for (let x = 0; x < GRID_W; x++) {
         if (state.grid[y][x].wall) continue;
         const addV = Math.round(added[y][x]);
-        if (addV < 12) continue;
+        if (addV < TH_LIQUID.splatter_min) continue;
         const existing = state.grid[y][x].liquid;
         let finalV = addV;
         if (existing && existing.tint === normTint) {
@@ -821,7 +806,7 @@
       releaseGasPlume(2, 4, 92, "gentle", "#DCEEFF", "Billowing Steam / Vapor Plume", false, null);
       releaseGasPlume(7, 3, 86, "stirred", "#78808C", "Turbulent Exhaust Smoke", false, null);
       state.selectedX = 2; state.selectedY = 4;
-      logPhysics("Scenario [Billowing Gas & Smoke Density Gradient]: Two distinct plumes (`#DCEEFF` steam & `#78808C` smoke), each seamlessly blending `mist` (>=0.35 mol) -> `smoke` (>=2.5 mol) -> `dense cloud` (>=8.0 mol) via Nested Contour Shells and 8-frame rolling advection.");
+      logPhysics(`Scenario [Billowing Gas & Smoke Density Gradient]: Two distinct plumes (#DCEEFF steam & #78808C smoke), each seamlessly blending mist (>=${TH_GAS.mist_min} mol) -> smoke (>=${TH_GAS.smoke_min} mol) -> dense cloud (>=${TH_GAS.cloud_min} mol) via Nested Contour Shells and 8-frame rolling advection.`);
     } else if (name === "gas_oxidation") {
       state.bgMode = "plating";
       for (let x = 2; x <= 7; x++) {
@@ -870,7 +855,7 @@
       state.grid[4][6].wall = true;
       pourLiquidSpill(4, 3, 27500, 0.56, "#4BA3E3", "Clean Water", false);
       state.selectedX = 4; state.selectedY = 3;
-      logPhysics("Scenario [Balanced Large Spill (1g)]: 27,500 mL water breach balancing out around a bulkhead wall: ankle-deep `liquid_pool_smooth_ripple` core (>=2200 mL) -> unbroken `liquid_puddle_smooth_shimmer` apron (>=260 mL) -> peripheral `spill`, `splash`, and `splatter` droplets.");
+      logPhysics(`Scenario [Balanced Large Spill (1g)]: 27,500 mL water breach balancing out around a bulkhead wall: ankle-deep \`liquid_pool_smooth_ripple\` core (>=${TH_LIQUID.pool_min} mL) -> unbroken \`liquid_puddle_smooth_shimmer\` apron (>=${TH_LIQUID.puddle_min} mL) -> peripheral \`spill\`, \`splash\`, and \`splatter\` droplets.`);
     } else if (name === "zerog_cabin") {
       state.gravity = "0g";
       state.bgMode = "plating";

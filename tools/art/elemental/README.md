@@ -12,7 +12,8 @@ tracked.
 |---|---|
 | `elemental_kit.py` | Per domain: validates the specs, exports each source's frames through Aseprite MCP, audits colour, chroma and junction tiles, writes `manifests/<domain>.json` and a review board. |
 | `specs/spec_{gasses,liquids,solids,fire}.py` | `SPRITES = [...]`: procedural pixel rows, layers, durations, tint samples and metadata per sprite. |
-| `build_gallery.py` | Bundles the manifests with `gallery/` into `target/art/elemental/gallery/`. `reading_thresholds()` is the one place the gallery's amounts (mL, mol) come from. |
+| `build_gallery.py` | Bundles the manifests with `gallery/` into `target/art/elemental/gallery/`. `reading_thresholds()` is the one place the gallery's amounts (mL, mol) come from: it reads the game's `content/matter_appearances.luau`, so the gallery previews what the game draws. |
+| `luau_table.py` | The small reader for the data subset of Luau that `reading_thresholds()` uses; a form outside the subset raises with its line. |
 | `gallery/` | The authored page: `index.html`, `gallery_app.js`, `gallery_styles.css`. |
 | `audit/audit_assets.py` | Reads the `.aseprite` binaries, the Aseprite CLI export, the manifests and the gallery data; reports palette, chroma, tag, seam and loop findings. |
 | `audit/render_diagnostics.py` | Composite plates (gas gradient, liquid gradient, loop wrap) from the audit's exports. |
@@ -88,7 +89,10 @@ in the sheet from the pixel across the seam, so palette, chroma and alpha tiers 
 ## Remaining assumptions
 
 - The gallery (`gallery/gallery_app.js`) still carries scenario presets, substance
-  tables and prose log lines with their own literals; only the sprite and shell
-  switch amounts read `DATA.thresholds`.
+  tables and the amounts of its pour and release solvers with their own literals;
+  the sprite and shell switch amounts read `DATA.thresholds`.
+- The gallery's edges follow the engine's rule: gas and liquid sit flush against a
+  bulkhead, solids and fire stay soft, a neighbour past the grid reads as joined.
+  It has no doors or windows, so only walls seal.
 - Specs are tuned to `docs/art-reference/palettes/tales-from-space.gpl` and refuse any
   colour outside it; the audits also refuse its `-reserved` swatches.

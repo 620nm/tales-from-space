@@ -13,6 +13,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import sys
 import zlib
@@ -21,6 +22,7 @@ from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from elemental_kit import DEFAULT_OUT_DIR, ELEMENTAL_DIR, JUNCTIONS, PACK_ROOT  # noqa: E402
+from luau_table import read_luau_table  # noqa: E402
 
 AUTHORED_GALLERY_DIR = ELEMENTAL_DIR / "gallery"
 AUTHORED_FILES = ("index.html", "gallery_styles.css", "gallery_app.js")
@@ -41,23 +43,74 @@ def find_tg_icons() -> Path | None:
     return None
 
 
+MATTER_APPEARANCES = PACK_ROOT / "content" / "matter_appearances.luau"
+CAPABILITIES = PACK_ROOT / "content" / "capabilities.luau"
+# The gas ladder the gallery previews, and the substance whose visibility threshold turns a
+# rung's `at_factor` (a multiple of it) into moles for one tile.
+GALLERY_GAS_PROFILE = "cloud"
+GALLERY_REFERENCE_GAS = "water"
+
+
+def rung_amount(profile: dict, art: str, field: str, ladder: str = "rungs") -> float:
+    """The `field` (`at_ml` or `at_factor`) of the rung of `profile` that draws `art`, a
+    picture name or a shell's still strip."""
+    rungs = profile["rungs"] if ladder == "rungs" else profile.get(ladder, {}).get("rungs", [])
+    for rung in rungs:
+        if art in rung.get("sprites", []) or rung.get("shell", {}).get("still") == art:
+            return rung[field]
+    raise KeyError(f"profile {profile['key']!r} has no {ladder} rung drawing {art!r}")
+
+
+def tile_volume_m3() -> float:
+    """One tile's air volume, from the pack's `simulation.tile`."""
+    text = CAPABILITIES.read_text(encoding="utf-8")
+    m = re.search(r"tile\s*=\s*\{\s*width_m\s*=\s*([\d.]+)\s*,\s*depth_m\s*=\s*([\d.]+)\s*,\s*height_m\s*=\s*([\d.]+)", text)
+    if m is None:
+        raise ValueError(f"{CAPABILITIES}: no `tile = {{ width_m, depth_m, height_m }}`")
+    return float(m.group(1)) * float(m.group(2)) * float(m.group(3))
+
+
+def reference_visibility_mol_per_m3() -> float:
+    """The visibility density of `GALLERY_REFERENCE_GAS`, the unit a gas rung multiplies."""
+    path = PACK_ROOT / "content" / "substances" / f"{GALLERY_REFERENCE_GAS}.luau"
+    m = re.search(r"visible\s*=\s*\{[^}]*mol_per_m3\s*=\s*([\d.]+)", path.read_text(encoding="utf-8"))
+    if m is None:
+        raise ValueError(f"{path}: no `visible = {{ mol_per_m3 = ... }}`")
+    return float(m.group(1))
+
+
 def reading_thresholds() -> dict[str, dict[str, float]]:
     """THE THRESHOLD SEAM: the amounts at which the gallery switches sprite and shell.
 
-    Liquids are in millilitres, gases in moles. The gallery reads these from
-    `DATA.thresholds` only; replace this function's body to source them elsewhere.
+    Read from the pack's `content/matter_appearances.luau`, so the gallery previews what the
+    game draws: millilitres for liquids (the default liquid profile), moles per tile for gas
+    (the `cloud` ladder, whose `at_factor` rungs multiply the reference gas's visibility
+    density by the tile volume). The gallery reads these from `DATA.thresholds` only.
     """
+    doc = read_luau_table(MATTER_APPEARANCES)
+    profiles = {p["key"]: p for p in doc["profiles"]}
+    liquid = profiles[doc["defaults"]["liquid"]]
+    gas = profiles[GALLERY_GAS_PROFILE]
+    per_tile = reference_visibility_mol_per_m3() * tile_volume_m3()
+
+    def moles(art: str) -> float:
+        return round(rung_amount(gas, art, "at_factor") * per_tile, 3)
+
     return {
         "liquid": {
-            "splatter_min": 10,
-            "splash_min": 65,
-            "spill_min": 140,
-            "puddle_min": 260,
-            "pool_min": 2200,
-            "zerog_mixed_min": 350,
-            "zerog_large_min": 1400,
+            "splatter_min": rung_amount(liquid, "liquid_splatter_1", "at_ml"),
+            "splash_min": rung_amount(liquid, "liquid_splash_1", "at_ml"),
+            "spill_min": rung_amount(liquid, "liquid_spill_1", "at_ml"),
+            "puddle_min": rung_amount(liquid, "liquid_puddle_smooth", "at_ml"),
+            "pool_min": rung_amount(liquid, "liquid_pool_smooth_still", "at_ml"),
+            "zerog_mixed_min": rung_amount(liquid, "liquid_zerog_mixed_float", "at_ml", "weightless"),
+            "zerog_large_min": rung_amount(liquid, "liquid_zerog_large_float", "at_ml", "weightless"),
         },
-        "gas": {"mist_min": 0.35, "smoke_min": 2.5, "cloud_min": 8.0},
+        "gas": {
+            "mist_min": moles("gas_mist_smooth_still"),
+            "smoke_min": moles("gas_smoke_smooth_still"),
+            "cloud_min": moles("gas_cloud_smooth_still"),
+        },
     }
 
 
