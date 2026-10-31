@@ -42,6 +42,14 @@ local content = {
     sprite = "captains_aid",
     modes = #DIRECTIONS,
     mode = 0,
+    actions = {
+        {
+            id = "point",
+            gesture = "self",
+            route = "self_use",
+            label = "lunatic/tfs:ui.affordance.point_aid",
+        },
+    },
     -- One appearance state per dial position, named for tg's own mode
     -- words. The dial and the picture are separate mechanisms that the
     -- handler below keeps in step -- which is deliberate: `modes` is what

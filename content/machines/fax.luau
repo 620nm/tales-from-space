@@ -1,8 +1,11 @@
 -- One-sheet fax endpoint. The network service directory is native; this
 -- declaration supplies the endpoint socket and names the script bridge.
 -- tg code/modules/paperwork/fax.dm:222-237, :294-351, :406-428.
+local printing = require("@lib/printing")
+
 return {
     id = "fax",
+    actions = printing.actions(),
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.fax.name",

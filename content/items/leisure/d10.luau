@@ -1,3 +1,4 @@
+local dice = require("@lib/dice")
 local physical_profiles = require("@lib/physical_profiles")
 -- Ten sides. tg: "Useful for percentages."
 -- (`/obj/item/dice/d10`, code/game/objects/items/dice.dm:212-216) --
@@ -26,6 +27,7 @@ local content = {
     id = "d10",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
+    actions = dice.actions(),
     name_label = "lunatic/tfs:entity.d10.name",
     name = "d10",
     sprite = "d10",

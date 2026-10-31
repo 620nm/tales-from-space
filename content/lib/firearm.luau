@@ -10,10 +10,10 @@
 -- committed attack draws — a refused shot stays dark and silent.
 --
 -- Which round a magazine takes is the table below, pack data enforced
--- twice: the magazine's own `interaction.use` claims the wrong caliber
--- before the engine stows it, and the reload below only feeds rounds
--- the table names. A round clicked onto a FLOOR magazine slips past
--- the first gate natively; the second still starves it.
+-- twice: the magazine's `load_row` refuses the wrong caliber before the
+-- engine stows it, and the reload below only feeds rounds the table
+-- names. A round clicked onto a FLOOR magazine slips past the first
+-- gate natively; the second still starves it.
 local firearm = {}
 
 -- Magazine id to the round ids it feeds. tg's C-20r takes the 24-round
@@ -45,24 +45,27 @@ function firearm.accepts(mag_id: string, round_id: string): boolean
     return rounds ~= nil and rounds[round_id] == true
 end
 
--- The magazine's loading gate: claim the pair (blocking the stow)
--- when the implement is no round this magazine feeds, decline it
--- otherwise so the engine seats it.
-function firearm.gate(mag: Handle, implement: Handle?, actor: Handle): boolean
-    local rounds = COMPATIBLE[mag.prototype or ""]
-    if rounds == nil then
-        return false
+-- The magazine's loading row: the rounds it feeds are the hand that seats
+-- them, and any other hand is told the caliber is wrong (`needs`) when
+-- nothing else takes the click. An empty hand stays quiet and picks it up.
+function firearm.load_row(mag_id: string): { [string]: any }
+    local held = {}
+    local first: string? = nil
+    for round_id in COMPATIBLE[mag_id] or {} do
+        table.insert(held, { fact = "held.proto", value = round_id })
+        first = first or round_id
     end
-    -- An empty hand takes the magazine; only an offered round is gated.
-    if implement == nil then
-        return false
-    end
-    local round_id = implement.prototype or ""
-    if rounds[round_id] == true then
-        return false
-    end
-    tell(actor, "lunatic/tfs:lib.firearm.wrong_caliber")
-    return true
+    return {
+        id = "load_round",
+        gesture = "primary",
+        route = "receiver",
+        label = "lunatic/tfs:ui.affordance.load_round",
+        held = if #held == 1 then held[1] else { any = held },
+        uses_held = true,
+        suggest = true,
+        suggest_implement = { item = first },
+        needs = "lunatic/tfs:lib.firearm.wrong_caliber",
+    }
 end
 
 -- One trigger pull at `primary`, or the reason it stays holstered.

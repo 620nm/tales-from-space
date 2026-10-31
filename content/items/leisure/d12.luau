@@ -1,3 +1,4 @@
+local dice = require("@lib/dice")
 local physical_profiles = require("@lib/physical_profiles")
 -- Twelve sides, and tg is unkind about it: "There's an air of neglect
 -- about it." (`/obj/item/dice/d12`, code/game/objects/items/dice.dm:
@@ -25,6 +26,7 @@ local content = {
     id = "d12",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
+    actions = dice.actions(),
     name_label = "lunatic/tfs:entity.d12.name",
     name = "d12",
     sprite = "d12",

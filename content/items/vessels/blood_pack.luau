@@ -104,7 +104,11 @@ if sim ~= nil then
 
     behavior:handle(
         "interaction.use",
-        { kind = "replace", route = "interact" },
+        {
+            kind = "replace",
+            route = "interact",
+            hidden = "swallows a held vessel's click so it never pours into the sealed pack; offers no action",
+        },
         function(ev: InteractionUsePayload)
             local subject_prototype = ev.subject.prototype
             if subject_prototype ~= content.id

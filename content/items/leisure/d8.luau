@@ -1,3 +1,4 @@
+local dice = require("@lib/dice")
 local physical_profiles = require("@lib/physical_profiles")
 -- Eight sides. tg's whole description is "It feels... lucky."
 -- (`/obj/item/dice/d8`, code/game/objects/items/dice.dm:206-210) and
@@ -27,6 +28,7 @@ local content = {
     id = "d8",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
+    actions = dice.actions(),
     name_label = "lunatic/tfs:entity.d8.name",
     name = "d8",
     sprite = "d8",
