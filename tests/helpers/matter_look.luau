@@ -75,14 +75,18 @@ local ROOM = [==[(
 
 -- A sealed 9 x 5 room with each spill painted on its tile at 293.15 K, a
 -- joined player at (1, 1), one tick run. `gravity` (m/s2) pins a planetary
--- environment, 0 making it weightless; nil keeps the pack's default.
+-- environment, 0 a weightless space one; nil keeps the pack's default.
 function matter_look.room(spills: { Spill }, gravity: number?): number
     local environment = ""
     if gravity ~= nil then
-        environment = string.format(
-            '\n    tags: ["terrestrial"],\n    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(%.5f)),',
-            gravity
-        )
+        if gravity > 0 then
+            environment = string.format(
+                '\n    tags: ["terrestrial"],\n    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(%.5f)),',
+                gravity
+            )
+        else
+            environment = "\n    environment: (kind: Exact(space), gravity_m_s2: Exact(0.0)),"
+        end
     end
     local painted: { string } = {}
     local blends: { string } = {}

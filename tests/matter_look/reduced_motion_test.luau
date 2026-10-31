@@ -24,11 +24,13 @@ local function parts_at(x: number, reduced_motion: boolean): { SpecSeenMatterPar
     return t.seen_matter(p, x, 3, nil, reduced_motion)
 end
 
+assert(#parts_at(PUDDLE_TILE, false) > 0, "the spill draws")
+assert(#parts_at(GAS_TILE, false) > 0, "the canister draws")
+
 local moving_regimes = 0
-for _, x in ipairs({ PUDDLE_TILE, GAS_TILE, GAS_TILE - 1, GAS_TILE + 1 }) do
+for x = 1, 9 do
     local live = parts_at(x, false)
     local held = parts_at(x, true)
-    assert(#live > 0, "tile " .. x .. " draws")
     assert(#held == #live, "reduced motion draws the same parts at tile " .. x)
     for index, part in ipairs(live) do
         assert(not part.held, "motion is the default, tile " .. x .. " rung " .. part.rung)
