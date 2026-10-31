@@ -20,12 +20,12 @@ do
     local p = ignition_room.build({
         rows = { "#######", "#.....#", "#######" },
         spawn = { x = 2, y = 1 },
-        items = '(2, 1, "burner"),',
+        items = '(1, 1, "burner"),',
         spills = { { x = 4, y = 1, ethanol_mol = ignition_room.POOL_MOL } },
     })
     t.run_seconds(30)
     assert(ignition_room.ethanol_gas(4, 1) >= 0.5, "the target tile holds vapour")
-    t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "burner")))
+    t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "burner")))
     t.tick()
     assert(t.hands(p).held == "burner", "the burner is in hand")
 
@@ -56,12 +56,12 @@ do
     local p = ignition_room.build({
         rows = { "###########", "#.........#", "###########" },
         spawn = { x = 1, y = 1 },
-        items = '(1, 1, "burner"),',
+        items = '(2, 1, "burner"),',
         spills = { { x = 9, y = 1, ethanol_mol = ignition_room.POOL_MOL } },
     })
     local far_gas = ignition_room.ethanol_gas(1, 1)
     assert(far_gas < ignition_room.FUEL_FLOOR_MOL, "no vapour has reached the burner's end yet: " .. far_gas)
-    ignition_room.take_lit_burner(p, 1, 1)
+    ignition_room.take_lit_burner(p, 2, 1)
     t.drop(p)
     t.tick()
     assert(t.hands(p).held ~= "burner", "the burner is set down, not held")

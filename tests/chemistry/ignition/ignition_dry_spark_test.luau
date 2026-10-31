@@ -13,14 +13,14 @@ local IGNITE_MESSAGE = "The flame catches in the air."
 local p = ignition_room.build({
     rows = { "#####", "#...#", "#####" },
     spawn = { x = 1, y = 1 },
-    items = '(1, 1, "burner"),',
+    items = '(2, 1, "burner"),',
     spills = {},
 })
 
 assert(ignition_room.ethanol_gas(2, 1) == 0.0, "the air holds no fuel")
 local before = assert(t.room_temperature(2, 1))
 
-ignition_room.take_lit_burner(p, 1, 1)
+ignition_room.take_lit_burner(p, 2, 1)
 ignition_room.touch(p, 2, 1)
 t.run_seconds(10)
 

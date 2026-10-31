@@ -205,10 +205,11 @@ function ignition_room.oxygen_gas(x: number, y: number): number
     return (gas and gas.o2) or 0.0
 end
 
--- Picks up the burner lying on (x, y), where the player stands, and
--- strikes it.
+-- Picks up the burner lying on (x, y), beside the player, and strikes
+-- it: a small item under the player's own feet cannot be clicked.
 function ignition_room.take_lit_burner(player: number, x: number, y: number)
-    t.click(player, x, y, assert(t.target_at(player, x, y, "burner"), "a burner lies here"))
+    local burner = assert(t.target_at(player, x, y, "burner"), "a burner lies here")
+    t.click(player, x, y, burner)
     t.tick()
     assert(t.hands(player).held == "burner", "the burner is in hand")
     t.use_self(player)

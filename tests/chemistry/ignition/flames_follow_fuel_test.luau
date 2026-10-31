@@ -30,7 +30,7 @@ local function flame_parts(player: number): { SpecSeenMatterPart }
 end
 
 local function light_own_tile(player: number)
-    ignition_room.take_lit_burner(player, TILE.x, TILE.y)
+    ignition_room.take_lit_burner(player, 2, 1)
     ignition_room.touch(player, TILE.x, TILE.y)
 end
 
@@ -39,9 +39,9 @@ end
 -- ---------------------------------------------------------------
 do
     local p = ignition_room.build({
-        rows = { "###", "#.#", "###" },
+        rows = { "####", "#..#", "####" },
         spawn = TILE,
-        items = '(1, 1, "burner"),',
+        items = '(2, 1, "burner"),',
         spills = { { x = TILE.x, y = TILE.y, ethanol_mol = ignition_room.POOL_MOL } },
     })
     t.run_seconds(30)
@@ -72,9 +72,9 @@ end
 -- ---------------------------------------------------------------
 do
     local p = ignition_room.build({
-        rows = { "###", "#.#", "###" },
+        rows = { "####", "#..#", "####" },
         spawn = TILE,
-        items = '(1, 1, "burner"),',
+        items = '(2, 1, "burner"),',
         oxygen_mol = 2.0,
         spills = { { x = TILE.x, y = TILE.y, ethanol_mol = VAPOUR_MOL } },
     })

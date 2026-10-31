@@ -20,7 +20,7 @@ local SPILL_X = 2
 local p = ignition_room.build({
     rows = { "######", "#....#", "######" },
     spawn = { x = 1, y = 1 },
-    items = '(1, 1, "burner"),',
+    items = '(2, 1, "burner"),',
     oxygen_mol = 1.0,
     spills = { { x = SPILL_X, y = 1, ethanol_mol = ignition_room.POOL_MOL } },
 })
@@ -29,7 +29,7 @@ assert(
     ignition_room.ethanol_gas(4, 1) < ignition_room.FUEL_FLOOR_MOL,
     "the far tile holds no vapour when the fire starts"
 )
-ignition_room.take_lit_burner(p, 1, 1)
+ignition_room.take_lit_burner(p, 2, 1)
 ignition_room.touch(p, SPILL_X, 1)
 assert(#ignition_room.latch_edges(true) >= 1, "the click lit the spill tile")
 
