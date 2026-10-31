@@ -1,11 +1,7 @@
--- Five sheets box up into a frame that waits for an identity. It is
--- wired, then boarded, then screwed together -- and every one of those
--- steps runs backwards, which is the reverse path the old one-way
--- deploy never had (tg's machine_frame.dm).
---
--- The frame never learns what it is becoming: the board carries the
--- machine id and its parts list in the board's own small file, so
--- adding a machine costs zero edits here.
+local assembly = require("@lib/assembly")
+
+-- Five sheets box up into a frame that waits for an identity
+-- (tg's machine_frame.dm).
 return {
     id = "machine_frame",
     visual_layer = "fixture",
@@ -22,83 +18,10 @@ return {
         start = "You start assembling a machine frame.",
         done = "The frame is boxed up.",
     },
-    transitions = {
-        {
-            sound = "smash",
-            at = "empty",
-            with = { cable_coil = 5 },
-            hint = { id = "wire", label = "lunatic/tfs:ui.affordance.wire_frame", suggest = true },
-            secs = 2.0,
-            to = "wired",
-            start = "You start wiring the frame.",
-            done = "The frame is wired.",
-        },
-        -- Only a bare frame comes apart under a torch: wiring first, as
-        -- tg does, so nobody burns a coil's worth of cable by accident.
-        {
-            sound = "smash",
-            at = "empty",
-            tool = "welder",
-            hint = {
-                id = "dismantle",
-                label = "lunatic/tfs:ui.affordance.dismantle_frame",
-            },
-            secs = 4.0,
-            fuel = 0.3,
-            yields = { metal = 5 },
-            gone = true,
-            start = "You start cutting the frame apart.",
-            done = "The frame comes apart.",
-        },
-        {
-            sound = "smash",
-            at = "wired",
-            tool = "cutters",
-            secs = 2.0,
-            yields = { cable_coil = 5 },
-            to = "empty",
-            start = "You start cutting the wiring out.",
-            done = "The wiring comes free.",
-        },
-        -- Any item with a board table fits; which machine it makes is
-        -- the board's business, not the frame's.
-        {
-            sound = "smash",
-            at = "wired",
-            slot = "board",
-            to = "boarded",
-            done = "The board clicks into place.",
-        },
-        -- ...and whatever that board asks for goes in after it, one
-        -- unit at a time (tg's `req_components`, machine_frame.dm). The
-        -- frame still learns nothing: which parts, and how many, is the
-        -- board's list, and the refusal reads it out when something is
-        -- missing or unwanted.
-        {
-            sound = "smash",
-            at = "boarded",
-            slot = "part",
-            done = "It clicks into the assembly.",
-        },
-        -- The crowbar takes the board AND everything fitted after it,
-        -- which is one assembly coming apart rather than two steps
-        -- (tg's `default_deconstruction_crowbar`).
-        {
-            sound = "smash",
-            at = "boarded",
-            tool = "crowbar",
-            eject = "board",
-            to = "wired",
-            done = "You pry the board back out.",
-        },
-        {
-            sound = "smash",
-            at = "boarded",
-            tool = "screwdriver",
-            secs = 4.0,
-            finish = true,
-            start = "You start screwing the assembly together.",
-            done = "The machine hums to life.",
-        },
-    },
+    transitions = assembly.board_frame({
+        metal = 5,
+        cut_start = "You start cutting the frame apart.",
+        cut_done = "The frame comes apart.",
+        closed = "The machine hums to life.",
+    }),
 }

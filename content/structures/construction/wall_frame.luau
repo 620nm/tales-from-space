@@ -1,11 +1,11 @@
+local assembly = require("@lib/assembly")
+
 -- Two sheets bent into a box and screwed to a wall: the thing every
 -- wall-mounted device on this station is before it is anything in
 -- particular.
 --
--- It is `machine_frame` for the wall, and deliberately the same ladder
--- said in the same order -- wired, then boarded, then screwed together,
--- and every rung running backwards. What differs is the one thing that
--- makes a mount a mount: `build.on` names what it HANGS ON rather than
+-- It is `machine_frame` for the wall, the same `assembly.board_frame`
+-- ladder. What differs is the one thing that makes a mount a mount: `build.on` names what it HANGS ON rather than
 -- what it stands on, so a player clicks the WALL with the sheets in
 -- hand and the box rises on their own tile, facing it
 -- (docs/CONSTRUCTION.md, "What hangs on a wall").
@@ -25,9 +25,9 @@
 -- frame does, and the two frames in this pack answering "how much
 -- cable is a frame" differently would be a number spelled twice.
 --
--- The frame never learns what it is becoming: the board carries the
--- product and its parts list, so hanging a new kind of device costs
--- zero edits here.
+-- tg hands its own hull back as the item it was (apc_tool_act.dm:384);
+-- there is no frame ITEM here -- the sheets are the recipe -- so what the
+-- torch gives back is the sheets.
 return {
     id = "wall_frame",
     visual_layer = "fixture",
@@ -76,78 +76,10 @@ return {
         flavor = "An empty box bolted to the wall, waiting for somebody to "
             .. "decide what it is.",
     },
-    transitions = {
-        {
-            sound = "smash",
-            at = "empty",
-            with = { cable_coil = 5 },
-            secs = 2.0,
-            to = "wired",
-            start = "You start wiring the frame.",
-            done = "The frame is wired.",
-        },
-        -- Only a bare frame comes off under a torch: wiring first, as
-        -- the machine frame does, so nobody burns a coil's worth of
-        -- cable by accident. tg hands its own hull back as the item it
-        -- was (apc_tool_act.dm:384); there is no frame ITEM here -- the
-        -- sheets are the recipe -- so what comes back is the sheets.
-        {
-            sound = "smash",
-            at = "empty",
-            tool = "welder",
-            secs = 4.0,
-            fuel = 0.3,
-            yields = { metal = 2 },
-            gone = true,
-            start = "You start cutting the frame off the wall.",
-            done = "The frame comes off the wall.",
-        },
-        {
-            sound = "smash",
-            at = "wired",
-            tool = "cutters",
-            secs = 2.0,
-            yields = { cable_coil = 5 },
-            to = "empty",
-            start = "You start cutting the wiring out.",
-            done = "The wiring comes free.",
-        },
-        -- Any item with a board table fits; what it makes is the
-        -- board's business and not the frame's.
-        {
-            sound = "smash",
-            at = "wired",
-            slot = "board",
-            to = "boarded",
-            done = "The board clicks into place.",
-        },
-        -- ...and whatever that board asks for goes in after it, one
-        -- unit at a time. The refusal reads the list out when something
-        -- is missing or unwanted, so the frame still learns nothing.
-        {
-            sound = "smash",
-            at = "boarded",
-            slot = "part",
-            done = "It clicks into the assembly.",
-        },
-        -- The crowbar takes the board AND everything fitted after it:
-        -- one assembly coming apart rather than two steps.
-        {
-            sound = "smash",
-            at = "boarded",
-            tool = "crowbar",
-            eject = "board",
-            to = "wired",
-            done = "You pry the board back out.",
-        },
-        {
-            sound = "smash",
-            at = "boarded",
-            tool = "screwdriver",
-            secs = 4.0,
-            finish = true,
-            start = "You start screwing the assembly together.",
-            done = "The panel closes over it.",
-        },
-    },
+    transitions = assembly.board_frame({
+        metal = 2,
+        cut_start = "You start cutting the frame off the wall.",
+        cut_done = "The frame comes off the wall.",
+        closed = "The panel closes over it.",
+    }),
 }

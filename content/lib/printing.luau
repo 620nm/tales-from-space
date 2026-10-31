@@ -61,7 +61,12 @@ end
 -- The clicks a paper machine's `interaction.use` answers: an empty hand opens
 -- the panel; a toner source, a paper source or a sheet is loaded.
 function printing.actions(): { { [string]: any } }
-    local function loading(id: string, label: string, tag: string, item: string)
+    local function loading(
+        id: string,
+        label: string,
+        tag: string,
+        item: string
+    ): { [string]: any }
         return {
             id = id,
             gesture = "primary",

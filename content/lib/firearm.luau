@@ -45,26 +45,33 @@ function firearm.accepts(mag_id: string, round_id: string): boolean
     return rounds ~= nil and rounds[round_id] == true
 end
 
--- The magazine's loading row: the rounds it feeds are the hand that seats
--- them, and any other hand is told the caliber is wrong (`needs`) when
--- nothing else takes the click. An empty hand stays quiet and picks it up.
+-- The magazine's loading row: any held thing is offered, the rounds it feeds
+-- fall through to the engine's stow, and anything else is refused here,
+-- before that stow. An empty hand fails the row and picks the magazine up.
 function firearm.load_row(mag_id: string): { [string]: any }
-    local held = {}
+    local rounds = {}
     local first: string? = nil
     for round_id in COMPATIBLE[mag_id] or {} do
-        table.insert(held, { fact = "held.proto", value = round_id })
+        table.insert(rounds, { fact = "held.proto", value = round_id })
         first = first or round_id
     end
+    local holding = { fact = "held.present", value = "true" }
+    local feeds = if #rounds == 1 then rounds[1] else { any = rounds }
     return {
         id = "load_round",
         gesture = "primary",
         route = "receiver",
         label = "lunatic/tfs:ui.affordance.load_round",
-        held = if #held == 1 then held[1] else { any = held },
+        held = holding,
         uses_held = true,
         suggest = true,
         suggest_implement = { item = first },
-        needs = "lunatic/tfs:lib.firearm.wrong_caliber",
+        refuse = {
+            {
+                when = { all = { holding, { ["not"] = feeds } } },
+                label = "lunatic/tfs:lib.firearm.wrong_caliber",
+            },
+        },
     }
 end
 

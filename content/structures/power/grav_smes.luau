@@ -25,6 +25,7 @@
 -- draw while the field runs (lib/grav_smes_run.luau `SELF_DRAW_W`).
 -- The field is 30 tiles of connected deck at standard gravity, and only
 -- while that draw is met.
+local assembly = require("@lib/assembly")
 local run = require("@lib/grav_smes_run")
 
 local STATUSES = run.STATUSES
@@ -39,14 +40,6 @@ local CASING_METAL = 16
 local SCREEN_GLASS = 1
 
 local MESSAGE = "lunatic/tfs:lib.grav_smes."
-
-local function next_step(label: string): { [string]: any }
-    return { label = label, group = "lunatic/tfs:ui.look.next" }
-end
-
-local function back_step(label: string): { [string]: any }
-    return { label = label, group = "lunatic/tfs:ui.look.back", order = 1 }
-end
 
 -- A step this machine never takes, for the reason `key` says.
 local function refused(key: string): { { [string]: any } }
@@ -171,7 +164,7 @@ local entry: { [string]: any } = {
             sound = "smash",
             at = "welded",
             with = { metal = CLAMP_METAL },
-            hint = next_step("Fit Clamps"),
+            hint = assembly.next("Fit Clamps"),
             secs = 4.0,
             to = "clamped",
             start = "You start fitting the yoke clamps.",
@@ -181,7 +174,7 @@ local entry: { [string]: any } = {
             sound = "smash",
             at = "clamped",
             with = { cable_coil = CABLE_COILS },
-            hint = next_step("Wire"),
+            hint = assembly.next("Wire"),
             secs = 6.0,
             to = "wired",
             start = "You start wiring the machine.",
@@ -191,7 +184,7 @@ local entry: { [string]: any } = {
             sound = "ratchet",
             at = "wired",
             with = { pipe = PIPE_LENGTHS },
-            hint = next_step("Run Pipes"),
+            hint = assembly.next("Run Pipes"),
             secs = 6.0,
             to = "piped",
             start = "You start running the coolant pipes.",
@@ -201,7 +194,7 @@ local entry: { [string]: any } = {
             sound = "smash",
             at = "piped",
             with = { metal = CASING_METAL },
-            hint = next_step("Fit Casing"),
+            hint = assembly.next("Fit Casing"),
             secs = 8.0,
             to = "cased",
             start = "You start fitting the casing plates.",
@@ -211,7 +204,7 @@ local entry: { [string]: any } = {
             sound = "smash",
             at = "cased",
             with = { glass = SCREEN_GLASS },
-            hint = next_step("Install Screen"),
+            hint = assembly.next("Install Screen"),
             refuse = {
                 {
                     when = { ["not"] = { fact = "target.cell", value = tostring(SOUTH_CELL) } },
@@ -226,14 +219,14 @@ local entry: { [string]: any } = {
         {
             at = "welded",
             tool = "welder",
-            hint = back_step("Cut Welds"),
+            hint = assembly.back("Cut Welds"),
             refuse = refused("welded_fast"),
         },
         {
             sound = "crowbar",
             at = "cased",
             tool = "crowbar",
-            hint = back_step("Pry Off Casing"),
+            hint = assembly.back("Pry Off Casing"),
             secs = 8.0,
             yields = { metal = CASING_METAL },
             to = "piped",
@@ -244,7 +237,7 @@ local entry: { [string]: any } = {
             sound = "ratchet",
             at = "piped",
             tool = "wrench",
-            hint = back_step("Unbolt Pipes"),
+            hint = assembly.back("Unbolt Pipes"),
             secs = 6.0,
             yields = { pipe = PIPE_LENGTHS },
             to = "wired",
@@ -255,7 +248,7 @@ local entry: { [string]: any } = {
             sound = "wirecutter",
             at = "wired",
             tool = "cutters",
-            hint = back_step("Cut Wiring"),
+            hint = assembly.back("Cut Wiring"),
             secs = 6.0,
             yields = { cable_coil = CABLE_COILS },
             to = "clamped",
@@ -266,7 +259,7 @@ local entry: { [string]: any } = {
             sound = "smash",
             at = "clamped",
             tool = "screwdriver",
-            hint = back_step("Remove Clamps"),
+            hint = assembly.back("Remove Clamps"),
             secs = 4.0,
             yields = { metal = CLAMP_METAL },
             to = "welded",
@@ -282,7 +275,7 @@ for _, state in ipairs(standby_dresses) do
         sound = "crowbar",
         at = state,
         tool = "crowbar",
-        hint = back_step("Pry Out Screen"),
+        hint = assembly.back("Pry Out Screen"),
         secs = 3.0,
         yields = { glass = SCREEN_GLASS },
         to = "cased",
@@ -296,7 +289,7 @@ for _, state in ipairs(running_dresses) do
     table.insert(entry.transitions, {
         at = state,
         tool = "crowbar",
-        hint = back_step("Pry Out Screen"),
+        hint = assembly.back("Pry Out Screen"),
         refuse = refused("stop_first"),
     })
 end
