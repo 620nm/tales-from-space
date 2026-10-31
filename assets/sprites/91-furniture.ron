@@ -21,6 +21,7 @@
     ],
     sprites: [
         ("table_frame", Dmi("@structures", "table_frame", 0)),
+        ("rack", Dmi("@structures", "rack", 0)),
         // The operating table, off its own sheet rather than the table
         // family's, because tg gives it `smoothing_flags = NONE` and a
         // private icon precisely so it never joins a row

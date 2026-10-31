@@ -273,6 +273,7 @@
   "lunatic/tfs:entity.programming_terminal.name": "programming terminal",
   "lunatic/tfs:entity.pump_fitting.name": "pump fitting",
   "lunatic/tfs:entity.pump.name": "pump",
+  "lunatic/tfs:entity.rack.name": "rack",
   "lunatic/tfs:entity.reinforced_floor.name": "reinforced floor",
   "lunatic/tfs:entity.reinforced_girder.name": "reinforced girder",
   "lunatic/tfs:entity.reinforced_glass_floor.name": "reinforced glass floor",
