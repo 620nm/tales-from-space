@@ -24,7 +24,7 @@ for x = 1, FAR do
     )
 end
 
-local spills = {}
+local spills: { ignition_room.Spill } = {}
 for x = CUT, FAR do
     table.insert(spills, { x = x, y = 1, ethanol_mol = ignition_room.POOL_MOL })
 end

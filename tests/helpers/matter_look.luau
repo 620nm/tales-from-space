@@ -30,7 +30,8 @@ function matter_look.edges(part: SpecSeenMatterPart): (SpecSeenMatterJoins, Spec
     return joins, quadrants
 end
 
--- Every part of one look drawn at a tile, in the order the client draws them.
+-- Every part of one look drawn at a tile, in resolve order; the client
+-- stacks them by layer.
 function matter_look.parts(player: number, x: number, y: number, look: string): { SpecSeenMatterPart }
     local found = {}
     for _, part in ipairs(t.seen_matter(player, x, y)) do
