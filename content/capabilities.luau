@@ -28,6 +28,7 @@ return {
             open = "lunatic/tfs:action.open",
             close = "lunatic/tfs:action.close",
             place = "lunatic/tfs:ui.verb.place",
+            panel = "lunatic/tfs:ui.affordance.view_interface",
         },
     },
     simulation = {

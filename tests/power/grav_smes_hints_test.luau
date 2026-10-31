@@ -90,6 +90,10 @@ assert(row(5, 5, "grav_smes", "Remove Clamps") ~= nil, "and the way back")
 step("cable_coil", 7, "wired")
 assert(row(5, 5, "grav_smes", "Run Pipes") ~= nil, "wired offers the pipes")
 assert(row(5, 5, "grav_smes", "Cut Wiring") ~= nil, "and the way back")
+assert(
+    row(5, 5, "grav_smes", "lunatic/tfs:ui.affordance.view_interface") ~= nil,
+    "the click that opens its panel is named"
+)
 step("pipe", 7, "piped")
 assert(row(5, 5, "grav_smes", "Fit Casing") ~= nil, "piped offers the casing")
 assert(row(5, 5, "grav_smes", "Unbolt Pipes") ~= nil, "and the way back")
