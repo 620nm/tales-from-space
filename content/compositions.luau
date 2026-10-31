@@ -243,6 +243,9 @@ return {
         { id = "standing_mob", parent = "world" },
         { id = "overhead_entities", parent = "world" },
         { id = "gas_haze", parent = "world" },
+        -- Flames draw over the haze and under effects: they are emissive,
+        -- so everything above them on the tile is lit by them.
+        { id = "matter_flame", parent = "world" },
         { id = "effects", parent = "world" },
     },
     components = {

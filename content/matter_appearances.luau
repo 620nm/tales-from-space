@@ -16,8 +16,34 @@ return {
         liquid = "puddle",
         solid = "powder",
         gas = "mist",
+        -- What burns draws by what lies under the flame.
+        burning = { gas = "flame_open", liquid = "flame_pool" },
     },
     profiles = {
+        {
+            key = "flame_open",
+            visual_layer = "matter_flame",
+            phase = "flame",
+            full_kw = 4,
+            alpha = { min = 0.6, max = 1 },
+            light = { range = 4, power = 1.5, color = "#FFB060" },
+            rungs = {
+                { at_kw = 0.3, sprites = { "fire_gas_single_violent" } },
+                { at_kw = 1.5, shell = { still = "fire_gas_smooth_violent" } },
+            },
+        },
+        {
+            key = "flame_pool",
+            visual_layer = "matter_flame",
+            phase = "flame",
+            full_kw = 4,
+            alpha = { min = 0.6, max = 1 },
+            light = { range = 4, power = 1.5, color = "#FFB060" },
+            rungs = {
+                { at_kw = 0.3, sprites = { "fire_grease_single" } },
+                { at_kw = 1.5, shell = { still = "fire_grease_smooth" } },
+            },
+        },
         {
             key = "puddle",
             visual_layer = "matter_ground",
