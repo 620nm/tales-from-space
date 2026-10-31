@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tales from Space — Elemental Matter &amp; Oxidized Fire Technical Workbench</title>
+  <link rel="stylesheet" href="gallery_styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-title">
+      <h1>Elemental Matter &amp; Oxidized Fire Workbench</h1>
+      <span class="topbar-meta" id="header-summary">Loading manifest...</span>
+    </div>
+    <nav class="tabs" id="main-tabs">
+      <button class="active" data-tab="sandbox">1. Spill &amp; Combustion Sandbox</button>
+      <button data-tab="slicer">2. 47-Junction Bitmask Slicer</button>
+      <button data-tab="catalog">3. Complete Asset &amp; Telemetry Catalog</button>
+      <button data-tab="substances">4. Solid Morphology &amp; Substance Matrix</button>
+    </nav>
+  </header>
+
+  <!-- TAB 1: MULTI-LAYER COMPOSITOR & DYNAMIC SPILL SANDBOX -->
+  <section class="tab-view active" id="tab-sandbox">
+    <div class="workbench-grid">
+      <!-- LEFT PANEL: SCENARIOS & DYNAMIC GENERATORS -->
+      <div class="panel">
+        <h2>Composite Scenarios (1-Click Presets)</h2>
+        <div class="btn-stack" id="scenario-buttons">
+          <button data-scenario="campfire">
+            <span>Campfire (Solid Pile + Flame + Smoke)</span>
+            <span class="tag fire">SOLID+FIRE</span>
+          </button>
+          <button data-scenario="grease_fire">
+            <span>Liquid Oil / Grease Pool Fire</span>
+            <span class="tag fire">LIQ+FIRE</span>
+          </button>
+          <button data-scenario="gas_oxidation">
+            <span>Violent Gas Cloud Oxidation (Hydrocarbon)</span>
+            <span class="tag fire">GAS+FIRE</span>
+          </button>
+          <button data-scenario="plasma_firestorm">
+            <span>Plasma Cloud Deflagration (Tintable Fire)</span>
+            <span class="tag fire">PLASMA</span>
+          </button>
+          <button data-scenario="spill_balance">
+            <span>Balanced Large Water Spill (Pool/Puddle/Spill)</span>
+            <span class="tag info">1G SPILL</span>
+          </button>
+          <button data-scenario="smoke_gradient">
+            <span>Billowing Gas &amp; Smoke Density Gradient</span>
+            <span class="tag info">MIST&rarr;CLOUD</span>
+          </button>
+          <button data-scenario="zerog_cabin">
+            <span>Zero-G Cabin Droplets &amp; Mist</span>
+            <span class="tag info">0G SPHERES</span>
+          </button>
+          <button data-scenario="flour_mill">
+            <span>Spilled Flour Dusting + Pile (Ignitable)</span>
+            <span class="tag">POWDER</span>
+          </button>
+          <button data-scenario="tunnel_debris">
+            <span>Jagged Tunnel Debris + Shards + Miasma</span>
+            <span class="tag">RUBBLE</span>
+          </button>
+          <button data-scenario="farm_plot">
+            <span>Tilled Farm Plot (Dry vs Irrigated Soil)</span>
+            <span class="tag ok">SOIL</span>
+          </button>
+        </div>
+
+        <h3>Click-on-Grid Generator Tool</h3>
+        <div class="field-row">
+          <label for="tool-mode">Active Tool</label>
+          <select id="tool-mode">
+            <option value="inspect">Inspect Tile Only</option>
+            <option value="pour_liquid" selected>Pour Dynamic Liquid Spill (mL)</option>
+            <option value="release_gas">Release Dynamic Gas Plume (mol)</option>
+            <option value="dump_solid">Deposit Solid Matter / Soil</option>
+            <option value="ignite">Ignite / Oxidize Fuel on Tile</option>
+            <option value="toggle_wall">Toggle Bulkhead Wall (Flow Barrier)</option>
+            <option value="erase_tile">Erase Tile Matter &amp; Fire</option>
+          </select>
+        </div>
+
+        <div id="tool-params-liquid" class="tool-params">
+          <div class="field-row">
+            <label>Spill Volume</label>
+            <input type="range" id="liq-volume" min="60" max="32000" step="100" value="14000" />
+            <span class="mono small" id="liq-volume-val">14000 mL</span>
+          </div>
+          <div class="field-row">
+            <label for="liq-viscosity">Spread / Viscosity</label>
+            <select id="liq-viscosity">
+              <option value="0.58">Low Viscosity (Water / Fuel)</option>
+              <option value="0.44" selected>Medium (Blood / Cooking Oil)</option>
+              <option value="0.28">High Viscosity (Crude / Sludge)</option>
+            </select>
+          </div>
+          <div class="preset-pills" id="liq-tint-pills"></div>
+        </div>
+
+        <div id="tool-params-gas" class="tool-params" style="display:none;">
+          <div class="field-row">
+            <label>Plume Moles</label>
+            <input type="range" id="gas-moles" min="2" max="140" step="2" value="68" />
+            <span class="mono small" id="gas-moles-val">68 mol</span>
+          </div>
+          <div class="field-row">
+            <label for="gas-agitation">Agitation State</label>
+            <select id="gas-agitation">
+              <option value="still">Still (Frozen Suspended)</option>
+              <option value="gentle" selected>Gentle (Slow Convection Drift)</option>
+              <option value="stirred">Stirred (Rapidly Turbulent)</option>
+            </select>
+          </div>
+          <div class="preset-pills" id="gas-tint-pills"></div>
+        </div>
+
+        <div id="tool-params-solid" class="tool-params" style="display:none;">
+          <div class="field-row">
+            <label for="solid-kind">Morphology</label>
+            <select id="solid-kind">
+              <option value="flour_smooth">Spilled Flour / Powder (Multi-Tile Smooth)</option>
+              <option value="flour_single">Spilled Flour Drift (Single Tile)</option>
+              <option value="debris_smooth">Jagged Tunnel Debris (Multi-Tile Smooth)</option>
+              <option value="debris_single">Jagged Rock Debris (Single Tile)</option>
+              <option value="soil_smooth">Uncultivated Soil Bed (Multi-Tile Smooth)</option>
+              <option value="soil_single">Loose Soil Patch (Single Tile)</option>
+              <option value="soil_tilled">Tilled Farm Plot Furrows (Multi-Tile Smooth)</option>
+              <option value="pile_large">Faceted Solid Pile (Large)</option>
+              <option value="pile_small">Faceted Solid Pile (Small)</option>
+              <option value="sprinkles">Crystalline Sprinkles</option>
+              <option value="scattering">Chiseled Mineral Scattering</option>
+              <option value="shards_large">Sharp Crystal Shards (Dense)</option>
+              <option value="shards_small">Sharp Crystal Shards (Sparse)</option>
+            </select>
+          </div>
+          <div class="field-row">
+            <label>Brush Radius</label>
+            <input type="range" id="solid-radius" min="0" max="3" step="1" value="1" />
+            <span class="mono small" id="solid-radius-val">r=1</span>
+          </div>
+          <div class="preset-pills" id="solid-tint-pills"></div>
+        </div>
+
+        <div class="field-row">
+          <label for="active-tint-color">Multiply Tint (sRGB)</label>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <input type="color" id="active-tint-color" value="#4ba3e3" />
+            <input type="text" id="active-tint-hex" class="mono" value="#4BA3E3" style="width:78px;" />
+          </div>
+        </div>
+
+        <div class="btn-grid" style="margin-top:8px;">
+          <button id="btn-ignite-all">Ignite All Fuels</button>
+          <button id="btn-extinguish">Extinguish Fire</button>
+          <button id="btn-random-spill" class="primary">Random Spill + Plume</button>
+          <button id="btn-clear-grid" class="danger">Clear All Tiles</button>
+        </div>
+
+        <h3>Generator &amp; Physics Log</h3>
+        <div class="log-box" id="physics-log">Ready.</div>
+      </div>
+
+      <!-- CENTER PANEL: LIVE MULTI-LAYER GRID CANVAS -->
+      <div class="panel canvas-stage">
+        <div class="toolbar-inline">
+          <label>Gravity:
+            <select id="env-gravity">
+              <option value="1g" selected>1g Deck (Hydrostatic Films)</option>
+              <option value="0g">0g Microgravity (Spherical Droplets)</option>
+            </select>
+          </label>
+          <label>Deck Bg:
+            <select id="env-bg">
+              <option value="plating" selected>Station Plating</option>
+              <option value="floor">Station Floor Tile</option>
+              <option value="rock_floor">Mined Tunnel Rock</option>
+              <option value="reinforced_floor">Engine Deck</option>
+              <option value="dark">Dark (#151824)</option>
+              <option value="light">Light Paper (#F1EAD4)</option>
+              <option value="checker">Alpha Checker</option>
+            </select>
+          </label>
+          <label>Scale:
+            <select id="env-scale">
+              <option value="2">2x (64px/tile)</option>
+              <option value="3" selected>3x (96px/tile)</option>
+              <option value="4">4x (128px/tile)</option>
+            </select>
+          </label>
+          <label>Speed:
+            <select id="env-speed">
+              <option value="0.25">0.25x</option>
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1.0x</option>
+              <option value="1.5">1.5x</option>
+            </select>
+          </label>
+          <button id="btn-anim-toggle" class="active">Playing</button>
+          <button id="btn-anim-step">Step +100ms</button>
+        </div>
+
+        <canvas id="sandbox-canvas" class="pixel" width="960" height="768"></canvas>
+
+        <div class="toolbar-inline">
+          <span class="small mono">Render Stack (Bottom &rarr; Top):</span>
+          <label><input type="checkbox" id="vis-ground" checked /> 0:Turf</label>
+          <label><input type="checkbox" id="vis-decal" checked /> 1:Scorch</label>
+          <label><input type="checkbox" id="vis-solid" checked /> 2:Solids</label>
+          <label><input type="checkbox" id="vis-liquid" checked /> 3:Liquids</label>
+          <label><input type="checkbox" id="vis-fire" checked /> 4:Fire</label>
+          <label><input type="checkbox" id="vis-gas" checked /> 5:Gasses</label>
+          <span style="border-left:1px solid var(--border);height:14px;"></span>
+          <label><input type="checkbox" id="vis-grid" checked /> Tile Grid</label>
+          <label><input type="checkbox" id="vis-junctions" /> Junction IDs</label>
+          <label><input type="checkbox" id="vis-quadrants" /> 16x16 Cuts</label>
+        </div>
+        <div class="small mono" id="canvas-status-line">
+          Click any tile to apply active generator tool; hover or click to inspect exact layer composition &amp; 47-junction quadrant cuts.
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: TECHNICAL INSPECTOR ("WHAT'S GOING ON") -->
+      <div class="panel">
+        <h2>Technical Tile Readout <span class="mono" id="insp-coords">(x=4, y=4)</span></h2>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+          <canvas id="insp-tile-canvas" class="pixel" width="128" height="128"></canvas>
+          <div class="small" id="insp-summary">
+            Hover or click a tile on the grid to inspect its physical values, runtime sRGB byte multiply tinting, and 47-junction bitmask quadrant assembly.
+          </div>
+        </div>
+
+        <h3>Active Layer Stack (Bottom &rarr; Top)</h3>
+        <table class="kv-table" id="insp-layers-table">
+          <thead>
+            <tr>
+              <th>Layer</th>
+              <th>Sprite ID / Frame</th>
+              <th>Tint / Mode</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <h3>47-Junction Bitmask &amp; Quadrant Cut</h3>
+        <div id="insp-junction-box" class="mono small">No smooth layer on selected tile.</div>
+
+        <h3>Physical State &amp; Engine Color Math</h3>
+        <table class="kv-table" id="insp-physics-table">
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: 47-JUNCTION BITMASK SLICER -->
+  <section class="tab-view" id="tab-slicer">
+    <div class="panel" style="margin-bottom:12px;">
+      <h2>Interactive 5-Block Strip &rarr; 47-Junction Slicer (`diagonal_32x32` / `BitmaskSlice`)</h2>
+      <div class="toolbar-inline" style="justify-content:flex-start;">
+        <label>Smooth Strip Asset:
+          <select id="slicer-asset-select"></select>
+        </label>
+        <label>Multiply Tint:
+          <input type="color" id="slicer-tint-picker" value="#4ba3e3" />
+        </label>
+        <button id="slicer-reset-tint">Neutral (#FFFFFF)</button>
+        <label>Backdrop:
+          <select id="slicer-bg-select">
+            <option value="plating" selected>Station Plating</option>
+            <option value="dark">Dark (#151824)</option>
+            <option value="light">Light (#F1EAD4)</option>
+            <option value="checker">Checker</option>
+          </select>
+        </label>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;margin-top:12px;">
+        <div>
+          <h3>Source 5-Block Strip (160&times;32 @ 3x = 480&times;96)</h3>
+          <canvas id="slicer-strip-canvas" class="pixel" width="480" height="96"></canvas>
+          <div class="small mono" style="margin-top:4px;">
+            Block 0: convex (!v&amp;!h) | Block 1: vertical (v&amp;!h) | Block 2: horizontal (!v&amp;h) | Block 3: concave (v&amp;h&amp;!d) | Block 4: flat (v&amp;h&amp;d)
+          </div>
+        </div>
+
+        <div>
+          <h3>Toggle 8 Neighbors</h3>
+          <div class="neighbor-pad" id="slicer-neighbor-pad">
+            <button data-bit="128">NW<br/>128</button>
+            <button data-bit="1" class="active">N<br/>1</button>
+            <button data-bit="16">NE<br/>16</button>
+            <button data-bit="8">W<br/>8</button>
+            <button disabled style="background:#2b354d;color:#fff;">SELF</button>
+            <button data-bit="4" class="active">E<br/>4</button>
+            <button data-bit="64">SW<br/>64</button>
+            <button data-bit="2" class="active">S<br/>2</button>
+            <button data-bit="32" class="active">SE<br/>32</button>
+          </div>
+        </div>
+
+        <div>
+          <h3>Assembled Tile (4x = 128&times;128)</h3>
+          <div style="display:flex;gap:12px;align-items:center;">
+            <canvas id="slicer-result-canvas" class="pixel" width="128" height="128"></canvas>
+            <div class="mono small" id="slicer-formula-readout"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>All 47 Reachable Canonical Junction States (Click any cell to load into Neighbor Pad)</h2>
+      <div class="junction-sheet" id="slicer-47-grid"></div>
+    </div>
+  </section>
+
+  <!-- TAB 3: COMPLETE ASSET & GATE TELEMETRY CATALOG -->
+  <section class="tab-view" id="tab-catalog">
+    <div class="panel">
+      <h2>Authored `.aseprite` Asset &amp; Gate Telemetry Catalog</h2>
+      <div class="toolbar-inline" style="justify-content:flex-start;">
+        <label>Domain:
+          <select id="cat-filter-domain">
+            <option value="all" selected>All Domains</option>
+            <option value="gas">Gasses</option>
+            <option value="liquid">Liquids &amp; Zero-G</option>
+            <option value="solid">Solids &amp; Soil</option>
+            <option value="fire">Oxidized Fire</option>
+          </select>
+        </label>
+        <label>Geometry:
+          <select id="cat-filter-kind">
+            <option value="all" selected>All (Single + Smooth)</option>
+            <option value="single">Single Tile (32&times;32)</option>
+            <option value="smooth_strip">Smooth Strip (160&times;32 &rarr; 47)</option>
+          </select>
+        </label>
+        <label>Preview Backdrop:
+          <select id="cat-bg-mode">
+            <option value="plating" selected>Station Plating</option>
+            <option value="dark">Dark (#151824)</option>
+            <option value="light">Light (#F1EAD4)</option>
+            <option value="checker">Alpha Checker</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="cat-use-tint" checked /> Apply Sample Multiply Tint on Colorable Matter</label>
+      </div>
+      <div class="catalog-grid" id="catalog-cards"></div>
+    </div>
+  </section>
+
+  <!-- TAB 4: SOLID MORPHOLOGY & SUBSTANCE MATRIX -->
+  <section class="tab-view" id="tab-substances">
+    <div class="panel">
+      <h2>Solid Matter Morphology Research &amp; `tales-from-space` Substance Tint Matrix</h2>
+      <p class="small">
+        All Matter assets are authored in multi-step neutral greyscale (`R == G == B` swatches from <code>tales-from-space.gpl</code>, passing <code>dominant_rgb_share &lt; 0.85</code>) and tinted at runtime via sRGB byte multiplication <code>floor((px * tint + 127) / 255)</code> (<code>lunatic/docs/COLOR.md</code>). Click <strong>Test in Sandbox</strong> on any row to load that substance into the generator.
+      </p>
+      <table class="kv-table" id="substances-table">
+        <thead>
+          <tr>
+            <th>Substance</th>
+            <th>sRGB Tint</th>
+            <th>Morphology Class</th>
+            <th>Primary Asset</th>
+            <th>Live 2x Preview</th>
+            <th>Physical &amp; Visual Notes</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <script src="gallery_data.js"></script>
+  <script src="gallery_app.js"></script>
+</body>
+</html>
