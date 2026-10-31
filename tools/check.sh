@@ -643,8 +643,9 @@ if [ -z "$BAKE" ]; then
 fi
 
 # Content, then every map, then the sprite names, all read back out of
-# this pack's own bake.
+# this pack's own bake. `hints` fails a click a player cannot see coming.
 gated "$BAKE" content server test "$PACK" --load-only --web "$PACK_WEB"
+gated "$BAKE" hints server hints --strict "$PACK"
 gated "$BAKE" maps map_fixture_check
 gated "$BAKE" lint-assets server lint-assets "$PACK" --web "$PACK_WEB"
 

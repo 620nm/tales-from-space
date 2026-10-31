@@ -9,10 +9,11 @@ Available actions precede unavailable actions, followed by the opted-in
 Other interactions suggestions. Within each section, authored `order`
 takes priority over gesture order. `presentation_group` names a catalog key
 for a noninteractive group heading. The style tokens in
-`ui/overlay/actions.ts` map to safe classes in `ui/theme-overlay.ts`.
+`ui/overlay/actions.ts` map to safe classes in `ui/theme/overlay.ts`.
 
 Each action owns its implement sprite, accessible name, requirements and
-unavailable reason. A row without an implement stays key-only, even when
+unavailable reason. A short reason reads inline, `Label (Reason)`; a long one
+takes the second line. At most four suggestions show. A row without an implement stays key-only, even when
 another row on the same mouse button uses the held tool. Suggested tools
 are representative sprites; available rows use the actual held sprite.
 Requirement labels name the item, including a required condition such as

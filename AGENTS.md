@@ -121,6 +121,10 @@ repository's gitignored `target/`, never the engine's served root.
   is the as-built list of record and `idl/v1.json` declares their names.
   An idea that seems to need per-tick native execution becomes a native
   system with data-driven knobs — never a faster handler.
+- A new interaction hints by default: a scripted click gets an `actions` row,
+  a step that cannot run says why with `refuse` or `needs`, and hiding one is a
+  decision (`hidden = "reason"`). `lunatic-server hints --strict` is the gate;
+  contract in the engine's `docs/luau-api/action-declarations.md`.
 - When content needs the engine, ask for ONE generic primitive (a guard,
   query, command, permission or notification), never the feature: it
   serves another kind of game too, has a generic name with no TfS or tg
