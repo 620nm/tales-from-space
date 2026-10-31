@@ -20,44 +20,12 @@ local matter_look = require("@helpers/matter_look")
 
 t.set_breathing(false)
 
-local ROOM = [==[(
-    name: "spill ladder",
-    legend: {
-        ' ': (composition: (substrate: Named("space"))),
-        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-    },
-    levels: [
-        (
-            rows: [
-                "###########",
-                "#.........#",
-                "#.........#",
-                "#.........#",
-                "#.........#",
-                "#.........#",
-                "###########",
-            ],
-            structures: [(1, 1, "player_spawn")],
-            painted: [(5, 3, "spill")],
-        ),
-    ],
-    blends: {
-        "spill": (rows: [%s, ("o2", 26.19), ("n2", 98.53)], temperature_k: 293.15, amount: total),
-    },
-)]==]
-
+-- A sealed room with `rows` painted on the tile (5, 3).
 local function spill(rows: string): number
-    t.world(ROOM:format(rows), 0)
-    local p = t.join()
-    t.tick()
-    return p
+    return matter_look.room({ { x = 5, y = 3, rows = rows } })
 end
 
--- Millilitres of water: 55.51 mol a litre.
-local function water(ml: number): string
-    return string.format('("water", %.4f)', ml * 0.05551)
-end
+local water = matter_look.water
 
 local function top_water(p: number, x: number, y: number): number
     return matter_look.top_rung(p, x, y, "puddle")
