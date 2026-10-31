@@ -1,5 +1,7 @@
 local physical_profiles = require("@lib/physical_profiles")
 local item_actions = require("@lib/item_actions")
+local action_rules = require("@lib/action_rules")
+local ignition = require("@lib/ignition")
 
 -- A torch does not understand every single thing it is capable of
 -- doing. It knows it is welding equipment and that it burns fuel to do
@@ -59,6 +61,12 @@ local content = {
     sealed = true,
 }
 
+-- A lit torch held to a deck lights what burns there. Construction
+-- targets answer a welder first, so welding on plating is unchanged.
+content.actions = {
+    action_rules.primary("ignite", action_rules.any_deck(), action_rules.fact("held.state", "lit")),
+}
+
 if sim ~= nil then
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
@@ -84,6 +92,7 @@ if sim ~= nil then
                 return true
             end
             sim.set_flame(self, true)
+            ignition.tend_flame(self, user)
             sim.sound.play({ asset = "lunatic/tfs:sound/welder_activate", at = ev.at })
             sim.message.send({
                 recipient = user,
@@ -93,6 +102,9 @@ if sim ~= nil then
         return true
     end
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, use)
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        return ignition.act(ev.subject, ev.actor, ev)
+    end)
     item_actions.attach(script_definition, {
         id = content.id,
         sprite = content.sprite,

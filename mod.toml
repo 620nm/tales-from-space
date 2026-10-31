@@ -37,6 +37,7 @@ native_edges = [
     "matter.rupture",
     "matter.ignition",
     "matter.extinguished",
+    "flow.segment_split",
     "matter.rider",
     "matter.command",
     "body.threshold",
