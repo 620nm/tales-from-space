@@ -127,6 +127,14 @@ return {
     },
     category = "power",
     script = "light",
+    actions = {
+        {
+            id = "check",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:ui.affordance.check_light",
+        },
+    },
     examine = {
         flavor = "A tube in a bracket. Somebody has to change these.",
     },

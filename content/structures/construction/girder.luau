@@ -1,3 +1,18 @@
+local anchorable = require("@lib/anchorable")
+
+local wrench_anchor, wrench_unanchor = anchorable.pair({
+    sound = "smash",
+    secs = 4.0,
+    anchor = {
+        start = "You start securing the girder.",
+        done = "The girder is bolted to the deck.",
+    },
+    unanchor = {
+        start = "You start unsecuring the girder.",
+        done = "The girder shifts loose of its bolts.",
+    },
+})
+
 -- The first stage of every wall (tg's girders.dm). Two sheets stand one
 -- up; two more plate it into hull; a torch cuts it back down to exactly
 -- what it cost. Both numbers below are the only copy of themselves --
@@ -70,26 +85,8 @@ return {
             start = "You start reinforcing the girder.",
             done = "The plasteel struts into the frame.",
         },
-        {
-            sound = "smash",
-            at = "anchored",
-            tool = "wrench",
-            hint = { id = "unanchor", label = "lunatic/tfs:ui.affordance.unanchor" },
-            secs = 4.0,
-            to = "displaced",
-            start = "You start unsecuring the girder.",
-            done = "The girder shifts loose of its bolts.",
-        },
-        {
-            sound = "smash",
-            at = "displaced",
-            tool = "wrench",
-            hint = { id = "anchor", label = "lunatic/tfs:ui.affordance.anchor" },
-            secs = 4.0,
-            to = "anchored",
-            start = "You start securing the girder.",
-            done = "The girder is bolted to the deck.",
-        },
+        wrench_unanchor,
+        wrench_anchor,
         -- No `at`: a torch cuts one apart bolted or not (tg's
         -- welder_act asks no state at all).
         {

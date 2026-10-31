@@ -42,14 +42,7 @@ if sim ~= nil then
         function(ev)
             local self, user, x, y = ev.subject, ev.actor, ev.at.x, ev.at.y
             if not sim.is_powered(self) then
-                sim.message.send({
-                    recipient = user,
-                    message = sim.msg(
-                        "lunatic/tfs:fixtures.pipe_dispenser.the_dispenser_is_dark_and",
-                        {}
-                    ),
-                })
-                return true
+                return { refused = "lunatic/tfs:fixtures.pipe_dispenser.the_dispenser_is_dark_and" }
             end
             ui.open({ viewer = user, owner = self })
             return true

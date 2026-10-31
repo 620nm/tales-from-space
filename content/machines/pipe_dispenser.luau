@@ -24,7 +24,7 @@
 -- both mirror images are on the shelf.
 --
 -- The group order below is the window's stable order between rounds.
-return {
+local content = {
     id = "pipe_dispenser",
     visual_layer = "fixture",
     energy_network = "power",
@@ -163,3 +163,35 @@ return {
         },
     },
 }
+
+-- The fittings it takes back are the ones it stocks (`sim.stocks`), so the
+-- held condition is read off `vends`: groups of eight keep the tree inside
+-- the condition bounds (the engine's docs/luau-api/action-declarations.md:
+-- depth 4, 32 nodes); a shelf past 27 entries needs a tag instead.
+local stocked = {}
+for _, entry in ipairs(content.vends) do
+    table.insert(stocked, { fact = "held.proto", value = entry.item })
+end
+local groups = {}
+for first = 1, #stocked, 8 do
+    table.insert(groups, { any = table.move(stocked, first, math.min(first + 7, #stocked), 1, {}) })
+end
+
+content.actions = {
+    {
+        id = "browse",
+        gesture = "primary",
+        route = "receiver",
+        label = "lunatic/tfs:ui.affordance.browse_shelf",
+    },
+    {
+        id = "return_fitting",
+        gesture = "primary",
+        route = "receiver",
+        label = "lunatic/tfs:ui.affordance.return_fitting",
+        held = { any = groups },
+        uses_held = true,
+    },
+}
+
+return content

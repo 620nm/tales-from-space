@@ -1,8 +1,11 @@
 -- A powered paper copier. Resource quantities and the source sheet are
 -- native machine state; the fixture only names the player-facing actions.
 -- tg code/modules/paperwork/photocopier.dm:60-65, :140-152, :281-379.
+local printing = require("@lib/printing")
+
 return {
     id = "photocopier",
+    actions = printing.actions(),
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.photocopier.name",

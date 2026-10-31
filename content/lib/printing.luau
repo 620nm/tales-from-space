@@ -58,6 +58,35 @@ function printing.costs(): { { resource: string, amount: number } }
     }
 end
 
+-- The clicks a paper machine's `interaction.use` answers: an empty hand opens
+-- the panel; a toner source, a paper source or a sheet is loaded.
+function printing.actions(): { { [string]: any } }
+    local function loading(id: string, label: string, tag: string, item: string)
+        return {
+            id = id,
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:ui.affordance." .. label,
+            held = { fact = "held.tag", value = tag },
+            uses_held = true,
+            suggest = true,
+            suggest_implement = { item = item },
+        }
+    end
+    return {
+        {
+            id = "open",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:ui.affordance.view_interface",
+            held = { fact = "held.present", value = "false" },
+        },
+        loading("refill_toner", "refill_toner", "toner_source", "toner_cartridge"),
+        loading("refill_paper", "refill_paper", "paper_source", "paper_bin"),
+        loading("insert_original", "insert_original", "paper", "paper"),
+    }
+end
+
 local function stock(machine: Handle, id: string): number
     for _, row in ipairs(sim.resources.read(machine)) do
         if row.id == id then

@@ -1,3 +1,4 @@
+local dice = require("@lib/dice")
 local physical_profiles = require("@lib/physical_profiles")
 -- Ten sides that read as tens. tg: "Works better for d100 rolls than a
 -- golf ball." (`/obj/item/dice/d00`, code/game/objects/items/dice.dm:
@@ -50,6 +51,7 @@ local content = {
     id = "d00",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
+    actions = dice.actions(),
     name_label = "lunatic/tfs:entity.d00.name",
     name = "d00",
     sprite = "d00",

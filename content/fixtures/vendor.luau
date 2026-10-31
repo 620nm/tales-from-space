@@ -35,11 +35,7 @@ if sim ~= nil then
         function(ev)
             local self, user = ev.subject, ev.actor
             if not sim.is_powered(self) then
-                sim.message.send({
-                    recipient = user,
-                    message = sim.msg("lunatic/tfs:fixtures.vendor.the_machine_is_dark_and", {}),
-                })
-                return true
+                return { refused = "lunatic/tfs:fixtures.vendor.the_machine_is_dark_and" }
             end
             -- Clicking the machine opens its content-declared clean-room
             -- shelf; dispensing happens through its exact action envelopes.

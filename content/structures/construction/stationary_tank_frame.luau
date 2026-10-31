@@ -1,3 +1,20 @@
+local anchorable = require("@lib/anchorable")
+
+-- tg's `default_unfasten_wrench(user, tool, time = 0.5 SECONDS)`
+-- (tank.dm:610-613), both ways.
+local wrench_anchor, wrench_unanchor = anchorable.pair({
+    sound = "smash",
+    secs = 0.5,
+    anchor = {
+        start = "You start bolting the frame down.",
+        done = "The frame is bolted to the deck.",
+    },
+    unanchor = {
+        start = "You start unbolting the frame.",
+        done = "The frame shifts loose of its bolts.",
+    },
+})
+
 -- The skeleton a pressure tank is welded out of (tg's
 -- /obj/structure/tank_frame, code/modules/atmospherics/machinery/
 -- components/tank.dm:560-697). Four sheets stand one up; twelve more
@@ -61,26 +78,8 @@ return {
     transitions = {
         -- tg's `default_unfasten_wrench(user, tool, time = 0.5 SECONDS)`
         -- (tank.dm:610-613), both ways.
-        {
-            sound = "smash",
-            at = "displaced",
-            tool = "wrench",
-            hint = { id = "anchor", label = "lunatic/tfs:ui.affordance.anchor" },
-            secs = 0.5,
-            to = "anchored",
-            start = "You start bolting the frame down.",
-            done = "The frame is bolted to the deck.",
-        },
-        {
-            sound = "smash",
-            at = "anchored",
-            tool = "wrench",
-            hint = { id = "unanchor", label = "lunatic/tfs:ui.affordance.unanchor" },
-            secs = 0.5,
-            to = "displaced",
-            start = "You start unbolting the frame.",
-            done = "The frame shifts loose of its bolts.",
-        },
+        wrench_anchor,
+        wrench_unanchor,
         -- tg's `screwdriver_act_secondary`: 1 second, and the bare
         -- frame comes apart into what it cost (tank.dm:615-624, and
         -- `atom_deconstruct` at :588-591 drops the four sheets).

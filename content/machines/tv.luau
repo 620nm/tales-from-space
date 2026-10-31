@@ -1,6 +1,14 @@
 -- Furniture with opinions.
 return {
     id = "tv",
+    actions = {
+        {
+            id = "watch",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:ui.affordance.watch_tv",
+        },
+    },
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.tv.name",

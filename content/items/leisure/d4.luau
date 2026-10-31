@@ -1,3 +1,4 @@
+local dice = require("@lib/dice")
 local physical_profiles = require("@lib/physical_profiles")
 -- Four sides. tg calls it "the nerd's caltrop" and means it literally:
 -- `/obj/item/dice/d4` fits a caltrop component that does 1-4 brute to
@@ -23,6 +24,7 @@ local content = {
     id = "d4",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
+    actions = dice.actions(),
     name_label = "lunatic/tfs:entity.d4.name",
     name = "d4",
     sprite = "d4",
