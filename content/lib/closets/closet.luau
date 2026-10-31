@@ -21,13 +21,10 @@ type FixtureExternalRemoval = {
 
 local FIXTURE_MAP_SOURCE = "closet_cut_test"
 local FIXTURE_MAP_LOGICAL = "lunatic/tfs:closet_cut_test"
-local ID_PROTOTYPES: { [string]: boolean } = {
-	id_assistant = true,
-	id_medical = true,
-	id_engineering = true,
-	id_security = true,
-	id_captain = true,
-}
+local ID_PROTOTYPES: { [string]: boolean } = {}
+for _, id in ipairs(data.id_prototypes) do
+	ID_PROTOTYPES[id] = true
+end
 
 local function knock_off_riders(actor: Handle, support: Handle): ()
 	local actor_tile = actor.tile

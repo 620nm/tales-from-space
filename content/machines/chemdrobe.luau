@@ -23,6 +23,14 @@ return {
     ui = { modules = { "shelf" }, opens_on_click = false },
     dense = true,
     script = "vendor",
+    actions = {
+        {
+            id = "browse",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:ui.affordance.browse_shelf",
+        },
+    },
     corded = true,
     -- tg's product_ads string (wardrobes.dm:604).
     ad = "Our clothes are 0.5% more resistant to acid spills! Get yours now!",

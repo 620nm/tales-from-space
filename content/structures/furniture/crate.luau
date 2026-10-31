@@ -7,6 +7,7 @@
 -- stay omitted (`crates.dm:28-29,48-54`). Bodies use the base closet's capacity
 -- (`code/game/objects/structures/crates_lockers/closets.dm:54-56,575-592`).
 local closet_data = require("@lib/closets/data")
+local closet_rows = require("@lib/closets/rows")
 
 return {
     id = "crate",
@@ -30,6 +31,7 @@ return {
     state_sprites = { open = "crate_open" },
     climbable = { elevation = 14 },
     gestures = { "alt_primary" },
+    actions = closet_rows.actions("crate.secure"),
     interaction_labels = {
         alt_primary = { label = "lunatic/tfs:action.climb" },
     },

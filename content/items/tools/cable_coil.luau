@@ -66,6 +66,7 @@ local content = {
 }
 
 content.actions = { action_rules.primary("lay_cable", action_rules.exposed_deck("power")) }
+table.insert(content.actions, action_rules.self_use("set_layer"))
 
 if sim ~= nil then
     -- The tile-address spelling of `sim.place_network`, named so the

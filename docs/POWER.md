@@ -36,9 +36,6 @@ A utility outlet port draws on no class: it passes whatever its cable
 carries. tg's high-volume vent is EQUIP (`vent_pump.dm:362-364`) and is
 not shipped. `air_sensor` declares no network and draws nothing.
 
-A prototype under `structures/` spells its own class word, because
-`lib/` is not published into the structure registry's sandbox.
-
 ## Between levels
 
 Cable never joins across levels on its own, whatever lies between (glass,

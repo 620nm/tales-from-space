@@ -59,6 +59,11 @@ turn(6, 4, "grav_emitter", 2)
 -- Unanchored emitter.
 bench.hold(p, "welder", NEAR)
 weld_says("The west emitter must be bolted down.")
+-- The loose part itself answers too.
+local _ = t.messages(p)
+t.click(p, 4, 4, t.target_at(p, 4, 4, "grav_emitter"))
+t.run_ticks(4)
+assert(bench.told(p, "The west emitter must be bolted down."), "the loose part says why")
 wrench(4, 4, "grav_emitter")
 
 -- A ring still on its cart.

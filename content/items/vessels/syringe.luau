@@ -118,6 +118,7 @@ content.actions = {
     action_rules.attack("draw_body", action_rules.fact("held.mode", 0), "draw"),
     action_rules.attack("inject_body", action_rules.fact("held.mode", 1), "inject"),
 }
+table.insert(content.actions, action_rules.self_use("set_syringe_mode"))
 
 if sim ~= nil then
     local script_definition =

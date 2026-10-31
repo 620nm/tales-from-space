@@ -49,11 +49,6 @@ return {
     -- anything, no hub offers one as a candidate, and a tube is on a
     -- room's network because it is screwed into that room's ceiling.
     --
-    -- The class word is spelled out here rather than shared for the
-    -- vent's reason: `lib/` is not published into the structure
-    -- registry's sandbox, so a structure reading a shared table reads
-    -- nil at prototype time (structures/vent.luau,
-    -- structures/air_alarm.luau).
     link = {
         network_interface = true,
         role = "endpoint",
@@ -129,10 +124,34 @@ return {
     script = "light",
     actions = {
         {
+            id = "change_tube",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:ui.affordance.change_tube",
+            held = {
+                any = {
+                    { fact = "held.proto", value = "light_tube" },
+                    { fact = "held.proto", value = "light_replacer" },
+                },
+            },
+            uses_held = true,
+            suggest_implement = { item = "light_tube" },
+        },
+        {
             id = "check",
             gesture = "primary",
             route = "receiver",
             label = "lunatic/tfs:ui.affordance.check_light",
+            held = { fact = "held.present", value = "false" },
+        },
+        -- A construction tool skips the swing and reaches the same answer.
+        {
+            id = "check_held",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:ui.affordance.check_light",
+            held = { fact = "held.present", value = "true" },
+            visible = false,
         },
     },
     examine = {

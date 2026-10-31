@@ -50,6 +50,7 @@ local content = {
 }
 
 content.actions = { action_rules.primary("paint_pipe", action_rules.network("pipe")) }
+table.insert(content.actions, action_rules.self_use("set_color"))
 
 if sim ~= nil then
     local script_definition =

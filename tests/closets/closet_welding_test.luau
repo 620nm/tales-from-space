@@ -31,9 +31,22 @@ t.world(
 
 local player = t.join("engineer")
 t.run_ticks(2)
+
+-- Whether the hover card names this click, ready to run.
+local function offers(x: number, y: number, id: string, label: string): boolean
+    local target = assert(t.target_at(player, x, y, id), "a target to hover")
+    for _, hint in ipairs(t.action_hints(player, target)) do
+        if hint.label.key == label then
+            return hint.available
+        end
+    end
+    return false
+end
+
 t.click(player, 3, 2, assert(t.target_at(player, 3, 2, "welder")))
 t.run_ticks(2)
 assert(t.hands(player).held == "welder", "picked up the unlit welder")
+assert(offers(4, 3, "crate", "lunatic/tfs:ui.verb.welder"), "the card offers the weld")
 t.click(player, 4, 3, assert(t.target_at(player, 4, 3, "crate")))
 t.run_seconds(4.0)
 assert(structure_state(4, 3) == "closed", "an unlit welder does not change the crate")
@@ -49,6 +62,14 @@ t.click(player, 4, 3)
 t.run_ticks(2)
 t.click(player, 3, 2, assert(t.target_at(player, 3, 2, "id_captain")))
 t.run_ticks(2)
+assert(
+    offers(4, 2, "crate.secure", "lunatic/tfs:ui.affordance.toggle_lock"),
+    "the card offers the lock"
+)
+assert(
+    not offers(4, 3, "crate", "lunatic/tfs:ui.affordance.toggle_lock"),
+    "a plain crate has none"
+)
 t.click(player, 4, 2, assert(t.target_at(player, 4, 2, "crate.secure")))
 t.run_ticks(2)
 assert(structure_state(4, 2) == "closed", "the command ID unlocks without opening")

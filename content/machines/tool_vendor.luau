@@ -25,6 +25,14 @@ return {
     ui = { modules = { "shelf" }, opens_on_click = false },
     dense = true,
     script = "vendor",
+    actions = {
+        {
+            id = "browse",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:ui.affordance.browse_shelf",
+        },
+    },
     corded = true,
     ad = "Tools for tools.",
     categories = { "Tools", "Parts", "Media" },

@@ -28,6 +28,7 @@ local content = {
     },
 }
 content.actions = { action_rules.primary("spray", true) }
+table.insert(content.actions, action_rules.self_use("set_spray_mode"))
 
 if sim ~= nil then
     local d = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })

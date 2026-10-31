@@ -64,6 +64,7 @@ local content = {
 content.actions = {
     action_rules.primary("heat", action_rules.fact("target.has_matter", true)),
 }
+table.insert(content.actions, action_rules.self_use("toggle_flame"))
 
 if sim ~= nil then
     local script_definition =

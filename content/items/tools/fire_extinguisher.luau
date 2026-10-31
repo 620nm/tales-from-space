@@ -85,6 +85,7 @@ content.actions = {
     }),
     action_rules.primary("discharge", true),
 }
+table.insert(content.actions, action_rules.self_use("toggle_safety"))
 
 local vessel_spec: vessel.Spec = {
     id = content.id,

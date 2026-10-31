@@ -74,6 +74,17 @@ function rules.primary(id: string, target: Selector, held: Selector?): Action
     }
 end
 
+-- The click on the item in the active hand, for the card that names it.
+function rules.self_use(id: string): Action
+    return {
+        id = id,
+        gesture = "self",
+        route = "self_use",
+        label = "lunatic/tfs:ui.affordance." .. id,
+        target = true,
+    }
+end
+
 function rules.attack(id: string, held: Selector?, label: string?): Action
     local action = rules.primary(id, rules.kind("player"), held)
     action.route = "attack"

@@ -140,6 +140,7 @@ content.actions = {
     action_rules.primary("return_card", action_rules.fact("target.proto", "card")),
     action_rules.primary("deal", deal_target),
 }
+table.insert(content.actions, action_rules.self_use("shuffle"))
 
 if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:order", { replicate = "server" })

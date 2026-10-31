@@ -40,6 +40,7 @@ local content = {
 }
 
 content.actions = { action_rules.primary("lay_pipe", action_rules.exposed_deck("pipe")) }
+table.insert(content.actions, action_rules.self_use("set_layer"))
 
 if sim ~= nil then
     local script_definition =

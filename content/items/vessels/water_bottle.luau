@@ -1,4 +1,5 @@
 local physical_profiles = require("@lib/physical_profiles")
+local action_rules = require("@lib/action_rules")
 local vessel = require("@lib/vessel")
 
 local content = {
@@ -38,6 +39,7 @@ local vessel_spec: vessel.Spec = {
     spill = true,
 }
 content.actions = vessel.actions(vessel_spec)
+table.insert(content.actions, action_rules.self_use("toggle_seal"))
 
 if sim ~= nil then
     local d = vessel.attach(vessel_spec)

@@ -33,7 +33,7 @@ t.world(
                 "#####",
             ],
             structures: [(1, 1, "player_spawn"), (1, 1, "apc")],
-            items: [(1, 1, "toolbox"), (1, 2, "light_replacer"), (2, 2, "box_lights")],
+            items: [(1, 1, "toolbox"), (1, 2, "light_replacer"), (2, 2, "box_lights"), (2, 2, "wrench")],
             networks: [
                 (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
                 (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
@@ -198,6 +198,14 @@ local hands = t.hands(p)
 assert(hands[1] == "light_tube" or hands[2] == "light_tube", "the box dispenses a tube")
 t.swap_hands(p)
 assert(t.hands(p).held == "light_tube", "a tube in the working hand")
+t.tick()
+
+local labels: { [string]: boolean } = {}
+for _, hint in ipairs(t.action_hints(p, assert(t.target_at(p, 2, 1, light_target)))) do
+    labels[hint.label.key] = true
+end
+assert(labels["lunatic/tfs:ui.affordance.change_tube"], "the card says what the tube does")
+assert(not labels["lunatic/tfs:ui.affordance.check_light"], "and never offers to check it")
 
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
 t.tick()
@@ -209,3 +217,12 @@ assert(
     table.concat(t.messages(p), "\n"):find("You fit the new tube.", 1, true),
     "and the hand that fitted it is told"
 )
+
+-- A tool is not swung at the fitting, so it still gets the fitting's answer.
+t.click(p, 2, 2, t.target_at(p, 2, 2, "wrench"))
+t.tick()
+assert(t.hands(p).held == "wrench", "picked the wrench up")
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
+t.tick()
+assert(assert(t.light_at(2, 1)).status == "ok", "a wrench breaks nothing")
+assert(table.concat(t.messages(p), "\n"):find("The light is on.", 1, true), "and reads the light")

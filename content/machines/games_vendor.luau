@@ -62,6 +62,14 @@ return {
     ui = { modules = { "shelf" }, opens_on_click = false },
     dense = true,
     script = "vendor",
+    actions = {
+        {
+            id = "browse",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:ui.affordance.browse_shelf",
+        },
+    },
     corded = true,
     -- tg's `product_ads`, first of the eight it rotates
     -- (games.dm:4). One line because the window shows one.

@@ -43,6 +43,13 @@ data.confirm_seconds = 1.0
 data.closed_state = "closed"
 data.open_state = "open"
 data.welder_prototype = "welder"
+data.id_prototypes = {
+	"id_assistant",
+	"id_medical",
+	"id_engineering",
+	"id_security",
+	"id_captain",
+}
 
 data.welded_latch = "welded"
 data.locked_latch = "locked"

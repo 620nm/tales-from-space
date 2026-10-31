@@ -18,6 +18,7 @@
 -- while inheriting capacity and behavior, so a mapper places one real
 -- prototype id rather than a structure plus an out-of-band loot table.
 local closet_data = require("@lib/closets/data")
+local closet_rows = require("@lib/closets/rows")
 
 return {
     id = "locker",
@@ -39,6 +40,7 @@ return {
     states = { "closed", "open" },
     state_sprites = { open = "locker_open" },
     passable = { "open" },
+    actions = closet_rows.actions(),
     loose = true,
     drag_slowdown = 1.5,
     container = {

@@ -30,6 +30,14 @@ return {
     ui = { modules = { "shelf" }, opens_on_click = false },
     dense = true,
     script = "vendor",
+    actions = {
+        {
+            id = "browse",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:ui.affordance.browse_shelf",
+        },
+    },
     corded = true,
     -- First of tg's product_ads (medical.dm:7).
     ad = "Go save some lives!",

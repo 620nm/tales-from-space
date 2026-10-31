@@ -106,6 +106,7 @@ local content = {
 content.actions = {
     action_rules.primary("return_card", action_rules.fact("target.proto", "card_deck")),
 }
+table.insert(content.actions, action_rules.self_use("flip_card"))
 
 if sim ~= nil then
     local script_definition =

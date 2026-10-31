@@ -259,18 +259,14 @@ function grav_smes.set_ring(ev: InteractionUsePayload): boolean
     return true
 end
 
--- Another tool on a packed ring, when nothing else took the click: says
--- what the cart wants. An empty hand stays quiet.
-
--- The row every anchored emitter and set ring shares. Both reasons are
--- `hint_only`: `weld` says exactly what is wrong when it is clicked.
+-- The row every emitter and set ring shares. Both reasons are `hint_only`:
+-- `weld` says exactly what is wrong when it is clicked.
 function grav_smes.weld_row(): { [string]: any }
     return {
         id = "weld",
         gesture = "primary",
         route = "receiver",
         label = "lunatic/tfs:ui.affordance.weld_assembly",
-        target = { fact = "target.state", value = ANCHORED },
         held = { fact = "held.proto", value = WELDER },
         uses_held = true,
         suggest_implement = { item = WELDER },
