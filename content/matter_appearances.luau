@@ -1,10 +1,14 @@
--- Shared floor appearances for the one matter system. Profiles are
--- vocabulary; native aggregation chooses at most one liquid and one
--- solid layer per visible tile from the real phase/volume ledger.
+-- Shared appearances for the one matter system. Profiles are
+-- vocabulary; native aggregation chooses at most one liquid, one solid
+-- and one gas look per visible tile from the real phase/volume ledger.
+-- A rung is the amount at which a picture starts to draw (`at_ml` for
+-- floor matter, `at_factor` for a gas); docs/looks/matter.md in the
+-- engine is the contract.
 return {
     defaults = {
         liquid = "liquid",
         solid = "powder",
+        gas = "haze",
     },
     profiles = {
         {
@@ -13,7 +17,7 @@ return {
             phase = "liquid",
             full_volume_ml = 50,
             alpha = { min = 0.15, max = 0.80 },
-            tiers = {
+            rungs = {
                 {
                     at_ml = 1,
                     sprites = {
@@ -45,7 +49,7 @@ return {
             phase = "liquid",
             full_volume_ml = 1000,
             alpha = { min = 0.15, max = 1.0 },
-            tiers = {
+            rungs = {
                 {
                     at_ml = 1,
                     sprites = {
@@ -66,14 +70,14 @@ return {
             phase = "solid",
             full_volume_ml = 50,
             alpha = { min = 0.25, max = 1.0 },
-            tiers = { { at_ml = 1, sprites = { "matter_powder" } } },
+            rungs = { { at_ml = 1, sprites = { "matter_powder" } } },
         },
         {
             key = "granular",
             visual_layer = "matter_ground",
             phase = "solid",
             full_volume_ml = 50,
-            tiers = {
+            rungs = {
                 { at_ml = 1, sprites = { "matter_granular_small" } },
                 { at_ml = 25, sprites = { "matter_granular_large" } },
             },
@@ -83,7 +87,7 @@ return {
             visual_layer = "matter_ground",
             phase = "solid",
             full_volume_ml = 50,
-            tiers = {
+            rungs = {
                 { at_ml = 1, sprites = { "matter_amorphous_small" } },
                 { at_ml = 25, sprites = { "matter_amorphous_large" } },
             },
@@ -93,7 +97,7 @@ return {
             visual_layer = "matter_ground",
             phase = "solid",
             full_volume_ml = 50,
-            tiers = {
+            rungs = {
                 {
                     at_ml = 1,
                     sprites = {
@@ -111,7 +115,21 @@ return {
             visual_layer = "matter_ground",
             phase = "solid",
             full_volume_ml = 50,
-            tiers = { { at_ml = 1, sprites = { "matter_chunks" } } },
+            rungs = { { at_ml = 1, sprites = { "matter_chunks" } } },
+        },
+        -- Every visible gas: a flat white wash tinted by the substance's
+        -- `visible.tint`. The rung is a multiple of the substance's own
+        -- `visible.mol_per_m3`, so one profile serves all of them; alpha
+        -- climbs from .05 to full at the substance's `visible.factor`.
+        -- The streak is the drifting mark over moving air, solid at
+        -- 8 m/s of wind.
+        {
+            key = "haze",
+            visual_layer = "gas_haze",
+            phase = "gas",
+            alpha = { min = 0.05, max = 1.0 },
+            streak = { sprite = "wind_streak", full_alpha_mps = 8 },
+            rungs = { { at_factor = 1, sprites = { "white" } } },
         },
     },
 }

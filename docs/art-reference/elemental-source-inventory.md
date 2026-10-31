@@ -125,9 +125,9 @@ revision [assets/tg-revision](../../assets/tg-revision) pins; sprite rosters are
 ## 3. Air, mist and clouds (Gas Haze, Wind, Smoke, Steam, Weather)
 
 ### 3.1 Imported / Rendered in the pack & the engine
-1. **Procedural Gas Haze + Wind Streaks (`gas_haze` layer, the engine's `crates/lunatic-client/src/app/frame.rs` and `wind.rs`)**:
-   - Every visible gas in `content/substances/*.luau` (`water` steam `#C8D4E0`, `plasma` `#E03997`, `chlorine` `#B8E986`, `ammonia` `#D8E8D0`, `iodine` `#9B30FF`, `uf6` `#C8D8A0`) renders as a flat `white` tile quad tinted by `visible.tint` with log-scaled alpha.
-   - When `GasCell.wind` is non-zero, `wind_streak` ([`assets/sprites/95-originals.ron`](../../assets/sprites/95-originals.ron) <- `assets/originals/art/fx/wind_streak.png`) is rotated along the velocity vector and scrolled across the tile on a sawtooth phase.
+1. **Gas haze + wind streaks (`gas_haze` layer, the `haze` profile of [`content/matter_appearances.luau`](../../content/matter_appearances.luau))**:
+   - Every visible gas in `content/substances/*.luau` (`water` steam `#C8D4E0`, `plasma` `#E03997`, `chlorine` `#B8E986`, `ammonia` `#D8E8D0`, `iodine` `#9B30FF`, `uf6` `#C8D8A0`) draws the profile's one rung, a flat `white` tile quad tinted by `visible.tint`, with alpha climbing from `.05` to full at the substance's `visible.factor`.
+   - When an `AirCell.wind` is non-zero, the profile's `streak` sprite `wind_streak` ([`assets/sprites/95-originals.ron`](../../assets/sprites/95-originals.ron) <- `assets/originals/art/fx/wind_streak.png`) is rotated along the velocity vector and scrolled across the tile on a sawtooth phase, solid at `full_alpha_mps = 8`.
 2. **Spray Puffs**:
    - `spray_puff` (the `92-*-fillings.ron` roster <- `obj/medical/chempuff.dmi` `""`), used by `fire_extinguisher.luau` and `spray_bottle.luau`.
 3. **Engine Density Plume Automaton (`sim.visual.plume`, the engine's `crates/lunatic-client/src/scene_fx/density.rs`, the engine's `docs/luau-api/effects.md`)**:
