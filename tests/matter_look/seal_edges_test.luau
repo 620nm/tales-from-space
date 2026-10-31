@@ -99,3 +99,47 @@ assert(
     open_quadrants.ne == "vertical" and open_quadrants.se == "vertical",
     "so the eastern quarters fall back to the soft edge"
 )
+
+-- A run of water along a wall has no bite in it, and neither has water
+-- wrapped round a pillar: the wall past the corner seals that diagonal.
+t.world(
+    [==[(
+    name: "seal runs",
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+    },
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#.#.#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            painted: [
+                (1, 1, "spill"), (2, 1, "spill"), (3, 1, "spill"),
+                (1, 2, "spill"), (3, 2, "spill"),
+                (1, 3, "spill"), (2, 3, "spill"), (3, 3, "spill"),
+            ],
+        ),
+    ],
+    blends: {
+        "spill": (rows: [("water", 55.51), ("o2", 26.19), ("n2", 98.53)], temperature_k: 293.15, amount: total),
+    },
+)]==],
+    0
+)
+local q = t.join()
+t.tick()
+
+local run = assert(matter_look.find(q, 2, 1, "puddle", 4), "the run draws the puddle shell")
+local _, run_quadrants = matter_look.edges(run)
+for corner, block in pairs(run_quadrants) do
+    assert(block == "flat", `the run sits flush along its wall, {corner} is {block}`)
+end
+local round = assert(matter_look.find(q, 1, 1, "puddle", 4), "the corner draws the shell too")
+local _, round_quadrants = matter_look.edges(round)
+assert(round_quadrants.se == "flat", "the pillar's corner seals the diagonal")

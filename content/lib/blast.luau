@@ -100,7 +100,7 @@ function blast.cast(at: TileAddress): ()
     for dy = -1, 1 do
         for dx = -1, 1 do
             if dx ~= 0 or dy ~= 0 then
-                local near = sim.map_tile(at, at.x + dx, at.y + dy, at.z)
+                local near = ignition.tile_beside(at, dx, dy)
                 if near ~= nil then
                     ignition.expose(near, ignition.SPARK_K)
                 end

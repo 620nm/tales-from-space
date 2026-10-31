@@ -92,7 +92,7 @@ if sim ~= nil then
                 return true
             end
             sim.set_flame(self, true)
-            ignition.tend_flame(self, user)
+            ignition.tend_flame(self)
             sim.sound.play({ asset = "lunatic/tfs:sound/welder_activate", at = ev.at })
             sim.message.send({
                 recipient = user,

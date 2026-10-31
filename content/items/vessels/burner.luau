@@ -83,7 +83,7 @@ if sim ~= nil then
             return true
         end
         sim.set_flame(self, true)
-        ignition.tend_flame(self, user)
+        ignition.tend_flame(self)
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:items.burner.you_light_the_burner", {}),
