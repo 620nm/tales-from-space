@@ -1,3 +1,13 @@
+local anchorable = require("@lib/anchorable")
+
+local wrench_anchor, wrench_unanchor = anchorable.pair({
+    sound = "smash",
+    -- The socket, and nothing else.
+    over = "fitting",
+    anchor = { done = "You fasten the canister to the port." },
+    unanchor = { done = "You unfasten the canister from the port." },
+})
+
 -- A canister is PORTABLE, and that is the whole of what this file
 -- says (tg's portable/canister.dm: `/obj/machinery/portable_atmospherics`
 -- starts unanchored, and a wrench fastens it to a connector port).
@@ -134,23 +144,7 @@ return {
         message = "lunatic/tfs:structures.canister.split",
     },
     transitions = {
-        {
-            sound = "smash",
-            at = "anchored",
-            tool = "wrench",
-            hint = { id = "unanchor", label = "lunatic/tfs:ui.affordance.unanchor" },
-            to = "displaced",
-            done = "You unfasten the canister from the port.",
-        },
-        {
-            sound = "smash",
-            at = "displaced",
-            tool = "wrench",
-            hint = { id = "anchor", label = "lunatic/tfs:ui.affordance.anchor" },
-            -- The socket, and nothing else.
-            over = "fitting",
-            to = "anchored",
-            done = "You fasten the canister to the port.",
-        },
+        wrench_unanchor,
+        wrench_anchor,
     },
 }

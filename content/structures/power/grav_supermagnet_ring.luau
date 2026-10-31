@@ -4,6 +4,7 @@
 -- Its facing names the corner arc it draws (north is the north-west arc,
 -- then clockwise) and comes from the two emitters it was set between, so it
 -- does not turn by hand. A wrench packs it back onto its cart.
+local anchorable = require("@lib/anchorable")
 local grav_smes = require("@lib/grav_smes")
 
 local CORNERS = { "north", "east", "south", "west" }
@@ -35,16 +36,13 @@ return {
     hint_flags = { grav_smes.ASSEMBLY_READY },
     actions = { grav_smes.weld_row() },
     transitions = {
-        {
+        anchorable.unanchor({
             sound = "ratchet",
-            at = "anchored",
-            tool = "wrench",
-            hint = { id = "unanchor", label = "lunatic/tfs:ui.affordance.unanchor" },
             secs = 1.0,
-            gone = true,
-            leaves = "grav_supermagnet",
-            start = "lunatic/tfs:entity.grav_supermagnet_ring.unanchor.start",
-            done = "lunatic/tfs:entity.grav_supermagnet_ring.unanchor.done",
-        },
+            unanchor = {
+                start = "lunatic/tfs:entity.grav_supermagnet_ring.unanchor.start",
+                done = "lunatic/tfs:entity.grav_supermagnet_ring.unanchor.done",
+            },
+        }, "grav_supermagnet"),
     },
 }
