@@ -67,16 +67,23 @@ these exports. A `smooth_strip` is 160×32 and is cut by `Slice(5, 1, <row>)`; t
 engine's `docs/assets/rosters.md` §Slicing one large picture owns the rule. On an
 original, `Anim("name", "idle", s)` reads the tag `idle-s`.
 
-Every source carries one tag `idle` (frames 1..N, forward), the spec default. A
-`Slice(5, 1, Anim(...))` row wants `idle-s`, so those sources need a second tag
-spanning the same frames:
+Every source carries exactly one forward tag over frames 1..N. A `single` is tagged
+`idle` and rostered top-level (`Ase` for one frame, `AseAnim` for more); a `smooth_strip`
+is tagged `idle-s` (`bake_tag` in the kit) and rostered through `Slice(5, 1, ...)`, which
+mints `<name>_0_0` .. `<name>_0_4`. The roster is `assets/sprites/94-elemental.ron`.
 
 ```sh
 # a PNG strip per frame, the form the audits and gallery read
 aseprite -b assets/originals/art/matter/gasses/gas_mist_smooth_gentle.aseprite \
   --save-as 'target/art/elemental/png/gas/gas_mist_smooth_gentle_f{frame1}.png'
-# tag edits: Aseprite MCP set_tag / delete_tag, or set the spec's "tag" and use --rebuild-sources
 ```
+
+## Seam patches
+
+`specs/seam_patches.json` lists single pixels (frame, x, y, final colour and alpha) that
+`load_sprites` sets on top of the procedural spec, so a rebuild reproduces the sources.
+Each moves a junction-tile seam under the audit's threshold: it copies a colour already
+in the sheet from the pixel across the seam, so palette, chroma and alpha tiers stay.
 
 ## Remaining assumptions
 

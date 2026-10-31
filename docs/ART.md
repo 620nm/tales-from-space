@@ -38,8 +38,8 @@ weather planes (22d319fa860). Its resprites since 2023 share four habits:
 
 Sprites are 32×32 RGBA on the tile grid (tall fixtures use 32×48 or
 32×64; dual-bay lathes use 64×32). Solid sprites take binary alpha with
-no anti-aliasing and no dithering; glass, glows and emissives may use
-partial alpha. Block the silhouette first so it reads in greyscale.
+no anti-aliasing and no dithering; glass, gas, glows and emissives may
+use partial alpha. Block the silhouette first so it reads in greyscale.
 Light falls from the top of the screen: top faces take the highlight and
 south faces sit darker, with no left/right bias. Using Rec.709 luma
 (`0.2126 R + 0.7152 G + 0.0722 B`), across 1,363 south-facing tg

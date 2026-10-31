@@ -16,7 +16,7 @@ Each entry is a dict:
       "colorable": True | False,           # True enforces neutral greyscale (chroma == 0)
       "require_top_light": True | False,   # True enforces luma_top >= luma_bottom - 1.0
       "ase_relpath": "assets/originals/art/matter/gasses/gas_mist_smooth_gentle.aseprite",
-      "tag": "idle",
+      "tag": "idle",                       # state name; a smooth_strip is tagged "idle-s" (`bake_tag`)
       "description": "Concise technical note on physical appearance & layer usage.",
       "frames": [
           {
@@ -374,6 +374,12 @@ def validate_spec(
     return layer_order, layer_props, used_hexes
 
 
+def bake_tag(spec: dict[str, Any]) -> str:
+    """The tag the roster reads: a strip is cut by `Slice`, which asks for `<state>-s`."""
+    state = spec.get("tag", "idle")
+    return f"{state}-s" if spec["kind"] == "smooth_strip" else state
+
+
 async def draw_source(
     session: Any,
     spec: dict[str, Any],
@@ -454,7 +460,7 @@ async def draw_source(
         "set_tag",
         {
             "filename": str(ase_path),
-            "name": spec.get("tag", "idle"),
+            "name": bake_tag(spec),
             "from_frame": 1,
             "to_frame": len(frames_spec),
             "direction": "forward",
@@ -790,7 +796,49 @@ def load_sprites(spec_path: Path) -> list[dict[str, Any]]:
     sprites = getattr(mod, "SPRITES", None)
     if not isinstance(sprites, list) or not sprites:
         raise ValueError(f"{spec_path}: must define non-empty SPRITES = [...]")
+    apply_seam_patches(sprites)
     return sprites
+
+
+SEAM_PATCHES_PATH = ELEMENTAL_DIR / "specs/seam_patches.json"
+
+
+def _patch_char(layer: dict[str, Any], hex_color: str) -> str:
+    for ch, hx in layer["legend"].items():
+        if hx.upper() == hex_color:
+            return ch
+    ch = next(c for c in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" if c not in layer["legend"])
+    layer["legend"][ch] = hex_color
+    return ch
+
+
+def _patch_pixel(layer: dict[str, Any], x: int, y: int, ch: str) -> None:
+    row = layer["rows"][y]
+    layer["rows"][y] = row[:x] + ch + row[x + 1 :]
+
+
+def apply_seam_patches(sprites: list[dict[str, Any]]) -> None:
+    """Set the pixels `specs/seam_patches.json` lists on top of the procedural spec.
+
+    A patch names one flattened pixel (frame, x, y) and its final colour and alpha. An
+    opaque patch recolours the topmost layer that draws the pixel; a partial-alpha patch
+    moves it into the layer of that opacity and clears the others (tiers are disjoint).
+    The same list is written into the sources, so a rebuild reproduces them.
+    """
+    patches = json.loads(SEAM_PATCHES_PATH.read_text(encoding="utf-8"))
+    for sp in sprites:
+        for p in patches.get(sp["id"], []):
+            layers = sp["frames"][p["frame"] - 1]["layers"]
+            x, y, alpha = p["x"], p["y"], p["alpha"]
+            drawn = [lay for lay in layers if lay["rows"][y][x] != "."]
+            if alpha == 255:
+                target = drawn[-1]
+            else:
+                target = next(lay for lay in layers if lay["opacity"] == alpha)
+                for lay in drawn:
+                    if lay is not target:
+                        _patch_pixel(lay, x, y, ".")
+            _patch_pixel(target, x, y, _patch_char(target, p["hex"].upper()))
 
 
 def check_specs(spec_path: Path) -> None:
