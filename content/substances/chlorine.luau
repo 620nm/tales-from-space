@@ -65,6 +65,8 @@ local content = {
     -- that has gone quiet may have swept off it (lunatic
     -- docs/MATTER-WORLD.md §3 step 8).
     visible = { mol_per_m3 = 0.15, factor = 20, tint = "#C4D64A", visual_layer = "gas_haze" },
+    -- A heavy leak banks up as a cloud, not a haze.
+    appearance = { gas = "cloud" },
     -- Through glass, the colour tg's reagent wears
     -- (tg: other_reagents.dm:1090).
     color = "#FFFB89",

@@ -3,65 +3,47 @@
 -- and one gas look per visible tile from the real phase/volume ledger.
 -- A rung is the amount at which a picture starts to draw (`at_ml` for
 -- floor matter, `at_factor` for a gas); docs/looks/matter.md in the
--- engine is the contract.
+-- engine is the contract. The art is assets/sprites/94-elemental.ron:
+-- a `shell` names a strip, which bakes the five blocks `<strip>_0_0`
+-- to `<strip>_0_4` the client stitches into joined edges.
+--
+-- The rungs are read off real spills (tests/matter_look/spill_ladder_test).
+-- A tile is 1 m x 1 m x 3 m: a litre is a millimetre of wet, water stops
+-- thinning at a 3.3 L film, and a puddle deeper than that is a flood.
+-- Gas rungs are multiples of the substance's own visibility threshold.
 return {
     defaults = {
-        liquid = "liquid",
+        liquid = "puddle",
         solid = "powder",
-        gas = "haze",
+        gas = "mist",
     },
     profiles = {
         {
-            key = "liquid",
-            visual_layer = "matter_ground",
-            phase = "liquid",
-            full_volume_ml = 50,
-            alpha = { min = 0.15, max = 0.80 },
-            rungs = {
-                {
-                    at_ml = 1,
-                    sprites = {
-                        "matter_liquid_1",
-                        "matter_liquid_2",
-                        "matter_liquid_3",
-                        "matter_liquid_5",
-                        "matter_liquid_6",
-                    },
-                },
-            },
-        },
-        -- WATER, and anything else that pools by the litre. The shared
-        -- `liquid` profile above tops out at a fifty-millilitre splash,
-        -- which is a beaker emptied on the deck; this one keeps going.
-        --
-        -- The ladder is depth over a square metre, because that is what
-        -- a tile is: one litre is a millimetre of wet, and fifty is five
-        -- centimetres -- over the boot line, which is where a puddle
-        -- stops being something you walk through without noticing. The
-        -- two upper tiers are tg's river tiles, which move.
-        --
-        -- `full_volume_ml = 1000` is where the wash reaches full alpha,
-        -- so a litre already reads as a covered tile and everything
-        -- above it is depth rather than opacity.
-        {
-            key = "flowing",
+            key = "puddle",
             visual_layer = "matter_ground",
             phase = "liquid",
             full_volume_ml = 1000,
-            alpha = { min = 0.15, max = 1.0 },
+            alpha = { min = 0.55, max = 0.95 },
+            settle_seconds = 8,
             rungs = {
+                { at_ml = 5, sprites = { "liquid_splatter_1", "liquid_splatter_2" } },
+                { at_ml = 30, sprites = { "liquid_splash_1", "liquid_splash_2" } },
+                { at_ml = 100, sprites = { "liquid_spill_1", "liquid_spill_2" } },
                 {
-                    at_ml = 1,
-                    sprites = {
-                        "matter_liquid_1",
-                        "matter_liquid_2",
-                        "matter_liquid_3",
-                        "matter_liquid_5",
-                        "matter_liquid_6",
-                    },
+                    at_ml = 250,
+                    shell = { still = "liquid_puddle_smooth", moving = "liquid_puddle_smooth_shimmer" },
                 },
-                { at_ml = 1000, sprites = { "matter_water" } },
-                { at_ml = 50000, sprites = { "matter_deep_water" } },
+                {
+                    at_ml = 4500,
+                    shell = { still = "liquid_pool_smooth_still", moving = "liquid_pool_smooth_ripple" },
+                },
+            },
+            weightless = {
+                rungs = {
+                    { at_ml = 5, sprites = { "liquid_zerog_small_float" } },
+                    { at_ml = 250, sprites = { "liquid_zerog_mixed_float" } },
+                    { at_ml = 2000, sprites = { "liquid_zerog_large_float" } },
+                },
             },
         },
         {
@@ -70,7 +52,10 @@ return {
             phase = "solid",
             full_volume_ml = 50,
             alpha = { min = 0.25, max = 1.0 },
-            rungs = { { at_ml = 1, sprites = { "matter_powder" } } },
+            rungs = {
+                { at_ml = 1, sprites = { "solid_dusting_flour_single" } },
+                { at_ml = 25, shell = { still = "solid_dusting_flour_smooth" } },
+            },
         },
         {
             key = "granular",
@@ -78,8 +63,9 @@ return {
             phase = "solid",
             full_volume_ml = 50,
             rungs = {
-                { at_ml = 1, sprites = { "matter_granular_small" } },
-                { at_ml = 25, sprites = { "matter_granular_large" } },
+                { at_ml = 1, sprites = { "solid_sprinkles" } },
+                { at_ml = 25, sprites = { "solid_pile_small" } },
+                { at_ml = 200, sprites = { "solid_pile_large" } },
             },
         },
         {
@@ -88,8 +74,8 @@ return {
             phase = "solid",
             full_volume_ml = 50,
             rungs = {
-                { at_ml = 1, sprites = { "matter_amorphous_small" } },
-                { at_ml = 25, sprites = { "matter_amorphous_large" } },
+                { at_ml = 1, sprites = { "solid_soil_patch_single" } },
+                { at_ml = 25, shell = { still = "solid_soil_smooth" } },
             },
         },
         {
@@ -98,16 +84,8 @@ return {
             phase = "solid",
             full_volume_ml = 50,
             rungs = {
-                {
-                    at_ml = 1,
-                    sprites = {
-                        "matter_crystalline_1",
-                        "matter_crystalline_2",
-                        "matter_crystalline_3",
-                        "matter_crystalline_4",
-                    },
-                },
-                { at_ml = 25, sprites = { "matter_crystalline_large" } },
+                { at_ml = 1, sprites = { "solid_shards_small" } },
+                { at_ml = 25, sprites = { "solid_shards_large" } },
             },
         },
         {
@@ -115,21 +93,82 @@ return {
             visual_layer = "matter_ground",
             phase = "solid",
             full_volume_ml = 50,
-            rungs = { { at_ml = 1, sprites = { "matter_chunks" } } },
+            rungs = {
+                { at_ml = 1, sprites = { "solid_scattering" } },
+                { at_ml = 25, shell = { still = "solid_debris_jagged_smooth" } },
+            },
         },
-        -- Every visible gas: a flat white wash tinted by the substance's
-        -- `visible.tint`. The rung is a multiple of the substance's own
-        -- `visible.mol_per_m3`, so one profile serves all of them; alpha
-        -- climbs from .05 to full at the substance's `visible.factor`.
-        -- The streak is the drifting mark over moving air, solid at
-        -- 8 m/s of wind.
         {
-            key = "haze",
+            key = "mist",
             visual_layer = "gas_haze",
             phase = "gas",
-            alpha = { min = 0.05, max = 1.0 },
-            streak = { sprite = "wind_streak", full_alpha_mps = 8 },
-            rungs = { { at_factor = 1, sprites = { "white" } } },
+            alpha = { min = 0.08, max = 0.8 },
+            wind = { at_mps = { 0.03, 0.25 }, calm_ratio = 0.8 },
+            streak = { sprite = "wind_streak", full_alpha_mps = 1 },
+            rungs = {
+                {
+                    at_factor = 1,
+                    shell = {
+                        still = "gas_mist_smooth_still",
+                        moving = { "gas_mist_smooth_gentle", "gas_mist_smooth_stirred" },
+                    },
+                },
+            },
+        },
+        {
+            key = "smoke",
+            visual_layer = "gas_haze",
+            phase = "gas",
+            alpha = { min = 0.08, max = 0.9 },
+            wind = { at_mps = { 0.03, 0.25 }, calm_ratio = 0.8 },
+            streak = { sprite = "wind_streak", full_alpha_mps = 1 },
+            rungs = {
+                {
+                    at_factor = 1,
+                    shell = {
+                        still = "gas_mist_smooth_still",
+                        moving = { "gas_mist_smooth_gentle", "gas_mist_smooth_stirred" },
+                    },
+                },
+                {
+                    at_factor = 10,
+                    shell = {
+                        still = "gas_smoke_smooth_still",
+                        moving = { "gas_smoke_smooth_gentle", "gas_smoke_smooth_stirred" },
+                    },
+                },
+            },
+        },
+        {
+            key = "cloud",
+            visual_layer = "gas_haze",
+            phase = "gas",
+            alpha = { min = 0.08, max = 1.0 },
+            wind = { at_mps = { 0.03, 0.25 }, calm_ratio = 0.8 },
+            streak = { sprite = "wind_streak", full_alpha_mps = 1 },
+            rungs = {
+                {
+                    at_factor = 1,
+                    shell = {
+                        still = "gas_mist_smooth_still",
+                        moving = { "gas_mist_smooth_gentle", "gas_mist_smooth_stirred" },
+                    },
+                },
+                {
+                    at_factor = 10,
+                    shell = {
+                        still = "gas_smoke_smooth_still",
+                        moving = { "gas_smoke_smooth_gentle", "gas_smoke_smooth_stirred" },
+                    },
+                },
+                {
+                    at_factor = 30,
+                    shell = {
+                        still = "gas_cloud_smooth_still",
+                        moving = { "gas_cloud_smooth_gentle", "gas_cloud_smooth_stirred" },
+                    },
+                },
+            },
         },
     },
 }

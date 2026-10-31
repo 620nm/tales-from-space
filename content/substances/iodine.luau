@@ -28,6 +28,8 @@ return {
     phase = { melt = 386.75, boil = 457.4, l_fus = 15520, l_vap = 41570 },
     density = { solid = 4.93, liquid = 3.96 },
     visible = { mol_per_m3 = 0.02, factor = 20, tint = "#7B2CBF", visual_layer = "gas_haze" },
+    -- Dense violet vapour: the one visible gas that reads as smoke.
+    appearance = { gas = "smoke" },
     -- What it looks like through glass (tg: other_reagents.dm:1998).
     color = "#BC8A00",
     relevance = 5,

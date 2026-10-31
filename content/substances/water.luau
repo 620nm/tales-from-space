@@ -64,14 +64,12 @@ return {
     },
     color = "#AAAAAA",
     -- What water LOOKS LIKE on a deck (docs/chemistry/substances.md).
-    -- A splash uses the shared blobs; a litre and fifty litres are tg's
-    -- own river tiles, which move (assets/sprites/93-matter.ron).
-    -- `tint = "#FFFFFF"` overrides the multiply for the liquid layer
-    -- only: those tiles are already blue, and multiplying water's grey
-    -- through them would grey out the one picture that came coloured.
-    -- Ice keeps the shared crystalline silhouette and the grey.
+    -- The shared `puddle` ladder is neutral grey art, so the liquid
+    -- layer's tint carries the blue; `color` above stays the grey the
+    -- reading panels use. Ice keeps the shared crystalline silhouette
+    -- and the grey.
     appearance = {
-        liquid = { profile = "flowing", tint = "#FFFFFF" },
+        liquid = { profile = "puddle", tint = "#5F9BD5" },
         solid = "crystalline",
     },
     visible = { mol_per_m3 = 0.25, factor = 20, tint = "#E6EDF7", visual_layer = "gas_haze" },
