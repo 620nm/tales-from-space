@@ -5,6 +5,7 @@
 local bloodshed = require("@lib/bloodshed")
 local disinfection = require("@lib/medical/disinfection")
 local item_fall = require("@lib/item_fall")
+local ignition = require("@lib/ignition")
 
 local sounds = {
     "computer_start",
@@ -140,6 +141,17 @@ end
 
 sim.handle("matter.ignition.done", { kind = "react" }, tally("fires_lit"))
 sim.handle("matter.extinguished.done", { kind = "react" }, tally("fires_out"))
+
+-- What lights a tile (`content/lib/ignition.luau`): a fire tends and
+-- spreads from the edge that lit it, and a cut power run sparks, whoever
+-- cut it. Unscoped for the same reason as the tallies above.
+sim.define("script_var", "lunatic/tfs:flame_tended", { replicate = "server" })
+sim.handle("matter.ignition.done", { kind = "react" }, ignition.on_ignited)
+sim.handle("flow.segment_split.done", { kind = "react" }, function(ev: FlowSegmentSplitDonePayload)
+    if ev.network == "power" then
+        ignition.spark(ev.at)
+    end
+end)
 
 -- Every wound, one answer: bleed stacks on the worst-hurt part, the
 -- flesh-impact sound, the spilled blood as matter and the splatter

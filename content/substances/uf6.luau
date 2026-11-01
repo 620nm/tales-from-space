@@ -54,6 +54,8 @@ return {
     decay_heat = 25.0,
     density = { solid = 5.09 },
     visible = { mol_per_m3 = 0.25, factor = 20, tint = "#E9F2E4", visual_layer = "gas_haze" },
+    -- Twelve times the air by mass: it pools and billows as a cloud.
+    appearance = { gas = "cloud" },
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAP-PROPERTIES.md, the recipe panel). With the other poisons,
     -- between nitrous oxide (60) and tritium (40).

@@ -19,6 +19,12 @@ palette rules, animation timing and LED restraint policy. Nothing here ships.
   - **Swatch naming**: Aseprite's C++ `.gpl` loader reads swatch names with
     whitespace-delimited `operator>>`, so every swatch name is a single
     hyphenated token (`structure-1-outline`, `eng-yellow-3`).
+- [elemental-asset-guide.md](elemental-asset-guide.md) holds the ground, water,
+  air and fire art rules, importer arms and tile-connectivity mechanisms;
+  [elemental-source-inventory.md](elemental-source-inventory.md) lists the
+  tgstation art per element and what the pack imports. The tools that author
+  and audit the elemental sprites are in
+  [tools/art/elemental/](../../tools/art/elemental/README.md).
 - `palettes/file-icons/` holds the file-icon importer's fixed palette strips.
 - `plates/01-medical.png` .. `09-information.png` are composite visual
   reference plates rendered from the pinned `tgstation` checkout

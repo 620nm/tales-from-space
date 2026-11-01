@@ -1,0 +1,49 @@
+{
+  "gas_cloud_smooth_gentle": [
+    {"frame": 2, "x": 15, "y": 8, "hex": "#EEEEEE", "alpha": 122},
+    {"frame": 2, "x": 16, "y": 13, "hex": "#D9D9D9", "alpha": 204},
+    {"frame": 2, "x": 40, "y": 31, "hex": "#EEEEEE", "alpha": 122},
+    {"frame": 3, "x": 16, "y": 6, "hex": "#EEEEEE", "alpha": 122},
+    {"frame": 3, "x": 79, "y": 13, "hex": "#D9D9D9", "alpha": 204},
+    {"frame": 4, "x": 15, "y": 6, "hex": "#D9D9D9", "alpha": 122},
+    {"frame": 4, "x": 159, "y": 31, "hex": "#EEEEEE", "alpha": 204},
+    {"frame": 5, "x": 79, "y": 9, "hex": "#EEEEEE", "alpha": 166},
+    {"frame": 5, "x": 80, "y": 10, "hex": "#EEEEEE", "alpha": 204},
+    {"frame": 6, "x": 79, "y": 9, "hex": "#EEEEEE", "alpha": 166},
+    {"frame": 6, "x": 16, "y": 13, "hex": "#D9D9D9", "alpha": 204},
+    {"frame": 6, "x": 80, "y": 13, "hex": "#EEEEEE", "alpha": 204},
+    {"frame": 8, "x": 15, "y": 6, "hex": "#D9D9D9", "alpha": 76}
+  ],
+  "gas_cloud_smooth_stirred": [
+    {"frame": 3, "x": 15, "y": 8, "hex": "#C4C4C4", "alpha": 122},
+    {"frame": 3, "x": 79, "y": 15, "hex": "#C4C4C4", "alpha": 204},
+    {"frame": 3, "x": 140, "y": 31, "hex": "#D9D9D9", "alpha": 204},
+    {"frame": 5, "x": 15, "y": 7, "hex": "#EEEEEE", "alpha": 122},
+    {"frame": 6, "x": 16, "y": 5, "hex": "#EEEEEE", "alpha": 122},
+    {"frame": 6, "x": 16, "y": 10, "hex": "#EEEEEE", "alpha": 204},
+    {"frame": 6, "x": 80, "y": 10, "hex": "#FFFFFF", "alpha": 204},
+    {"frame": 8, "x": 143, "y": 18, "hex": "#EEEEEE", "alpha": 204},
+    {"frame": 8, "x": 47, "y": 20, "hex": "#EEEEEE", "alpha": 204},
+    {"frame": 8, "x": 144, "y": 24, "hex": "#C4C4C4", "alpha": 204},
+    {"frame": 8, "x": 48, "y": 25, "hex": "#C4C4C4", "alpha": 204},
+    {"frame": 8, "x": 112, "y": 26, "hex": "#C4C4C4", "alpha": 204},
+    {"frame": 8, "x": 111, "y": 27, "hex": "#D9D9D9", "alpha": 204}
+  ],
+  "solid_soil_smooth": [
+    {"frame": 1, "x": 112, "y": 0, "hex": "#EEEEEE", "alpha": 255},
+    {"frame": 1, "x": 79, "y": 4, "hex": "#EEEEEE", "alpha": 255},
+    {"frame": 1, "x": 48, "y": 8, "hex": "#AAAAAA", "alpha": 255},
+    {"frame": 1, "x": 15, "y": 9, "hex": "#AAAAAA", "alpha": 255},
+    {"frame": 1, "x": 144, "y": 9, "hex": "#626262", "alpha": 255}
+  ],
+  "solid_soil_tilled_smooth": [
+    {"frame": 1, "x": 95, "y": 4, "hex": "#C4C4C4", "alpha": 255},
+    {"frame": 1, "x": 16, "y": 6, "hex": "#929292", "alpha": 255},
+    {"frame": 1, "x": 47, "y": 6, "hex": "#626262", "alpha": 255},
+    {"frame": 1, "x": 80, "y": 6, "hex": "#929292", "alpha": 255},
+    {"frame": 1, "x": 111, "y": 6, "hex": "#626262", "alpha": 255},
+    {"frame": 1, "x": 143, "y": 6, "hex": "#626262", "alpha": 255},
+    {"frame": 1, "x": 64, "y": 7, "hex": "#444444", "alpha": 255},
+    {"frame": 1, "x": 128, "y": 7, "hex": "#444444", "alpha": 255}
+  ]
+}

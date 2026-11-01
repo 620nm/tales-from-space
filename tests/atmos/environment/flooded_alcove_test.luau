@@ -15,7 +15,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 -- threshold the floor layer draws at, so a look never reports a film
 -- the eye cannot find).
 --
--- The tiers above this one -- the two river tiles a deep pool wears --
+-- The rungs above this one -- the two river tiles a deep pool wears --
 -- are proven where they live, by the asset gate walking every sprite a
 -- profile names (content/matter_appearances.luau, tools/check.sh
 -- lint-assets).

@@ -24,6 +24,7 @@
 -- radius-10 ring is 80 turfs (pellet_cloud.dm:171-174) -- keeping the
 -- ledger readable while the direct blast carries the kill.
 local bloodshed = require("@lib/bloodshed")
+local ignition = require("@lib/ignition")
 local residue_kinds = require("@lib/residue_kinds")
 
 local RADIUS = 1.5
@@ -94,6 +95,18 @@ function blast.cast(at: TileAddress): ()
     sim.visual.glow({ at = at, strength = 2, duration = 0.6 })
     sim.visual.spawn({ visual_layer = "effects", at = at, sprite = "blast_fire", duration = 1.0 })
     sim.sound.play({ asset = "lunatic/tfs:sound/explosion", at = at })
+    -- A hotspot per flame tile (tg explosions.dm:703-704) at the spark's heat.
+    ignition.expose(at, ignition.SPARK_K)
+    for dy = -1, 1 do
+        for dx = -1, 1 do
+            if dx ~= 0 or dy ~= 0 then
+                local near = ignition.tile_beside(at, dx, dy)
+                if near ~= nil then
+                    ignition.expose(near, ignition.SPARK_K)
+                end
+            end
+        end
+    end
 end
 
 return blast

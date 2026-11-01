@@ -1649,5 +1649,6 @@
   "lunatic/tfs:lib.grav_smes_run.no_charge": "The gravity battery holds too little charge to start.",
   "lunatic/tfs:lib.grav_smes_run.starting": "The gravity battery begins to spin up.",
   "lunatic/tfs:lib.grav_smes_run.not_running": "The gravity battery is not running.",
-  "lunatic/tfs:lib.grav_smes_run.stopping": "The gravity battery begins to spin down."
+  "lunatic/tfs:lib.grav_smes_run.stopping": "The gravity battery begins to spin down.",
+  "lunatic/tfs:ui.message.ignite": "The flame catches in the air."
 }

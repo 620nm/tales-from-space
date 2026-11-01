@@ -1,5 +1,6 @@
 local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
+local ignition = require("@lib/ignition")
 
 -- A bench burner: a small tank of spirit with a wick, for heating one
 -- beaker at a time. tg's `/obj/item/burner`
@@ -63,6 +64,7 @@ local content = {
 
 content.actions = {
     action_rules.primary("heat", action_rules.fact("target.has_matter", true)),
+    action_rules.primary("ignite", action_rules.any_deck(), action_rules.fact("held.state", "lit")),
 }
 table.insert(content.actions, action_rules.self_use("toggle_flame"))
 
@@ -81,6 +83,7 @@ if sim ~= nil then
             return true
         end
         sim.set_flame(self, true)
+        ignition.tend_flame(self)
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:items.burner.you_light_the_burner", {}),
@@ -92,10 +95,10 @@ if sim ~= nil then
         local clicked, target = ev.claim, ev.claim
         local _x, _y, _choice = x, y, choice
         if clicked == nil or clicked.entity == nil then
-            return { replaced = false }
+            return ignition.act(self, user, ev)
         end
         if sim.matter_read(clicked.entity) == nil then
-            return { replaced = false } -- not something that holds anything
+            return ignition.act(self, user, ev) -- not something that holds anything
         end
         if self.state ~= "lit" then
             sim.message.send({
