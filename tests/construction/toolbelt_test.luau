@@ -1,10 +1,9 @@
--- An engineer signs on wearing a stocked toolbelt AND a backpack, and
--- the belt SHOWS ITS TOOLS on the wearer. That last part is a
--- deliberate divergence from tg, whose build_worn_icon draws a worn
--- belt barren (human_update_icons.dm:337-352 builds the mob overlay
--- alone; belt.dm:24-28 keeps the content overlays on the object) —
--- Josh ruled the tools show. Inventory rows still track every stored
--- tool, and the row LIST is still nobody else's business.
+-- An engineer signs on wearing a stocked toolbelt AND a backpack. Like
+-- tg (human_update_icons.dm:337-355; belt.dm:23-29), the worn mob belt
+-- draws its four-direction waist icon unadorned while the loose belt on
+-- the deck composes each stored tool's `stowed_sprite` in storage order.
+-- Inventory rows track every stored tool, and the row LIST stays private
+-- to its wearer.
 t.world(
     [==[(
     name: "locker room",
@@ -78,34 +77,15 @@ local function belt_art(layers: { string })
     return found
 end
 
--- THE DIVERGENCE: the worn belt draws its contents over its own
--- directional worn icon, in storage order.
+-- The worn belt draws its directional waist icon alone; object-scale
+-- `belt_*` overlays belong on the loose belt entity, never the mob.
 local mine = t.layers(eng)
-local waist = index_of(mine, "worn_toolbelt")
-assert(waist, "the worn belt reached the wire")
-local previous = waist
-for _, sprite in ipairs({
-    "belt_screwdriver",
-    "belt_wrench",
-    "belt_crowbar",
-    "belt_cutters",
-    "belt_multitool",
-}) do
-    local at = index_of(mine, sprite)
-    assert(at, sprite .. " is drawn on the wearer")
-    assert(at > previous, sprite .. " draws over the belt, in storage order")
-    previous = at
-end
+assert(index_of(mine, "worn_toolbelt"), "the worn belt reached the wire")
+assert(#belt_art(mine) == 0, "no object-scale belt overlays draw on the wearer")
 
--- NEGATIVE: the picture is not the manifest. Seven tools ride the
--- belt; only the five with art of their own show. Nobody can count a
--- crewman's belt by looking at it, and the welder in there stays a
--- surprise.
-assert(#belt_art(mine) == 5, "five pictures for seven tools")
-
--- The loose belt on the floor is unchanged: the object view composed
--- its contents before this divergence and composes them the same way
--- now, base sprite first.
+-- The loose belt on the floor composes its contents over its base
+-- sprite, in storage order: five pictures for seven tools (welder and
+-- cable coil name no `stowed_sprite`).
 local floor_belt = assert(t.target_at(eng, 3, 1, "toolbelt"))
 assert(floor_belt, "a stocked belt lies on the deck")
 local loose = t.layers(eng, floor_belt)
@@ -113,25 +93,21 @@ assert(loose[1] == "toolbelt", "the object's own picture is the base")
 assert(
     table.concat(belt_art(loose), ",")
         == "belt_screwdriver,belt_wrench,belt_crowbar,belt_cutters,belt_multitool",
-    "the object view still lists its tools in storage order"
+    "the object view lists its five pictured tools in storage order"
 )
 
--- Pull the wrench (row 2) into a hand: the belt loses that picture in
--- the SAME tick the inventory changes.
+-- Pull the wrench (row 2) into a hand, then put it back (which appends
+-- it at the end of storage).
 t.take_from(eng, "belt", 2)
 t.tick()
 assert(t.hands(eng).held == "wrench", "the wrench is in hand")
 assert(#t.stored(eng, "belt") == 6, "and off the belt")
 assert(drawn("worn_toolbelt"), "the belt itself did not vanish")
-assert(not drawn("belt_wrench"), "the empty loop is empty on the wearer too")
-assert(drawn("belt_crowbar"), "and the tools still on it are still drawn")
 
--- Put it back: the picture returns with the row.
 t.store(eng, "belt")
 t.tick()
 assert(t.hands(eng).held == nil, "the hand is empty again")
 assert(#t.stored(eng, "belt") == 7, "seven back on the belt")
-assert(drawn("belt_wrench"), "and the wrench is drawn on the waist again")
 
 -- NEGATIVE: a belt row is not a backpack row. Taking index 1 from the
 -- BACK slot must hand over the pack's first item, never the belt's —
@@ -155,27 +131,23 @@ t.tick()
 assert(t.hands(eng).held == nil, "no such row, nothing taken")
 assert(#t.stored(eng, "belt") == 7, "and nothing left the belt")
 
--- Another crewman sees the whole waist: what a mob WEARS is public in
--- tg, and under this divergence the tools hanging off it are part of
--- that picture.
+-- Another crewman sees the directional worn belt on the wearer with no
+-- `belt_*` overlays; once the belt is dropped onto the deck, its live
+-- storage order (wrench moved to the end) composes onto the floor item.
 local mate = t.join()
 t.tick()
 local seen = t.layers(mate, eng)
 assert(index_of(seen, "worn_toolbelt"), "a bystander sees the directional worn belt")
-assert(index_of(seen, "belt_wrench"), "and the wrench hanging on it")
+assert(#belt_art(seen) == 0, "and no object-scale belt overlays on the wearer")
 
--- NEGATIVE: cosmetics are all a bystander gets. The overlays are five
--- for seven rows, so the stream still never discloses the belt's
--- CONTENTS — and pulling a tool changes the bystander's picture in the
--- same tick, without ever handing them a row.
-assert(#belt_art(seen) == 5, "the bystander sees pictures, not a manifest")
-local wrench_row
-for n, id in ipairs(t.stored(eng, "belt")) do
-    if id == "wrench" then
-        wrench_row = n
-    end
-end
-t.take_from(eng, "belt", assert(wrench_row, "the wrench is back on some row"))
+local bx, by = t.pos(eng)
+t.unequip(eng, "belt")
+t.drop(eng)
 t.tick()
-assert(not drawn("belt_wrench", mate, eng), "the bystander's belt lost the wrench too")
-assert(drawn("worn_toolbelt", mate, eng), "the belt itself stayed on")
+assert(not drawn("worn_toolbelt", mate, eng), "unequipping removes the worn belt")
+local dropped_belt = assert(t.target_at(mate, bx, by, "toolbelt"))
+assert(
+    table.concat(belt_art(t.layers(mate, dropped_belt)), ",")
+        == "belt_screwdriver,belt_crowbar,belt_cutters,belt_multitool,belt_wrench",
+    "dropped belt composes its current contents in storage order"
+)
