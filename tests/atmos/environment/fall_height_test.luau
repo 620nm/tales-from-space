@@ -2,7 +2,7 @@
 -- to the level below: one `level_changed` row via "fall" over one level, then
 -- one `physical_motion_landed` row no sooner than the drop allows.
 --
--- The drop is one tile height, `simulation.tile.height_m` = 3 m
+-- The drop is one tile height, `simulation.tile.height_m` (`t.tile`), here 3 m
 -- (content/capabilities.luau), under standard gravity 9.80665 m/s2 (the
 -- terrestrial profile below). Free fall takes sqrt(2h/g) = 0.7823 s, which is
 -- 15.65 ticks at the pack's 20 Hz; clock.deadline_ticks rounds that up to 16
@@ -12,7 +12,9 @@
 -- advance 9, below this minimum.
 local clock = require("@helpers/clock")
 
-local FALL_HEIGHT_M = 3.0
+local tile = t.tile()
+assert(tile, "the pack declares simulation.tile")
+local FALL_HEIGHT_M = tile.height_m
 local STANDARD_GRAVITY_M_S2 = 9.80665
 
 t.world(

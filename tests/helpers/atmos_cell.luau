@@ -1,10 +1,12 @@
--- The atmospheric cell this pack declares: `simulation.tile` in
--- content/capabilities.luau, 1 m x 1 m of floor under a 3 m level. Blends
+-- The atmospheric cell this pack declares (`simulation.tile` in
+-- content/capabilities.luau), read through `t.tile`. Blends
 -- are densities (`amount = "per_m3"`), and `t.room_gas` reads moles per
 -- cell, so a spec turns a density into a cell's moles through this volume.
 local atmos_cell = {}
 
-atmos_cell.CELL_VOLUME_M3 = 3.0
+local tile = t.tile()
+assert(tile, "the pack declares simulation.tile")
+atmos_cell.CELL_VOLUME_M3 = tile.cell_volume_m3
 atmos_cell.R_GAS = 8.314
 
 -- Moles of ideal gas per cubic metre at a pressure (Pa) and temperature (K):
