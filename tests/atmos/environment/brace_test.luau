@@ -1,6 +1,6 @@
 -- The pack's `move.brace` (content/lib/brace.luau) in an explicit microgravity
--- sky: a solid thing braces a live body only on its own level, and only when it
--- is anchored. Every other way a flight ends is a collision.
+-- sky: a solid thing braces a conscious body only on its own level, and only
+-- when it is anchored. Every other way a flight ends is a collision.
 local function weightless(below: string, rows: string, structures: string): number
     t.world(
         string.format(
@@ -67,3 +67,10 @@ assert(t.staff_kill(corpse), "the staff action kills the body")
 t.run_seconds(4)
 local corpse_x = t.pos(corpse)
 assert(corpse_x == 8, "a corpse grips nothing and coasts to the edge: " .. corpse_x)
+
+local sleeper = launched("w", "")
+t.set_health(sleeper, { oxy = 60 })
+assert(not assert(t.body(sleeper)).conscious, "past fifty the body is out cold")
+t.run_seconds(4)
+local sleeper_x = t.pos(sleeper)
+assert(sleeper_x == 8, "a sleeper grips nothing and coasts to the edge: " .. sleeper_x)

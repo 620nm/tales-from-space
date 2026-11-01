@@ -278,8 +278,9 @@ return {
         -- tg /turf/closed/mineral: opaque, dense (minerals.dm:6-51, :15-16), airtight as a closed turf
         -- (_closed.dm:8 `blocks_air`). No `thermal`: it sets no heat_capacity, so INFINITY
         -- (LINDA_turf_tile.dm:5), unrepresentable; the tile keeps its substrate's.
-        -- `receives_gravity` matches the walls and is unobservable: rock braces a body in it, which
-        -- never falls (the engine's crates/lunatic-server/src/sim/movement/level_change.rs:resolve_fall_step).
+        -- `receives_gravity` matches the walls and is unobservable: no step enters blocking rock, and
+        -- a fall neither starts onto it nor lands in it (the engine's
+        -- crates/lunatic-server/src/sim/movement/level_change.rs:resolve_fall_step).
         { id = "rock", occludes_substrate = true, label = "rock", layer = "cover", sprite = "rock-0", cover = barrier_controls(),
             physical = { ambient = 0, support = true, receives_gravity = true, substrate_seal = true, movement_blocking = true,
                 gas_blocking = true, opaque = true } },

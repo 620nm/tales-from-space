@@ -18,15 +18,12 @@ local STEPS: { Step } = {
     { word = "southwest", dx = -1, dy = 1 },
 }
 
--- Who grips at all: a live, controllable body. A corpse or a sleeper coasts
+-- Who grips at all: a conscious body. A corpse, a crit or a sleeper coasts
 -- until it hits something. tg asks no hand either (`get_spacemove_backup`,
 -- code/modules/mob/mob_movement.dm:306).
 local function grips(actor: Handle): boolean
-    if actor.alive ~= true then
-        return false
-    end
     local body = sim.body(actor)
-    return body ~= nil and body.controllable == true
+    return body ~= nil and body.conscious == true
 end
 
 -- A dense thing `actor` can push off: anchored, and not itself. A loose thing
