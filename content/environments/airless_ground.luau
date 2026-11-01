@@ -7,4 +7,5 @@ return {
     sink_k = 2.7,
     insolation = 0,
     surface_temperature_k = 259.15,
+    sides_open_from = 0,
 }
