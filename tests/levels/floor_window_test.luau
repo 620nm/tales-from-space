@@ -126,7 +126,7 @@ assert(hx == 2 and hy == 1, "the faller landed under the hole, got (" .. hx .. "
 
 -- 4. Smoothing across the group. The west window has an east neighbour: bit
 -- EAST = 1 << 2 = 4. The east window has a west neighbour: bit WEST = 1 << 3 = 8
--- (the engine's crates/lunatic-server/src/structures/junction_bits.rs). Walls to
+-- (the engine's crates/lunatic-content/src/structures/junction_bits.rs). Walls to
 -- the north and south are no glass, so no other bit is set.
 local west = composition.seen_sprites(window_body, 6, 1)
 assert(west.components[1] == "glass_floor-4", "the west window joins east, got " .. tostring(west.components[1]))

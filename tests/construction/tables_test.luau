@@ -4,8 +4,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- take apart every one of them.
 --
 -- Two claims, and neither is about arithmetic. The engine's own tests
--- own the junction rule (`crates/lunatic-server/src/structures/
--- smoothing.rs` and sim/tests/smoothing.rs); what this file asserts is
+-- own the junction rule (`crates/lunatic-content/src/structures/
+-- junction_bits.rs` and sim/tests/smoothing.rs); what this file asserts is
 -- what THIS PACK declared with it -- that steel and reinforced tables
 -- agree they are one surface and wooden ones do not, which is three
 -- words in three content files (tg's `smoothing_groups`,

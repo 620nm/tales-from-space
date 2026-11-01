@@ -15,7 +15,7 @@
 // mean nothing to a reader.
 //
 // The junction a thing is at is the SERVER's arithmetic
-// (`crates/lunatic-server/src/structures/smoothing.rs`), which also
+// (`crates/lunatic-content/src/structures/junction_bits.rs`), which also
 // refuses to load any entry whose family is missing a single frame. All
 // this file does is put the frames where that check can find them.
 (

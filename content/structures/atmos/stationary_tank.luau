@@ -48,7 +48,7 @@
 -- (sim/holder/pressure_failure.rs). What is still deferred is either side of
 -- it, both tg's and neither a debug tank's problem (they are noted in
 -- the engine beside the fields that would carry them,
--- crates/lunatic-server/src/structures/atmos.rs):
+-- crates/lunatic-content/src/structures/atmos_block.rs):
 --   * the MERGER -- tg pools tanks standing next to each other into one
 --     mixture of their combined volume (tank.dm:270-306), and draws the
 --     47 smoothing states this file's sprite deliberately skips;
