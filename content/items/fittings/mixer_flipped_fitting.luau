@@ -11,6 +11,7 @@ return {
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.mixer_flipped_fitting.name",
     name = "flipped mixer fitting",
+    hint_tags = { "pipe_part" },
     sprite = "mixer_fitting",
     category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },

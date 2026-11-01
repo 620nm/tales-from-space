@@ -18,6 +18,7 @@ local content = {
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pipe_adapter.name",
     name = "multi-deck adapter",
+    hint_tags = { "pipe_part" },
     sprite = "pipe_adapter_loose",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
     -- Five piping layers, minted on the third like every pipe off the shelf.

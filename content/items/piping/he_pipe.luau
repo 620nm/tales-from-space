@@ -34,6 +34,7 @@ local content = {
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.he_pipe.name",
     name = "heat-exchanging pipe",
+    hint_tags = { "pipe_part" },
     sprite = "he_pipe",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
     stack = 25,

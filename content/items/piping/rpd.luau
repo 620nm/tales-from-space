@@ -413,20 +413,10 @@ local content = {
     -- in-hand key or tg-style pickup double-click opens its window.
 }
 
--- Every recipe's item, eight to a group: a condition holds at most 32
--- nodes and eight per list, so 1 + ceil(N / 8) + N <= 32 caps the recipes
--- at 27. Only an item has a prototype fact, so the prototypes alone name a
--- loose fitting.
-local breakdown_groups: { action_rules.Selector } = {}
-for first = 1, #RECIPES, 8 do
-    local group: { action_rules.Selector } = {}
-    for index = first, math.min(first + 7, #RECIPES) do
-        table.insert(group, action_rules.fact("target.proto", RECIPES[index].item))
-    end
-    table.insert(breakdown_groups, { any = group })
-end
+-- tg's breakdown is typed: loose atmos construction, which every recipe's
+-- item declares with this hint tag.
 content.actions = {
-    action_rules.primary("disassemble", { any = breakdown_groups }, {
+    action_rules.primary("disassemble", action_rules.fact("target.tag", "pipe_part"), {
         any = {
             action_rules.fact("held.dial", "mode=Build"),
             action_rules.fact("held.dial", "mode=Destroy"),

@@ -10,6 +10,7 @@ return {
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.volume_pump_fitting.name",
     name = "volumetric pump fitting",
+    hint_tags = { "pipe_part" },
     sprite = "volume_pump_loose",
     category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },

@@ -28,6 +28,7 @@ return {
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.connector_port_fitting.name",
     name = "connector port fitting",
+    hint_tags = { "pipe_part" },
     sprite = "connector_port_loose",
     -- tg's `inhand_icon_state = "buildpipe"` for the whole /obj/item/pipe
     -- family (construction.dm:19) -- one length of pipe over the

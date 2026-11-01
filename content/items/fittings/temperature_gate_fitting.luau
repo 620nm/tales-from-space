@@ -10,6 +10,7 @@ return {
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.temperature_gate_fitting.name",
     name = "temperature gate fitting",
+    hint_tags = { "pipe_part" },
     sprite = "temperature_gate_loose",
     category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },

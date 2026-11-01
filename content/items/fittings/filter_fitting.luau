@@ -27,6 +27,7 @@ return {
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.filter_fitting.name",
     name = "filter fitting",
+    hint_tags = { "pipe_part" },
     sprite = "filter_fitting",
     category = "fittings",
     -- tg's `inhand_icon_state = "buildpipe"` for the whole

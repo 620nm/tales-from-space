@@ -11,6 +11,7 @@ return {
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.vent_fitting.name",
     name = "air vent fitting",
+    hint_tags = { "pipe_part" },
     sprite = "vent_loose",
     category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },

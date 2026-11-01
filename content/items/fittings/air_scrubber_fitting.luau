@@ -10,6 +10,7 @@ return {
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.air_scrubber_fitting.name",
     name = "air scrubber fitting",
+    hint_tags = { "pipe_part" },
     sprite = "air_scrubber_loose",
     category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },

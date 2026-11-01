@@ -33,6 +33,7 @@ local content = {
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pipe_meter.name",
     name = "meter",
+    hint_tags = { "pipe_part" },
     -- tg's `icon_state = "meter"` off the fittings sheet: the gauge
     -- with no pipe drawn through it, because in your hands it is
     -- attached to nothing.
