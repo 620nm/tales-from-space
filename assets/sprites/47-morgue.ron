@@ -1,14 +1,11 @@
-// The morgue drawer and its tray, off tg's general structures sheet
-// (icons/obj/structures.dmi, code/game/objects/structures/morgue.dm).
+// The morgue, off tg's general structures sheet (icons/obj/structures.dmi,
+// code/game/objects/structures/morgue.dm).
 //
-// Six states, and which one is drawn is the drawer mechanism's answer
-// rather than a picture per prototype: `morgue1` is the shut, empty
-// face the file names as its base, `morgue0` is the open one, and the
-// other three are what `update_icon_state` swaps to for what is inside
-// (morgue.dm:384-403). Only two of those three ship — `morgue4` is the
-// revivable light, which needs ghosts and a defibrillator, and
-// `morgue3` is "things but nobody". `morguet` is the tray
-// (morgue.dm:608-621, which reads the same sheet).
+// One facing of the four the sheet ships, because a cadaver chamber is a
+// container and takes no aimed `dir`. `morgue1` is the shut, empty face the
+// file names as its base, `morgue0` the open one, and the other two are what
+// `update_icon_state` swaps to for what is inside (morgue.dm:384-403):
+// `morgue3` is things and nobody, `morgue2` a corpse.
 //
 // One family of `tfs/assets/sprites.ron`'s roster. Every .ron in this
 // directory is baked, in FILE-NAME order and then entry order, so the
@@ -19,34 +16,9 @@
         ("structures", "obj/structures.dmi"),
     ],
     sprites: [
-        // Every state on the sheet is four-directional (dirs = 4): a
-        // drawer is placed facing the aisle its tray rolls into, and
-        // the picture turns with it. Cell suffixes follow the sheet's
-        // own order, south, north, east, west (the atmos devices'
-        // convention in 20-atmos-inline-devices.ron).
         ("morgue0_s", Dmi("@structures", "morgue0", 0)),
-        ("morgue0_n", Dmi("@structures", "morgue0", 1)),
-        ("morgue0_e", Dmi("@structures", "morgue0", 2)),
-        ("morgue0_w", Dmi("@structures", "morgue0", 3)),
         ("morgue1_s", Dmi("@structures", "morgue1", 0)),
-        ("morgue1_n", Dmi("@structures", "morgue1", 1)),
-        ("morgue1_e", Dmi("@structures", "morgue1", 2)),
-        ("morgue1_w", Dmi("@structures", "morgue1", 3)),
         ("morgue2_s", Dmi("@structures", "morgue2", 0)),
-        ("morgue2_n", Dmi("@structures", "morgue2", 1)),
-        ("morgue2_e", Dmi("@structures", "morgue2", 2)),
-        ("morgue2_w", Dmi("@structures", "morgue2", 3)),
         ("morgue3_s", Dmi("@structures", "morgue3", 0)),
-        ("morgue3_n", Dmi("@structures", "morgue3", 1)),
-        ("morgue3_e", Dmi("@structures", "morgue3", 2)),
-        ("morgue3_w", Dmi("@structures", "morgue3", 3)),
-        ("morgue4_s", Dmi("@structures", "morgue4", 0)),
-        ("morgue4_n", Dmi("@structures", "morgue4", 1)),
-        ("morgue4_e", Dmi("@structures", "morgue4", 2)),
-        ("morgue4_w", Dmi("@structures", "morgue4", 3)),
-        ("morguet_s", Dmi("@structures", "morguet", 0)),
-        ("morguet_n", Dmi("@structures", "morguet", 1)),
-        ("morguet_e", Dmi("@structures", "morguet", 2)),
-        ("morguet_w", Dmi("@structures", "morguet", 3)),
     ],
 )

@@ -1,17 +1,15 @@
--- A cadaver chamber as a crewman meets it: an obstacle while shut, a
--- slab that rolls out onto the aisle, a body and a dropped thing that
--- stop existing for everybody else the moment it shuts, the lamp that
--- says which of those is inside, and the push from within that opens
--- it again.
+-- A cadaver chamber as a crewman meets it: an obstacle while shut, walkable
+-- open, a lying body and a dropped thing that stop existing for everybody else
+-- the moment it shuts, the push from within that opens it again, the lamp for
+-- things and nobody, and the four-second stuff from the next tile.
 --
 -- The concealment assertions are the security half: `t.items_at` and
--- `t.target_at` are what any second crewman in the room could see, and
--- a stowed thing has no tile at all, so there is nothing to filter.
+-- `t.target_at` are what any second crewman in the room could see, and a
+-- stowed thing has no tile at all, so there is nothing to filter.
 --
--- The bay is wired, because a cadaver chamber is a corded appliance and
--- its lamps read power: on an unwired bench every one of them is dark.
--- The plant, the controller and the socket sit in the row behind the
--- rank, two cells of cord away (docs/POWER.md, "Outlets and cords").
+-- The bay is wired, because a cadaver chamber is a corded appliance and its
+-- lamps read power. The plant, the controller and the socket sit in the row
+-- behind the rank, two cells of cord away (docs/POWER.md, "Outlets and cords").
 -- `cadaver_power_test.luau` is the one that pulls the plug.
 local clock = require("@helpers/clock")
 t.world(
@@ -33,8 +31,8 @@ t.world(
                 "#Gao..#",
                 "#######",
             ],
-            items: [(3, 1, "headset")],
-            structures: [(1, 1, "player_spawn", { "jobs": "medic" }), (3, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 2, "apc")],
+            items: [(2, 1, "headset")],
+            structures: [(1, 1, "player_spawn", { "jobs": "medic" }), (3, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "cadaver_chamber"), (2, 2, "apc")],
             networks: [
                 (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
                 (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
@@ -56,171 +54,105 @@ local function has(rows, wanted)
     return false
 end
 
--- The first spawn is beside the drawer; the second is the tile it
--- opens onto, which is the only way a body gets onto a tray: stand
--- there and let the slab arrive under you.
+local WATCH_TICKS = clock.deadline_ticks(1.0) + 2
+
 local attendant = t.join("medic")
 local patient = t.join("assistant")
 t.tick()
 local ax, ay = t.pos(attendant)
-assert(ax == 1 and ay == 1, "the attendant stands beside the drawer")
+assert(ax == 1 and ay == 1, "the attendant stands beside the chamber")
 local px, py = t.pos(patient)
-assert(px == 3 and py == 1, "the patient stands where the tray will be")
+assert(px == 3 and py == 1, "the patient stands on its far side")
 
-local drawer = t.target_at(attendant, 2, 1, "cadaver_chamber")
-assert(drawer ~= nil, "one targetable drawer")
+local chamber = t.target_at(attendant, 2, 1, "cadaver_chamber")
+assert(chamber ~= nil, "one targetable chamber")
 local shut = assert(t.structure_at(2, 1))
-assert(
-    shut.state == "closed" and shut.sprite == "morgue1_e",
-    "it starts shut, wearing the empty face"
-)
-assert(#shut.overlays == 0, "an empty drawer wears no lamp")
-assert(t.structure_at(3, 1) == nil, "a shut drawer's tray is nowhere")
+assert(shut.state == "closed" and shut.sprite == "morgue1_s", "it starts shut, wearing the empty face")
 
--- Dense while shut, and dense while open: the drawer never stops
--- occupying its own tile, which is what makes a rank of them a wall.
 t.move(attendant, "east")
 t.run_ticks(3)
 ax, ay = t.pos(attendant)
-assert(ax == 1 and ay == 1, "the shut drawer blocks movement")
+assert(ax == 1 and ay == 1, "the shut chamber blocks movement")
 
 t.sounds(attendant)
-t.click(attendant, 2, 1, drawer)
+t.click(attendant, 2, 1, chamber)
 t.tick()
 local open = assert(t.structure_at(2, 1))
-assert(
-    open.state == "open" and open.sprite == "morgue0_e",
-    "opening selects the authored state and art"
-)
-assert(has(t.sounds(attendant), "morgue_clank"), "the tray is heard rolling")
-local tray = t.structure_at(3, 1)
-assert(
-    tray ~= nil and tray.id == "cadaver_drawer" and tray.sprite == "morguet_e",
-    "the slab lands on the tile the drawer faces"
-)
-px, py = t.pos(patient)
-assert(px == 3 and py == 1, "the tray arrives under whoever is standing there")
+assert(open.state == "open" and open.sprite == "morgue0_s", "opening selects the authored state and art")
+assert(has(t.sounds(attendant), "morgue_clank"), "the slab is heard")
 
--- Lie down on it, and let the attendant shut the drawer.
+-- Open it is walkable; a body lies down where it stands.
+t.move(patient, "west")
+t.run_ticks(4)
+px, py = t.pos(patient)
+assert(px == 2 and py == 1, "an open chamber can be walked onto")
 t.rest(patient)
+t.run_ticks(2)
 t.sounds(attendant)
-t.click(attendant, 2, 1, drawer)
+t.click(attendant, 2, 1, chamber)
 t.tick()
 assert(assert(t.structure_at(2, 1)).state == "closed", "it shuts again")
 assert(has(t.sounds(attendant), "morgue_clank"), "and is heard doing it")
-assert(t.structure_at(3, 1) == nil, "the tray goes back in with everything on it")
-assert(#t.items_at(3, 1) == 0, "the dropped thing is concealed")
-assert(t.target_at(attendant, 3, 1) == nil, "and there is nothing left on that tile to click")
+assert(#t.items_at(2, 1) == 0, "the dropped thing is concealed")
+assert(#t.bodies_at(2, 1) == 0, "and so is the body")
+assert(t.target_at(attendant, 2, 1, "headset") == nil, "there is no item left on that tile to click")
 assert(t.body_id(patient) ~= nil, "the body still exists; it simply has no tile")
--- The patient is a player who lay down on the slab and is very much
--- still going, so this is the `morgue4` lamp rather than the `morgue2`
--- one: tg lights it for an occupant a defibrillator could bring back
--- (morgue.dm:303-321, :384-403), and "has not stopped" is what that
--- reads as here. `cadaver_test.luau` is where a corpse lights the other.
+
+-- Somebody going keeps the plain shut face: no lamp takes their push away.
+t.run_ticks(WATCH_TICKS)
+local holding = assert(t.structure_at(2, 1))
 assert(
-    assert(t.structure_at(2, 1)).overlays[1] == "morgue4_e",
-    "a drawer with somebody alive in it wears the living lamp"
+    holding.state == "closed" and holding.sprite == "morgue1_s",
+    "a chamber with somebody alive in it stays exactly closed"
 )
 
--- tg's relaymove: a conscious body inside pushing any direction slides
--- it back out (morgue.dm:75-83).
+-- tg's relaymove: a conscious body inside pushing any direction opens it
+-- (morgue.dm:75-83).
 t.move(patient, "west")
 t.run_ticks(3)
 assert(assert(t.structure_at(2, 1)).state == "open", "the push from inside opened it")
 px, py = t.pos(patient)
-assert(px == 3 and py == 1, "and put the patient back on the slab")
-assert(has(t.items_at(3, 1), "headset"), "everything else came out with them")
+assert(px == 2 and py == 1, "and left the patient on the chamber's own tile")
+assert(has(t.items_at(2, 1), "headset"), "everything else came out with them")
 
--- Off the slab, and shut it on the dropped thing alone: the other lamp.
+-- A standing body is refused, and says so.
 t.rest(patient, false)
 t.run_ticks(3)
+t.messages(attendant)
+t.click(attendant, 2, 1, chamber)
+t.tick()
+assert(assert(t.structure_at(2, 1)).state == "open", "a standing body keeps it open")
+assert(#t.messages(attendant) > 0, "and the closer is told why")
+
+-- Off the slab, and shut it on the dropped thing alone: the lit state. The push
+-- cost a lying step, which the wait pays off.
+t.run_seconds(1)
 t.move(patient, "east")
 t.run_ticks(4)
 px, py = t.pos(patient)
-assert(px == 4 and py == 1, "the patient steps clear of the slab")
-t.move(patient, "west")
-t.run_ticks(4)
-px, py = t.pos(patient)
-assert(px == 4 and py == 1, "and cannot step back onto it: an open tray is dense")
+assert(px == 3 and py == 1, "the patient steps clear")
+t.click(attendant, 2, 1, chamber)
+t.run_ticks(WATCH_TICKS)
+local lit = assert(t.structure_at(2, 1))
+assert(lit.state == "closed_items" and lit.sprite == "morgue3_s", "things and nobody is the items lamp")
+assert(#t.items_at(2, 1) == 0, "the dropped thing is inside")
+assert(t.target_at(attendant, 2, 1, "headset") == nil, "and a lit chamber leaves nothing to click")
 
-t.click(attendant, 2, 1, drawer)
-t.tick()
-assert(#t.items_at(3, 1) == 0, "the dropped thing is inside")
-assert(
-    assert(t.structure_at(2, 1)).overlays[1] == "morgue3_e",
-    "things but nobody is the other lamp"
-)
+-- A click steps the lamp back to `closed`, which is the only state that opens.
+t.click(attendant, 2, 1, chamber)
+t.run_ticks(2)
+assert(assert(t.structure_at(2, 1)).state == "open", "a lit chamber opens to a click")
+assert(has(t.items_at(2, 1), "headset"), "and gives the thing back")
 
-assert(#t.ledger_rows("drawer_opened") == 2, "both opens are attributed")
-assert(#t.ledger_rows("drawer_closed") == 2, "both closes are attributed")
-assert(t.ledger_has("DrawerClosed", "cadaver chamber"), "the row names the thing")
+assert(#t.ledger_rows("container_opened") == 3, "every open is attributed")
+assert(#t.ledger_rows("container_closed") == 2, "every close is attributed")
+assert(t.ledger_has("ContainerClosed", "cadaver chamber"), "the row names the thing")
+assert(#t.script_errors() == 0, "the chamber's handlers run cleanly")
 
--- A drawer whose mouth is walled over after boot refuses to open, says
--- so, and is still an obstacle afterwards.
---
--- Wired for the same reason the bench above is: this one is about the
--- refusal, not about power, and an unfed chamber here would be a true
--- `corded fixture has no outlet within cord range` warning drowning out
--- the one bench that means to trip it.
-t.world(
-    [==[(
-    name: "walled cadaver chamber bench",
-    legend: {
-        ' ': (composition: (substrate: Named("space"))),
-        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-    },
-    levels: [
-        (
-            rows: [
-                "#####",
-                "#...#",
-                "#Gao#",
-                "#####",
-            ],
-            items: [],
-            structures: [(1, 1, "player_spawn"), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 2, "apc")],
-            networks: [
-                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-            ],
-        ),
-    ],
-)]==],
-    7
-)
-assert(t.set_composition(3, 1, "wall"), "the tile the tray would land on is built over after boot")
-
-local crew = t.join()
-t.tick()
-local walled = t.target_at(crew, 2, 1, "cadaver_chamber")
-t.messages(crew)
-t.click(crew, 2, 1, walled)
-t.tick()
-assert(assert(t.structure_at(2, 1)).state == "closed", "a drawer facing a wall stays shut")
-assert(#t.messages(crew) > 0, "and says why")
-t.move(crew, "east")
-t.run_ticks(3)
-local crew_x, crew_y = t.pos(crew)
-assert(crew_x == 1 and crew_y == 1, "a refused drawer is still an obstacle")
-
--- ---- dragging somebody onto the slab --------------------------------
--- tg lets you stuff a body into a cadaver drawer: the tray's own
--- `mouse_drop_receive` force-moves an unbuckled mob onto the tray's
--- tile (code/game/objects/structures/morgue.dm:582-594). Here the
--- engine's drag seam has an arm for the tray, and it is the same timed
--- lay every other surface gets -- two seconds, tg's own number for
--- putting somebody somewhere (bin.dm:225).
---
--- The slab is DENSE, which is the interesting part: an open tray is an
--- obstacle you cannot walk onto (the assertion further up says so), and
--- the thing you are being laid ONTO is the one thing that never blocks
--- the drop.
+-- ---- stuffing somebody in from the next tile --------------------------
+-- The closet's drag: four seconds, then the close takes the body off its own
+-- tile (lib/body_drag.luau). tg's own body drag is onto the tray
+-- (morgue.dm:589-601), which is not ported.
 t.world(
     [==[(
     name: "cadaver chamber aisle",
@@ -241,7 +173,7 @@ t.world(
                 "#Gao..#",
                 "#######",
             ],
-            structures: [(3, 2, "player_spawn", { "jobs": "medic" }), (4, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 3, "apc")],
+            structures: [(3, 2, "player_spawn", { "jobs": "medic" }), (3, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "cadaver_chamber"), (2, 3, "apc")],
             networks: [
                 (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
                 (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
@@ -254,50 +186,34 @@ t.world(
     7
 )
 
-local LAY_TICKS = clock.deadline_ticks(2.0) + 2
-
 local orderly = t.join("medic")
-local corpse = t.join("assistant")
+local stuffed = t.join("assistant")
 t.tick()
-assert(t.pos(orderly) == 3, "the orderly stands in the aisle")
-local cx, cy = t.pos(corpse)
-assert(cx == 4 and cy == 1, "and the body beside the slab's tile")
 
 local bay = t.target_at(orderly, 2, 1, "cadaver_chamber")
 t.click(orderly, 2, 1, bay)
 t.tick()
-local slab = t.target_at(orderly, 3, 1, "cadaver_drawer")
-assert(slab ~= nil, "the slab is out on the deck")
+assert(assert(t.structure_at(2, 1)).state == "open", "the chamber stands open")
 
 -- Nothing lands in the tick the drag arrives.
-t.drag(orderly, 4, 1, t.body_target(orderly, corpse), 3, 1, slab)
+t.sounds(orderly)
+t.drag(orderly, 3, 1, assert(t.body_target(orderly, stuffed)), 2, 1, assert(bay))
 t.run_ticks(2)
-cx, cy = t.pos(corpse)
-assert(cx == 4 and cy == 1, "two ticks in, the body has not moved")
+local cx, cy = t.pos(stuffed)
+assert(cx == 3 and cy == 1, "two ticks in, the body has not moved")
 
-t.run_ticks(LAY_TICKS)
-cx, cy = t.pos(corpse)
-assert(cx == 3 and cy == 1, "the body is on the slab: " .. cx .. "," .. cy)
-assert(assert(t.body(corpse)).posture == "lying", "lying on it")
+t.run_ticks(clock.deadline_ticks(4.0) + 3)
+assert(assert(t.structure_at(2, 1)).state == "closed", "the chamber shuts on them")
+assert(#t.bodies_at(3, 1) == 0, "a stowed body has no tile at all")
+assert(t.body_id(stuffed) ~= nil, "the body still exists")
+assert(assert(t.body(stuffed)).posture == "lying", "and was knocked down going in")
 
--- ...and that is already everything the close needs. A body on the
--- tray's tile is what `close_drawer` gathers; the drag added no second
--- mechanism.
-t.click(orderly, 2, 1, bay)
-t.tick()
-assert(assert(t.structure_at(2, 1)).state == "closed", "the drawer shuts on them")
-assert(t.structure_at(3, 1) == nil, "the slab went back in")
-assert(
-    t.target_at(orderly, 3, 1) == nil,
-    "a stowed body has no tile at all: there is nothing left to click"
-)
-assert(t.body_id(corpse) ~= nil, "the body still exists")
-assert(
-    assert(t.structure_at(2, 1)).overlays[1] == "morgue4_e",
-    "and the drawer wears the lamp for somebody still going"
-)
+-- The drag's close starts the same watch a click's does.
+t.run_ticks(WATCH_TICKS)
+assert(has(t.sounds(orderly), "cadaver_alert"), "the alarm answers somebody stuffed in alive")
+t.set_health(stuffed, { burn = 200 })
+t.run_ticks(WATCH_TICKS)
+assert(assert(t.structure_at(2, 1)).state == "closed_bodies", "and the lamp lights once they stop")
+assert(#t.script_errors() == 0, "the stuff runs cleanly")
 
-print(
-    "cadaver chamber: obstacle, slab, concealment, lamps, the push out, "
-        .. "and a body dragged onto the slab"
-)
+print("cadaver chamber: obstacle, walkable open, concealment, the push out, the items lamp, the stuff")

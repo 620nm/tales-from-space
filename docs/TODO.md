@@ -97,6 +97,8 @@ identity and deck forensics.
 
 `content/structures/furniture/freezer.luau` no longer preserves organs; tg
 holds organs frozen in a freezer (`code/modules/surgery/organs/_organ.dm:159-171`).
+`content/lib/closets/chamber_watch.luau` holds a corpse's seated organs in a
+cadaver chamber; a loose organ in any holder has no hold.
 
 Done: the organ-decay timer that follows the P16 container work reads the
 holder's cold state, so organs in a freezer do not decay, with a spec in

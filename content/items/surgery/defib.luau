@@ -82,9 +82,9 @@ local function refusal(patient: Handle): Message?
     -- DEFIB_FAIL_FAILING_BRAIN (carbon.dm:830-831), and the reason the
     -- cadaver chamber matters: a brain in a corpse DECAYS
     -- (content/items/organ_brain.luau, half the standard rate), and a
-    -- drawer's `preserves` multiplies that decay. The revival window is
-    -- therefore a real clock a mapper set, and a preserved cadaver has
-    -- no clock at all.
+    -- shut, powered chamber holds that decay off (`lib/closets/
+    -- chamber_watch.luau`). The revival window is therefore a real clock,
+    -- and a preserved cadaver has no clock at all.
     if assert(sim.organ(brain)).failing then
         return sim.msg("lunatic/tfs:items.defib.brain_gone", {})
     end
@@ -122,7 +122,7 @@ if sim ~= nil then
             -- The patient is the wait's SECOND party: a body effect is
             -- applied without a reach test, so without naming them here
             -- a medic could charge over a patient, have them dragged
-            -- three rooms off or stowed in a drawer, and still land the
+            -- three rooms off or shut in a chamber, and still land the
             -- shock. `options.subject` ends the wait the moment they
             -- stop being in front of the medic (docs/LUAU-API.md §6).
             if sim.do_after(user, sim.ticks(5), { subject = patient }) ~= "ok" then

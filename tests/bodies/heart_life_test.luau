@@ -21,8 +21,8 @@
 -- anything to do once life is an organ rather than a sum of damage.
 
 -- The chamber is here for one assertion at the very bottom -- a patient
--- shut in a drawer mid-charge -- and it is unpowered on purpose: what
--- this spec needs is a drawer that opens and shuts, not a lamp.
+-- shut in one mid-charge -- and it is unpowered on purpose: what this
+-- spec needs is a door that opens and shuts, not a lamp.
 local clock = require("@helpers/clock")
 local ARENA = [==[(
     name: "theatre",
@@ -35,7 +35,7 @@ local ARENA = [==[(
                 (1, 1, "player_spawn", { "jobs": "medic" }),
                 (2, 1, "player_spawn", { "jobs": "assistant" }),
                 (3, 1, "player_spawn", { "jobs": "engineer" }),
-                (2, 2, "cadaver_chamber", { "dir": "north" }),
+                (2, 2, "cadaver_chamber"),
             ],
         ),
     ],
@@ -51,15 +51,13 @@ end
 t.world(ARENA, 0)
 local medic = t.join("medic")
 local patient = t.join("assistant")
-local attendant = t.join("engineer") -- somebody with a free hand for the drawer
+local attendant = t.join("engineer") -- somebody with a free hand for the chamber
 t.run_ticks(3)
 
 assert(assert(t.body(patient)).animate == true, "they start out alive")
 assert(assert(t.organ_damage(patient, "heart")) == 0, "with an undamaged heart")
 
--- 200 brute is what the cadaver chamber's own stock row deals
--- (content/structures/cadaver_chamber.luau), i.e. how this game makes a
--- corpse.
+-- 200 brute of a 200-brute chest is how this game makes a corpse.
 t.set_health(patient, { brute = 200 })
 t.run_ticks(2)
 assert(assert(t.body(patient)).animate == false, "200 brute is past the dead line")
@@ -121,10 +119,10 @@ assert(said(medic, "too severe"), "treat them before you shock them")
 assert(assert(t.organ_damage(patient, "heart")) == 100, "and nothing was restarted")
 
 -- A brain too far gone: DEFIB_FAIL_FAILING_BRAIN (carbon.dm:830-831).
--- This is the revival WINDOW, and it is a clock the map sets — a brain
--- in a corpse decays (content/items/organ_brain.luau), and a drawer's
--- `preserves` multiplies that decay, so a body in the cadaver chamber
--- has no clock running at all. Half an hour of decay is not something a
+-- This is the revival WINDOW, and it is a real clock — a brain
+-- in a corpse decays (content/items/organ_brain.luau), and a shut,
+-- powered cadaver chamber holds that decay off, so a body in one has no
+-- clock running at all. Half an hour of decay is not something a
 -- spec can wait out, so `t.set_organ_damage` puts the brain where the
 -- decay would have.
 t.set_health(patient, { brute = 0, burn = 0, oxy = 0, tox = 0 })
@@ -141,7 +139,7 @@ assert(assert(t.body(patient)).animate == false, "and they stay dead")
 -- The charge is a TWO-PARTY wait. A body effect is applied without a
 -- reach test, so without `options.subject` on the do_after
 -- (content/items/defib.luau) a medic could start the charge, have the
--- patient dragged into the next room or shut in a drawer, and still
+-- patient dragged into the next room or shut in a chamber, and still
 -- land the shock at the end of it.
 -- =====================================================================
 t.set_organ_damage(patient, "brain", 0)
@@ -173,23 +171,25 @@ assert(t.pos(medic) == 1, "back beside the patient")
 
 -- ---- the patient is taken away mid-charge ----------------------------
 -- A body with no tile is a body that is NOWHERE, and the guard ends the
--- wait on the same clause that catches one carried off. The drawer's
--- slab comes out onto the patient's own tile, so shutting it takes them
--- with it (`sim/drawers.rs`: bodies are not dense and are exactly what a
--- close is for).
+-- wait on the same clause that catches one carried off. The stuff takes
+-- four seconds and the charge five, so the charge starts one second into
+-- the stuff and the close lands inside it.
 local chamber = assert(t.target_at(attendant, 2, 2, "cadaver_chamber"), "the target is visible")
 t.click(attendant, 2, 2, chamber)
 t.run_ticks(2)
-assert(t.structure_at(2, 1) ~= nil, "the slab is out, under the patient")
+assert(assert(t.structure_at(2, 2)).state == "open", "the chamber stands open beside the patient")
+t.drag(attendant, 2, 1, t.body_target(attendant, patient), 2, 2, chamber)
+t.run_seconds(1.0)
 t.messages(medic)
 t.click(medic, 2, 1, t.body_target(medic, patient))
 t.run_ticks(3)
 assert(said(medic, "charge the defibrillator"), "the charge started again")
-t.click(attendant, 2, 2, chamber)
-t.run_ticks(2)
-assert(t.structure_at(2, 1) == nil, "the slab went back in")
+assert(#t.bodies_at(2, 1) == 1, "with the patient still on the deck")
+t.run_seconds(3.5)
+assert(assert(t.structure_at(2, 2)).state == "closed", "the chamber shut on them")
+assert(#t.bodies_at(2, 1) == 0, "and the patient is nowhere")
 t.run_seconds(7.0)
 assert(not said(medic, "heart restarts"), "a stowed patient is not shocked")
-assert(assert(t.body(patient)).animate == false, "still dead in the drawer")
+assert(assert(t.body(patient)).animate == false, "still dead in the chamber")
 
 print("heart life: dying stops the heart, healing does not restart it, a defibrillator does")

@@ -104,9 +104,9 @@ near(num(body.leak_rates.blood or 0), 0.0125, "at the flat stack rate")
 -- A precondition, not a blow: the victim at 195 brute, ten health
 -- from dead. Actorless, so it bleeds (living) and leaves no trace —
 -- no second mint, no thump.
-local function stacks(): number
+local function stacks(body: number): number
     local total = 0
-    for _, row in pairs(assert(t.parts(victim))) do
+    for _, row in pairs(assert(t.parts(body))) do
         total += num(row.leak_stacks.blood or 0)
     end
     return total
@@ -120,7 +120,7 @@ assert(#t.sounds(attacker) == 0, "and thumps nothing")
 -- the living precondition opens far more than time closes. The chest
 -- saturates at the engine's 40-stack cap (a pass boundary may have
 -- closed one meanwhile).
-local opened = stacks()
+local opened = stacks(victim)
 assert(opened > bleed_sum, "but the living precondition still bleeds")
 local chest = num(assert(t.parts(victim)).chest.leak_stacks.blood or 0)
 assert(chest >= 39, "a part holds no more than 40")
@@ -150,11 +150,27 @@ end
 assert(marks == 1, "one tile, one mark, repainted")
 -- The killing wound opens onto a saturated chest: the cap hides its
 -- 10 and time only closes, so the count never rises past the opening.
--- (The animate gate itself — no stacks once dead — is pinned from the
--- other side by tests/bodies/surgery_cadaver_test.luau's rolled-out
--- cadaver. A swung tool cannot reach a corpse at all: clicks on one
--- route to `interaction.use`, never combat.)
-assert(stacks() <= opened, "the heart beats on the receipt")
+assert(stacks(victim) <= opened, "the heart beats on the receipt")
 t.run_seconds(3)
 assert(not assert(t.body(victim)).animate, "and the cascade ends dead")
+
+-- The animate gate, exercised on the `t.set_health` path only: a blow that kills
+-- there reads a corpse on its receipt. The receipt's order on a swung blow is not
+-- established; the swing above says only that the count never rose. The brute is
+-- the actorless kind that opened a bleeder on the living above, and burns carry
+-- the body to one 40-point blow from the dead line, because a drive lands at
+-- most 40 a blow and a corpse takes nothing at all.
+t.set_health(attacker, { burn = 160 })
+t.run_ticks(4)
+assert(assert(t.body(attacker)).animate, "one blow from the dead line")
+assert(stacks(attacker) == 0, "burns open no bleeder")
+t.set_health(attacker, { burn = 160, brute = 40 })
+t.run_ticks(4)
+assert(not assert(t.body(attacker)).animate, "the blow killed")
+local corpse_brute = 0
+for _, row in pairs(assert(t.parts(attacker))) do
+    corpse_brute += num(row.brute or 0)
+end
+near(corpse_brute, 40, "and it landed")
+assert(stacks(attacker) == 0, "the dead open no bleeder")
 assert(#t.script_errors() == 0, "the wound chain runs clean")

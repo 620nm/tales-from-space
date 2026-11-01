@@ -25,7 +25,7 @@
 -- make treating a body slower for no rule. Treating the parts is the
 -- FIRST half of a revival either way, because a heart restarted under
 -- a body still past the dead line revives it into a corpse
--- (tests/cadaver_revival_test.luau).
+-- (tests/bodies/cadaver_revival_test.luau).
 
 return {
     id = "tend_wounds",
