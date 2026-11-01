@@ -9,7 +9,7 @@ local composition = require("@helpers/composition")
 -- junction packs the rock cardinal neighbours (N=1 S=2 E=4 W=8; the map edge is none),
 -- plus a corner bit (NE=16 SE=32 SW=64 NW=128) only when both cardinals beside it are
 -- set and the diagonal is rock too (the engine's
--- crates/lunatic-server/src/structures/junction_bits.rs). On the map below
+-- crates/lunatic-content/src/structures/junction_bits.rs). On the map below
 -- (x across, y down):
 --   (1,1): N+E+W = 13, NE (2,0) 16, NW (0,0) 128          = 157
 --   (2,1): N+E+W = 13, NE (3,0) 16, NW (1,0) 128          = 157
