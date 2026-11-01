@@ -1,6 +1,7 @@
 -- What lies beyond a map's levels is the environment's to say
 -- (`beyond` on the profile, the engine's `docs/gamemodes/environment.md`).
--- Every space environment declares `empty` below and above, so:
+-- Every space environment declares `empty` below and `closed` above
+-- (`covered_room_open_test.luau` owns the roof), so:
 --
 --   1. an Open tile on the LOWEST level is legal -- there is nothing under
 --      it to land on -- and it vents the room around it to vacuum;

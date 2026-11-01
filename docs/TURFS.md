@@ -82,8 +82,11 @@ The four glass floors (tg `glass.dm`) are floor windows over an open substrate.
 They hold a body and the air, show the level below, and show runs beneath
 without tool access. All four smooth as one group. Their presets open the
 substrate, so they cannot go on the lowest level of a closed environment; the four
-space environments declare `beyond = { below = "empty", above = "empty" }`, where
-an Open tile on the lowest level is legal and vents. A power cable needs
+space environments declare `beyond = { below = "empty", above = "closed" }`, where
+an Open tile on the lowest level is legal and vents, and an Open tile on the top
+level holds its air: the roof over a map is always closed, and gas leaves
+downward. With a level above, that level's floor decides, and an open floor there
+shares its air with the tile below it. A power cable needs
 supporting ground, station base or catwalk, so none runs on glass, and the
 glass preset is refused over a cable run (tg refuses cable where the underfloor
 is only visible, `cable.dm:692`); pipes have no such need. A crowbar pries a glass
@@ -110,7 +113,10 @@ Station base and walls receive the station gravity field. Uncovered space,
 lattice, and catwalk do not. Terrestrial environments have gravity everywhere,
 including authored vacuum tiles; an explicit microgravity space environment
 disables gravity throughout. The station field is assumed enabled until
-generator control is implemented.
+generator control is implemented. A bare Open tile has no weight of its own: it
+borrows the deck below it, so a body over a hole in a room with weight falls, and
+a gravity battery's field runs up and down through such holes to the decks they
+join (the engine's `docs/netcode/gravity.md`).
 
 In zero gravity, a conscious body can brace against a wall, lattice, catwalk, or
 anchored blocking object on its tile or any of its eight neighbours, on its own
