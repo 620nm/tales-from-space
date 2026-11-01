@@ -13,6 +13,7 @@ requires = []
 optional = []
 native_edges = [
     "movement.bump",
+    "movement.brace",
     "movement.cross",
     "movement.climb",
     "motion.entity_location",

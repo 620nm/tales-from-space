@@ -112,9 +112,12 @@ including authored vacuum tiles; an explicit microgravity space environment
 disables gravity throughout. The station field is assumed enabled until
 generator control is implemented.
 
-In zero gravity, a body can brace against a wall, lattice, catwalk, or blocking
-object on its tile or any of its eight neighbours. A bare floor supplies no
-handhold. Pushing off a movable blocking object sends that object oppositely.
+In zero gravity, a live, controllable body can brace against a wall, lattice,
+catwalk, or anchored blocking object on its tile or any of its eight neighbours,
+on its own level (`content/lib/brace.luau`, the mode's `move.brace`). It cannot
+push off an anchored object it is stepping into. A bare floor supplies no
+handhold, and a corpse or sleeper grips nothing. Pushing off a movable blocking
+object sends that object oppositely.
 Structural support, handholds, gravity reception, and atmosphere sealing are
 independent composition properties.
 
