@@ -137,9 +137,13 @@ t.tick()
 
 local run = assert(matter_look.find(q, 2, 1, "puddle", 4), "the run draws the puddle shell")
 local _, run_quadrants = matter_look.edges(run)
-for corner, block in pairs(run_quadrants) do
-    assert(block == "flat", `the run sits flush along its wall, {corner} is {block}`)
-end
+assert(
+    run_quadrants.nw == "flat"
+        and run_quadrants.ne == "flat"
+        and run_quadrants.sw == "flat"
+        and run_quadrants.se == "flat",
+    "the run sits flush along its wall"
+)
 local round = assert(matter_look.find(q, 1, 1, "puddle", 4), "the corner draws the shell too")
 local _, round_quadrants = matter_look.edges(round)
 assert(round_quadrants.se == "flat", "the pillar's corner seals the diagonal")
