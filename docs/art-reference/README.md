@@ -48,7 +48,7 @@ palette rules, animation timing and LED restraint policy. Nothing here ships.
 | `06-furniture.png` | Calm room surfaces: `table-0` (`75%` top plane), `glass_table-0`, 32×48 `med` and `eng` lockers, 2026 `medicalcrate`, 2024 `coffeemaker`, ceramic-beige `mw_complete`, and `autolathe`. |
 | `07-palette.png` | All 20 sets (155 colours) of `tales-from-space.gpl` plus the pixel-budget breakdown of `sheater-off` (502 opaque pixels, 7 colours, 1 `#b91411` power LED pixel). |
 | `08-context.png` | Contact test at 3× on `floors.dmi` (`white` and `floor`): medical and 2024–2026 engineering rows read clearly by silhouette and value, whereas a telecomms row drowns in blinking cyan/amber noise. |
-| `09-information.png` | Informative displays: 2026 `vitals_monitor.dmi` (dark when idle; every lit region maps to a limb or vital) and 2025 `wall_healer.dmi` (4 reagent bars drop as stock is spent). |
+| `09-information.png` | Informative displays: 2026 `vitals_monitor.dmi` (dark when idle; every lit region maps to a limb or vital) and 2025 `wall_healer.dmi` (4 substance bars drop as stock is spent). |
 
 ## Spatial, paper-doll and timing reference
 
