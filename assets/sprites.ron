@@ -255,8 +255,16 @@
         "light_glow_e",
         "light_glow_w",
     ],
-    // The running gravity battery's field disc bends the scene slightly
-    // about its centre tile: pack-tuned, a subtle pull (radius in tiles,
-    // strength as a fresh Lens; the engine's docs/assets/rosters.md).
-    lens: [(sprite: "grav_disc_active", radius: 2.5, strength: 0.12)],
+    // The running gravity battery's field disc bends the scene and whoever
+    // stands in it about its centre tile, winding inward and rolling back:
+    // pack-tuned (radius in tiles, strength as a fresh Lens, swing in
+    // seconds; the engine's docs/assets/rosters.md).
+    lens: [(
+        sprite: "grav_disc_active",
+        radius: 3.25,
+        strength: 0.2,
+        swing_s: 2.0,
+        roll_back: 0.4,
+        bends_entities: true,
+    )],
 )
