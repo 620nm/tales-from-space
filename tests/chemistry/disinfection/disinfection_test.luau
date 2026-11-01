@@ -108,7 +108,9 @@ t.world(
     0
 )
 
-local HOLDER_REVISIT_SLACK_TICKS = clock.deadline_ticks(HOLDER_REVISIT_SECONDS) + 1
+-- Two dispatch revisits: the first qualifying sample and the crossing sample
+-- each land up to one revisit after their contact.
+local HOLDER_REVISIT_SLACK_TICKS = 2 * clock.deadline_ticks(HOLDER_REVISIT_SECONDS) + 1
 
 assert(
     t.count_items("bottle.rhinovirus_culture") == TEST_CULTURE_HOLDER_COUNT,

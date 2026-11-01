@@ -48,12 +48,13 @@ Sparse registries can therefore take multiple events to fit within the
 dispatch limit. Queue refusal or a dropped notification leaves registrations
 eligible for later attempts. Repacking does not guarantee a sample every second
 or progress under native queue overload. A missed observation longer than one
-simulated second starts a fresh contact interval.
+page revisit (`maximum_sample_gap_ticks`) starts a fresh contact interval.
 
 Each illness has its own contact clock. Qualifying samples must span at least
 10 seconds by default. An observed below-dose sample resets that illness's
-clock. A gap longer than one simulated second between qualifying samples also
-starts a fresh interval. The rule measures sampled contact and makes no claim
+clock. A gap longer than one page revisit between qualifying samples, one
+second plus a tick while the registry fits one dispatch, also starts a fresh
+interval. The rule measures sampled contact and makes no claim
 about uninterrupted contact between subsecond changes.
 
 The sweep acts on the holder handle without a player actor or a floor-tile
