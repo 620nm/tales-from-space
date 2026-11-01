@@ -1,6 +1,5 @@
 -- A rock basement in orbit (the asteroid look): the same map as
--- rock_basement_test.luau, but the rock lies on rock floor, as the editor's
--- space subterrain fill writes it (content/editor.luau), so digging the rock
+-- rock_basement_test.luau, but the rock lies on rock floor, so digging the rock
 -- reveals rock floor, tg's asteroid sand (minerals.dm:29). The map pins standard
 -- gravity, which a space environment applies to receiving surfaces (the
 -- engine's docs/mapping/environment.md), and rock floor receives it, so the

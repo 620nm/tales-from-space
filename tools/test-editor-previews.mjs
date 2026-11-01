@@ -24,15 +24,15 @@ function preview(schema, values) {
 // With no roster one skipped test records why, instead of zero tests.
 if (skip) test("editor previews", { skip }, () => {});
 // Band fills for a new level (the engine's docs/mapping/editor-declarations.md):
-// rock below ground, blank ground, blank open air (a blank tile above ground is sky).
+// rock below a planet's ground, blank below ground in space, blank ground, blank
+// open air (a blank tile above ground is sky).
 test("editor.levels fills a new level by band for both environment kinds", { skip }, () => {
-  assert.equal(manifest.revision, "6", "the served declaration revision");
+  assert.equal(manifest.revision, "7", "the served declaration revision");
   assert.deepEqual(Object.keys(manifest.levels).sort(), ["space", "terrestrial"]);
   for (const [kind, bands] of Object.entries(manifest.levels)) {
     assert.deepEqual(Object.keys(bands).sort(), ["open_air", "subterrain", "terrain"], `${kind} bands`);
-    // Mined rock leaves asteroid floor in orbit and the profile's ground on a planet.
-    const subterrain = { components: [{ component: "rock", controls: {} }] };
-    if (kind === "space") subterrain.substrate = "rock_floor";
+    // Mined rock leaves the profile's ground on a planet; a space basement inherits space.
+    const subterrain = kind === "space" ? {} : { components: [{ component: "rock", controls: {} }] };
     assert.deepEqual(bands.subterrain, subterrain, `${kind} subterrain`);
     assert.deepEqual(bands.terrain, {}, `${kind} terrain inherits`);
     assert.deepEqual(bands.open_air, {}, `${kind} open_air inherits to sky`);

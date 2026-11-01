@@ -63,11 +63,12 @@ Rock floor (tg `/turf/open/misc/asteroid`, `asteroid.dm:5-14`) is a natural
 substrate beside ground: it supports, receives the station field and is no
 vacuum boundary, so a carved room in orbit holds a body with no station base.
 Its picture is the asteroid sand state; tg's random floor variance is not drawn.
-The `rock_floor` preset paints it and replaces the installed components. The
-editor's space subterrain fill lays rock over rock floor (`content/editor.luau`),
-because tg's mineral turf leaves asteroid floor by default (`minerals.dm:29`);
-the terrestrial fill keeps the profile's cold ground, as the icemoon mineral
-leaves snow (`minerals.dm:677`). Laying plating on rock floor is not ported.
+The `rock_floor` preset paints it and replaces the installed components; an
+authored asteroid lays rock over it, because tg's mineral turf leaves asteroid
+floor by default (`minerals.dm:29`). The editor's terrestrial subterrain fill
+keeps the profile's cold ground, as the icemoon mineral leaves snow
+(`minerals.dm:677`); its space subterrain fill is blank and inherits space
+(`content/editor.luau`). Laying plating on rock floor is not ported.
 
 Open sky above ground and what seals it are the engine's contract (the
 engine's `docs/content-schema/compositions.md` "Tile values and replacement"
@@ -75,8 +76,7 @@ and `docs/mapping/environment.md` "Exposure"). Station base and rock seal the
 substrate, so either one roofs open sky. The `open` preset cuts a hole on any
 level, ground-level terrain included, but not on the lowest. `bare` and `rock`
 write the `inherit` substrate, so painting either over a hole at or below ground
-closes it; above ground it is open sky, so a hole there stays open. The editor's
-space subterrain fill differs from `rock`: rock over rock floor, as above.
+closes it; above ground it is open sky, so a hole there stays open.
 
 The four glass floors (tg `glass.dm`) are floor windows over an open substrate.
 They hold a body and the air, show the level below, and show runs beneath
