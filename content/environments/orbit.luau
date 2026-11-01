@@ -8,5 +8,5 @@ return {
     sink_k = 2.7,
     insolation = 1361,
     surface_temperature_k = 293.15,
-    beyond = { below = "empty", above = "empty" },
+    beyond = { below = "empty", above = "closed" },
 }
