@@ -51,3 +51,19 @@ assert(#t.seen_matter(p, 2, 1) == 0, "inherited ground is no cell matter either"
 assert(#t.seen_ground(p, 0, 3) == 0, "a tile that says it has no material draws none")
 assert(#t.seen_ground(p, 2, 3) == 0, "a named substrate does not inherit the sky's material")
 assert(face(4, 3).tint == SAND, "a named material outranks the sky's")
+
+-- The ground changes under the round: what inherits follows, what said
+-- otherwise does not, and a player sees it without moving.
+local sky = t.environment()
+t.set_environment({ sink_k = sky.sink_k, insolation = sky.insolation, material = "sand_ground" })
+t.run_ticks(4)
+assert(face(2, 1).tint == SAND, "a blank tile follows its sky's ground")
+assert(face(2, 1).whole, "and stays one ground with its neighbours")
+assert(#t.seen_ground(p, 0, 3) == 0, "a tile with no material stays without")
+assert(#t.seen_ground(p, 2, 3) == 0, "a named substrate still inherits nothing")
+
+local refused = pcall(function()
+    t.set_environment({ sink_k = sky.sink_k, insolation = sky.insolation, material = "no_such_ground" })
+end)
+assert(not refused, "a ground the pack does not define is refused")
+assert(face(2, 1).tint == SAND, "and changes nothing")
