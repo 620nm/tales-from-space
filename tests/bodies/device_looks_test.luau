@@ -173,10 +173,10 @@ assert(running.sprite == "scrubber_on_e", "wearing its working body: " .. assert
 -- on the layer stack already there (sim/atmos_machines/underlays.rs).
 -- `intact` is tg's word for a mouth that FOUND its run; 8 is west.
 local drawn = t.layers(p, t.target_at(p, 2, 1, "air_scrubber"))
-assert(#drawn == 3, "a stub and its cap under a body, and nothing else: " .. #drawn)
+assert(#drawn == 3, "a stub under a body with a cap over it, and nothing else: " .. #drawn)
 assert(drawn[1] == "pipe_intact_l2_8", "the mouth it bound, beneath it: " .. drawn[1])
-assert(drawn[2] == "pipe_cap_scrub_l2_8", "capped: " .. tostring(drawn[2]))
-assert(drawn[3] == "scrubber_on_e", "then the machine: " .. tostring(drawn[3]))
+assert(drawn[2] == "scrubber_on_e", "then the machine: " .. tostring(drawn[2]))
+assert(drawn[3] == "pipe_cap_scrub_l2_8", "capped, on top: " .. tostring(drawn[3]))
 
 -- ---- the emergency posture over a room that is still fine ----
 --
