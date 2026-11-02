@@ -62,6 +62,8 @@ return {
         -- Degrees on a painted deck: a content judgment, not a measurement.
         contact_angle = 75,
     },
+    -- Frozen, a sea or a lake is a sheet of ice in its bed, not dry ground.
+    terrain = { solid = "sheet_ice" },
     color = "#AAAAAA",
     -- What water LOOKS LIKE on a deck (docs/chemistry/substances.md).
     -- The shared `puddle` ladder is neutral grey art, so the liquid
