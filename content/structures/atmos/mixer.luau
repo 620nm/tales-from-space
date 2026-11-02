@@ -72,6 +72,7 @@ return {
         channel = "l3",
         network = "pipe",
         device = "mixer",
+        mouth_cap = "inline",
         positions = { "off", "running" },
         -- tg's ONE_ATMOSPHERE default and its MAX_OUTPUT_PRESSURE
         -- ceiling (mixer.dm:13, 42-45).

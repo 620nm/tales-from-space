@@ -80,6 +80,7 @@ return {
     atmos = {
         network = "pipe",
         device = "line_dock",
+        fixed_body = true,
         -- The distribution main, because what comes out of this machine
         -- is meant to be delivered somewhere. A mapper who wants it on
         -- the waste line says so on the placement.

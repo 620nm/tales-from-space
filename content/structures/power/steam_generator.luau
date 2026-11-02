@@ -60,6 +60,7 @@ return {
     atmos = {
         network = "pipe",
         device = "line_dock",
+        fixed_body = true,
         -- The distribution main, like the vent it is meant to feed.
         channel = "l3",
     },

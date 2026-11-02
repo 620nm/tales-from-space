@@ -37,6 +37,7 @@ return {
         channel = "l3",
         network = "pipe",
         device = "passive_vent",
+        mouth_cap = "vent",
         -- Layer 3, the distribution layer -- the same run a supply vent
         -- draws from, because that is the line this thing exists to
         -- charge.

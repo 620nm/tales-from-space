@@ -51,6 +51,7 @@ return {
         channel = "l3",
         network = "pipe",
         device = "heat_exchanger",
+        fixed_body = true,
     },
     build = {
         sound = "smash",

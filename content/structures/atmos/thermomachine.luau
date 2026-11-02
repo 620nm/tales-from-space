@@ -92,6 +92,7 @@ return {
         channel = "l3",
         network = "pipe",
         device = "thermomachine",
+        fixed_body = true,
         positions = { "off", "running" },
         -- tg's `target_temperature = T20C` out of the crate
         -- (thermomachine.dm:31): a unit somebody has only switched on

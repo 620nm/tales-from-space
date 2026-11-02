@@ -104,6 +104,7 @@ return {
     atmos = {
         network = "pipe",
         device = "scrubber",
+        mouth_cap = "scrub",
         -- LAYER 2, which is where tg puts scrubbers and very nearly
         -- only where: counted across every map file it ships,
         -- `vent_scrubber/on/layer2` appears 1860 times and every other

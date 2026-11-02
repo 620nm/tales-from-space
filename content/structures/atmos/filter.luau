@@ -77,6 +77,7 @@ return {
         channel = "l3",
         network = "pipe",
         device = "filter",
+        mouth_cap = "inline",
         positions = { "off", "running" },
         rate_lps = 200.0,
         max_rate_lps = 200.0,

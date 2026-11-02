@@ -68,6 +68,7 @@ return {
         channel = "l3",
         network = "pipe",
         device = "injector",
+        mouth_cap = "inje",
         positions = { "off", "injecting" },
         -- tg's `volume_rate = 50` (outlet_injector.dm:19), and the
         -- family's `MAX_TRANSFER_RATE` on the dial.

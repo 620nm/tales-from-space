@@ -139,6 +139,7 @@ return {
         channel = "l3",
         network = "pipe",
         device = "vent",
+        mouth_cap = "vent",
         -- LAYER 3, the distribution layer, which is where tg puts
         -- supply vents and where every dispenser hands out plain pipe.
         -- The scrubber's layer 2 is the other half of that convention:

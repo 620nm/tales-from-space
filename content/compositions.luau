@@ -60,10 +60,14 @@ local function uniform_shapes(sprite_of: (string) -> string, channels: {string})
     return result
 end
 
+-- The mouth caps tg draws over a device's ports, joined or not
+-- (filter.dm:51, vent_pump.dm:190). A device names one as `atmos.mouth_cap`.
+local mouth_cap_families = { "inline", "vent", "scrub", "inje" }
+
 local function port_shapes(channels: {string})
-    local result: {[string]: {[string]: {[number]: string}}} = {}
-    for _, channel in ipairs(channels) do
-        local states: {[string]: {[number]: string}} = {}
+    local result: {[string]: any} = {}
+    for index, channel in ipairs(channels) do
+        local states: {[string]: any} = {}
         for _, state in ipairs({ "connected", "exposed", "half" }) do
             local sprites: {[number]: string} = {}
             local family = if state == "connected" then "intact" else state
@@ -72,6 +76,19 @@ local function port_shapes(channels: {string})
             end
             states[state] = sprites
         end
+        -- PIPING_LAYER_SHIFT, five pixels per layer off the middle one
+        -- (atmos_helpers.dm): a body lies on the run it stands in.
+        local shift = (index - 3) * 5
+        states.body_offset = { shift, shift }
+        local caps: {[string]: {[number]: string}} = {}
+        for _, family in ipairs(mouth_cap_families) do
+            local sprites: {[number]: string} = {}
+            for _, direction in ipairs({ 1, 2, 4, 8 }) do
+                sprites[direction] = "pipe_cap_" .. family .. "_" .. channel .. "_" .. tostring(direction)
+            end
+            caps[family] = sprites
+        end
+        states.caps = caps
         result[channel] = states
     end
     return result
