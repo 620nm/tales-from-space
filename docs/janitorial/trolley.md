@@ -26,12 +26,14 @@ items need engine work in `crates/lunatic-server/src/sim/movement/step_admission
 | `janitor.dm:8` | Dense | omitted: see above |
 | `janitor.dm:9` | Syringe transfer stub | omitted: nothing calls it here |
 | `janitor.dm:15,68` | 100 u; cart holds 2.5 times that | adapted: 1667 mL and 4167 mL, tg's ratio to the head |
-| `janitor.dm:18-29` | Screen tips | api: action rows name both gestures |
+| `janitor.dm:18-29` | Screen tips | api: the pour row shows only for a pouring vessel or the mop; the dump row for a crowbar |
 | `janitor.dm:31-44` | Secondary wets a mop | adapted, reversed: secondary pours the mop or vessel in |
 | `janitor.dm:43` | Slosh sound | api: same sound |
 | `janitor.dm:48-51` | Water overlay | api: `fill_sprites` |
-| `janitor.dm:251-263` | Crowbar dumps after 5 s | luau: `dump_seconds = 5`, `sim.matter.spill`, cart only as in tg |
-| Not in tg | Overflow | api: `sim.matter.pour` lands the excess on the deck |
+| `janitor.dm:251-263` | Crowbar dumps after 5 s | luau: `dump_seconds = 5`, `sim.matter.spill`, reported from `matter.spill.done`; a user who walks or a tub that rolls stops it. The mop bucket dumps too, adapted: its mop cannot empty it here |
+| Not in tg | Sealed or gas-only source | luau: refused with a line |
+| Not in tg | Overflow | api: `sim.matter.pour` lands the excess on the deck; `matter.pour.done` tells the player |
+| `spray.dm:43` | A spray bottle fills from the cart | omitted: primary stows the bottle and secondary pours it in; no gesture draws from a tub |
 
 ## Rack
 
@@ -53,6 +55,14 @@ items need engine work in `crates/lunatic-server/src/sim/movement/step_admission
 
 Primary clicks with any held item stow it, so pouring and dumping are on the
 secondary gesture, where tg already keeps its mop verb.
+
+The rack's untyped click is an engine gap: storage has no `accepts` filter, so
+stowing runs ahead of every handler and the pack cannot turn a held item away.
+A generic `accepts` selector on item storage closes it, and the typed slots with
+it.
+
+Every lift off the deck asks the item first, so a drag into a bag meets the same
+refusal as a click.
 
 Other carried items draw nothing on the cart. A `stowed_sprite` is per
 prototype, so a mop in another `show_contents` container draws the cart's mop.

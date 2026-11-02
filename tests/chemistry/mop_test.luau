@@ -151,6 +151,34 @@ stroke_at(2, 1)
 assert(held(mop) > 13, "a wrung mop takes another head")
 
 -- ---------------------------------------------------------------
+-- WALKING OFF spends the stroke, and a click on a busy mop is not a
+-- second stroke: tg's one clean at a time (cleaner.dm:96).
+-- ---------------------------------------------------------------
+t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker_bluespace"))
+t.tick()
+composition.click_deck(p, 2, 1)
+t.tick()
+t.move(p, "east")
+t.run_seconds(STROKE_SECONDS)
+assert(held(mop) < 1e-4, "a stroke walked away from lifts nothing")
+t.move(p, "west")
+t.run_seconds(0.5)
+t.messages(p)
+
+composition.click_deck(p, 2, 1)
+t.tick()
+composition.click_deck(p, 2, 1)
+t.tick()
+t.run_seconds(STROKE_SECONDS * 2)
+local strokes = 0
+for _, spoken in ipairs(t.messages(p)) do
+    if spoken == "You run the mop over the deck." then
+        strokes += 1
+    end
+end
+assert(strokes == 1, ("two clicks, one stroke: %d"):format(strokes))
+
+-- ---------------------------------------------------------------
 -- NOTHING WAS MADE OR LOST doing any of it. The water is in three
 -- places now instead of one -- the deck, the head, the beaker, plus
 -- whatever went into the air over it -- and it is the same water.

@@ -266,7 +266,7 @@ local function read_deck(at: TileAddress, pinned_solids: { [string]: boolean }?)
     for substance, entry in pairs(deck.contents) do
         found.liquid = found.liquid + (entry.liquid or 0)
         local solid = entry.solid or 0
-        if solid > 0 then
+        if solid >= DREGS_MOL then
             found.solid = found.solid + solid
             found.pinned = found.pinned or (pinned_solids ~= nil and pinned_solids[substance] == true)
         end
@@ -321,8 +321,18 @@ local function soak(
 end
 
 -- The mops mid-stroke: a second click on a busy mop is not a second stroke
--- (tg's TRAIT_CURRENTLY_CLEANING, cleaner.dm:96).
-local stroking: { Handle } = {}
+-- (tg's TRAIT_CURRENTLY_CLEANING, cleaner.dm:96). An entry past its `ends`
+-- is stale, so a stroke that faulted cannot hold its mop busy for the round.
+local stroking: { { mop: Handle, ends: number } } = {}
+
+local function stroke_index(mop: Handle): number?
+    for index, stroke in ipairs(stroking) do
+        if stroke.mop == mop then
+            return index
+        end
+    end
+    return nil
+end
 
 local function begin_soak(
     spec: SoakSpec,
@@ -336,13 +346,18 @@ local function begin_soak(
         soak(spec, phases, self, user, at, lines)
         return true
     end
-    if table.find(stroking, self) ~= nil then
-        return true
+    local ticks = sim.ticks(spec.seconds)
+    local busy = stroke_index(self)
+    if busy ~= nil then
+        if sim.tick() <= stroking[busy].ends then
+            return true
+        end
+        table.remove(stroking, busy)
     end
-    table.insert(stroking, self)
+    table.insert(stroking, { mop = self, ends = sim.tick() + ticks })
     sim.spawn_task(user, function()
-        local outcome = sim.do_after(user, sim.ticks(spec.seconds), {})
-        local index = table.find(stroking, self)
+        local outcome = sim.do_after(user, ticks, { stationary = true })
+        local index = stroke_index(self)
         if index ~= nil then
             table.remove(stroking, index)
         end
@@ -358,7 +373,8 @@ local function soakable_tile(): action_rules.Selector
     local underfoot: action_rules.Selector = { any = { action_rules.kind("turf"), action_rules.kind("component") } }
     local not_wall: action_rules.Selector = { ["not"] = action_rules.fact("target.has_component", "wall") }
     local not_reinforced: action_rules.Selector = { ["not"] = action_rules.fact("target.has_component", "reinforced_wall") }
-    return { all = { underfoot, not_wall, not_reinforced } }
+    local not_reinforcement: action_rules.Selector = { ["not"] = action_rules.fact("target.has_component", "reinforcement") }
+    return { all = { underfoot, not_wall, not_reinforced, not_reinforcement } }
 end
 
 -- Attaches the gestures to one prototype and declares the behaviour that

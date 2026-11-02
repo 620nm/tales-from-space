@@ -31,9 +31,9 @@ tg paths: `mop.dm` is `code/game/objects/items/mop.dm`, `cleaner.dm` is
 
 | tg | Behaviour | Decision |
 | --- | --- | --- |
-| `mop.dm:40` | Cleaner component on tile click | luau: `soak` action on any non-wall tile, so natural ground counts |
-| `cleaner.dm:96` | One clean at a time per tool | luau: `stroking` list; a second click on a busy mop does nothing |
-| `cleaner.dm:120-143` | Timed action, interrupted by moving | api: `sim.do_after`; an interrupted stroke lifts nothing |
+| `mop.dm:40` | Cleaner component on tile click | luau: `soak` action on any tile without a wall or reinforcement, so natural ground counts |
+| `cleaner.dm:96` | One clean at a time per tool | luau: `stroking` list; a second click on a busy mop does nothing until the stroke ends, and an entry past its end is free |
+| `cleaner.dm:120-143` | Timed action, interrupted by moving | api: `sim.do_after` with `stationary`; a stroke interrupted by walking lifts nothing |
 | `mop.dm:24-28,51` | Never scrubs a bucket, mop bucket or sink | adapted: clicking a vessel wrings; the deck branch never sees one |
 | `mop.dm:53-55` | A dry mop refuses | omitted: a mop here starts dry and absorbs |
 | `mop.dm:56-58` | Cleans only with a cleaning reagent | omitted: same reason; residue sweeps regardless (`docs/TURFS.md`) |
@@ -68,9 +68,9 @@ generic primitive that would free ash lying on ice.
 | --- | --- | --- |
 | `_cup.dm:636-644` | Bucket douses the mop, 5 u | adapted, reversed: mop click on any vessel wrings the head into it |
 | `janitor.dm:31-44` | Mop bucket douses the mop | adapted, reversed: secondary on a tub pours the head in |
-| `janitor.dm:34`, `mop.dm:21` | Full head refuses | api: the soaked line |
+| `janitor.dm:33-35` | A soaked mop refuses a dousing | adapted: nothing douses a mop; a full head refuses a stroke with the soaked line |
 | Not in tg | Empty mop refuses a wring | api: the vessel's empty line |
-| `sink.dm:166,228`, `water_source.dm:93` | Sink wets a mop | omitted: no sink fixture |
+| `code/game/objects/structures/water_structures/sink.dm:166,228`, `water_source.dm:93` | Sink wets a mop | omitted: no sink fixture |
 | `other_reagents.dm:162` | Water wets the floor | omitted: as `mop.dm:71` |
 | `robot_upgrades.dm:205` | Cyborg advanced mop | omitted: no such module |
 

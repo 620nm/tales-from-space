@@ -14,7 +14,8 @@ tg path: `_cup.dm` is
 | `_cup.dm:598` | Pours 20 u | adapted: a third of a litre, 740 vessel units |
 | `_cup.dm:599` | Selectable transfer amounts | omitted: one vessel pour size here |
 | `_cup.dm:600` | Holds 70 u | adapted: 1167 mL, tg's ratio to the mop head |
-| `_cup.dm:176-195` | Refill, drain, drink by click | api: `vessel` pour and sip |
+| `_cup.dm:183-184,189-190` | Refill and drink by click | api: `vessel` pour and sip |
+| `_cup.dm:186-187` | Drain a dispenser | omitted: a click on a vessel pours out of the held one; a tub empties by crowbar (`trolley.md`) |
 | `_cup.dm:197` | Pour concrete | omitted: no concrete |
 | `reagent_containers.dm:144,223-226,239` | Splash and spill on a throw | api: `spill = true`, the vessel's throw landing |
 | `_cup.dm:601-602,654-661` | Worn as a hat, contents spill over you | omitted: `content/part_tree.luau` has no head slot; adding one is a design call |

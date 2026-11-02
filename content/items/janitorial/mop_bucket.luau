@@ -24,7 +24,9 @@ local content = {
     gestures = { "secondary" },
 }
 
-local spec: wheeled_tub.Spec = { id = content.id, noun = "mop bucket" }
+-- The cart's dump (janitor.dm:257): tg's mop bucket empties through the mop it
+-- wets, and a mop here fills from the deck, so a crowbar is the way out.
+local spec: wheeled_tub.Spec = { id = content.id, noun = "mop bucket", dump_seconds = 5 }
 content.actions = wheeled_tub.actions(spec)
 
 if sim ~= nil then
