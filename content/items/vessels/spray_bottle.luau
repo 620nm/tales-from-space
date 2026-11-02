@@ -17,6 +17,16 @@ local content = {
     gestures = { "middle" },
     -- Ordinary loose items use the pack's 1 kg physical scale.
     motion_response = physical_profiles.loose_item1kg,
+    variants = {
+        -- tg's `spray/cleaner` (spray.dm:184-189): 100 u of cleaner at 1 mL a
+        -- unit, 110 g/mol. tg's smaller bottle and two-unit nozzle stay out:
+        -- a variant keeps its base's vessel.
+        cleaner = {
+            name_label = "lunatic/tfs:entity.spray_bottle.cleaner.name",
+            name = "space cleaner",
+            contents = { space_cleaner = 0.91 },
+        },
+    },
     ranged_use = {
         visual_layer = "effects",
         range = 5,

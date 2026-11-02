@@ -67,6 +67,24 @@ prototype, so a mop in another `show_contents` container draws the cart's mop.
 Pull is a reserved gesture no action row can declare, so no item shows a Pull
 row of its own: the card names no way to move the cart.
 
+## Stocked cart
+
+tg has no stocked subtype: `janitor.dm:66-69` fills no slot, the cargo crate ships
+the bare cart (`cargo/packs/service.dm:50`), and every mapped cart varies only
+`dir`. `janitor_trolley.stocked`, a palette variant under the cart, fills tg's
+slots as far as the pack has their items:
+
+| tg slot (`janitor.dm:58-64`) | Stock |
+| --- | --- |
+| `mymop` | `mop`, dry as tg's |
+| `myspray` | `spray_bottle.cleaner`: `spray.dm:184-189`, 100 u of space cleaner at 1 mL a unit |
+| `myreplacer` | `light_replacer`, as it spawns |
+| `mybag`, `mybroom`, `held_signs` | absent: no trash bag, push broom or caution sign prototype |
+
+tg names no water level. The tub brims: 230 mol, the 4167 mL. The cart keeps its
+capacity, so six rack places stay free. The vendor sells the bare cart, as cargo
+does.
+
 ## Vendor
 
 `content/machines/tool_vendor.luau` stocks both, standing in for

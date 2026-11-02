@@ -26,6 +26,17 @@ local content = {
     storage = 9,
     show_contents = true,
     gestures = { "secondary" },
+    variants = {
+        -- tg has no stocked subtype and maps every cart bare, so this is tg's
+        -- slots filled (janitor.dm:58-64) as far as the pack has their items,
+        -- and a brimming tub: 4167 mL of water. docs/janitorial/trolley.md.
+        stocked = {
+            name_label = "lunatic/tfs:entity.janitor_trolley.stocked.name",
+            name = "stocked janitorial cart",
+            contents = { water = 230 },
+            holds = { "mop", "spray_bottle.cleaner", "light_replacer" },
+        },
+    },
 }
 
 local spec: wheeled_tub.Spec = {
