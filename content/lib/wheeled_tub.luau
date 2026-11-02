@@ -1,5 +1,5 @@
--- What a tub on wheels answers: a loose vessel too heavy to lift. It rolls
--- on a pull, takes what is poured in with the secondary gesture, and with
+-- What a tub on wheels answers: a dense vessel on the deck, pulled and shoved
+-- like a canister. It takes what is poured in with the secondary gesture, and with
 -- `dump_seconds` tips out under a crowbar. tg: `/obj/structure/mop_bucket`
 -- and its cart (code/game/objects/structures/janitor.dm); the rows are
 -- docs/janitorial/trolley.md. Its pictures are the vessel's `fill_sprites`.
@@ -17,8 +17,7 @@ export type Spec = {
 -- pack's bridge of 0.025 mol.
 local MINIMUM_MOL = 0.025
 
--- What a primary click on a tub pours or wrings, and what the pour row names:
--- the pouring vessels that act on items, and the mop.
+-- What the pour row names: the pouring vessels that act on items, and the mop.
 local POURABLE = {
     "mop",
     "bucket",
@@ -70,18 +69,7 @@ local function condensed_moles(held: Handle): number
 end
 
 function wheeled_tub.actions(spec: Spec): { action_rules.Action }
-    local unpoured: action_rules.Selector = { ["not"] = pourable_hold() }
     local actions: { action_rules.Action } = {
-        -- Claims the primary row from the native Take, which the handler
-        -- below refuses. Ctrl+primary is the reserved Pull: no row can name it.
-        {
-            id = "too_heavy",
-            gesture = "primary",
-            route = "receiver",
-            label = "lunatic/tfs:action.wheeled_tub.too_heavy",
-            target = true,
-            held = unpoured,
-        },
         {
             id = "pour_in",
             gesture = "secondary",
@@ -108,15 +96,6 @@ end
 
 function wheeled_tub.attach(spec: Spec): Definition
     local definition = sim.define("behavior", "lunatic/tfs:" .. spec.id, { prototype = spec.id })
-
-    -- A pouring thing passes on to its own handler, so a mop wrings and a
-    -- vessel pours; anything else would lift the tub into the other hand.
-    definition:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
-        if ev.implement ~= nil and table.find(POURABLE, ev.implement.prototype) ~= nil then
-            return { replaced = false }
-        end
-        return { refused = "lunatic/tfs:action.wheeled_tub.too_heavy" }
-    end)
 
     -- Who asked for each command, in issue order, for its completion to answer.
     local dumps: { { tub: Handle, user: Handle } } = {}

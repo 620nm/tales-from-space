@@ -1,14 +1,15 @@
 local wheeled_tub = require("@lib/wheeled_tub")
 
 -- tg's `/obj/structure/mop_bucket/janitorialcart` (janitor.dm:53-64): the tub
--- plus a rack. An item, for the same reason as `mop_bucket`: native storage is
--- the rack, `show_contents` is `update_overlays` (janitor.dm:359-372), and
--- alt-click opens it in place of tg's radial. Tub 2.5 × 100 tg units
+-- plus a rack. Dense (janitor.dm:8), and a dense item for the same reason as
+-- `mop_bucket`: native storage is the rack, `show_contents` is `update_overlays`
+-- (janitor.dm:359-372), and alt-click opens it in place of tg's radial. Tub 2.5 × 100 tg units
 -- (janitor.dm:68) at the mop's scale. Nine rack places: bag, mop, broom, spray,
 -- replacer and four signs (janitor.dm:58-64). docs/janitorial/trolley.md.
 local content = {
     id = "janitor_trolley",
     visual_layer = "low_object",
+    dense = true,
     motion_response = {
         mass = 50.0,
         restitution = 0.1,

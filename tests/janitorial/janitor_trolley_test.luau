@@ -1,7 +1,7 @@
 local composition = require("@helpers/composition")
 
 -- The bucket, the mop bucket and the cart (docs/janitorial/trolley.md): a mop
--- wrung into a tub, a tub too heavy to lift, a rack that stows and shows, a
+-- wrung into a tub, a dense tub, shoved and pulled, a rack that stows and shows, a
 -- crowbar that dumps it, and overflow onto the deck.
 t.world(
     [==[(
@@ -48,21 +48,13 @@ local function tub(): number
     return (assert(t.contents(cart)).water or 0)
 end
 
--- A bare hand does not lift it, and says so.
+-- No hand lifts it, and the card offers no Take.
 t.click(p, 2, 1, cart)
 t.tick()
-assert(said() == "Too heavy to lift; Ctrl-click to pull", "the cart refuses a lift")
-
--- The card says so before the click: no Take, and the way to move it.
-local primary_rows = {}
-for _, view in ipairs(t.actions(p)) do
-    for _, action in ipairs(view.actions) do
-        if action.gesture == "primary" then
-            primary_rows[action.label.key] = true
-        end
-    end
+assert(t.hands(p).held == nil, "the click lifts nothing")
+for _, action in ipairs(t.action_hints(p, { Entity = cart })) do
+    assert(action.gesture ~= "primary", "no primary row on a bare hand")
 end
-assert(primary_rows["lunatic/tfs:action.wheeled_tub.too_heavy"], "the card names the weight")
 
 -- A mop wrung into the tub empties, and the tub wears the water.
 t.click(p, 3, 1, mop)
@@ -83,6 +75,29 @@ t.tick()
 assert(t.hands(p).held == nil, "the mop left the hand")
 t.tick()
 assert(t.target_at(p, 2, 1, "sprite:janitor_trolley_mop") == cart, "and the rack wears it")
+
+-- A bump shoves it a tile, and the walker takes the tile it left.
+local held = tub()
+t.move(p, "west")
+t.run_seconds(0.5)
+cart = assert(t.target_at(p, 1, 1, "janitor_trolley"), "the bump shoved it")
+assert((t.pos(p)) == 2, "and the walker followed")
+
+-- Against a wall the shove does nothing, and the cart blocks the walker.
+t.move(p, "west")
+t.run_seconds(0.5)
+cart = assert(t.target_at(p, 1, 1, "janitor_trolley"), "the wall stops it")
+assert((t.pos(p)) == 2, "and the walker stops short")
+
+-- A pull rolls it with what it holds.
+t.pull(p, 1, 1, cart)
+t.tick()
+t.move(p, "east")
+t.run_seconds(0.5)
+cart = assert(t.target_at(p, 2, 1, "janitor_trolley"), "the pull rolled it")
+assert(math.abs(tub() - held) < 0.05, ("with its water: %g of %g"):format(tub(), held))
+assert(table.find(t.overlays(cart), "janitor_trolley_water") ~= nil, "still showing")
+assert(t.target_at(p, 2, 1, "sprite:janitor_trolley_mop") == cart, "and its mop")
 t.click(p, 3, 1, crowbar)
 t.tick()
 

@@ -4,18 +4,18 @@
 `content/lib/wheeled_tub.luau`. Decisions read as in `docs/janitorial/mop.md`.
 tg path: `janitor.dm` is `code/game/objects/structures/janitor.dm`.
 
-## Why items
+## Dense items
 
-Both are items that refuse a bare-hand pickup. Item mechanisms already cover
-them: native storage is the rack, `show_contents` with `stowed_sprite` is
-`update_overlays`, `fill_sprites` is the water, a pull rolls them, and tile reach
-covers their matter. As structures they would need engine widening for stowing
-held items, taking out one item, a third `item_slot` kind, and reach to a
-vessel that is not docked.
+Both are dense, pushed and dragged like a canister: a walker bumps one and shoves
+it, a shove into a wall does nothing, and a pull rolls it. They are items declaring
+`dense = true`, which keeps every item mechanism: native storage is the rack,
+`show_contents` with `stowed_sprite` is `update_overlays`, `fill_sprites` is the
+water, and tile reach covers their matter. No hand, store or container takes a
+dense item, by click or drag, and the card offers no Take.
 
-The price is density: walkers pass through a cart and do not shove it. Dense
-items need engine work in `crates/lunatic-server/src/sim/movement/step_admission.rs`
-`loose_structure_at`, which queries structures only, and is left out.
+As structures they would need engine widening for stowing held items, taking out
+one item, a structure as a matter owner without a dock, and overlays and reach for
+what a structure holds.
 
 ## Tub
 
@@ -23,7 +23,7 @@ items need engine work in `crates/lunatic-server/src/sim/movement/step_admission
 | --- | --- | --- |
 | `janitor.dm:1` | At least 1 u counts as holding | luau: `MINIMUM_MOL`, 0.025 mol |
 | `janitor.dm:4-7,54-57` | Names, sprites | api |
-| `janitor.dm:8` | Dense | omitted: see above |
+| `janitor.dm:8` | Dense | api: `dense = true` |
 | `janitor.dm:9` | Syringe transfer stub | omitted: nothing calls it here |
 | `janitor.dm:15,68` | 100 u; cart holds 2.5 times that | adapted: 1667 mL and 4167 mL, tg's ratio to the head |
 | `janitor.dm:18-29` | Screen tips | api: the pour row shows only for a pouring vessel or the mop; the dump row for a crowbar |
@@ -61,19 +61,16 @@ stowing runs ahead of every handler and the pack cannot turn a held item away.
 A generic `accepts` selector on item storage closes it, and the typed slots with
 it.
 
-Every lift off the deck asks the item first, so a drag into a bag meets the same
-refusal as a click.
-
 Other carried items draw nothing on the cart. A `stowed_sprite` is per
 prototype, so a mop in another `show_contents` container draws the cart's mop.
 
-The card's primary row reads too heavy and names Ctrl-click: the native Take is
-false here, and Pull is a reserved gesture no action row can declare, so no
-item shows a Pull row of its own.
+Pull is a reserved gesture no action row can declare, so no item shows a Pull
+row of its own: the card names no way to move the cart.
 
 ## Vendor
 
 `content/machines/tool_vendor.luau` stocks both, standing in for
-`cargo/packs/service.dm:30-50`.
+`cargo/packs/service.dm:30-50`. Tool vendors output on their own tile, so a bought
+tub stands in the machine, and the buyer pulls it out.
 
 The janicart vehicle is omitted: no vehicle exists to carry it.

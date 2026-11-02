@@ -1,13 +1,14 @@
 local wheeled_tub = require("@lib/wheeled_tub")
 
 -- tg's `/obj/structure/mop_bucket` (code/game/objects/structures/janitor.dm:3-16).
--- An item here, because native storage, pulling and fill pictures are item
--- mechanisms and nothing a player does to it needs a structure
+-- A dense item (janitor.dm:8): walkers bump and shove it, a pull rolls it and no
+-- hand lifts it, while its vessel, reach and fill picture stay item mechanisms
 -- (docs/janitorial/trolley.md). tg's capacity keeps its ratio to the mop's
 -- head: 100 tg units at 250/15 mL.
 local content = {
     id = "mop_bucket",
     visual_layer = "low_object",
+    dense = true,
     motion_response = {
         mass = 20.0,
         restitution = 0.1,

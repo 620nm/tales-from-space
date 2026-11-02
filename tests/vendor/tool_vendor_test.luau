@@ -247,3 +247,12 @@ assert(cola_product.product == "cola", "the softdrinks machine still sells softd
 ui_controls.vend(p, "cola")
 t.tick()
 assert(t.count_items("cola") == 1, "and dispenses them")
+
+-- What no hand can take stands in the machine, and the buyer pulls it out.
+t.ui_close(p)
+local bought = assert(t.target_at(p, 2, 1, "janitor_trolley"), "the cart stands in the machine")
+t.pull(p, 2, 1, bought)
+t.tick()
+t.move(p, "south")
+t.run_seconds(0.5)
+assert(t.target_at(p, 1, 1, "janitor_trolley"), "the buyer pulls it out")

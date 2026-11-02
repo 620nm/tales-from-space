@@ -97,6 +97,7 @@ assert(water(bucket) < wrung, "and is lighter for it")
 put_down()
 
 -- A tub takes heads until the rest runs over its side, and says so.
+tub = assert(t.target_at(p, 3, 1, "mop_bucket"))
 lift(4, assert(t.target_at(p, 4, 1, "mop")))
 local last = ""
 for _ = 1, 7 do
@@ -122,12 +123,13 @@ assert(water(tub) >= full - 1, "nothing came out")
 t.move(p, "west")
 t.run_seconds(0.5)
 
--- It rolls on a pull.
+-- It rolls on a pull, with its water.
 t.pull(p, 3, 1, tub)
 t.tick()
 t.move(p, "east")
 t.run_seconds(0.5)
-assert(t.target_at(p, 4, 1, "mop_bucket") ~= nil, "the tub follows")
+tub = assert(t.target_at(p, 4, 1, "mop_bucket"), "the tub follows")
+assert(water(tub) >= full - 1, "wet")
 
 -- A crowbar empties it where it stands.
 t.messages(p)
