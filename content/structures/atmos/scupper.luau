@@ -5,7 +5,8 @@
 -- discharges what is in the run until the two stand level. `one_way` means
 -- nothing comes back up it, so a line ending here cannot flood a deck
 -- upstream from the far side. It may discharge into zero gravity: water may
--- enter a room in either state, as beads.
+-- enter a room in either state, as beads. It passes no air, so a run that
+-- ends past a hull does not vent the rooms its drains stand in.
 --
 -- tg has no scupper; these numbers are this pack's.
 --
@@ -49,7 +50,7 @@ return {
         on = true,
         powered = false,
         positions = { "idle", "draining" },
-        phases = { "gas", "liquid" },
+        phases = { "liquid" },
         head_m = 0.5,
         one_way = true,
         rate_lps = 2.0,

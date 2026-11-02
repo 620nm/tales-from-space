@@ -41,5 +41,15 @@ assert(settled < 9.5, ("with weight on, the water spreads: %.2f L stays"):format
 assert(bench.standing(POOL.x + 1, POOL.y) > 0, "onto the next tile")
 assert(not drawn().weightless, "and is drawn as a puddle")
 
+-- The pool still stands over its film and the next tile under it, so the
+-- thin edge goes on creeping outward for as long as the field runs.
+local beside = bench.standing(POOL.x + 1, POOL.y)
+t.run_seconds(1)
+assert(bench.standing(POOL.x + 1, POOL.y) > beside, "the water is still levelling")
+
 press("stop")
 assert(drawn().weightless, "the field gone, what stands there floats again")
+beside = bench.standing(POOL.x + 1, POOL.y)
+t.run_seconds(5)
+local after = bench.standing(POOL.x + 1, POOL.y)
+assert(after <= beside, ("and levelling stops: %.6f L to %.6f"):format(beside, after))

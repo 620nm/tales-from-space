@@ -49,10 +49,23 @@ local function room(gravity: string): number
     })
 end
 
+-- Moles of a gas over the whole room, however it has shifted between tiles.
+local function room_air(id: string): number
+    local total = 0
+    for x = 1, 7 do
+        for y = 1, 5 do
+            local gas = t.room_gas(x, y)
+            total += (gas and gas[id]) or 0
+        end
+    end
+    return total
+end
+
 -- Two litres a tile, under the film: a passive mouth could not touch them.
 for _, service in ipairs({ 1, 5, 9 }) do
     local p = room(bench.ONE_G)
     local gas_before = assert(network_matter.gas(3, 3))
+    local room_before: { [string]: number } = { o2 = room_air("o2"), n2 = room_air("n2") }
     t.click(p, 4, 3, t.target_at(p, 4, 3, "sump_pump"))
     t.tick()
     ui_controls.toggle(p, "service", tostring(service))
@@ -78,18 +91,26 @@ for _, service in ipairs({ 1, 5, 9 }) do
             math.abs((gas_after[id] or 0) - (gas_before[id] or 0)) < 1e-6,
             `no {id} goes down the pump`
         )
+        local room_after = room_air(id)
+        assert(
+            math.abs(room_after - room_before[id]) < 0.05,
+            `the room keeps its {id}: {room_after}`
+        )
     end
 end
 
-local function strip(gravity: string, litres: number): number
+-- With `kit` the pump is still a fitting at (1, 1) and a wrench lies underfoot.
+local function strip(gravity: string, litres: number, kit: boolean?): number
     local pools = {}
     for x = 1, 4 do
         table.insert(pools, { x = x, y = 1, litres = litres })
     end
+    local pump = ', (1, 1, "sump_pump", "pumping", {"pipe": "north"})'
     return bench.world({
         environment = gravity,
         rows = { "######", "#..g.#", "######" },
-        structures = '(2, 1, "player_spawn"), (4, 1, "apc"), (1, 1, "sump_pump", "pumping", {"pipe": "north"})',
+        structures = '(2, 1, "player_spawn"), (4, 1, "apc")' .. (if kit then "" else pump),
+        items = if kit then '(1, 1, "sump_pump_fitting"), (2, 1, "wrench")' else nil,
         run = { { x = 1, y = 0 } },
         cables = {
             { x = 1, y = 1, channel = "l1" },
@@ -125,3 +146,47 @@ strip(bench.ZERO_G, 10)
 t.run_seconds(5)
 assert(bench.standing(1, 1) > 9.9, "beads float past the pump")
 assert(assert(t.structure_at(1, 1)).state == "off", "and it has nothing to do")
+
+-- Wrenched down from its fitting it joins the run and pumps once switched on.
+-- A wrench will not lift a running pump: the full line holds it at its fault
+-- lamp, and off the switch it comes up as a fitting.
+p = strip(bench.ONE_G, 75, true)
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "wrench")))
+t.run_ticks(2)
+assert(t.hands(p).held == "wrench", "wrench in hand")
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "sump_pump_fitting")))
+t.run_seconds(2.5)
+local built = t.structure_at(1, 1)
+assert(built and built.id == "sump_pump", "the fitting becomes a pump")
+assert(t.count_items("sump_pump_fitting") == 0, "and is spent into it")
+
+t.swap_hands(p)
+t.click(p, 1, 1, t.target_at(p, 1, 1, "sump_pump"))
+t.tick()
+ui_controls.toggle(p, "power")
+t.ui_close(p)
+t.run_seconds(45)
+assert(assert(t.structure_at(1, 1)).state == "fault", "a built pump fills its line")
+
+t.swap_hands(p)
+t.click(p, 1, 1, t.target_at(p, 1, 1, "sump_pump"))
+t.run_seconds(2.5)
+built = t.structure_at(1, 1)
+assert(built and built.id == "sump_pump", "a wrench leaves a running pump alone")
+assert(t.count_items("sump_pump_fitting") == 0, "and no fitting comes up")
+
+t.swap_hands(p)
+t.click(p, 1, 1, t.target_at(p, 1, 1, "sump_pump"))
+t.tick()
+ui_controls.toggle(p, "power")
+t.ui_close(p)
+t.run_seconds(1)
+assert(assert(t.structure_at(1, 1)).state == "off", "switched off")
+
+t.swap_hands(p)
+t.click(p, 1, 1, t.target_at(p, 1, 1, "sump_pump"))
+t.run_seconds(2.5)
+assert(
+    t.structure_at(1, 1) == nil and t.count_items("sump_pump_fitting") == 1,
+    "a wrench brings the fitting back"
+)

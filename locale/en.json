@@ -684,6 +684,8 @@
   "lunatic/tfs:module.scrubber.liquid": "Liquid selection",
   "lunatic/tfs:module.scrubber.liquid.all": "All liquid",
   "lunatic/tfs:module.scrubber.liquid.selected": "Selected liquids",
+  "lunatic/tfs:module.scrubber.liquid.taken": "Pumped",
+  "lunatic/tfs:module.scrubber.liquid.left": "Left",
   "lunatic/tfs:module.scrubber.blocked": "Blocked",
   "lunatic/tfs:module.scrubber.blocked.fill": "Line full of liquid",
   "lunatic/tfs:module.scrubber.blocked.pressure": "Line at full pressure",

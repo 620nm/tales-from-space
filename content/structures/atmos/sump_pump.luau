@@ -19,8 +19,9 @@
 -- `watts` 2000 is the bill at full dial on one tile. Lifting 50 kg/s through
 -- three metres (one deck) at 9.81 m/s2 is 1471 W of water; at three quarters
 -- efficiency that is 1960 W. The stock dial bills 400 W, under three vents.
--- The whole ring at full dial is 18 kW, past a panel's 10 kW feed, so a
--- full-bore pump-out runs a 1 MJ panel flat in under a minute.
+-- The whole ring at full dial is 18 kW, billed for as long as the pump is on,
+-- dry floor included. With no feed that flattens a 1 MJ panel in 55 s; against
+-- a panel's 10 kW `charge_w` the net 8 kW takes about 125 s.
 return {
     id = "sump_pump",
     visual_layer = "fixture",
@@ -63,6 +64,7 @@ return {
         mouth_cap = "vent",
         positions = { "off", "pumping", "fault" },
         phases = { "liquid" },
+        whole_phase = true,
         rate_lps = 10.0,
         max_rate_lps = 50.0,
         service = 1,
