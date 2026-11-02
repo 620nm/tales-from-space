@@ -188,6 +188,14 @@
         (sprite: "status_display_n", x: 0, y: -32),
         (sprite: "status_display_e", x: 32, y: 0),
         (sprite: "status_display_w", x: -32, y: 0),
+        (sprite: "scupper_s", x: 0, y: 32),
+        (sprite: "scupper_n", x: 0, y: -32),
+        (sprite: "scupper_e", x: 32, y: 0),
+        (sprite: "scupper_w", x: -32, y: 0),
+        (sprite: "scupper_draining_s", x: 0, y: 32),
+        (sprite: "scupper_draining_n", x: 0, y: -32),
+        (sprite: "scupper_draining_e", x: 32, y: 0),
+        (sprite: "scupper_draining_w", x: -32, y: 0),
     ],
     // lighting.dmi's tube art spans x=4..28 at y=0..4 (N) or
     // y=28..32 (S), so its center is 14px from the tile center;

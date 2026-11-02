@@ -96,9 +96,8 @@ revision [assets/tg-revision](../../assets/tg-revision) pins; sprite rosters are
 - **`flowing` Condensed Matter Profile ([`assets/sprites/93-matter.ron`](../../assets/sprites/93-matter.ron), [`content/matter_appearances.luau`](../../content/matter_appearances.luau))**:
   - Used by `water` (`#AAAAAA`) and `heavy_water` (`#99AABB`).
   - `at_ml = 2`: `matter_liquid_3` -> `at_ml = 15`: `matter_liquid_2`, `matter_liquid_5` -> `at_ml = 50`: `matter_water` (`turf/floors.dmi` `"riverwater_motion"`, 8-frame loop) -> `at_ml = 150`: `matter_deep_water` (`turf/floors.dmi` `"deep_riverwater_motion"`, 8-frame loop).
-- **Decals, Drains & Tools**:
+- **Decals & Tools**:
   - `blood_splatter_{n,e,s,w}` (`11-decals.ron` <- `effects/blood.dmi` `"gibbl1"`).
-  - `floor_drain` (`21-atmos-thermal-room-and-canisters.ron` <- `obj/pipes_n_cables/hydrochem/plumbers.dmi` `"disposal"`).
   - `mop` (`10-turf-fixtures-and-tools.ron` <- `obj/service/janitor.dmi` `"mop"`).
   - `soap_bar`, `soap_wet`, `soap_bubbles` (`95-originals.ron` <- `originals/art/items/debug/soap.png` & `.aseprite`, unwired in `content/`).
 

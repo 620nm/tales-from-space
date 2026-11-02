@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tales from Space — Liquid Drainage Fixtures &amp; Pipe Connections</title>
+  <link rel="stylesheet" href="gallery_styles.css">
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute">
+    <filter id="rec709-grey" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="
+        0.2126 0.7152 0.0722 0 0
+        0.2126 0.7152 0.0722 0 0
+        0.2126 0.7152 0.0722 0 0
+        0      0      0      1 0" />
+    </filter>
+  </svg>
+
+  <header class="topbar">
+    <div class="hdr-row1">
+      <div class="hdr-title">
+        <h1>Tales from Space — Liquid Drainage Fixtures &amp; Pipe Connections</h1>
+        <span>Floor drain · Scupper · Sump pump</span>
+      </div>
+      <div class="tabs" id="nav-tabs">
+        <button class="active" data-tab="gallery">1. Fixtures</button>
+        <button data-tab="pipes">2. Pipe-Connection Workbench</button>
+        <button data-tab="room">3. Interactive 8×6 Plumbable Room</button>
+        <button data-tab="inspector">4. 32×32 Pixel &amp; Layer Inspector</button>
+      </div>
+    </div>
+    <div class="controls-bar">
+      <div class="ctrl-group" id="cg-scale">
+        <label for="sel-scale">Zoom</label>
+        <select id="sel-scale">
+          <option value="1">1× (Native 32px)</option>
+          <option value="3">3× (96px)</option>
+          <option value="5" selected>5× (160px)</option>
+          <option value="7">7× (224px)</option>
+        </select>
+      </div>
+      <div class="ctrl-group" id="cg-turf">
+        <label for="sel-turf">Deck Turf</label>
+        <select id="sel-turf">
+          <option value="floor" selected>Standard Station Floor (#808080 — Covers Pipe)</option>
+          <option value="plating">Subfloor Plating (#36373a — Exposes Pipe)</option>
+          <option value="open_grid">Open Maintenance Grid (Exposes Pipe)</option>
+          <option value="reinforced_floor">Engine Reinforced Deck (#232127)</option>
+          <option value="white_floor">Medbay Cleanroom White (#d9d9d9)</option>
+          <option value="dark_floor">Dark Checker Deck</option>
+          <option value="void_dark">Dark Void (#151824 — Exposes Pipe)</option>
+          <option value="paper_light">Light Paper (#f1ead4)</option>
+        </select>
+      </div>
+      <div class="ctrl-group" id="cg-wall">
+        <label for="sel-wall">Bulkhead</label>
+        <select id="sel-wall">
+          <option value="wall" selected>Standard Wall (#444444)</option>
+          <option value="reinforced_wall">Reinforced Wall</option>
+        </select>
+      </div>
+      <div class="ctrl-group" id="cg-water">
+        <label for="sel-water">Liquid</label>
+        <select id="sel-water">
+          <option value="none">Dry Deck</option>
+          <option value="puddle" selected>Wet Puddle (Under Fixture)</option>
+          <option value="flood">Standing Flood</option>
+        </select>
+      </div>
+      <div class="ctrl-group" id="cg-state">
+        <label>State</label>
+        <div class="btn-seg" id="seg-state">
+          <button data-state="idle">Idle / Off</button>
+          <button class="active" data-state="active">Active Loop</button>
+          <button data-state="fault">Fault / Full</button>
+        </div>
+      </div>
+      <div class="ctrl-group">
+        <button id="btn-pipes" class="active" title="Show subfloor pipe stub + mouth_cap when deck cover is open/plating">Pipes: ON</button>
+        <button id="btn-grey" title="Toggle exact Rec.709 Greyscale value readability check">Rec.709 Grey: OFF</button>
+        <button id="btn-grid" title="Overlay 1px tile pixel grid">Grid: OFF</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- TAB 1: FIXTURES -->
+    <div class="tab-pane active" id="pane-gallery">
+      <section class="cat-block">
+        <div class="cat-header">
+          <h2>Existing Air, Wallmount &amp; Drainage References</h2>
+          <p>Switch <strong>Deck Turf</strong> above to <code>Subfloor Plating</code> or <code>Open Maintenance Grid</code> to reveal subfloor pipe stubs and mouth caps; covered floors hide both.</p>
+        </div>
+        <div class="ref-grid" id="ref-grid"></div>
+      </section>
+
+      <section class="cat-block">
+        <div class="cat-header">
+          <h2>Floor Drain</h2>
+          <p>A 4-fold symmetric <code>19×19</code> (<code>6..24</code>) collar matching <code>scrub_off</code>, so one picture serves every facing.</p>
+        </div>
+        <div class="fixture-grid" id="grid-floor-drains"></div>
+      </section>
+
+      <section class="cat-block">
+        <div class="cat-header">
+          <h2>Scupper</h2>
+          <p>Four drawn faces after tg's <code>dirs=4</code> wallmounts (<code>fire0</code>, <code>telescreen</code>): the louvers run parallel to the wall on every face.</p>
+        </div>
+        <div class="tg4-grid" id="tg4-grid"></div>
+        <div class="fixture-grid" id="grid-wall-scuppers"></div>
+      </section>
+
+      <section class="cat-block">
+        <div class="cat-header">
+          <h2>Sump Pump</h2>
+          <p>Two pipe axes in one source: the E–W manifold on east and west facings, the N–S manifold on north and south.</p>
+        </div>
+        <div class="fixture-grid" id="grid-sump-pumps"></div>
+      </section>
+    </div>
+
+    <!-- TAB 2: PIPE-CONNECTION WORKBENCH -->
+    <div class="tab-pane" id="pane-pipes">
+      <div class="cat-header">
+        <h2>Interactive Pipe-Connection Workbench — Channels l1..l5</h2>
+        <p>The compositing stack of a unary fixture: bare body, pipe stub and mouth cap; stubs and caps hide under a covered floor.</p>
+      </div>
+
+      <div class="pipe-controls">
+        <div class="field">
+          <label for="pw-dir">Facing / Wall Side</label>
+          <select id="pw-dir">
+            <option value="N" selected>North (Mouth N / Wall N)</option>
+            <option value="E">East (Mouth E / Wall E)</option>
+            <option value="S">South (Mouth S / Wall S)</option>
+            <option value="W">West (Mouth W / Wall W)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pw-layer">Piping Channel (`body_offset`)</label>
+          <select id="pw-layer">
+            <option value="1">l1 (-10px shift)</option>
+            <option value="2">l2 (-5px shift)</option>
+            <option value="3" selected>l3 (0px — Center 13..17)</option>
+            <option value="4">l4 (+5px shift)</option>
+            <option value="5">l5 (+10px shift)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pw-join">Neighbour Pipe Join</label>
+          <select id="pw-join">
+            <option value="joined" selected>Joined Run (`pipe_intact` + Tinted Trunk)</option>
+            <option value="exposed">Unjoined Capped Stubs (`pipe_exposed`)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pw-color">Pipe Paint</label>
+          <select id="pw-color">
+            <option value="#f04137" selected>Waste / Drain Red (#f04137)</option>
+            <option value="#5491e8">Supply / Greywater Blue (#5491e8)</option>
+            <option value="#d4803d">Bilge / Fuel Amber (#d4803d)</option>
+            <option value="#ffffff">Unpainted Dispenser Grey</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pw-scupper-mode">Scupper Connection</label>
+          <select id="pw-scupper-mode">
+            <option value="riser" selected>Subfloor Riser Sleeve (Room Tile)</option>
+            <option value="bulkhead">In-Wall Bulkhead Drop (`pipe_half` / Wall Trunk)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pipe-workbench-grid" id="pw-grid"></div>
+
+    </div>
+
+    <!-- TAB 3: FLOODED ROOM COMPOSER -->
+    <div class="tab-pane" id="pane-room">
+      <div class="room-layout">
+        <div class="room-sidebar">
+          <h3>8×6 Plumbable Station Room</h3>
+          <div class="field">
+            <label for="rm-scale">Room Scale</label>
+            <select id="rm-scale">
+              <option value="2">2× (512×384)</option>
+              <option value="3" selected>3× (768×576)</option>
+              <option value="4">4× (1024×768)</option>
+            </select>
+          </div>
+          <p class="notes">
+            Switch <strong>Deck Turf</strong> in the top bar to <code>Subfloor Plating</code> or <code>Open Maintenance Grid</code> to inspect the connected subfloor waste-pipes.
+          </p>
+        </div>
+        <div class="room-stage">
+          <canvas id="room-canvas" class="preview-cv"></canvas>
+          <div class="legend-inline">
+            <span><strong>(2,1)&rarr;N, (1,2)&rarr;W</strong> Scuppers w/ Risers</span>
+            <span><strong>(3,2)</strong> Floor Drain</span>
+            <span><strong>(5,2)</strong> Sump Pump</span>
+            <span><strong>(1,1)</strong> Air Vent · <strong>(1,4)</strong> Air Scrubber</span>
+            <span><strong>(4,1)&rarr;N</strong> APC · <strong>(6,3)&rarr;E</strong> Air Alarm</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: PIXEL & LAYER INSPECTOR -->
+    <div class="tab-pane" id="pane-inspector">
+      <div class="insp-layout">
+        <div class="insp-list" id="insp-list"></div>
+        <div class="insp-main">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <div>
+              <h3 id="insp-title" style="margin:0;color:var(--accent-gold);"></h3>
+              <div id="insp-sub" style="font-family:var(--mono);font-size:11px;color:var(--text-muted);"></div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <label style="font-family:var(--mono);font-size:11px;color:var(--text-muted);">Frame / Orientation:</label>
+              <select id="insp-frame"></select>
+            </div>
+          </div>
+          <div class="insp-top">
+            <canvas id="insp-canvas" class="preview-cv" width="384" height="384"></canvas>
+            <div style="display:flex;flex-direction:column;gap:12px;max-width:540px;">
+              <div class="hover-readout" id="insp-readout">Hover over any pixel on the 32×32 canvas to inspect coordinates, hex, and tales-from-space.gpl swatch.</div>
+              <p class="blurb" id="insp-blurb"></p>
+              <p class="notes" id="insp-notes"></p>
+              <div>
+                <div style="font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-bottom:6px;">Embedded .gpl Palette Swatches:</div>
+                <div class="swatch-strip" id="insp-swatches"></div>
+              </div>
+              <div>
+                <div style="font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-bottom:6px;">Live Semantic .aseprite Layers for Selected Frame (Bottom &rarr; Top):</div>
+                <div class="layers-row" id="insp-layers"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="gallery_data.js"></script>
+  <script src="gallery_app.js"></script>
+  <script src="gallery_workbench.js"></script>
+  <script src="gallery_room.js"></script>
+  <script src="gallery_inspector.js"></script>
+  <script src="gallery_boot.js"></script>
+</body>
+</html>

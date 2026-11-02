@@ -15,9 +15,10 @@
         ("color_adapter", "obj/pipes_n_cables/color_adapter.dmi"),
         ("manifold", "obj/pipes_n_cables/manifold.dmi"),
         ("pipe_item", "obj/pipes_n_cables/pipe_item.dmi"),
-        ("plumbers", "obj/pipes_n_cables/hydrochem/plumbers.dmi"),
         ("stack_objects", "obj/stack_objects.dmi"),
         ("tiles", "obj/tiles.dmi"),
+        ("scupper", "art/machines/drainage/scupper.aseprite"),
+        ("sump_pump", "art/machines/drainage/sump_pump.aseprite"),
     ],
     sprites: [
         // ---- the thermal pair, and the two adapters ----------------------
@@ -298,16 +299,33 @@
         ("plasma_glass_tile", Dmi("@tiles", "tile_pglass", 0)),
         ("reinforced_plasma_glass_tile", Dmi("@tiles", "tile_rpglass", 0)),
         ("tv", Dmi("@computer", "detective_tv", 0)),
-        // The drain grate. tg has no floor drain -- its water spills are
-        // decals on a timer -- so the picture is borrowed from the one
-        // machine in that tree that does the same JOB: the chemical
-        // disposer, "Breaks down chemicals and annihilates them"
-        // (code/modules/plumbing/plumbers/destroyer.dm:4-8), which is a
-        // grated steel box standing on the deck. Its rate is NOT
-        // borrowed with it -- a hole in the deck is not a chemical
-        // annihilator -- and content/structures/floor_drain.luau says so.
-        ("floor_drain", Dmi("@plumbers", "disposal", 0)),
+        // The liquid mouths, first-party art (docs/art-reference/drainage-asset-guide.md).
+        // The flat `scupper` is what a scupper off its wall draws; the rest of
+        // its family is in the groups below.
+        ("floor_drain", Ase("art/machines/drainage/floor_drain.aseprite", "idle")),
+        ("floor_drain_draining", AseAnim("art/machines/drainage/floor_drain.aseprite", "draining")),
+        ("scupper", Ase("art/machines/drainage/scupper.aseprite", "idle-n")),
         ("white", White),
 
+    ],
+    groups: [
+        // Each face is drawn on the wall tile, displaced a whole tile by the
+        // head roster's `offsets`.
+        (sheet: "scupper", sprites: [
+            Directions("scupper", "idle"),
+            Anim("scupper_draining_n", "draining", n),
+            Anim("scupper_draining_s", "draining", s),
+            Anim("scupper_draining_e", "draining", e),
+            Anim("scupper_draining_w", "draining", w),
+        ]),
+        // n and s draw the N-S manifold, e and w the E-W one.
+        (sheet: "sump_pump", sprites: [
+            Directions("sump_pump_off", "off"),
+            Anim("sump_pump_pumping_n", "pumping", n),
+            Anim("sump_pump_pumping_s", "pumping", s),
+            Anim("sump_pump_pumping_e", "pumping", e),
+            Anim("sump_pump_pumping_w", "pumping", w),
+            Directions("sump_pump_fault", "fault"),
+        ]),
     ],
 )
