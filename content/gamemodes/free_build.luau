@@ -47,7 +47,14 @@ local content = {
         -- temperature reading in it a question about the weather.
         environment = {
             rolls = {
-                { id = "cold_outdoors", required_tags = { "terrestrial" }, weight = 1 },
+                {
+                    id = "cold_outdoors",
+                    required_tags = { "terrestrial" },
+                    excluded_tags = { "warm_outdoors" },
+                    weight = 1,
+                },
+                -- Only a map that carries the tag stands under this sky.
+                { id = "warm_outdoors", required_tags = { "terrestrial", "warm_outdoors" }, weight = 1 },
                 { id = "dead_space", excluded_tags = { "terrestrial" }, weight = 1 },
                 { id = "microgravity", excluded_tags = { "terrestrial" }, weight = 1 },
             },

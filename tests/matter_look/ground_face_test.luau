@@ -5,9 +5,8 @@
 -- Columns 0-2 of the ground level are sand, columns 3-5 soil, over a
 -- basement that only exists so a hole can be dug. Row 3 holds a tile of
 -- named ground with no material and a blank tile: under the cold sky,
--- which names no material, neither has a face. (No mode rolls
--- `warm_outdoors` or `mars_surface` yet, so a spec cannot stand under a
--- sky whose `material` a blank tile would inherit.)
+-- which names no material, neither has a face. A blank tile under a sky
+-- that does name one is `environment_ground_test.luau`.
 t.world(
     [==[(
     name: "ground face",

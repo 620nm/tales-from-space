@@ -6,8 +6,8 @@
 -- sleeps. A sink colder than the surface keeps every outdoor cell
 -- radiating into air that ambient refills, and the map never rests.
 --
--- No mode rolls this profile: a roll takes it by tag, and no map carries
--- the tag yet.
+-- `free_build` rolls this profile for a map tagged `warm_outdoors`, and only
+-- `tests/matter_look/environment_ground_test.luau` carries the tag yet.
 return {
     id = "warm_outdoors",
     name = "Warm outdoors",
