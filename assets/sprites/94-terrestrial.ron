@@ -1,0 +1,42 @@
+// The terrestrial planetary, shoreline, botanical decal and outcrop sprites.
+// Authored by `tools/art/terrestrial/`; the art rules are
+// docs/art-reference/terrestrial-asset-guide.md.
+//
+// A `single` is one 32x32 picture, tagged `idle` (one frame is a still,
+// more frames loop). A `smooth strip` is 160x32, five blocks side by side
+// (0 convex, 1 vertical, 2 horizontal, 3 concave, 4 flat), tagged `idle-s`
+// so `Slice(5, 1, ...)` can cut it: `<name>_0_0` .. `<name>_0_4`, block
+// `c` playing every frame of the tag. The client picks each 16x16 quarter
+// of a tile from the block its two sides and corner select.
+//
+// Every sprite here is authored in neutral greyscale (`R == G == B`) from
+// `tales-from-space.gpl` for runtime multiply tinting, so no tint is
+// declared here.
+(
+    sheets: [
+        ("decal_nature_grass_smooth", "art/terrestrial/decal_nature_grass_smooth.aseprite"),
+        ("decal_nature_moss_smooth", "art/terrestrial/decal_nature_moss_smooth.aseprite"),
+        ("ocean_backwash_smooth", "art/terrestrial/ocean_backwash_smooth.aseprite"),
+        ("ocean_body_smooth", "art/terrestrial/ocean_body_smooth.aseprite"),
+        ("ocean_foam_lace_smooth", "art/terrestrial/ocean_foam_lace_smooth.aseprite"),
+        ("ocean_swash_smooth", "art/terrestrial/ocean_swash_smooth.aseprite"),
+        ("terrain_cliff_stepped_smooth", "art/terrestrial/terrain_cliff_stepped_smooth.aseprite"),
+        ("terrain_ice_sheet_smooth", "art/terrestrial/terrain_ice_sheet_smooth.aseprite"),
+        ("terrain_silicate_rough_smooth", "art/terrestrial/terrain_silicate_rough_smooth.aseprite"),
+    ],
+    sprites: [
+        ("prop_rough_outcrop_1", Ase("art/terrestrial/prop_rough_outcrop_1.aseprite", "idle")),
+        ("prop_rough_outcrop_2", Ase("art/terrestrial/prop_rough_outcrop_2.aseprite", "idle")),
+    ],
+    groups: [
+        (sheet: "decal_nature_grass_smooth", sprites: [Slice(5, 1, Sprite("decal_nature_grass_smooth", "idle", s))]),
+        (sheet: "decal_nature_moss_smooth", sprites: [Slice(5, 1, Sprite("decal_nature_moss_smooth", "idle", s))]),
+        (sheet: "ocean_backwash_smooth", sprites: [Slice(5, 1, Anim("ocean_backwash_smooth", "idle", s))]),
+        (sheet: "ocean_body_smooth", sprites: [Slice(5, 1, Anim("ocean_body_smooth", "idle", s))]),
+        (sheet: "ocean_foam_lace_smooth", sprites: [Slice(5, 1, Anim("ocean_foam_lace_smooth", "idle", s))]),
+        (sheet: "ocean_swash_smooth", sprites: [Slice(5, 1, Anim("ocean_swash_smooth", "idle", s))]),
+        (sheet: "terrain_cliff_stepped_smooth", sprites: [Slice(5, 1, Sprite("terrain_cliff_stepped_smooth", "idle", s))]),
+        (sheet: "terrain_ice_sheet_smooth", sprites: [Slice(5, 1, Sprite("terrain_ice_sheet_smooth", "idle", s))]),
+        (sheet: "terrain_silicate_rough_smooth", sprites: [Slice(5, 1, Sprite("terrain_silicate_rough_smooth", "idle", s))]),
+    ],
+)
