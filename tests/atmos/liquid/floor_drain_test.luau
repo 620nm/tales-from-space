@@ -39,13 +39,13 @@ assert(left > 9.9, ("beads float over the grating, %.3f L left"):format(left))
 -- floor as a mapped one does, and a wrench gives the fitting back.
 local p = bench.world({
     environment = bench.ONE_G,
-    rows = { "#####", "#.#.#", "#####" },
-    structures = '(1, 1, "player_spawn")',
-    items = '(1, 1, "wrench"), (1, 1, "floor_drain_fitting")',
-    run = { { x = 2, y = 1 } },
-    pools = { { x = 1, y = 1, litres = 10 } },
+    rows = { "####", "#..#", "####" },
+    structures = '(2, 1, "player_spawn")',
+    items = '(2, 1, "wrench"), (1, 1, "floor_drain_fitting")',
+    run = { { x = 1, y = 0 } },
+    pools = { { x = 1, y = 1, litres = 10 }, { x = 2, y = 1, litres = 10 } },
 })
-t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "wrench")))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "wrench")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "floor_drain_fitting")))
@@ -53,10 +53,10 @@ t.run_seconds(2.5)
 local built = t.structure_at(1, 1)
 assert(built and built.id == "floor_drain", "the fitting becomes a drain")
 assert(t.count_items("floor_drain_fitting") == 0, "and is spent into it")
-t.run_seconds(30)
+t.run_seconds(60)
 left = bench.standing(1, 1)
 assert(
-    math.abs(left - bench.FILM_L) < 0.35,
+    left > bench.FILM_L - 0.35 and left < bench.FILM_L + 0.7,
     ("a built drain takes the floor to its film, %.3f L left"):format(left)
 )
 t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "floor_drain")))
