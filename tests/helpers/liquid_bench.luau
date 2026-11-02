@@ -19,6 +19,7 @@ export type Bench = {
     run: { Tile }?,
     cables: { Cable }?,
     pools: { Pool },
+    job: string?,
 }
 
 local MAP = [==[(
@@ -88,7 +89,7 @@ function liquid_bench.world(bench: Bench): number
         ),
         7
     )
-    local player = t.join()
+    local player = t.join(bench.job)
     t.tick()
     return player
 end
