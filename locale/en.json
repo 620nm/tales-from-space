@@ -246,7 +246,7 @@
   "lunatic/tfs:entity.janitor_trolley.name": "janitorial cart",
   "lunatic/tfs:action.wheeled_tub.pour_in": "Pour into the tub",
   "lunatic/tfs:action.wheeled_tub.dump": "Dump the tub",
-  "lunatic/tfs:action.wheeled_tub.too_heavy": "Too heavy to lift; pull it instead",
+  "lunatic/tfs:action.wheeled_tub.too_heavy": "Too heavy to lift; Ctrl-click to pull",
   "lunatic/tfs:lib.wheeled_tub.empty": "The {noun} is empty.",
   "lunatic/tfs:lib.wheeled_tub.dumping": "You begin to dump the {noun}...",
   "lunatic/tfs:lib.wheeled_tub.dumped": "You dump the {noun} onto the deck.",

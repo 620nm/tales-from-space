@@ -74,5 +74,9 @@ generic primitive that would free ash lying on ice.
 | `other_reagents.dm:162` | Water wets the floor | omitted: as `mop.dm:71` |
 | `robot_upgrades.dm:205` | Cyborg advanced mop | omitted: no such module |
 
+A full mop has no picture of its own: `janitor.dmi` holds one `mop` state and tg
+draws nothing for a wet one, so the soaked line is the only tell. A wet mop
+needs new art.
+
 The head is an open vessel, so what it holds can evaporate and take the deck's
 temperature.

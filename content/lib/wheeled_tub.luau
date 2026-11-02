@@ -17,7 +17,8 @@ export type Spec = {
 -- pack's bridge of 0.025 mol.
 local MINIMUM_MOL = 0.025
 
--- What can be held out over the tub: the pack's pouring vessels and the mop.
+-- What a primary click on a tub pours or wrings, and what the pour row names:
+-- the pouring vessels that act on items, and the mop.
 local POURABLE = {
     "mop",
     "bucket",
@@ -28,7 +29,6 @@ local POURABLE = {
     "beaker_metamaterial",
     "beaker_plastic",
     "bottle",
-    "cola",
     "lab_flask",
     "test_tube",
     "water_bottle",
@@ -70,7 +70,18 @@ local function condensed_moles(held: Handle): number
 end
 
 function wheeled_tub.actions(spec: Spec): { action_rules.Action }
+    local unpoured: action_rules.Selector = { ["not"] = pourable_hold() }
     local actions: { action_rules.Action } = {
+        -- Claims the primary row from the native Take, which the handler
+        -- below refuses. Ctrl+primary is the reserved Pull: no row can name it.
+        {
+            id = "too_heavy",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:action.wheeled_tub.too_heavy",
+            target = true,
+            held = unpoured,
+        },
         {
             id = "pour_in",
             gesture = "secondary",
@@ -98,14 +109,10 @@ end
 function wheeled_tub.attach(spec: Spec): Definition
     local definition = sim.define("behavior", "lunatic/tfs:" .. spec.id, { prototype = spec.id })
 
-    -- A bare hand gets the refusal in place of a pickup; a held thing passes
-    -- on to its own handler, so a mop wrings and a vessel pours.
-    definition:handle("interaction.use", {
-        kind = "replace",
-        route = "interact",
-        hidden = "refuses a bare-hand pickup with a line; offers no action",
-    }, function(ev)
-        if ev.implement ~= nil then
+    -- A pouring thing passes on to its own handler, so a mop wrings and a
+    -- vessel pours; anything else would lift the tub into the other hand.
+    definition:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
+        if ev.implement ~= nil and table.find(POURABLE, ev.implement.prototype) ~= nil then
             return { replaced = false }
         end
         return { refused = "lunatic/tfs:action.wheeled_tub.too_heavy" }

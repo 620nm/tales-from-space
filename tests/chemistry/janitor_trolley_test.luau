@@ -51,7 +51,18 @@ end
 -- A bare hand does not lift it, and says so.
 t.click(p, 2, 1, cart)
 t.tick()
-assert(said() == "Too heavy to lift; pull it instead", "the cart refuses a lift")
+assert(said() == "Too heavy to lift; Ctrl-click to pull", "the cart refuses a lift")
+
+-- The card says so before the click: no Take, and the way to move it.
+local primary_rows = {}
+for _, view in ipairs(t.actions(p)) do
+    for _, action in ipairs(view.actions) do
+        if action.gesture == "primary" then
+            primary_rows[action.label.key] = true
+        end
+    end
+end
+assert(primary_rows["lunatic/tfs:action.wheeled_tub.too_heavy"], "the card names the weight")
 
 -- A mop wrung into the tub empties, and the tub wears the water.
 t.click(p, 3, 1, mop)

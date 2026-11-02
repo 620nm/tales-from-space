@@ -67,6 +67,10 @@ refusal as a click.
 Other carried items draw nothing on the cart. A `stowed_sprite` is per
 prototype, so a mop in another `show_contents` container draws the cart's mop.
 
+The card's primary row reads too heavy and names Ctrl-click: the native Take is
+false here, and Pull is a reserved gesture no action row can declare, so no
+item shows a Pull row of its own.
+
 ## Vendor
 
 `content/machines/tool_vendor.luau` stocks both, standing in for
