@@ -1,32 +1,18 @@
 local physical_profiles = require("@lib/physical_profiles")
 local vessel = require("@lib/vessel")
 
--- The mop: the one thing on the station that takes a puddle OFF the
--- deck rather than putting one there.
+-- The mop: the one thing on the station that takes a mess OFF the deck
+-- rather than putting one there. tg: `/obj/item/mop`
+-- (code/game/objects/items/mop.dm:1-47); every row is docs/janitorial/mop.md.
 --
--- It is a vessel, and that is the whole trick. A tile's matter is a
--- body of matter like a beaker's (docs/luau-api/matter.md), so mopping
--- is the transfer every vessel already does with the ends swapped and
--- only the liquid phase named: the deck fills the head, the head is
--- wrung into whatever you point it at. Neither gesture is spelled out
--- here -- `lib/vessel.luau` owns both -- and this file is the numbers
--- and the nouns that make them a mop.
+-- It is a vessel, and `lib/vessel.luau` owns both gestures: the deck fills
+-- the head, the head is wrung into whatever you point it at. Beads and a
+-- settled puddle both lift, and so do the loose solids a tile has gathered,
+-- in proportion, until the head is full.
 --
--- Every stroke also sweeps the tile's settled dust
--- (lib/residue_kinds.luau), which rests on the deck rather than in the
--- head and so answers to a full mop and a dry one alike.
---
--- WHAT CAME FROM TG AND WHAT DID NOT. tg declares
--- `max_reagent_volume = 15` and `mopspeed = 1.5 SECONDS` (mop.dm:20-22).
--- The SHAPE is tg's: one head, holding a fixed amount, filled a stroke
--- at a time off the floor. The numbers are not, and cannot be. A tg unit is a
--- millilitre of nothing in particular, so tg's head holds fifteen of
--- them and its floors hold a puddle the size of a sprite; here a spill
--- is real litres of a real substance and a fifteen-millilitre head would
--- be a teaspoon against a flood. A quarter of a litre is a real mop head. tg's
--- second-and-a-half stroke has no seam to hang on either: there is no
--- timed action here yet, so one click is one stroke, and the cadence is
--- a player's arm rather than a timer.
+-- tg's head is `max_reagent_volume = 15` (mop.dm:21), a unit of nothing in
+-- particular; here a spill is real litres and the head is a real quarter
+-- litre. The stroke is tg's `mopspeed` (mop.dm:22).
 local content = {
     id = "mop",
     visual_layer = "item",
@@ -34,15 +20,23 @@ local content = {
     name_label = "lunatic/tfs:entity.mop.name",
     name = "mop",
     sprite = "mop",
+    inhand_sprite = { "held_mop_l", "held_mop_r" },
     category = "tools",
     examine = {
         flavor = "A grey head on a long handle. It answers the deck and "
             .. "nothing else, and it is the only answer the deck has.",
     },
+    -- `force`, `throwforce`, `throw_speed`, `throw_range` (mop.dm:10-13).
+    force = 8,
+    throw_force = 10,
+    throw_speed = 3,
+    throw_range = 7,
     -- How much the HEAD holds, which is how much one stroke can lift:
     -- what is on the tile goes in until it is full, and the rest of the
-    -- puddle stays where it is.
+    -- mess stays where it is.
     volume_ml = 250,
+    -- What it draws stowed in a janitor's trolley (janitor.dm:363-364).
+    stowed_sprite = "janitor_trolley_mop",
     -- Clicking the bucket has to reach the handler rather than picking it
     -- up: wringing out is a thing you do TO the thing you named.
     acts_on_items = true,
@@ -51,12 +45,16 @@ local content = {
 local vessel_spec: vessel.Spec = {
     id = content.id,
     noun = "mop",
-    -- A mop takes up liquid and leaves the salt on the deck.
-    phases = { "liquid" },
+    -- Liquid, and the loose solids resting with it. Ice is fast to the deck.
+    phases = { "solid", "liquid" },
     -- A wring is not a measured pour: the head comes out.
     pour = { units = "all", message = "lunatic/tfs:items.mop.you_wring_the_mop_out" },
     soak = {
+        seconds = 1.5,
+        pinned_solids = { water = true },
         message = "lunatic/tfs:items.mop.you_run_the_mop_over",
+        floating = "lunatic/tfs:items.mop.you_chase_the_beads",
+        deposit = "lunatic/tfs:items.mop.you_scrape_the_deposit",
         dry = "lunatic/tfs:items.mop.the_deck_here_is_dry",
         full = "lunatic/tfs:items.mop.the_mop_is_soaked_through",
     },

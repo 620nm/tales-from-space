@@ -170,7 +170,8 @@ vendor (`tests/vendor/tool_vendor_test.luau`); `tests/decals/` covers their use.
 A blast leaves three things that are not decals: shards where pellets
 landed and cloudy fallout over the blast area, both engine residue as
 counts on tiles (the engine's `docs/physics/residue.md`), and ash, which
-is ordinary solid matter. `content/residue_appearances.luau` dresses the
+is ordinary solid matter a mop scrapes into its head
+(`docs/janitorial/mop.md`). `content/residue_appearances.luau` dresses the
 two kinds `content/lib/residue_kinds.luau` declares, drawn on the
 `residue` layer between paint and spills as one composite — a part
 per resting kind, messier as each cakes. Residue is never pickable and

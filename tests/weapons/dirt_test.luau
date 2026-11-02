@@ -199,9 +199,8 @@ assert(shows(1, 1, "dust"), "over its cloudy heap")
 assert(shows_dirt(2, 2), "diagonal to it, the ring keeps its one")
 
 -- ---------------------------------------------------------------
--- MOP: a stroke on the ashy tile finds no liquid to lift. Ash is a
--- solid and the head takes liquids, so the deck reads dry and the ash
--- stays where it lay; dust is what a stroke sweeps, and it sweeps it
+-- MOP: a stroke on the ashy tile scrapes the deposit into the head, and
+-- no ash is lost doing it; dust is what a stroke sweeps, and it sweeps it
 -- silently beside whatever the head answers for.
 -- ---------------------------------------------------------------
 t.move(p, "west")
@@ -210,17 +209,19 @@ t.move(p, "west")
 t.run_ticks(6)
 px, py = t.pos(p)
 assert(px == 2 and py == 1, "back beside the blast")
-t.click(p, 1, 1, t.target_at(p, 1, 1, "mop"))
+local mop = assert(t.target_at(p, 1, 1, "mop"))
+t.click(p, 1, 1, mop)
 t.tick()
 assert(t.hands(p).held == "mop", "the mop survived the blast")
 
 composition.click_deck(p, 1, 1)
 t.tick()
-assert(said() == "The deck here is dry.", "no liquid to lift: " .. said())
-assert(
-    math.abs(ash_total() - 0.25) < 1e-9,
-    "and the ash stays where it lay"
-)
+t.run_seconds(1.6)
+local scraped = said()
+assert(scraped == "You scrape the deposit up into the mop.", "the ash is a deposit: " .. scraped)
+local scraped_ash = assert(t.contents(mop)).ash or 0
+assert(math.abs(scraped_ash - 0.25) < 1e-9, ("and the head holds it: %g"):format(scraped_ash))
+assert(math.abs(ash_total() - 0.25) < 1e-9, "no ash is lost")
 
 -- The stroke's silent half: the blast tile's whole heap lifts in one
 -- row -- cloudy and shards together -- and only that tile's. The ring

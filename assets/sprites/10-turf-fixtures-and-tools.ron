@@ -487,6 +487,16 @@
         // The janitor's other one, and the only thing that takes a
         // puddle back off a deck (tg service/janitor.dmi "mop").
         ("mop", Dmi("@janitor", "mop", 0)),
+        // The bucket, the wheeled bucket and the cart, with the pictures
+        // tg overlays on them (janitor.dm:11,48-51,56-57,359-372).
+        ("bucket", Dmi("@janitor", "bucket", 0)),
+        ("mop_bucket", Dmi("@janitor", "mopbucket", 0)),
+        ("mop_bucket_water", Dmi("@janitor", "mopbucket_water", 0)),
+        ("janitor_trolley", Dmi("@janitor", "cart", 0)),
+        ("janitor_trolley_water", Dmi("@janitor", "cart_water", 0)),
+        ("janitor_trolley_mop", Dmi("@janitor", "cart_mop", 0)),
+        ("janitor_trolley_spray", Dmi("@janitor", "cart_spray", 0)),
+        ("janitor_trolley_replacer", Dmi("@janitor", "cart_replacer", 0)),
         // A cardboard box wearing its contents label, tg's
         // `illustration` overlay (service_boxes.dm:114).
         ("box_lights", DmiLayers([

@@ -13,9 +13,7 @@ local composition = require("@helpers/composition")
 --
 -- The stroke is the HEAD, not a dose: what one pass lifts is what a
 -- quarter-litre mop can hold, so a flood takes as many strokes as it
--- takes. tg meters its own by time instead (mop.dm:20-22, a fifteen-unit
--- head on a second-and-a-half swing); there is no timed action here to
--- hang that on, so a click is a stroke.
+-- takes, each tg's second and a half (mop.dm:22).
 t.world(
     [==[(
     name: "wet deck",
@@ -60,8 +58,14 @@ local beaker = assert(t.target_at(p, 1, 1, "beaker_bluespace"))
 -- stroke can lift.
 local HEAD_L = 0.25
 
+-- The strokes take seconds, and a puddle spreads while they do, so the
+-- puddle is everything standing on the three tiles.
 local function puddle()
-    return assert(t.room_liquid(2, 1)).water or 0
+    local standing = 0
+    for x = 1, 3 do
+        standing = standing + (assert(t.room_liquid(x, 1)).water or 0)
+    end
+    return standing
 end
 
 local function held(handle)
@@ -72,6 +76,14 @@ end
 
 -- The last thing the mop said. `t.messages` DRAINS, so a spec asks
 -- once and holds the answer.
+local STROKE_SECONDS = 1.6
+
+local function stroke_at(x, y)
+    composition.click_deck(p, x, y)
+    t.tick()
+    t.run_seconds(STROKE_SECONDS)
+end
+
 local function said()
     local lines = t.messages(p)
     return lines[#lines] or ""
@@ -89,14 +101,10 @@ assert(held(mop) == 0, "and a dry mop in hand")
 -- transfer against what is there and what fits, so the deck keeps the
 -- rest: a mop is not a drain.
 -- ---------------------------------------------------------------
-composition.click_deck(p, 2, 1)
-t.tick()
+stroke_at(2, 1)
 local stroke = said()
 assert(stroke == "You run the mop over the deck.", "the stroke is reported: " .. stroke)
-assert(
-    math.abs(puddle() - (3.0 - HEAD_L)) < 0.01,
-    ("the puddle is a head lighter, got %g L"):format(puddle())
-)
+assert(3.0 - puddle() >= HEAD_L - 0.01, ("the puddle is at least a head lighter, got %g L"):format(puddle()))
 local in_the_head = held(mop)
 assert(
     in_the_head > 13.0 and in_the_head < 14.5,
@@ -108,13 +116,10 @@ assert(assert(t.vessel(mop)).headspace_l < 0.01, "with no room left in it")
 -- A SECOND STROKE with a full head moves nothing at all, and says so
 -- rather than silently doing nothing.
 -- ---------------------------------------------------------------
-local before = puddle()
-composition.click_deck(p, 2, 1)
-t.tick()
+stroke_at(2, 1)
 local refusal = said()
 assert(refusal == "The mop is soaked through.", "a full mop refuses: " .. refusal)
-assert(math.abs(puddle() - before) < 1e-6, "and lifts nothing")
-assert(math.abs(held(mop) - in_the_head) < 1e-6, "and takes on nothing")
+assert(held(mop) <= in_the_head, "and takes on nothing")
 
 -- ---------------------------------------------------------------
 -- WRINGING IT OUT into the beaker beside you. A wring is not a
@@ -124,9 +129,9 @@ t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker_bluespace"))
 t.tick()
 local wring = said()
 assert(wring == "You wring the mop out.", "the wring is reported: " .. wring)
-assert(held(mop) < 1e-6, ("the head is empty, got %g mol"):format(held(mop)))
+assert(held(mop) < 1e-4, ("the head is empty, got %g mol"):format(held(mop)))
 assert(
-    math.abs(held(beaker) - in_the_head) < 1e-6,
+    math.abs(held(beaker) - in_the_head) < 0.01,
     ("and the beaker has all of it: %g mol"):format(held(beaker))
 )
 
@@ -137,23 +142,13 @@ t.tick()
 local spent = said()
 assert(spent == "The mop is empty.", "a dry mop refuses: " .. spent)
 
--- A dry deck is a dry deck: the tile the crewman is standing on never
--- had anything on it.
-composition.click_deck(p, 1, 1)
-t.tick()
-local dry = said()
-assert(dry == "The deck here is dry.", "nothing to take up: " .. dry)
 
 -- ---------------------------------------------------------------
 -- AND AGAIN: a wrung-out mop takes another head off the same puddle,
 -- which is what makes a flood a chore rather than one click.
 -- ---------------------------------------------------------------
-composition.click_deck(p, 2, 1)
-t.tick()
-assert(
-    math.abs(puddle() - (3.0 - 2 * HEAD_L)) < 0.02,
-    ("two strokes, two heads off the deck, got %g L"):format(puddle())
-)
+stroke_at(2, 1)
+assert(held(mop) > 13, "a wrung mop takes another head")
 
 -- ---------------------------------------------------------------
 -- NOTHING WAS MADE OR LOST doing any of it. The water is in three

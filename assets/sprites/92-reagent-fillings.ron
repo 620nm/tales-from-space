@@ -68,6 +68,9 @@
         ("pill", Dmi("@chemical", "pill", 0)),
 
         // The fills, one family per vessel shape.
+        // The bucket's two stops (`fill_icon_thresholds`, _cup.dm:595).
+        ("bucket_fill_50", Dmi("@fillings", "bucket50", 0)),
+        ("bucket_fill_90", Dmi("@fillings", "bucket90", 0)),
         ("beaker_fill_1", Dmi("@fillings", "beaker1", 0)),
         ("beaker_fill_20", Dmi("@fillings", "beaker20", 0)),
         ("beaker_fill_40", Dmi("@fillings", "beaker40", 0)),

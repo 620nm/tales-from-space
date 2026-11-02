@@ -38,7 +38,19 @@ export type Spec = {
     pour: { units: number | "all", message: string? }?,
     sip: { units: number, message: string? }?,
     spill: boolean | { message: string? }?,
-    soak: { message: string?, dry: string?, full: string? }?,
+    soak: SoakSpec?,
+}
+-- What a vessel that takes the deck up says and how it strokes. `seconds`
+-- absent is an instant stroke. `pinned_solids` names substances whose solid
+-- is fast to the deck: while one lies on the tile, solids stay put.
+export type SoakSpec = {
+    message: string?,
+    floating: string?,
+    deposit: string?,
+    dry: string?,
+    full: string?,
+    seconds: number?,
+    pinned_solids: { [string]: boolean }?,
 }
 type Line = { key: string, args: { [string]: string | number | boolean | UnsafeMarkup } }
 export type GestureResult = boolean | { replaced: boolean }
@@ -240,48 +252,113 @@ local function dregs(spec: Spec, self: Handle, user: Handle): boolean
     return true
 end
 
--- TAKING A PUDDLE UP, which is the tile's own matter drawn into a
--- vessel: the room over a tile is a body of matter like any other
--- (docs/luau-api/matter.md, `ev.at.matter`), so a mop is the transfer
--- with the ends swapped and only the liquid phase named. What fits is
--- the engine's -- the head takes what it takes and the rest stays on the
--- deck -- so the two refusals here are the two states a stroke can find:
--- a vessel with no room in it, and a deck with nothing on it.
+-- What a stroke finds on one tile, in moles, read before anything moves: an
+-- effect lands at the end of the transaction, so a gesture cannot measure
+-- itself by re-reading its own vessel.
+type DeckReading = { liquid: number, solid: number, pinned: boolean }
+
+local function read_deck(at: TileAddress, pinned_solids: { [string]: boolean }?): DeckReading
+    local found: DeckReading = { liquid = 0, solid = 0, pinned = false }
+    local deck = sim.matter_read(at.matter)
+    if deck == nil then
+        return found
+    end
+    for substance, entry in pairs(deck.contents) do
+        found.liquid = found.liquid + (entry.liquid or 0)
+        local solid = entry.solid or 0
+        if solid > 0 then
+            found.solid = found.solid + solid
+            found.pinned = found.pinned or (pinned_solids ~= nil and pinned_solids[substance] == true)
+        end
+    end
+    return found
+end
+
+type SoakLines = { soak: Line, floating: Line, deposit: Line, dry: Line, full: Line }
+
+-- TAKING THE DECK UP, which is the tile's own matter drawn into a vessel:
+-- the room over a tile is a body of matter like any other
+-- (docs/luau-api/matter.md, `ev.at.matter`), so a mop is the transfer with
+-- the ends swapped. Floating beads and a settled puddle are one liquid to
+-- the transfer; `sim.matter.liquid_settling` only chooses the sentence. What
+-- fits is the engine's, so the refusals here are the states a stroke can
+-- find: a vessel with no room in it, and a deck with nothing to lift.
 local function soak(
+    spec: SoakSpec,
+    phases: { string },
     self: Handle,
     user: Handle,
     at: TileAddress,
-    soak_line: Line,
-    dry_line: Line,
-    full_line: Line
-): boolean
+    lines: SoakLines
+)
     -- A stroke sweeps settled dust whether or not it lifts anything:
-    -- dust rests on the deck, not in the head, so a full mop still
-    -- sweeps and a dry one still sweeps. The sentence below describes
-    -- the liquid, which is what the head answers for; the sweep is the
-    -- stroke's silent half.
+    -- dust rests on the deck, not in the head.
     sim.volley_residue_clear(at.x, at.y)
     if (vessel.headspace_l(self) or 0) <= HEADSPACE_L then
-        sim.message.send({ recipient = user, message = said(full_line) })
+        sim.message.send({ recipient = user, message = said(lines.full) })
+        return
+    end
+    local takes_solid = table.find(phases, "solid") ~= nil
+    local deck = read_deck(at, spec.pinned_solids)
+    local solid_free = takes_solid and not deck.pinned and deck.solid >= DREGS_MOL
+    if deck.liquid < DREGS_MOL and not solid_free then
+        sim.message.send({ recipient = user, message = said(lines.dry) })
+        return
+    end
+    sim.matter.transfer({
+        from = at.matter,
+        to = self,
+        amount = "all",
+        phases = if solid_free then { "solid", "liquid" } else { "liquid" },
+    })
+    local spoken = lines.soak
+    if deck.liquid < DREGS_MOL then
+        spoken = lines.deposit
+    elseif sim.matter.liquid_settling(at) == "floating" then
+        spoken = lines.floating
+    end
+    sim.message.send({ recipient = user, message = said(spoken) })
+end
+
+-- The mops mid-stroke: a second click on a busy mop is not a second stroke
+-- (tg's TRAIT_CURRENTLY_CLEANING, cleaner.dm:96).
+local stroking: { Handle } = {}
+
+local function begin_soak(
+    spec: SoakSpec,
+    phases: { string },
+    self: Handle,
+    user: Handle,
+    at: TileAddress,
+    lines: SoakLines
+): boolean
+    if spec.seconds == nil then
+        soak(spec, phases, self, user, at, lines)
         return true
     end
-    -- What is STANDING there, asked before anything is moved: an effect
-    -- lands at the end of the transaction, so a gesture that measured
-    -- itself by re-reading its own vessel would measure nothing at all.
-    local deck = sim.matter_read(at.matter)
-    local standing = 0
-    if deck ~= nil then
-        for _, entry in pairs(deck.contents) do
-            standing = standing + (entry.liquid or 0)
+    if table.find(stroking, self) ~= nil then
+        return true
+    end
+    table.insert(stroking, self)
+    sim.spawn_task(user, function()
+        local outcome = sim.do_after(user, sim.ticks(spec.seconds), {})
+        local index = table.find(stroking, self)
+        if index ~= nil then
+            table.remove(stroking, index)
         end
-    end
-    if standing < DREGS_MOL then
-        sim.message.send({ recipient = user, message = said(dry_line) })
-        return true
-    end
-    sim.matter.transfer({ from = at.matter, to = self, amount = "all", phases = { "liquid" } })
-    sim.message.send({ recipient = user, message = said(soak_line) })
+        if outcome == "ok" and self.alive then
+            soak(spec, phases, self, user, at, lines)
+        end
+    end)
     return true
+end
+
+-- A deck, or the ground outdoors: anything underfoot that is not a wall.
+local function soakable_tile(): action_rules.Selector
+    local underfoot: action_rules.Selector = { any = { action_rules.kind("turf"), action_rules.kind("component") } }
+    local not_wall: action_rules.Selector = { ["not"] = action_rules.fact("target.has_component", "wall") }
+    local not_reinforced: action_rules.Selector = { ["not"] = action_rules.fact("target.has_component", "reinforced_wall") }
+    return { all = { underfoot, not_wall, not_reinforced } }
 end
 
 -- Attaches the gestures to one prototype and declares the behaviour that
@@ -295,9 +372,9 @@ end
 --           "all"` is a vessel that empties itself in one gesture
 --   sip     { units, message? }
 --   spill   { message? } or true -- absent: no tipping it out
---   soak    { message?, dry?, full? } -- the deck the OTHER way round:
---           take the liquid on that tile up into this vessel instead of
---           tipping this vessel onto it. Declaring it beside `spill` is
+--   soak    SoakSpec -- the deck the OTHER way round: take what is on
+--           that tile up into this vessel instead of tipping this vessel
+--           onto it, in `phases`. Declaring it beside `spill` is
 --           a LOAD ERROR by the name of the prototype, because the deck
 --           is one branch and a thing cannot both put down and pick up:
 --           a file that asked for both would silently get this one.
@@ -344,7 +421,7 @@ function vessel.actions(spec: Spec): { action_rules.Action }
             actions,
             action_rules.primary(
                 if spec.soak then "soak" else "spill",
-                action_rules.deck("floor_tiles", "grid_cover", "station_base")
+                if spec.soak then soakable_tile() else action_rules.deck("floor_tiles", "grid_cover", "station_base")
             )
         )
     end
@@ -371,9 +448,18 @@ function vessel.attach(spec: Spec): Definition
     local sip_line = spec.sip and line(spec.sip.message, SIP, spec.noun)
     local named = type(spec.spill) == "table" and spec.spill.message or nil
     local spill_line = line(named, SPILL, spec.noun)
-    local soak_line = spec.soak and line(spec.soak.message, SOAK, spec.noun)
-    local dry_line = spec.soak and line(spec.soak.dry, SOAK_DRY, spec.noun)
-    local full_line = spec.soak and line(spec.soak.full, SOAK_FULL, spec.noun)
+    local soak_lines: SoakLines? = nil
+    local soak_phases: { string } = spec.phases or { "liquid" }
+    if spec.soak ~= nil then
+        local soaked = line(spec.soak.message, SOAK, spec.noun)
+        soak_lines = {
+            soak = soaked,
+            floating = if spec.soak.floating then line(spec.soak.floating, SOAK, spec.noun) else soaked,
+            deposit = if spec.soak.deposit then line(spec.soak.deposit, SOAK, spec.noun) else soaked,
+            dry = line(spec.soak.dry, SOAK_DRY, spec.noun),
+            full = line(spec.soak.full, SOAK_FULL, spec.noun),
+        }
+    end
 
     definition:handle(
         "interaction.use",
@@ -424,14 +510,17 @@ function vessel.attach(spec: Spec): Definition
             if spec.spill == nil and spec.soak == nil then
                 return { replaced = false }
             end
-            if not sim.has_component(at.x, at.y, "station_base")
-                or sim.has_component(at.x, at.y, "wall")
+            local walled = sim.has_component(at.x, at.y, "wall")
                 or sim.has_component(at.x, at.y, "reinforced_wall")
-                or sim.has_component(at.x, at.y, "reinforcement") then
-                return { replaced = false }
-            end
+                or sim.has_component(at.x, at.y, "reinforcement")
             if spec.soak ~= nil then
-                return soak(self, user, at, assert(soak_line), assert(dry_line), assert(full_line))
+                if walled then
+                    return { replaced = false }
+                end
+                return begin_soak(spec.soak, soak_phases, self, user, at, assert(soak_lines))
+            end
+            if walled or not sim.has_component(at.x, at.y, "station_base") then
+                return { replaced = false }
             end
             if dregs(spec, self, user) then
                 return true

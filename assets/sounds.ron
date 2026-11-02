@@ -85,6 +85,7 @@
     // open (canister.dm:488), which are the same noise for the same
     // reason.
     ("spray", "effects/spray.ogg"),
+    ("slosh", "effects/slosh.ogg"),
     // A nozzle with paint in it, which is a different noise from the
     // leak above and earns its own id. tg plays it from `use_paint` and
     // declares it the painter's `usesound` (airlock_painter.dm:16,
