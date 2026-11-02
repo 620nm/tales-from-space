@@ -68,7 +68,7 @@ for _, service in ipairs({ 1, 5, 9 }) do
     end
     assert(bench.standing(BEYOND.x, BEYOND.y) > 1.9, "nothing past the ring")
 
-    local billed = t.ports_at(APC.x, APC.y, "power").channels["l1"].out_w
+    local billed = assert(t.ports_at(APC.x, APC.y, "power")).channels["l1"].out_w
     local owed = 400 * service
     assert(math.abs(billed - owed) < owed * 0.05, `reach {service} bills {owed} W, got {billed}`)
 

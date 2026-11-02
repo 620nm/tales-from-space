@@ -30,7 +30,8 @@ local function drawn(): SpecSeenMatterPart
 end
 
 t.run_seconds(5)
-assert(bench.standing(POOL.x, POOL.y) > 9.9, "beads stay on their tile")
+assert(bench.standing(POOL.x + 1, POOL.y) == 0, "beads stay on their tile")
+assert(bench.standing(POOL.x, POOL.y) > 9.5, "losing only what evaporates")
 assert(drawn().weightless, "and are drawn as beads")
 
 press("start")
