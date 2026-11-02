@@ -1,7 +1,7 @@
 -- How a condensed phase of ground reads (the engine's
 -- docs/content-schema/terrain.md). A tile names a ground material, a
 -- blend; the profile that blend gets says what component lies under the
--- face (`bed`), which matter look is drawn as the face (`face`, in
+-- face (`substrate`), which matter look is drawn as the face (`face`, in
 -- matter_appearances.luau) and how much darker the substrate's own
 -- picture shows at a shell's edge (`under_shade`).
 --
@@ -14,7 +14,7 @@ return {
         {
             key = "bare_ground",
             phase = "solid",
-            bed = "ground",
+            substrate = "ground",
             face = "ground_shell",
             under_shade = 0.7,
         },
