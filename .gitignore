@@ -22,3 +22,7 @@ ui/staff/fixtures/baselines/*.diff.png
 
 # Local Trufflepig state
 .trufflepig/
+
+# Python bytecode from tools/art/
+__pycache__/
+*.py[cod]

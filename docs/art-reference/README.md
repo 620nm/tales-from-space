@@ -25,6 +25,11 @@ palette rules, animation timing and LED restraint policy. Nothing here ships.
   tgstation art per element and what the pack imports. The tools that author
   and audit the elemental sprites are in
   [tools/art/elemental/](../../tools/art/elemental/README.md).
+- [terrestrial-asset-guide.md](terrestrial-asset-guide.md) holds the
+  neutral-greyscale planetary terrain, 12-frame 4-layer shoreline, broadband
+  botanical decal and matte outcrop rules; the tools that author, render and
+  audit them are in
+  [tools/art/terrestrial/](../../tools/art/terrestrial/README.md).
 - `palettes/file-icons/` holds the file-icon importer's fixed palette strips.
 - `plates/01-medical.png` .. `09-information.png` are composite visual
   reference plates rendered from the pinned `tgstation` checkout

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tales from Space — Terrestrial Art Workbench</title>
+  <link rel="stylesheet" href="workbench.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-brand">
+      <h1>Tales from Space — Terrestrial Art Workbench</h1>
+      <p id="topbar-subtitle" class="subtitle">
+        Neutral-Greyscale Terrestrial Assets &bull; TfS Matter, Station &amp; <code>tgstation</code> Reference Gems &bull;
+        12-Frame 4-Layer Shoreline &bull; 47-Junction Auto-Smoothing &bull; Live sRGB Multiply
+      </p>
+    </div>
+    <nav class="tab-switcher" role="tablist">
+      <button id="tab-btn-diorama" class="tab-btn active" data-tab="diorama" role="tab" aria-selected="true">
+        1. Live Planetary Diorama (14&times;10)
+      </button>
+      <button id="tab-btn-browser" class="tab-btn" data-tab="browser" role="tab" aria-selected="false">
+        2. 47-Junction Slicer &amp; Asset Browser
+      </button>
+    </nav>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- TAB 1: LIVE MIX-AND-MATCH PLANETARY DIORAMA CANVAS (14x10)            -->
+  <!-- ===================================================================== -->
+  <main id="panel-diorama" class="tab-panel active">
+    <section class="preset-toolbar">
+      <div class="toolbar-group">
+        <span class="toolbar-label">Scene Presets:</span>
+        <div id="scene-preset-buttons" class="btn-row"></div>
+      </div>
+      <div class="toolbar-divider"></div>
+      <div class="toolbar-group">
+        <span class="toolbar-label">Zoom:</span>
+        <div id="zoom-buttons" class="btn-row">
+          <button class="pill-btn" data-zoom="1">1&times;</button>
+          <button class="pill-btn" data-zoom="2">2&times;</button>
+          <button class="pill-btn active" data-zoom="3">3&times;</button>
+          <button class="pill-btn" data-zoom="4">4&times;</button>
+        </div>
+      </div>
+      <div class="toolbar-divider"></div>
+      <div class="toolbar-group">
+        <button id="btn-play-pause" class="pill-btn accent-btn">Pause</button>
+        <button id="btn-prev-frame" class="pill-btn" title="Step Previous Frame">&larr;</button>
+        <div id="frame-pills" class="btn-row"></div>
+        <button id="btn-next-frame" class="pill-btn" title="Step Next Frame">&rarr;</button>
+        <span id="frame-phase-label" class="phase-readout">F1: Surge In</span>
+      </div>
+      <div class="toolbar-divider"></div>
+      <div class="toolbar-group">
+        <label class="inline-check">
+          <input type="checkbox" id="chk-gridlines" />
+          <span>Gridlines</span>
+        </label>
+        <button id="btn-reset-scene" class="pill-btn" title="Reset active preset map &amp; tints">Reset Preset</button>
+        <button id="btn-clear-scene" class="pill-btn" title="Clear map to flat silicate">Clear Map</button>
+      </div>
+    </section>
+
+    <div class="diorama-workspace">
+      <!-- Left Sidebar: Layer Checkboxes & Live Multiply Color Pickers -->
+      <aside class="side-panel left-panel">
+        <div class="panel-card">
+          <h2>Layer Stack Visibility</h2>
+          <div id="layer-checkboxes" class="layer-list">
+            <label><input type="checkbox" id="layer-terrain" data-layer="terrain" checked /> <span>Terrain / Ice</span></label>
+            <label><input type="checkbox" id="layer-ocean" data-layer="ocean" checked /> <span>Ocean Body (12f)</span></label>
+            <label><input type="checkbox" id="layer-backwash" data-layer="backwash" checked /> <span>Wet Backwash Glaze</span></label>
+            <label><input type="checkbox" id="layer-swash" data-layer="swash" checked /> <span>Swash Lip &amp; Tongue</span></label>
+            <label><input type="checkbox" id="layer-lace" data-layer="lace" checked /> <span>Surf Lace &amp; Roller</span></label>
+            <label><input type="checkbox" id="layer-cliffs" data-layer="cliffs" checked /> <span>Cliffs (<code>@96</code> shadow)</span></label>
+            <label><input type="checkbox" id="layer-station" data-layer="station" checked /> <span>Station Decks &amp; Hull</span></label>
+            <label><input type="checkbox" id="layer-decals" data-layer="decals" checked /> <span>Smooth Nature Decals</span></label>
+            <label><input type="checkbox" id="layer-matter" data-layer="matter" checked /> <span>TfS Matter</span></label>
+            <label><input type="checkbox" id="layer-props" data-layer="props" checked /> <span>TG Flora, Rocks &amp; Props</span></label>
+            <label><input type="checkbox" id="layer-haze" data-layer="haze" checked /> <span>Gas Haze</span></label>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="card-header-row">
+            <h2>Live sRGB Multiply Tints</h2>
+            <select id="split-tint-side" class="compact-select" title="Which side color pickers edit in Split-Screen mode" hidden>
+              <option value="primary">Left (Mars)</option>
+              <option value="secondary">Right (Earth)</option>
+            </select>
+          </div>
+          <p class="card-hint">Dragging pickers re-multiplies neutral-greyscale strips live on canvas:</p>
+          <div id="color-picker-list" class="picker-grid"></div>
+
+          <div class="sub-section">
+            <h3>Morph Palette Only (Keep Geometry)</h3>
+            <div id="recolor-only-buttons" class="recolor-grid"></div>
+          </div>
+
+          <label class="inline-check beach-toggle">
+            <input type="checkbox" id="chk-sandy-foreshore" />
+            <span>Expose Low/Sand Beach Foreshore</span>
+          </label>
+        </div>
+      </aside>
+
+      <!-- Center Viewport: 14x10 Live Canvas -->
+      <section class="canvas-stage-wrap">
+        <div class="canvas-scroll-box">
+          <canvas id="diorama-canvas" width="1344" height="960"></canvas>
+        </div>
+        <footer class="canvas-statusbar">
+          <span id="hover-tile-readout">Hover a tile on the 14&times;10 grid to inspect layers &bull; Left-drag: Paint active brush &bull; Right-drag: Erase</span>
+          <span id="active-brush-readout" class="brush-status-pill">Brush: Silicate Shelf</span>
+        </footer>
+      </section>
+
+      <!-- Right Sidebar: Interactive Paint Tool -->
+      <aside class="side-panel right-panel">
+        <div class="panel-card brush-panel-card">
+          <h2>Interactive Paint Tool</h2>
+          <p class="card-hint">Click or drag on the 14&times;10 diorama. Right-click erases the active brush's layer.</p>
+          <div id="brush-category-tabs" class="mini-tabs"></div>
+          <div id="brush-palette-grid" class="brush-grid"></div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- TAB 2: 47-JUNCTION SLICER & COMPLETE ASSET BROWSER                    -->
+  <!-- ===================================================================== -->
+  <main id="panel-browser" class="tab-panel">
+    <div class="browser-workspace">
+      <aside class="browser-sidebar">
+        <div class="browser-filters">
+          <input type="search" id="asset-search" class="search-input" placeholder="Search assets by id, title, or file.dm..." />
+          <div id="source-filter-row" class="filter-pills"></div>
+          <div id="category-filter-row" class="filter-pills"></div>
+        </div>
+        <div id="asset-list" class="asset-list"></div>
+      </aside>
+
+      <section class="browser-inspector">
+        <div class="inspector-header-card">
+          <div>
+            <div class="inspector-badges">
+              <span id="insp-source-badge" class="badge">terrestrial</span>
+              <span id="insp-category-badge" class="badge">terrain</span>
+              <span id="insp-kind-badge" class="badge">smooth_strip</span>
+              <span id="insp-dims-badge" class="badge">32&times;32</span>
+              <span id="insp-frames-badge" class="badge">1f</span>
+              <span id="insp-frame-pill" class="badge">F1/1</span>
+            </div>
+            <h2 id="insp-title">Rough Silicate Regolith Shelf</h2>
+            <code id="insp-id" class="insp-id-code">terrain_silicate_rough_smooth</code>
+          </div>
+          <div class="inspector-citation-box">
+            <span class="cit-label">Source &amp; Citation</span>
+            <code id="insp-citation">assets/originals/art/terrestrial/terrain_silicate_rough_smooth.aseprite</code>
+            <span id="insp-telemetry" class="telemetry-line"></span>
+          </div>
+        </div>
+
+        <div class="inspector-controls-bar">
+          <div class="toolbar-group">
+            <span class="toolbar-label">Preview Tint:</span>
+            <input type="color" id="insp-tint-picker" value="#B85C3C" />
+            <code id="insp-tint-hex">#B85C3C</code>
+            <div id="insp-quick-tints" class="btn-row"></div>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <span class="toolbar-label">Backdrop Mat:</span>
+            <select id="insp-mat-select" class="compact-select">
+              <option value="checker">Alpha Checkerboard</option>
+              <option value="dark">Dark Board (#141722)</option>
+              <option value="mars">Mars Silicate (#B85C3C)</option>
+              <option value="earth">Earth Sand (#CBB68C)</option>
+              <option value="light">Light Paper (#EFE8D5)</option>
+            </select>
+            <button id="btn-open-zoom-modal" class="pill-btn accent-btn" title="Open 8x Pixel Zoom Inspector">Zoom 8&times;</button>
+          </div>
+        </div>
+
+        <div class="slicer-top-grid">
+          <!-- Interactive 8-Neighbor Bitmask Compass -->
+          <div class="panel-card">
+            <h3>8-Neighbor Bitmask Toggle</h3>
+            <div id="neighbor-compass" class="compass-grid">
+              <button data-bit="128">NW<br/><small>128</small></button>
+              <button data-bit="1">N<br/><small>1</small></button>
+              <button data-bit="16">NE<br/><small>16</small></button>
+              <button data-bit="8">W<br/><small>8</small></button>
+              <div class="compass-self">SELF</div>
+              <button data-bit="4">E<br/><small>4</small></button>
+              <button data-bit="64">SW<br/><small>64</small></button>
+              <button data-bit="2">S<br/><small>2</small></button>
+              <button data-bit="32">SE<br/><small>32</small></button>
+            </div>
+            <div id="junction-quick-presets" class="btn-row wrap-row"></div>
+            <div id="junction-math-readout" class="math-box"></div>
+          </div>
+
+          <!-- 4x Single Cell / Oversized Anchor Preview -->
+          <div class="panel-card preview-card">
+            <h3 id="insp-single-heading">4&times; Active Cell Preview</h3>
+            <div class="preview-canvas-holder" title="Click to open 8x Pixel Zoom Inspector">
+              <canvas id="insp-cell-canvas" width="192" height="192"></canvas>
+            </div>
+            <p id="insp-offset-caption" class="card-hint">Anchor offset: (0, 0)</p>
+          </div>
+
+          <!-- 3x3 Live Context Patch Preview -->
+          <div class="panel-card preview-card">
+            <h3>3&times;3 Neighbor Context (2&times;)</h3>
+            <div class="preview-canvas-holder">
+              <canvas id="insp-context-canvas" width="192" height="192"></canvas>
+            </div>
+            <p class="card-hint">Live auto-smoothed 3&times;3 neighborhood</p>
+          </div>
+        </div>
+
+        <!-- Audit Telemetry Table Card -->
+        <div id="insp-telemetry-card" class="panel-card">
+          <h3>Audit Gate Telemetry</h3>
+          <table class="telemetry-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Measured Value</th>
+                <th>Contract / Gate</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="insp-telemetry-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Optional 5-Block Strip Slicer Card (shown when strip_data_uri exists) -->
+        <div id="insp-strip-card" class="panel-card">
+          <h3>5-Block Quadrant Source Strip (<code>160&times;32</code> @ 3&times; &mdash; <code>Slice(5, 1, ...)</code>)</h3>
+          <canvas id="insp-strip-canvas" width="480" height="96"></canvas>
+          <p class="card-hint">
+            Block 0: Convex Outer Corner &bull; Block 1: Vertical Edge (N/S) &bull; Block 2: Horizontal Edge (E/W) &bull;
+            Block 3: Concave Inner Corner &bull; Block 4: Flat Interior. Cyan boxes mark the 4 active 16&times;16 quadrants.
+          </p>
+        </div>
+
+        <!-- Complete 47-Junction Atlas or Animation Strip Grid -->
+        <div class="panel-card">
+          <h3 id="insp-atlas-heading">All 47 Canonical Junctions (Click to inspect &bull; Double-click for 8&times; Zoom)</h3>
+          <div id="insp-atlas-grid" class="atlas-47-grid"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Modal 8x Pixel Zoom Inspector -->
+  <div id="zoom-modal" class="zoom-modal" hidden>
+    <div class="zoom-modal-card" role="dialog" aria-modal="true" aria-labelledby="zoom-modal-title">
+      <div class="zoom-modal-header">
+        <div>
+          <h3 id="zoom-modal-title">8&times; Pixel Zoom Inspector</h3>
+          <span id="zoom-modal-subtitle" class="card-hint"></span>
+        </div>
+        <div class="toolbar-group">
+          <label class="inline-check">
+            <input type="checkbox" id="chk-zoom-grid" checked />
+            <span>Pixel Grid</span>
+          </label>
+          <button id="btn-close-zoom-modal" class="pill-btn">Close (Esc)</button>
+        </div>
+      </div>
+      <div class="zoom-modal-body">
+        <canvas id="zoom-modal-canvas" width="256" height="256"></canvas>
+      </div>
+      <div id="zoom-modal-readout" class="zoom-readout">Hover a pixel to inspect (x, y), RGBA, hex &amp; luma</div>
+    </div>
+  </div>
+
+  <script src="workbench_data.js"></script>
+  <script src="workbench_render.js"></script>
+  <script src="workbench_app.js"></script>
+</body>
+</html>
