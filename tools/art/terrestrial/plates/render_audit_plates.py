@@ -340,7 +340,7 @@ def render_plate_02(bank: AssetBank, out_dir: Path) -> Path:
     mars, earth = BIOME_TINT_PRESETS["mars_cryo_ammonia"], BIOME_TINT_PRESETS["earth_coastal_meadow"]
     sil_atlas, ice_atlas, cliff_atlas = bank.atlas("terrain_silicate_rough_smooth"), bank.atlas("terrain_ice_sheet_smooth"), bank.atlas("terrain_cliff_stepped_smooth")
     ocean_atlas, backwash_atlas = bank.atlas("ocean_body_smooth"), bank.atlas("ocean_backwash_smooth")
-    swash_atlas, lace_atlas, grass_atlas = bank.atlas("ocean_swash_smooth"), bank.atlas("ocean_foam_lace_smooth"), bank.atlas("decal_nature_grass_smooth")
+    swash_atlas, lace_atlas, grass_atlas = bank.atlas("ocean_swash_smooth"), bank.atlas("ocean_foam_lace_smooth"), bank.atlas("solid_grass_smooth")
 
     sil_j255_raw = cell_47(sil_atlas, 255, 0)
     mars_ground_low = tint_srgb_multiply(sil_j255_raw, mars["silicate_low"])
@@ -358,8 +358,8 @@ def render_plate_02(bank: AssetBank, out_dir: Path) -> Path:
         "ocean_backwash_smooth": (mars["backwash"], earth["backwash"], mars_ground_mid, earth_sand),
         "ocean_swash_smooth": (mars["swash"], earth["swash"], mars_ground_mid, earth_sand),
         "ocean_foam_lace_smooth": (mars["swash"], earth["swash"], mars_ground_mid, earth_sand),
-        "decal_nature_grass_smooth": (mars["grass"], earth["grass"], mars_ground_mid, earth_rock),
-        "decal_nature_moss_smooth": (mars["moss"], earth["moss"], mars_ground_mid, earth_rock),
+        "solid_grass_smooth": (mars["grass"], earth["grass"], mars_ground_mid, earth_rock),
+        "solid_moss_smooth": (mars["moss"], earth["moss"], mars_ground_mid, earth_rock),
     }
 
     smooth_records = [r for r in bank.terrestrial_records if is_smooth_kind(r["kind"])]
@@ -439,8 +439,8 @@ def render_plate_02(bank: AssetBank, out_dir: Path) -> Path:
             else 255 if sid in ("terrain_silicate_rough_smooth", "ocean_body_smooth")
             else 0
         )
-        z_bg = (e_bg if "decal_nature" in sid else m_bg).copy()
-        z_bg.alpha_composite(tint_srgb_multiply(cell_47(atlas_im, j_zoom_val, f_preview), earth_tint if "decal_nature" in sid else mars_tint))
+        z_bg = (e_bg if sid.startswith("solid_") else m_bg).copy()
+        z_bg.alpha_composite(tint_srgb_multiply(cell_47(atlas_im, j_zoom_val, f_preview), earth_tint if sid.startswith("solid_") else mars_tint))
         plate.paste(z_bg.resize((144, 144), Image.Resampling.NEAREST), (cx0, y0 + 28))
         draw.rectangle([cx0, y0 + 28, cx0 + 144, y0 + 172], outline=(110, 120, 148, 255))
         draw.text((cx0, y0 + 175), f"4.5x Detail (j={j_zoom_val})", fill=(185, 196, 218, 255))
@@ -579,8 +579,8 @@ def render_plate_08(bank: AssetBank, out_dir: Path) -> Path:
     y1 = y0 + 272
     draw.rounded_rectangle((20, y1, 748, y1 + 258), radius=8, fill=(25, 30, 42, 255), outline=(52, 62, 84, 255))
     draw.text((34, y1 + 10), "(3) FLAT BOTANICAL NATURE DECALS (4-TONE N..L WEAVE, ZERO MELTED-WAX DROP SHADOWS)", font=f_sec, fill=(146, 224, 132, 255))
-    grass_e, moss_e = load_tinted("decal_nature_grass_smooth", "#86C44A"), load_tinted("decal_nature_moss_smooth", "#5A9842")
-    moss_m, m_sil = load_tinted("decal_nature_moss_smooth", "#96A670"), load_tinted("terrain_silicate_rough_smooth", "#B85C3C")
+    grass_e, moss_e = load_tinted("solid_grass_smooth", "#86C44A"), load_tinted("solid_moss_smooth", "#5A9842")
+    moss_m, m_sil = load_tinted("solid_moss_smooth", "#96A670"), load_tinted("terrain_silicate_rough_smooth", "#B85C3C")
 
     decal_mask = [[True, True, False], [True, True, True], [False, True, True]]
     for idx, (lbl, base_at, dec_at) in enumerate([
@@ -707,8 +707,8 @@ def render_plate_09(bank: AssetBank, out_dir: Path) -> Path:
     soil_e = cell_47(load_tinted("terrain_silicate_rough_smooth", "#947B62"), 255, 0)
     soil_m = cell_47(load_tinted("terrain_silicate_rough_smooth", "#B85C3C"), 255, 0)
     oc_earth, oc_mars = load_tinted("ocean_body_smooth", "#3889C9"), load_tinted("ocean_body_smooth", "#5EB5C4")
-    gr_earth = load_tinted("decal_nature_grass_smooth", "#86C44A")
-    mo_earth, mo_mars = load_tinted("decal_nature_moss_smooth", "#5A9842"), load_tinted("decal_nature_moss_smooth", "#96A670")
+    gr_earth = load_tinted("solid_grass_smooth", "#86C44A")
+    mo_earth, mo_mars = load_tinted("solid_moss_smooth", "#5A9842"), load_tinted("solid_moss_smooth", "#96A670")
     grass_on_soil = Image.alpha_composite(soil_e, cell_47(gr_earth, 255, 0))
 
     panels = [

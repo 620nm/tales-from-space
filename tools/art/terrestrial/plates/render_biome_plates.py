@@ -238,7 +238,7 @@ def main() -> None:
             (mars_cryo["ocean"], "NH3 Ocean", "ocean_body_smooth (bubble-free)"),
             (mars_cryo["swash"], "NH3 Surf+Lace", "ocean_swash + foam_lace (F5/12)"),
             (mars_cryo["haze"], "NH3 Mist", "gas_mist_smooth_gentle (0.45a)"),
-            (mars_cryo["moss"], "Martian Lichen", "decal_nature_moss_smooth"),
+            (mars_cryo["moss"], "Martian Lichen", "solid_moss_smooth"),
             ("#9EA858", "NH3 Fumarole", "tg geyser (geyser.dm:7)"),
         ],
         layer_notes=[
@@ -357,8 +357,8 @@ def main() -> None:
             (earth_meadow["cliff"], "Granite Crag", "terrain_cliff_stepped_smooth"),
             (earth_meadow["ocean"], "Coastal Sea", "ocean_body_smooth (bubble-free)"),
             (earth_meadow["swash"], "Surf + Lace", "ocean_swash + foam_lace (F5/12)"),
-            (earth_meadow["grass"], "Meadow Grass", "decal_nature_grass_smooth"),
-            (earth_meadow["moss"], "Creeping Moss", "decal_nature_moss_smooth"),
+            (earth_meadow["grass"], "Meadow Grass", "solid_grass_smooth"),
+            (earth_meadow["moss"], "Creeping Moss", "solid_moss_smooth"),
             ("#6B4C35", "Tilled Plot", "solid_soil_tilled_smooth"),
         ],
         layer_notes=[

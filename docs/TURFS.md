@@ -127,6 +127,19 @@ sends that object oppositely.
 Structural support, handholds, gravity reception, and atmosphere sealing are
 independent composition properties.
 
+## Ground
+
+A tile's ground material is a blend it names (`material = Named("sand_ground")`)
+or its environment names (`material` in `content/environments/`). Blends
+`silica_ground`, `basalt_ground`, `sand_ground` and `soil_ground` are each one
+solid at its real bulk density. `content/terrain.luau` gives them one profile,
+`bare_ground`, whose `ground_shell` look
+(`content/matter_appearances.luau`) draws on the `ground_face` layer: over the
+substrate, under cover, decals, residue and matter. A plated tile draws none.
+`warm_outdoors` and `mars_surface` are the skies for soil and basalt; their
+`sink_k` equals `surface_temperature_k`, so dry ground sleeps. No mode rolls
+them yet. Spec: `tests/matter_look/ground_face_test.luau`.
+
 ## Decals
 
 `content/compositions.luau` declares eleven floor decals on a `decal` visual

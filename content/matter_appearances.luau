@@ -1,6 +1,7 @@
 -- Shared appearances for the one matter system. Profiles are
--- vocabulary; native aggregation chooses at most one liquid, one solid
--- and one gas look per visible tile from the real phase/volume ledger.
+-- vocabulary; native aggregation chooses at most one liquid and one gas
+-- look per visible tile, and one row per distinct solid look, from the
+-- real phase/volume ledger (the engine's docs/looks/matter.md §4).
 -- A rung is the amount at which a picture starts to draw (`at_ml` for
 -- floor matter, `at_factor` for a gas); docs/looks/matter.md in the
 -- engine is the contract. The art is assets/sprites/94-elemental.ron:
@@ -122,6 +123,21 @@ return {
             rungs = {
                 { at_ml = 1, sprites = { "solid_scattering" } },
                 { at_ml = 25, shell = { still = "solid_debris_jagged_smooth" } },
+            },
+        },
+        -- What a tile's ground material draws as (content/terrain.luau
+        -- `face`). Not measured from the cell: the engine fixes a ground
+        -- row's amount at the maximum, so the one rung always shows and
+        -- alpha sits at full. The `ground_face` layer puts it over the
+        -- substrate and under decals, residue and everything on the tile.
+        -- The art is greyscale and takes the material's colour as tint.
+        {
+            key = "ground_shell",
+            visual_layer = "ground_face",
+            phase = "solid",
+            alpha = { min = 1, max = 1 },
+            rungs = {
+                { at_ml = 1, shell = { still = "terrain_silicate_rough_smooth" } },
             },
         },
         {

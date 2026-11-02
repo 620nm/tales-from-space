@@ -14,8 +14,8 @@
 // declared here.
 (
     sheets: [
-        ("decal_nature_grass_smooth", "art/terrestrial/decal_nature_grass_smooth.aseprite"),
-        ("decal_nature_moss_smooth", "art/terrestrial/decal_nature_moss_smooth.aseprite"),
+        ("solid_grass_smooth", "art/terrestrial/solid_grass_smooth.aseprite"),
+        ("solid_moss_smooth", "art/terrestrial/solid_moss_smooth.aseprite"),
         ("ocean_backwash_smooth", "art/terrestrial/ocean_backwash_smooth.aseprite"),
         ("ocean_body_smooth", "art/terrestrial/ocean_body_smooth.aseprite"),
         ("ocean_foam_lace_smooth", "art/terrestrial/ocean_foam_lace_smooth.aseprite"),
@@ -29,8 +29,8 @@
         ("prop_rough_outcrop_2", Ase("art/terrestrial/prop_rough_outcrop_2.aseprite", "idle")),
     ],
     groups: [
-        (sheet: "decal_nature_grass_smooth", sprites: [Slice(5, 1, Sprite("decal_nature_grass_smooth", "idle", s))]),
-        (sheet: "decal_nature_moss_smooth", sprites: [Slice(5, 1, Sprite("decal_nature_moss_smooth", "idle", s))]),
+        (sheet: "solid_grass_smooth", sprites: [Slice(5, 1, Sprite("solid_grass_smooth", "idle", s))]),
+        (sheet: "solid_moss_smooth", sprites: [Slice(5, 1, Sprite("solid_moss_smooth", "idle", s))]),
         (sheet: "ocean_backwash_smooth", sprites: [Slice(5, 1, Anim("ocean_backwash_smooth", "idle", s))]),
         (sheet: "ocean_body_smooth", sprites: [Slice(5, 1, Anim("ocean_body_smooth", "idle", s))]),
         (sheet: "ocean_foam_lace_smooth", sprites: [Slice(5, 1, Anim("ocean_foam_lace_smooth", "idle", s))]),

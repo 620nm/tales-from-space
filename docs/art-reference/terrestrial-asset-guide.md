@@ -30,8 +30,8 @@ scree and rubble blend across planetary shelves.
 | `ocean_backwash_smooth` | `160×32` smooth strip | `idle-s` | `12` (`200 ms`) | `44, 78, 110` | `43..98` (`#2B2B2B..#626262`) | Wet-shoreline soak glaze (`@110`), sheen (`@78`) and fringe (`@44`) |
 | `ocean_swash_smooth` | `160×32` smooth strip | `idle-s` | `12` (`200 ms`) | `96, 152, 204, 255` | `170..255` (`#AAAAAA..#FFFFFF`) | Translucent swash tongue and unbroken `#FFFFFF` surf lip |
 | `ocean_foam_lace_smooth` | `160×32` smooth strip | `idle-s` | `12` (`200 ms`) | `58, 112, 168` | `170..238` (`#AAAAAA..#EEEEEE`) | Secondary nearshore wave roller and dissolving foam veil |
-| `decal_nature_grass_smooth` | `160×32` smooth strip | `idle-s` | `1` | `255` | `146..238` (`#929292..#EEEEEE`) | Broadband diagonal `/` and `\` meadow blade weave decal |
-| `decal_nature_moss_smooth` | `160×32` smooth strip | `idle-s` | `1` | `255` | `146..217` (`#929292..#D9D9D9`) | Broadband bryophyte cushion mat decal with creeping lobes |
+| `solid_grass_smooth` | `160×32` smooth strip | `idle-s` | `1` | `255` | `146..238` (`#929292..#EEEEEE`) | Broadband diagonal `/` and `\` meadow blade weave decal |
+| `solid_moss_smooth` | `160×32` smooth strip | `idle-s` | `1` | `255` | `146..217` (`#929292..#D9D9D9`) | Broadband bryophyte cushion mat decal with creeping lobes |
 | `prop_rough_outcrop_1` | `32×32` single | `idle` | `1` | `255` | `43..196` (`#2B2B2B..#C4C4C4`) | Multi-stone matte fieldstone cluster and satellite cobbles |
 | `prop_rough_outcrop_2` | `32×32` single | `idle` | `1` | `255` | `43..196` (`#2B2B2B..#C4C4C4`) | Single-piece craggy stepped basalt outcrop with talus base |
 
@@ -151,10 +151,10 @@ and over-relaxed point lattices into visible `32 px` grid bands or hexagonal pol
   `icons/turf/floors.dmi:riverwater_motion`, `code/game/turfs/open/water.dm:1-7`),
   yielding `#C4C4C4` cells, continuous 1 px `#D9D9D9` caustic lace and `#EEEEEE` cusps.
 - **Broadband `k >= 2.8` fields with anisotropic tuft/cushion shading**:
-  `decal_nature_grass_smooth` pairs a `k = 2.9..14.2` field with `/` and `\` diagonal
+  `solid_grass_smooth` pairs a `k = 2.9..14.2` field with `/` and `\` diagonal
   blade correlation (`#929292 : #C4C4C4 : #EEEEEE` = `1.00 : 1.34 : 1.63`, matching
   `icons/turf/floors/grass.dmi:grass`, `code/game/turfs/open/grass.dm:1-22`) and breaks
-  `>= 4 px` orthogonal bars; `decal_nature_moss_smooth` shades a `k = 2.8..13.0` bryophyte
+  `>= 4 px` orthogonal bars; `solid_moss_smooth` shades a `k = 2.8..13.0` bryophyte
   heightfield from the NNW (`#929292..#D9D9D9`, matching
   `icons/turf/floors/grass_damaged.dmi:grass_damaged`, `code/game/turfs/open/grass.dm:20-26`)
   with zero repeating substrate holes and deeply scalloped creeping lobes on blocks `0..3`.

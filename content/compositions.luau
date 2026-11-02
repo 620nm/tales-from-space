@@ -223,6 +223,9 @@ return {
     layers = {
         { id = "world" },
         { id = "substrate", parent = "world" },
+        -- A tile's ground material (content/terrain.luau `face`): over the
+        -- substrate it stands on and under cover, decals, residue and matter.
+        { id = "ground_face", parent = "world" },
         { id = "support", parent = "cover" },
         { id = "cover", parent = "world" },
         { id = "exposed_cover", parent = "cover" },

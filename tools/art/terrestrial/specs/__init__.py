@@ -11,8 +11,8 @@ from typing import Any
 if __package__:
     from .spec_ocean_nature import (
         OCEAN_NATURE_SPRITES,
-        gen_decal_nature_grass_smooth,
-        gen_decal_nature_moss_smooth,
+        gen_solid_grass_smooth,
+        gen_solid_moss_smooth,
         gen_ocean_backwash_smooth,
         gen_ocean_body_smooth,
         gen_ocean_foam_lace_smooth,
@@ -32,8 +32,8 @@ else:
         sys.path.insert(0, _TERRESTRIAL_DIR)
     from specs.spec_ocean_nature import (  # type: ignore[import-not-found]
         OCEAN_NATURE_SPRITES,
-        gen_decal_nature_grass_smooth,
-        gen_decal_nature_moss_smooth,
+        gen_solid_grass_smooth,
+        gen_solid_moss_smooth,
         gen_ocean_backwash_smooth,
         gen_ocean_body_smooth,
         gen_ocean_foam_lace_smooth,
@@ -56,8 +56,8 @@ _SPRITE_ORDER: tuple[str, ...] = (
     "ocean_backwash_smooth",
     "ocean_swash_smooth",
     "ocean_foam_lace_smooth",
-    "decal_nature_grass_smooth",
-    "decal_nature_moss_smooth",
+    "solid_grass_smooth",
+    "solid_moss_smooth",
     "prop_rough_outcrop_1",
     "prop_rough_outcrop_2",
 )
@@ -72,8 +72,8 @@ __all__ = [
     "OCEAN_NATURE_SPRITES",
     "SPRITES",
     "TERRAIN_SPRITES",
-    "gen_decal_nature_grass_smooth",
-    "gen_decal_nature_moss_smooth",
+    "gen_solid_grass_smooth",
+    "gen_solid_moss_smooth",
     "gen_ocean_backwash_smooth",
     "gen_ocean_body_smooth",
     "gen_ocean_foam_lace_smooth",

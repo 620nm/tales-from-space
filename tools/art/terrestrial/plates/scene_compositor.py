@@ -389,9 +389,9 @@ def render_diorama_frame(bank: AssetBank, scene: DioramaScene, frame_idx: int = 
     ground_grass = scene.grass_coords - scene.cliff_coords
     ground_moss = scene.moss_coords - scene.cliff_coords
     if ground_grass:
-        draw_smooth(SmoothLayerSpec("decal_nature_grass_smooth", ground_grass, tint=tints["grass"]))
+        draw_smooth(SmoothLayerSpec("solid_grass_smooth", ground_grass, tint=tints["grass"]))
     if ground_moss:
-        draw_smooth(SmoothLayerSpec("decal_nature_moss_smooth", ground_moss, tint=tints["moss"]))
+        draw_smooth(SmoothLayerSpec("solid_moss_smooth", ground_moss, tint=tints["moss"]))
 
     for dec in scene.station_decals:
         paste_obj(dec)
@@ -399,9 +399,9 @@ def render_diorama_frame(bank: AssetBank, scene: DioramaScene, frame_idx: int = 
     if scene.cliff_coords:
         draw_smooth(SmoothLayerSpec("terrain_cliff_stepped_smooth", scene.cliff_coords, tint=tints["cliff"], clamp_border=True))
         if scene.grass_coords & scene.cliff_coords:
-            draw_smooth(SmoothLayerSpec("decal_nature_grass_smooth", scene.grass_coords & scene.cliff_coords, tint=tints["grass"], clamp_border=True))
+            draw_smooth(SmoothLayerSpec("solid_grass_smooth", scene.grass_coords & scene.cliff_coords, tint=tints["grass"], clamp_border=True))
         if scene.moss_coords & scene.cliff_coords:
-            draw_smooth(SmoothLayerSpec("decal_nature_moss_smooth", scene.moss_coords & scene.cliff_coords, tint=tints["moss"], clamp_border=True))
+            draw_smooth(SmoothLayerSpec("solid_moss_smooth", scene.moss_coords & scene.cliff_coords, tint=tints["moss"], clamp_border=True))
 
     for ms in scene.matter_smooth:
         draw_smooth(ms)

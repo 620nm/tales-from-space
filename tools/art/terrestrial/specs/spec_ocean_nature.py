@@ -377,7 +377,7 @@ def gen_ocean_foam_lace_smooth() -> list[dict[str, Any]]:
 
 
 # ==============================================================================
-# 5. `decal_nature_grass_smooth` — Broadband Diagonal Meadow Blade Weave
+# 5. `solid_grass_smooth` — Broadband Diagonal Meadow Blade Weave
 #    Modeled directly on `tgstation` `icons/turf/floors/grass.dmi:grass` (`code/game/turfs/open/grass.dm:1-22`):
 #    3-tone luminance contrast ratios (`N:146 : C:196 : E:238` = `1.00 : 1.34 : 1.63`),
 #    ~70% calm meandering `N` clearings, ~25% diagonal `/` & `\` `C` blade wisps,
@@ -464,7 +464,7 @@ def _build_grass_interior_32() -> list[list[str]]:
     return tile
 
 
-def gen_decal_nature_grass_smooth() -> list[dict[str, Any]]:
+def gen_solid_grass_smooth() -> list[dict[str, Any]]:
     layer_defs = [
         ("meadow_blade_bed", 255),
         ("meadow_blade_tufts", 255),
@@ -507,7 +507,7 @@ def gen_decal_nature_grass_smooth() -> list[dict[str, Any]]:
 
 
 # ==============================================================================
-# 6. `decal_nature_moss_smooth` — Broadband Multi-Scale Bryophyte Cushion Mat
+# 6. `solid_moss_smooth` — Broadband Multi-Scale Bryophyte Cushion Mat
 #    Modeled on `tgstation` `icons/turf/floors/grass_damaged.dmi:grass_damaged` (`code/game/turfs/open/grass.dm:20-26`):
 #    Interlocking multi-scale moss cushions (`N:#929292, A:#AAAAAA, C:#C4C4C4, L:#D9D9D9`),
 #    NNW top-down slope shading, ZERO holes, ZERO cobblestone rings, ZERO 32x32 grid tells.
@@ -564,7 +564,7 @@ def _build_moss_stipple_32() -> list[list[str]]:
     return tile
 
 
-def gen_decal_nature_moss_smooth() -> list[dict[str, Any]]:
+def gen_solid_moss_smooth() -> list[dict[str, Any]]:
     layer_defs = [
         ("velvet_moss_bed", 255),
         ("moss_frond_clusters", 255),
@@ -675,7 +675,7 @@ OCEAN_NATURE_SPRITES: list[dict[str, Any]] = [
         "frames": gen_ocean_foam_lace_smooth(),
     },
     {
-        "id": "decal_nature_grass_smooth",
+        "id": "solid_grass_smooth",
         "title": "Botanical Meadow Grass Decal (Broadband Diagonal Blade Weave)",
         "element": "terrestrial",
         "category": "decal",
@@ -683,15 +683,15 @@ OCEAN_NATURE_SPRITES: list[dict[str, Any]] = [
         "colorable": True,
         "require_top_light": False,
         "allow_multipart": False,
-        "ase_relpath": "assets/originals/art/terrestrial/decal_nature_grass_smooth.aseprite",
+        "ase_relpath": "assets/originals/art/terrestrial/solid_grass_smooth.aseprite",
         "tag": "idle",
         "default_tint": "#86C44A",
-        "citation": "assets/originals/art/terrestrial/decal_nature_grass_smooth.aseprite (ref: tgstation icons/turf/floors/grass.dmi:grass, code/game/turfs/open/grass.dm:1-22)",
+        "citation": "assets/originals/art/terrestrial/solid_grass_smooth.aseprite (ref: tgstation icons/turf/floors/grass.dmi:grass, code/game/turfs/open/grass.dm:1-22)",
         "description": "160x32 5-block botanical meadow decal with broadband k=2.9..14.2 diagonal blade wisps (#929292/#C4C4C4/#EEEEEE) and tufted outer margins.",
-        "frames": gen_decal_nature_grass_smooth(),
+        "frames": gen_solid_grass_smooth(),
     },
     {
-        "id": "decal_nature_moss_smooth",
+        "id": "solid_moss_smooth",
         "title": "Velvety Creeping Moss & Bryophyte Decal (Broadband Cushion Mat)",
         "element": "terrestrial",
         "category": "decal",
@@ -699,11 +699,11 @@ OCEAN_NATURE_SPRITES: list[dict[str, Any]] = [
         "colorable": True,
         "require_top_light": False,
         "allow_multipart": False,
-        "ase_relpath": "assets/originals/art/terrestrial/decal_nature_moss_smooth.aseprite",
+        "ase_relpath": "assets/originals/art/terrestrial/solid_moss_smooth.aseprite",
         "tag": "idle",
         "default_tint": "#5A9842",
-        "citation": "assets/originals/art/terrestrial/decal_nature_moss_smooth.aseprite (ref: tgstation icons/turf/floors/grass_damaged.dmi:grass_damaged, code/game/turfs/open/grass.dm:20-26)",
+        "citation": "assets/originals/art/terrestrial/solid_moss_smooth.aseprite (ref: tgstation icons/turf/floors/grass_damaged.dmi:grass_damaged, code/game/turfs/open/grass.dm:20-26)",
         "description": "160x32 5-block creeping bryophyte cushion mat with broadband k=2.8..13.0 canopy shading (#929292..#D9D9D9) and scalloped outer lobes.",
-        "frames": gen_decal_nature_moss_smooth(),
+        "frames": gen_solid_moss_smooth(),
     },
 ]

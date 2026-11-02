@@ -525,8 +525,8 @@
     { id: "cliff_add", cat: "terrain", label: "Stepped Cliff", thumb: "terrain_cliff_stepped_smooth", tintRole: "cliff", apply: (c) => { if (c.base === "ocean") c.base = "silicate"; c.cliff = true; } },
     { id: "cliff_erase", cat: "terrain", label: "Erase Cliff", thumb: "terrain_silicate_rough_smooth", tintRole: "silicate_low", apply: (c) => { c.cliff = false; } },
 
-    { id: "decal_grass", cat: "decals", label: "Smooth Grass Decal", thumb: "decal_nature_grass_smooth", tintRole: "grass", apply: (c) => { c.grass = true; } },
-    { id: "decal_moss", cat: "decals", label: "Smooth Moss Decal", thumb: "decal_nature_moss_smooth", tintRole: "moss", apply: (c) => { c.moss = true; } },
+    { id: "decal_grass", cat: "decals", label: "Smooth Grass Decal", thumb: "solid_grass_smooth", tintRole: "grass", apply: (c) => { c.grass = true; } },
+    { id: "decal_moss", cat: "decals", label: "Smooth Moss Decal", thumb: "solid_moss_smooth", tintRole: "moss", apply: (c) => { c.moss = true; } },
     { id: "decal_erase", cat: "decals", label: "Erase Nature Decals", thumb: "rock_floor", apply: (c) => { c.grass = false; c.moss = false; } },
 
     { id: "deck_plating", cat: "station", label: "Station Plating", thumb: "plating", apply: (c) => { c.deck = "plating"; } },
@@ -739,8 +739,8 @@
     if (L.decals) {
       eachTile((c, x, y, minX, maxX, t) => {
         if (c.cliff) return;
-        if (c.grass) blitCell("decal_nature_grass_smooth", computeJunction((nx, ny) => g[ny][nx].grass && !g[ny][nx].cliff, x, y, GRID_W, GRID_H, false, minX, maxX), t.grass, x, y);
-        if (c.moss) blitCell("decal_nature_moss_smooth", computeJunction((nx, ny) => g[ny][nx].moss && !g[ny][nx].cliff, x, y, GRID_W, GRID_H, false, minX, maxX), t.moss, x, y);
+        if (c.grass) blitCell("solid_grass_smooth", computeJunction((nx, ny) => g[ny][nx].grass && !g[ny][nx].cliff, x, y, GRID_W, GRID_H, false, minX, maxX), t.grass, x, y);
+        if (c.moss) blitCell("solid_moss_smooth", computeJunction((nx, ny) => g[ny][nx].moss && !g[ny][nx].cliff, x, y, GRID_W, GRID_H, false, minX, maxX), t.moss, x, y);
       });
     }
 
@@ -750,8 +750,8 @@
       eachTile((c, x, y, minX, maxX, t) => {
         if (!c.cliff) return;
         blitCell("terrain_cliff_stepped_smooth", computeJunction((nx, ny) => g[ny][nx].cliff, x, y, GRID_W, GRID_H, true, minX, maxX), t.cliff, x, y);
-        if (L.decals && c.grass) blitCell("decal_nature_grass_smooth", computeJunction((nx, ny) => g[ny][nx].grass && g[ny][nx].cliff, x, y, GRID_W, GRID_H, true, minX, maxX), t.grass, x, y);
-        if (L.decals && c.moss) blitCell("decal_nature_moss_smooth", computeJunction((nx, ny) => g[ny][nx].moss && g[ny][nx].cliff, x, y, GRID_W, GRID_H, true, minX, maxX), t.moss, x, y);
+        if (L.decals && c.grass) blitCell("solid_grass_smooth", computeJunction((nx, ny) => g[ny][nx].grass && g[ny][nx].cliff, x, y, GRID_W, GRID_H, true, minX, maxX), t.grass, x, y);
+        if (L.decals && c.moss) blitCell("solid_moss_smooth", computeJunction((nx, ny) => g[ny][nx].moss && g[ny][nx].cliff, x, y, GRID_W, GRID_H, true, minX, maxX), t.moss, x, y);
       });
     }
 
