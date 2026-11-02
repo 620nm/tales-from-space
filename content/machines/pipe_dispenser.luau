@@ -142,6 +142,13 @@ local content = {
             category = "Devices",
             amount = 999,
         },
+        -- The three that move liquid between a room and a run.
+        {
+            item = "floor_drain_fitting",
+            name = "Floor Drain",
+            category = "Devices",
+            amount = 999,
+        },
 
         -- tg's own Heat Exchange shelf (`GLOB.atmos_pipe_recipes`,
         -- _globalvars/lists/pipe_recipes.dm:29-34). tg stocks "Pipe",
@@ -164,19 +171,10 @@ local content = {
     },
 }
 
--- The fittings it takes back are the ones it stocks (`sim.stocks`), so the
--- held condition is read off `vends`: groups of eight keep the tree inside
--- the condition bounds (the engine's docs/luau-api/action-declarations.md:
--- depth 4, 32 nodes); a shelf past 27 entries needs a tag instead.
-local stocked = {}
-for _, entry in ipairs(content.vends) do
-    table.insert(stocked, { fact = "held.proto", value = entry.item })
-end
-local groups = {}
-for first = 1, #stocked, 8 do
-    table.insert(groups, { any = table.move(stocked, first, math.min(first + 7, #stocked), 1, {}) })
-end
-
+-- The fittings it takes back are the ones it stocks (`sim.stocks`), and
+-- every one of them carries the `pipe_part` tag. The shelf outgrew a
+-- `held.proto` tree (the engine's docs/luau-api/action-declarations.md:
+-- 32 nodes), so a new pipe part is stocked here as well as tagged.
 content.actions = {
     {
         id = "browse",
@@ -189,7 +187,7 @@ content.actions = {
         gesture = "primary",
         route = "receiver",
         label = "lunatic/tfs:ui.affordance.return_fitting",
-        held = { any = groups },
+        held = { fact = "held.tag", value = "pipe_part" },
         uses_held = true,
     },
 }

@@ -102,6 +102,7 @@ assert(shelf.pipe.category == "Pipes", "and plain pipe leads")
 assert(shelf.vent_fitting.label == "Air Vent", "a vent is stocked like any other machine")
 assert(shelf.vent_fitting.category == "Devices", "on the shelf with the other room devices")
 assert(shelf.passive_vent_fitting.label == "Passive Vent", "and so is its unpowered twin")
+assert(shelf.floor_drain_fitting.label == "Floor Drain", "the deck's plumbing is on it too")
 assert(shelf.cola == nil, "a pipe dispenser sells no softdrinks")
 
 -- ---- it dispenses onto its OWN tile, free ----

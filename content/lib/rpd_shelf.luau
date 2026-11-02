@@ -199,6 +199,13 @@ local RECIPES: { Recipe } = {
         icon = "passive_vent_loose",
         group = "Room Devices",
     },
+    {
+        label = "Floor Drain",
+        item = "floor_drain_fitting",
+        structure = "floor_drain",
+        icon = "floor_drain",
+        group = "Room Devices",
+    },
 }
 
 return { recipes = RECIPES }
