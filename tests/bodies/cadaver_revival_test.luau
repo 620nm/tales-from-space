@@ -1,18 +1,15 @@
 local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
--- Bringing back the body the map arrived holding, the surgical way.
+-- Bringing back a body the surgical way.
 --
--- tests/heart_life_test.luau proves the MODEL on a patient a session is
--- steering: dying stops the heart, healing the parts does not restart
--- it, a defibrillator does. This proves the other revival path, and
--- proves it on the thing a surgeon actually finds -- a cadaver out of
--- the chamber, minted by `sim/stock.rs::stand_up_stock_body`, hurt past
--- the plan's dead line by a number its own content file wrote.
+-- tests/heart_life_test.luau proves the MODEL and the defibrillator. This
+-- proves the other revival path: a patient 200 brute past the plan's dead
+-- line, which is what a surgeon finds on the table.
 --
--- The whole loop: pull the drawer, lay it out, strip it, treat the
--- wound that killed it, open the chest, take the stopped heart out, put
--- a living one in. It sits up in crit.
+-- The whole loop: lay it out, strip it, treat the wound that killed it,
+-- open the chest, take the stopped heart out, put a living one in. It sits
+-- up in crit.
 --
 -- Order matters and is the surgeon's, not the spec's: `tend_wounds` is
 -- `blocked` on cut or open skin (content/operations/tend_wounds.luau),
@@ -45,9 +42,9 @@ local ARENA = [==[(
                 (4, 1, "circular_saw"), (4, 1, "cautery"), (4, 1, "organ_heart"),
             ],
             structures: [
-                (1, 1, "player_spawn"),
+                (1, 1, "player_spawn", { "jobs": "medic" }),
+                (5, 1, "player_spawn", { "jobs": "assistant" }),
                 (3, 2, "optable"),
-                (5, 2, "cadaver_chamber.cadaver", { "dir": "north" }),
                 (2, 3, "apc"),
             ],
             networks: [
@@ -61,7 +58,8 @@ local ARENA = [==[(
 )]==]
 
 t.world(ARENA, 0)
-local surgeon = t.join()
+local surgeon = t.join("medic")
+local patient = t.join("assistant")
 t.run_ticks(3)
 
 -- A document's words are labels: `{id=…}` for one the engine names,
@@ -98,22 +96,21 @@ for _ = 1, 3 do
     t.move(surgeon, "east")
     t.run_ticks(8)
 end
-assert(t.pos(surgeon) == 4, "beside the drawer: " .. t.pos(surgeon))
+assert(t.pos(surgeon) == 4, "beside the patient: " .. t.pos(surgeon))
 
--- ---- what the chamber was holding -------------------------------------
-t.click(surgeon, 5, 2, t.target_at(surgeon, 5, 2, "cadaver_chamber.cadaver"))
+-- ---- the body on the deck ---------------------------------------------
+-- 200 brute crosses the plan's `dead` line, the plan's handler stops the
+-- heart on that crossing, and the corpse therefore carries a heart at its
+-- maximum -- a stopped one -- and not merely a lot of bruises.
+t.set_health(patient, { brute = 200 })
 t.run_ticks(2)
 local found = t.bodies_at(5, 1)
-assert(#found == 1, "one body rolled out on the slab")
+assert(#found == 1, "one body on the deck")
 local corpse_name = found[1].name
-
--- The mint itself latched it. 200 brute crosses the plan's `dead` line
--- inside `stand_up_stock_body`, the plan's handler stops the heart on that
--- crossing, and the corpse therefore arrives with a heart at its
--- maximum -- a stopped one -- and not merely with a lot of bruises.
-assert(found[1].animate == false, "it arrived dead")
+assert(found[1].animate == false, "it is dead")
 assert(found[1].label == "Dead", "in the pack's own word")
 assert(assert(found[1].parts).chest.organs.heart, "with its heart still in its chest")
+assert(ui_controls.number(assert(found[1].parts).chest.brute) == 200, "and the wound on it")
 
 -- ---- onto the table, and out of the jumpsuit --------------------------
 local optable = assert(t.target_at(surgeon, 3, 2, "optable"))

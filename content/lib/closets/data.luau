@@ -1,5 +1,5 @@
--- The closet family's numbers and words. The crate, freezer and locker
--- prototypes read the capacities for their `container` blocks and the
+-- The closet family's numbers and words. The cadaver chamber, crate, freezer
+-- and locker prototypes read the capacities for their `container` blocks and the
 -- handlers under `lib/closets/` read the same fields, so each fact has one home.
 
 export type Family = {
@@ -42,6 +42,10 @@ data.confirm_seconds = 1.0
 
 data.closed_state = "closed"
 data.open_state = "open"
+-- A cadaver chamber's lit shut faces; only `closed_state` admits an open or
+-- holds an occupant (`lib/closets/chamber_watch.luau`).
+data.chamber_items_state = "closed_items"
+data.chamber_bodies_state = "closed_bodies"
 data.welder_prototype = "welder"
 data.id_prototypes = {
 	"id_assistant",
@@ -58,8 +62,9 @@ data.broken_latch = "broken"
 data.holding_latches = { data.locked_latch, data.welded_latch }
 
 -- Crate and freezer are tg's `horizontal` closets (`crates.dm:8`); the
--- locker is not.
+-- locker is not. A cadaver chamber takes bodies lying, as tg's tray does.
 local families: { [string]: Family } = {
+	cadaver_chamber = { horizontal = true },
 	crate = { horizontal = true },
 	freezer = { horizontal = true },
 	locker = { horizontal = false },

@@ -1,5 +1,3 @@
-local clock = require("@helpers/clock")
-
 local SEED = 3
 local O_MINUS, A_PLUS = 0, 3
 local BLOOD_REPORTS = {
@@ -116,36 +114,23 @@ t.run_seconds(3)
 assert(#identity_sets() == #stamps, "repeated mob.life passes add no spawn duplicates")
 assert(#t.script_errors() == 0, "spawn stamps and repeated life passes run cleanly")
 
--- A stocked native drawer starts with its typed, stopped body hidden.
+-- A stopped body keeps its typed blood, and the analyzer reads it off the
+-- corpse. Burns, so no bleeder takes the report off its full reservoir.
 t.world(
     [==[(
-    name: "typed cadaver bench",
+    name: "typed corpse ward",
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     levels: [
         (
-            rows: [ "#######", "#.....#", "#.....#", "#.aoG.#", "#######" ],
-            items: [
-                (1, 1, "health_analyzer"),
-            ],
+            rows: [ "#####", "#...#", "#####" ],
+            items: [ (1, 1, "health_analyzer") ],
             structures: [
-                (1, 1, "player_spawn"),
-                (2, 1, "cadaver_chamber.cadaver", { "dir": "east" }),
-                (2, 2, "cadaver_chamber", { "dir": "east" }),
-                (2, 3, "apc"),
-            ],
-            networks: [
-                (x: 4, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 3, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (1, 1, "player_spawn", { "jobs": "medic" }),
+                (2, 1, "player_spawn", { "jobs": "assistant" }),
             ],
         ),
     ],
@@ -153,77 +138,36 @@ t.world(
     0
 )
 
-local attendant = t.join()
-t.tick()
-assert(#t.bodies_at(3, 1) == 0, "joining does not disclose the cadaver")
-local pre_open_sets = identity_sets()
-assert(#pre_open_sets == 2, "the hidden cadaver and attendant each have one pre-open stamp")
-local attendant_name = body_name(1, 1)
-local attendant_joins = t.ledger_rows("joined_job")
-assert(#attendant_joins == 1, "the attendant has one join completion")
-local join_actor = attendant_joins[1].actor
-assert(join_actor.kind == "player", "the attendant join belongs to its player")
-local cadaver_stamp: any = nil
-local attendant_stamp: any = nil
-for _, row in ipairs(pre_open_sets) do
-    if row.actor.triggered_by == join_actor.id then
-        assert(attendant_stamp == nil, "one pre-open stamp belongs to the attendant")
-        attendant_stamp = row
-    else
-        assert(cadaver_stamp == nil, "one pre-open stamp belongs to the hidden cadaver")
-        cadaver_stamp = row
-    end
-end
-attendant_stamp = assert(attendant_stamp, "the attendant has a causal spawn stamp")
-assert(attendant_stamp.owner == attendant_name, "the causal stamp belongs to the attendant")
-cadaver_stamp = assert(cadaver_stamp, "the hidden cadaver has a pre-open rider row")
-local pre_open_type = assert(row_type(cadaver_stamp), "the hidden body stamp carries a type")
+local attendant = t.join("medic")
+local patient = t.join("assistant")
+t.run_seconds(1)
+local patient_type = assert(rider_type(assert(t.body_target(attendant, patient))), "the patient is typed")
 
-local drawer = assert(t.target_at(attendant, 2, 1, "cadaver_chamber.cadaver"))
-t.click(attendant, 2, 1, drawer)
-t.tick()
-
-local revealed = assert(t.bodies_at(3, 1), "the opened drawer reveals its body")
-assert(#revealed == 1, "the drawer reveals exactly one cadaver")
-local corpse = revealed[1]
-assert(corpse.plan == "human" and corpse.player == false, "the revealed native body is a human cadaver")
+t.set_health(patient, { burn = 200 })
+t.run_ticks(4)
+local corpse = t.bodies_at(2, 1)[1]
 assert(corpse.animate == false, "the body is stopped")
-assert(cadaver_stamp.owner == corpse.name, "the pre-open ledger stamp belongs to the revealed corpse")
-assert(rider_type(corpse.id) == pre_open_type, "the disclosed body keeps its pre-open blood type")
-assert(#t.script_errors() == 0, "native cadaver stamping runs cleanly")
-
-local function move_attendant(direction: "north" | "south" | "east" | "west")
-    t.move(attendant, direction)
-    t.run_ticks(clock.deadline_ticks(0.2) + 1)
-end
+assert(rider_type(corpse.id) == patient_type, "the corpse keeps its blood type")
 
 local analyzer = assert(t.target_at(attendant, 1, 1, "health_analyzer"), "the analyzer is visible beside the attendant")
 t.click(attendant, 1, 1, analyzer)
 t.tick()
 assert(t.hands(attendant).held == "health_analyzer", "the attendant holds the analyzer for player actions")
 
-move_attendant("south")
-move_attendant("south")
-move_attendant("east")
-move_attendant("east")
-move_attendant("north")
-local attendant_x, attendant_y = t.pos(attendant)
-assert(attendant_x == 3 and attendant_y == 2, "the attendant walks around both cabinets to the corpse")
-
 local corpse_target = assert(
-    t.target_at(attendant, 3, 1, "name:" .. corpse.name),
-    "the revealed stopped corpse is targetable by its disclosed name"
+    t.target_at(attendant, 2, 1, "name:" .. corpse.name),
+    "the stopped corpse is targetable by its disclosed name"
 )
 local report_before = #t.messages(attendant)
-t.click(attendant, 3, 1, corpse_target)
+t.click(attendant, 2, 1, corpse_target)
 t.tick()
 
-local blood_report = assert(BLOOD_REPORTS[pre_open_type + 1], "the pre-open type maps to a blood report")
+local blood_report = assert(BLOOD_REPORTS[patient_type + 1], "the type maps to a blood report")
 -- 560 cl reports the full 14 mol reservoir (code/__DEFINES/mobs.dm:20 at 0.025 mol/u).
 local expected_report = {
     "Analyzing results for " .. corpse.name .. ":",
     "Overall status: Deceased.",
-    "Damage: 200 brute, 0 burn, 0 toxin, and 0 suffocation.",
+    "Damage: 0 brute, 200 burn, 0 toxin, and 0 suffocation.",
     "Blood level: 100%, 560 cl " .. blood_report.name .. ".",
     "Can receive from types " .. blood_report.donors .. ".",
 }

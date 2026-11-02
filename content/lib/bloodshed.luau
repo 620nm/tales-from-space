@@ -140,7 +140,7 @@ end
 -- `sim.matter.deposit`), so an actorless wound returns before them;
 -- the mark, which would admit without one, goes with them, and the
 -- wound leaves no trace. The bleed itself needs a living body: the
--- dead don't bleed, which keeps a morgue cadaver's wounds shut.
+-- dead don't bleed (tests/bodies/bloodshed_test.luau).
 function bloodshed.shed(target: Handle, brute: number, audible: boolean, animate: boolean): ()
     local zone = wound_zone(target)
     if animate and zone ~= nil then

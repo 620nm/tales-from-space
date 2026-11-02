@@ -1,6 +1,6 @@
 -- A radio carrier with no tile: alive, tuned in, and standing nowhere.
 --
--- A living body shut in a cadaver drawer keeps everything it holds --
+-- A living body shut in a cadaver chamber keeps everything it holds --
 -- its Lifeline key included -- and loses its coordinates entirely
 -- (cadaver_chamber_test.luau: a stowed thing has no tile at all). The
 -- engine still offers that carrier as a `speech.radio` listener row,
@@ -23,8 +23,8 @@ local function said(p, line)
     return false
 end
 
--- The bay: a drawer facing east onto the aisle, its patient's spawn on
--- the tray tile, and two more listeners staked out on the corridor.
+-- The bay: a chamber in the aisle, its patient's spawn beside it, and two
+-- more listeners staked out on the corridor.
 -- Distances from the speaker at (1,1): near (8,1) = 7, f = 0.7,
 -- whole; far (12,1) = 11, outside LOCAL_RADIUS -- no tower here.
 t.world(
@@ -57,7 +57,7 @@ t.world(
                 (3, 1, "player_spawn", { "jobs": "engineer" }),
                 (8, 1, "player_spawn", { "jobs": "medic" }),
                 (12, 1, "player_spawn", { "jobs": "captain" }),
-                (2, 1, "cadaver_chamber", { "dir": "east" }),
+                (2, 1, "cadaver_chamber"),
                 (2, 2, "apc"),
             ],
             networks: [
@@ -89,21 +89,23 @@ pocket(patient)
 pocket(l_near)
 pocket(l_far)
 
--- Roll the tray out under the patient, lie them on it, shut it: the
--- cadaver chamber's own contract (cadaver_chamber_test.luau). The
--- drawer answers an EMPTY hand, so the key goes down for the
--- doorman's work and comes back after.
+-- Open it, walk the patient onto it, lie them down, shut it: the cadaver
+-- chamber's own contract (cadaver_chamber_test.luau). The chamber answers an
+-- EMPTY hand, so the key goes down for the doorman's work and comes back after.
 t.drop(speaker)
 t.run_ticks(2)
-local drawer = t.target_at(speaker, 2, 1, "cadaver_chamber")
-assert(drawer ~= nil, "one targetable drawer")
-t.click(speaker, 2, 1, drawer)
+local chamber = t.target_at(speaker, 2, 1, "cadaver_chamber")
+assert(chamber ~= nil, "one targetable chamber")
+t.click(speaker, 2, 1, chamber)
 t.tick()
-assert(assert(t.structure_at(2, 1)).state == "open", "the tray rolls out")
+assert(assert(t.structure_at(2, 1)).state == "open", "the chamber opens")
+t.move(patient, "west")
+t.run_ticks(4)
 t.rest(patient)
-t.click(speaker, 2, 1, drawer)
+t.run_ticks(2)
+t.click(speaker, 2, 1, chamber)
 t.tick()
-assert(assert(t.structure_at(2, 1)).state == "closed", "and rolls back in, patient aboard")
+assert(assert(t.structure_at(2, 1)).state == "closed", "and shuts, patient aboard")
 assert(t.body_id(patient) ~= nil, "the body still exists; it simply has no tile")
 pocket(speaker)
 

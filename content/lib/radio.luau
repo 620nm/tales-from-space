@@ -227,8 +227,8 @@ function radio.deliver(ev: SpeechRadioPayload): { listeners: { SpeechListenerRow
     -- hashes (the fuel argument on `garble_seeded`).
     local answered: { SpeechListenerRow } = {}
     for index, row in ipairs(ev.listeners) do
-        -- A LIVING listener may have no tile at all: a body stowed in
-        -- a drawer keeps its radio and loses its coordinates
+        -- A LIVING listener may have no tile at all: a body shut in
+        -- a closet keeps its radio and loses its coordinates
         -- (t.bodies_at's "no tile" case). A signal model has one
         -- honest answer for someone standing nowhere -- not heard --
         -- and the read is guarded per row, so an odd carrier costs

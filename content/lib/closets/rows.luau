@@ -1,24 +1,56 @@
--- The clicks `closet.attach`'s handler answers, as a closet's `actions`.
+-- The clicks a closet's handler answers, as its `actions`: `closet.attach`'s
+-- and the cadaver chamber's.
 local data = require("@lib/closets/data")
 
 type Row = { [string]: any }
 
 local rows = {}
 
-local function bare_hand(id: string, label: string, state: string): Row
+local function bare_hand(id: string, label: string, target: Row): Row
     return {
         id = id,
         gesture = "primary",
         route = "receiver",
         label = label,
-        target = { fact = "target.state", value = state },
+        target = target,
         held = { fact = "held.present", value = "false" },
     }
 end
 
+local function state_is(state: string): Row
+    return { fact = "target.state", value = state }
+end
+
+-- The open and close rows, for an empty hand, and the last row, which shows
+-- nothing, for any other.
+local function append_door(list: { Row }, shut: Row): ()
+    table.insert(list, bare_hand("open", "lunatic/tfs:action.open", shut))
+    table.insert(list, bare_hand("close", "lunatic/tfs:action.close", state_is(data.open_state)))
+    local reach_handler: Row = {
+        id = "reach_handler",
+        gesture = "primary",
+        route = "receiver",
+        label = "lunatic/tfs:action.open",
+        held = { fact = "held.present", value = "true" },
+        visible = false,
+    }
+    table.insert(list, reach_handler)
+end
+
+-- The door alone, for a closet with no weld or lock. `lit_states` are its
+-- scripted shut states, which open as `closed` does.
+function rows.door_actions(lit_states: { string }): { Row }
+    local shut: { Row } = { state_is(data.closed_state) }
+    for _, state in ipairs(lit_states) do
+        table.insert(shut, state_is(state))
+    end
+    local list: { Row } = {}
+    append_door(list, { any = shut })
+    return list
+end
+
 -- `secure` names the variant an ID locks. Declared rows gate the handler, which
--- climbs, knocks off and refuses, so every hand needs one: the open and close
--- rows take an empty hand and the last row, which shows nothing, any other.
+-- climbs, knocks off and refuses, so every hand needs a row.
 function rows.actions(secure: string?): { Row }
     local list: { Row } = {
         {
@@ -53,17 +85,7 @@ function rows.actions(secure: string?): { Row }
         }
         table.insert(list, toggle_lock)
     end
-    table.insert(list, bare_hand("open", "lunatic/tfs:action.open", data.closed_state))
-    table.insert(list, bare_hand("close", "lunatic/tfs:action.close", data.open_state))
-    local reach_handler: Row = {
-        id = "reach_handler",
-        gesture = "primary",
-        route = "receiver",
-        label = "lunatic/tfs:action.open",
-        held = { fact = "held.present", value = "true" },
-        visible = false,
-    }
-    table.insert(list, reach_handler)
+    append_door(list, state_is(data.closed_state))
     return list
 end
 

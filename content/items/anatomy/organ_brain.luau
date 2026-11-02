@@ -1,4 +1,5 @@
 local physical_profiles = require("@lib/physical_profiles")
+local preserved_organ = require("@lib/medical/preserved_organ")
 -- The brain (docs/BIOLOGY.md §1.2). An organ is an ITEM with an `organ`
 -- block: it fits a socket, carries its own pool, and adds its tags to
 -- that socket while it is seated. Take it out and the hole it leaves is
@@ -24,6 +25,7 @@ local content = {
     name = "brain",
     sprite = "organ_brain",
     organ = {
+        conditions = preserved_organ.conditions,
         slot = "brain",
         max_health = 200,
         low = 45,

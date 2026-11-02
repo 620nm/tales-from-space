@@ -42,8 +42,8 @@ return {
     safe_pressure_kpa = 85.0,
 
     -- How long it takes to lay a dragged body out on a surface it can
-    -- rest on -- an operating table, a cadaver drawer's slab. The whole
-    -- of that gesture's feel: raise it and a surgeon works for their
+    -- rest on, such as an operating table. The whole of that
+    -- gesture's feel: raise it and a surgeon works for their
     -- patient, drop it and a body on a table is a click. It is a wait
     -- the victim can walk out of, which is the point. Engine default:
     -- 2.0, tg's own number for putting somebody somewhere

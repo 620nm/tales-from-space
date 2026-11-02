@@ -147,7 +147,7 @@ assert(#blocks == 2, "two patients, one block each: got " .. #blocks)
 -- `default_zone` is the chest and nobody has pressed a target key).
 -- Without that second rule the console has nothing to say about a body
 -- nobody has cut yet, which is no use to a surgeon deciding where to
--- start (tests/surgery_cadaver_test.luau).
+-- start (tests/bodies/surgery_cadaver_test.luau).
 assert(rows_named(ui, "chest") == 2, "the open chest and the aimed one")
 local opened: ui_controls.Record? = nil
 local untouched: ui_controls.Record? = nil

@@ -1,14 +1,11 @@
 local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
--- Surgery on a body the map arrived holding.
+-- Surgery on a corpse.
 --
--- Every other surgery spec operates on a joined player, who is alive.
--- The thing a surgeon actually meets on a shift is a cadaver out of the
--- morgue: minted by `sim/stock.rs::stand_up_stock_body`, hurt past the
--- plan's own dead line, nobody at the wheel of it. This spec runs the
--- whole loop on one -- pull the drawer, lay it on the table, take the
--- jumpsuit off, cut -- because that loop is what tg's autopsy and
+-- Every other surgery spec operates on a living patient. This one runs the
+-- loop on a body past the plan's own dead line -- lay it on the table, take
+-- the jumpsuit off, cut -- because that loop is what tg's autopsy and
 -- revival surgeries are FOR, and tg puts no living requirement on any
 -- operation at all (`code/modules/surgery/operations/_operation.dm`
 -- declares no such flag; `operation_autopsy.dm` and
@@ -39,9 +36,9 @@ local ARENA = [==[(
             ],
             items: [(4, 1, "scalpel"), (4, 1, "retractor")],
             structures: [
-                (1, 1, "player_spawn"),
+                (1, 1, "player_spawn", { "jobs": "medic" }),
+                (5, 1, "player_spawn", { "jobs": "assistant" }),
                 (3, 2, "optable"),
-                (5, 2, "cadaver_chamber.cadaver", { "dir": "north" }),
                 (2, 3, "apc"),
             ],
             machines: [(2, 2, "operating_computer")],
@@ -56,7 +53,8 @@ local ARENA = [==[(
 )]==]
 
 t.world(ARENA, 0)
-local surgeon = t.join()
+local surgeon = t.join("medic")
+local patient = t.join("assistant")
 t.run_ticks(3)
 
 -- A document's words are labels: `{id=…}` for one the engine names,
@@ -91,31 +89,19 @@ for _ = 1, 3 do
     t.move(surgeon, "east")
     t.run_ticks(8)
 end
-assert(t.pos(surgeon) == 4, "beside the drawer: " .. t.pos(surgeon))
+assert(t.pos(surgeon) == 4, "beside the patient: " .. t.pos(surgeon))
 
--- ---- the drawer, and what is in it ------------------------------------
-local chamber = t.target_at(surgeon, 5, 2, "cadaver_chamber.cadaver")
-assert(chamber ~= nil, "the map stood the occupied variant there")
-t.click(surgeon, 5, 2, chamber)
+-- ---- the body on the deck ---------------------------------------------
+-- Burned and not beaten: burns open no bleeder, and the console's aimed row
+-- below has to be holding nothing.
+t.set_health(patient, { burn = 200 })
 t.run_ticks(2)
-
 local found = t.bodies_at(5, 1)
-assert(#found == 1, "one body rolled out on the slab")
-local corpse = found[1]
-local corpse_name = corpse.name
-assert(corpse.player == false, "nobody is at the wheel of it")
-assert(corpse.label == "Dead", "and the plan calls it dead")
--- The dead don't bleed: hurt past dead at mint, yet carrying no
--- bleeding stacks (`content/lib/bloodshed.luau` gates stacks on the
--- receipt's `animate`).
-local cadaver_stacks = 0
-for _, part in pairs(assert(found[1].parts)) do
-    cadaver_stacks += ui_controls.number(part.leak_stacks.blood or 0)
-end
-assert(cadaver_stacks == 0, "a stock cadaver carries no bleeding stacks")
+assert(#found == 1, "one body on the deck")
+local corpse_name = found[1].name
+assert(found[1].label == "Dead", "and the plan calls it dead")
 
--- `t.bodies_at` is the only door onto a body nobody is at the wheel of,
--- so every later reading of the cadaver comes back through it.
+-- `t.bodies_at` reads the corpse where it lies.
 local function on_table()
     local here = t.bodies_at(3, 2)
     return here[1]
@@ -200,4 +186,4 @@ assert(#t.ledger_rows("DoAfterStarted") > parked, "the incision parked")
 t.run_ticks(clock.deadline_ticks(5.0))
 assert(assert(on_table().parts).chest.surgical_states.skin_cut == true, "and the chest is open")
 
-print("cadaver surgery: pulled, laid out, stripped and opened")
+print("cadaver surgery: laid out, stripped and opened")
