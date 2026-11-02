@@ -64,6 +64,22 @@ return {
                     at_ml = 4500,
                     shell = { still = "liquid_pool_smooth_still", moving = "liquid_pool_smooth_ripple" },
                 },
+                -- Open water: 40 cm and deeper, as a 50 cm shallows stands
+                -- well clear of it. One rung, so a shallower neighbour draws
+                -- no surf between two tiles of the same sea.
+                {
+                    at_ml = 400000,
+                    alone = true,
+                    shade = 0.75,
+                    shell = {
+                        still = "ocean_body_smooth",
+                        over = {
+                            { strip = "ocean_backwash_smooth", tint = "#594936", edges_only = true },
+                            { strip = "ocean_swash_smooth", tint = "#F4FAFF", edges_only = true },
+                            { strip = "ocean_foam_lace_smooth", tint = "#F4FAFF", edges_only = true },
+                        },
+                    },
+                },
             },
             weightless = {
                 rungs = {
@@ -113,6 +129,8 @@ return {
             rungs = {
                 { at_ml = 1, sprites = { "solid_shards_small" } },
                 { at_ml = 25, sprites = { "solid_shards_large" } },
+                -- A sheet of it, standing in a bed.
+                { at_ml = 400000, alone = true, shell = { still = "terrain_ice_sheet_smooth" } },
             },
         },
         {

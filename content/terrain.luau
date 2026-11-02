@@ -8,8 +8,15 @@
 -- 0.7 is the art's `silicate_low` over its `silicate` (#82402A over
 -- #B85C3C in tools/art/terrestrial/schema_contract.py), so an edge pixel
 -- reads as the ledge the art drew.
+--
+-- The last profiles stand real matter in a bed (`fill`, `depth_m`): a bed
+-- of 1.5 m of a 3 m tile is safe under a body's pressure bands. A sea does
+-- not evaporate (`evaporation = 0`), or every tile of it would stay awake
+-- for good, and ignores a level difference under a millimetre.
+local SEABED = "#CBB68C"
+
 return {
-    defaults = { solid = "bare_ground" },
+    defaults = { solid = "bare_ground", liquid = "deep_liquid" },
     profiles = {
         {
             key = "bare_ground",
@@ -17,6 +24,46 @@ return {
             substrate = "ground",
             face = "ground_shell",
             under_shade = 0.7,
+        },
+        {
+            key = "deep_liquid",
+            phase = "liquid",
+            substrate = "ground",
+            face = "ground_shell",
+            face_tint = SEABED,
+            fill = true,
+            depth_m = 1.5,
+            evaporation = 0,
+            rest_head_m = 0.001,
+        },
+        {
+            key = "still_liquid",
+            phase = "liquid",
+            substrate = "ground",
+            face = "ground_shell",
+            face_tint = SEABED,
+            fill = true,
+            depth_m = 1,
+            rest_head_m = 0.001,
+        },
+        {
+            key = "sheet_ice",
+            phase = "solid",
+            substrate = "ground",
+            face = "ground_shell",
+            face_tint = SEABED,
+            fill = true,
+            depth_m = 1,
+            evaporation = 0,
+        },
+        -- A bed dug and left dry: whatever it reaches runs in.
+        {
+            key = "dry_bed",
+            phase = "solid",
+            substrate = "ground",
+            face = "ground_shell",
+            under_shade = 0.7,
+            depth_m = 2,
         },
     },
 }
