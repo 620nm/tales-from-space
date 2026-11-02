@@ -143,7 +143,6 @@
   "lunatic/tfs:entity.filter.n2.name": "nitrogen filter",
   "lunatic/tfs:entity.filter.name": "filter",
   "lunatic/tfs:entity.freezer.name": "freezer",
-  "lunatic/tfs:entity.floor_drain.name": "floor drain",
   "lunatic/tfs:entity.floor_tile.name": "floor tiles",
   "lunatic/tfs:entity.glass_tile.name": "glass floor tiles",
   "lunatic/tfs:entity.reinforced_glass_tile.name": "reinforced glass floor tiles",
