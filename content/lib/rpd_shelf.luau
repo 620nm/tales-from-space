@@ -206,6 +206,13 @@ local RECIPES: { Recipe } = {
         icon = "floor_drain",
         group = "Room Devices",
     },
+    {
+        label = "Sump Pump",
+        item = "sump_pump_fitting",
+        structure = "sump_pump",
+        icon = "sump_pump_off_n",
+        group = "Room Devices",
+    },
 }
 
 return { recipes = RECIPES }

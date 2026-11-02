@@ -150,6 +150,7 @@ local content = {
             amount = 999,
         },
         { item = "scupper_fitting", name = "Scupper", category = "Devices", amount = 999 },
+        { item = "sump_pump_fitting", name = "Sump Pump", category = "Devices", amount = 999 },
 
         -- tg's own Heat Exchange shelf (`GLOB.atmos_pipe_recipes`,
         -- _globalvars/lists/pipe_recipes.dm:29-34). tg stocks "Pipe",
