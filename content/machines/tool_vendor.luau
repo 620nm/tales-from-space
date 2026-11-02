@@ -55,6 +55,11 @@ return {
         { item = "decal_painter", name = "Decal Painter", category = "Tools", amount = 2 },
         { item = "decal_eraser", name = "Decal Eraser", category = "Tools", amount = 2 },
         { item = "light_replacer", name = "Light Replacer", category = "Tools", amount = 2 },
+        -- tg's Janitorial Supplies and cart crates (cargo/packs/service.dm:30-50).
+        { item = "mop", name = "Mop", category = "Tools", amount = 2 },
+        { item = "bucket", name = "Bucket", category = "Tools", amount = 3 },
+        { item = "mop_bucket", name = "Mop Bucket", category = "Tools", amount = 1 },
+        { item = "janitor_trolley", name = "Janitorial Cart", category = "Tools", amount = 1 },
         { item = "light_bulb", name = "Light Bulb", category = "Tools", amount = 10 },
         { item = "light_tube", name = "Light Tube", category = "Tools", amount = 10 },
         { item = "toolbelt", name = "Toolbelt", category = "Tools", amount = 2 },

@@ -8,6 +8,8 @@ local content = {
     name_label = "lunatic/tfs:entity.spray_bottle.name",
     name = "spray bottle",
     sprite = "spray_bottle",
+    -- What it draws stowed in a janitor's trolley (janitor.dm:367-368).
+    stowed_sprite = "janitor_trolley_spray",
     volume_ml = 250,
     modes = 2,
     mode = SPRAY,

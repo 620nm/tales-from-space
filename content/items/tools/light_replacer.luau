@@ -8,6 +8,8 @@ local physical_profiles = require("@lib/physical_profiles")
 -- refill (tubes and glass back into the device) is not written yet.
 return {
     id = "light_replacer",
+    -- What it draws stowed in a janitor's trolley (janitor.dm:369-370).
+    stowed_sprite = "janitor_trolley_replacer",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.light_replacer.name",
