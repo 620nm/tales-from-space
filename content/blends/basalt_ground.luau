@@ -3,7 +3,7 @@
 -- ground is a `per_m3` density of solid and not a dose.
 --
 -- Moles in one cubic metre: 2.9 g/mL * 10^6 g per m3 over 62.4 g/mol
--- (substances/basalt.luau).
+-- (substances/ground/basalt.luau).
 local DENSITY_G_PER_ML = 2.9
 local MOLAR_MASS = 62.4
 

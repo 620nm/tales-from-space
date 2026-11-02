@@ -7,7 +7,7 @@
 -- g/mL times 10^6 g per m3, over the molar mass in g/mol. A `total` blend
 -- would be a dose, which no tile's ground is. 293.15 K is what an indoor
 -- or temperate map holds.
-local DENSITY_G_PER_ML = 2.65 -- substances/silica.luau
+local DENSITY_G_PER_ML = 2.65 -- substances/ground/silica.luau
 local MOLAR_MASS = 60.08
 
 return {

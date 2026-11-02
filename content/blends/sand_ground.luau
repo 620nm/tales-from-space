@@ -3,7 +3,7 @@
 -- ground is a `per_m3` density of solid and not a dose.
 --
 -- Moles in one cubic metre: the BULK 1.6 g/mL * 10^6 g per m3 over 60.08
--- g/mol (substances/sand.luau); the voids between grains are why it is
+-- g/mol (substances/ground/sand.luau); the voids between grains are why it is
 -- fewer than silica's.
 local DENSITY_G_PER_ML = 1.6
 local MOLAR_MASS = 60.08

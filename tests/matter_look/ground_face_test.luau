@@ -47,8 +47,8 @@ t.world(
 )
 t.set_breathing(false)
 
-local SAND = "#D9C48F" -- content/substances/sand.luau
-local SOIL = "#5C4033" -- content/substances/soil.luau
+local SAND = "#D9C48F" -- content/substances/ground/sand.luau
+local SOIL = "#5C4033" -- content/substances/ground/soil.luau
 
 local p = t.join()
 t.run_ticks(4)
