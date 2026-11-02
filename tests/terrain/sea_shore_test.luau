@@ -1,10 +1,12 @@
 -- A sea stands in its bed one film under the land beside it: it does not
 -- flood the shore, and water spilled on the shore runs in. A body in it reads
 -- about double the air pressure, under tg's warning band, and takes no harm
--- (the engine's docs/matter-world/beds.md).
+-- (the engine's docs/matter-world/beds.md). What runs in washes out, and a
+-- slick poured on the sea with it (docs/matter-world/ideal.md).
 --
 -- Columns 0-3 are sand, 4-7 sea, under the `warm_outdoors` sky. The spill is
--- 20 L on the shore; the body stands in the sea.
+-- 20 L on the shore, the slick 20 L of ethanol on the sea; the body stands in
+-- the sea.
 t.world(
     [==[(
     name: "sea shore",
@@ -26,11 +28,12 @@ t.world(
                 "aaaawwww",
             ],
             structures: [(6, 3, "player_spawn")],
-            painted: [(3, 1, "spill")],
+            painted: [(3, 1, "spill"), (5, 5, "slick")],
         ),
     ],
     blends: {
         "spill": (rows: [("water", 1110.0)], temperature_k: 293.15, amount: total),
+        "slick": (rows: [("ethanol", 342.0)], temperature_k: 293.15, amount: total),
     },
 )]==],
     0,
@@ -66,3 +69,21 @@ local kpa = assert(t.room_pressure(6, 3))
 assert(kpa > 1.5 * ONE_ATMOSPHERE_KPA, "a deep tile reads the air squeezed into half its shell, got " .. kpa)
 assert(kpa < WARNING_HIGH_PRESSURE_KPA, "the body's own tile reads under the warning band, got " .. kpa)
 assert(t.health(p).health == health, "and takes no pressure effect")
+
+local function ethanol(): number
+    local total = 0
+    for x = 4, 7 do
+        for y = 0, 6 do
+            local liquid = t.room_liquid(x, y)
+            total += if liquid then liquid.ethanol or 0 else 0
+        end
+    end
+    return total
+end
+
+assert(ethanol() > 1, "the slick is still on the sea, got " .. ethanol() .. " L")
+t.run_seconds(960)
+assert(ethanol() < 0.1, "and washes out, got " .. ethanol() .. " L")
+for y = 0, 6 do
+    assert(math.abs(litres(4, y) - 1500) < 1, "the spill went with it, got " .. litres(4, y) .. " L")
+end

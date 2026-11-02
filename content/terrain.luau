@@ -35,6 +35,7 @@ return {
             depth_m = 1.5,
             evaporation = 0,
             rest_head_m = 0.001,
+            ideal = { half_life_s = 120 },
         },
         {
             key = "still_liquid",
