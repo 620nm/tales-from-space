@@ -47,6 +47,7 @@ return {
         channel = "l3",
         network = "pipe",
         device = "color_adapter",
+        joined_stubs = true,
     },
     build = {
         sound = "smash",
