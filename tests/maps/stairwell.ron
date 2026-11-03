@@ -1,5 +1,6 @@
-// Two stacked rooms joined by one flight of stairs going up north at (3, 2):
-// the stairs on level zero, the top of the stairs over them on level one.
+// Two stacked rooms joined by one flight of stairs going up east: the flight
+// at (3, 2) on level zero, its top over open space at (3, 2) on level one,
+// and the landing at (4, 2) on level one. A crate waits beside the foot.
 // A wrench lies on each level so a viewer can tell them apart.
 (
     name: "Stairwell",
@@ -8,30 +9,29 @@
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        '^': (composition: (components: [(component: "station_base"), (component: "stairs_north")])),
-        'o': (composition: (substrate: Open, components: [(component: "stairs_top")])),
+        'o': (composition: (substrate: Open)),
     },
     levels: [
         (
             rows: [
-                "#######",
-                "#.....#",
-                "#..^..#",
-                "#.....#",
-                "#######",
+                "#########",
+                "#.......#",
+                "#.......#",
+                "#.......#",
+                "#########",
             ],
-            structures: [(1, 2, "player_spawn")],
+            structures: [(2, 2, "player_spawn"), (1, 2, "crate"), (3, 2, "stairs", { "dir": "east" })],
             items: [(1, 1, "wrench")],
         ),
         (
             rows: [
-                "#######",
-                "#.....#",
-                "#..o..#",
-                "#.....#",
-                "#######",
+                "#########",
+                "#.......#",
+                "#..o....#",
+                "#.......#",
+                "#########",
             ],
-            items: [(5, 3, "wrench")],
+            items: [(7, 3, "wrench")],
         ),
     ],
 )

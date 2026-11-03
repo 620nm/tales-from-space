@@ -198,31 +198,9 @@ for index, channel in ipairs(pipe_channels) do
 end
 local supported = { substrate_support = true, any_component = { "station_base", "catwalk" } }
 
--- tg /obj/structure/stairs (stairs.dm:10-47): a flight whose `dir` is the way
--- up, one per facing, under open space (openspace.dm:1-6). The engine climbs a
--- body that steps onto a stair to the top directly over it, and back down from
--- the top (the engine's docs/sim/level-movement.md); tg ascends on stepping off
--- the last stair in `dir` to the tile ahead (stairs.dm:181-191,274-283) and
--- descends by a fall the stairs catch (stairs.dm:324-334). The facing is art
--- only. A stair with no top over it refuses the step, as tg's needs open space.
--- tg adds no time to the climb (`zMove` at once, stairs.dm:283): the pace is a
--- human step (content/bodies/human.luau `pace.base_ms`), so a climb costs one.
-local STAIRS_CLIMB = { kind = "climb", pace_seconds = 0.2 }
-type StairsFacing = { id: string, art: string, label: string }
-local STAIRS_FACINGS: { StairsFacing } = {
-    { id = "stairs_north", art = "stairs_n", label = "Stairs, Up North" },
-    { id = "stairs_east", art = "stairs_e", label = "Stairs, Up East" },
-    { id = "stairs_south", art = "stairs_s", label = "Stairs, Up South" },
-    { id = "stairs_west", art = "stairs_w", label = "Stairs, Up West" },
-}
-
 local construction_components = { "station_base", "floor_tiles", "grid_cover", "reinforcement",
     "lattice", "catwalk", "wall", "reinforced_wall", "rock",
-    "glass_floor", "reinforced_glass_floor", "plasma_glass_floor", "reinforced_plasma_glass_floor",
-    "stairs_top" }
-for _, facing in ipairs(STAIRS_FACINGS) do
-    table.insert(construction_components, facing.id)
-end
+    "glass_floor", "reinforced_glass_floor", "plasma_glass_floor", "reinforced_plasma_glass_floor" }
 
 -- tg /turf/open/floor/glass: in what is ported, the four variants differ in name
 -- and art only (glass.dm:2-114; the glow is not ported). Floor
@@ -239,24 +217,6 @@ local function glass_floor(id: string, label: string, light_transmission: { r: n
     return { id = id, label = label, layer = "cover", sprite = id .. "-0", cover = controls(true),
         physical = { ambient = 0.10, support = true, receives_gravity = true, substrate_seal = true,
             light_transmission = light_transmission, thermal = thermal(20000, 0.02, 0.5) } }
-end
-
-local stairs_components: { any } = {
-    -- The top of a flight, over an open substrate: unsealed and undrawn, so the
-    -- air and the eye pass down to the stairs as through tg's open space.
-    { id = "stairs_top", label = "top of the stairs", layer = "cover",
-        physical = { support = true, receives_gravity = true, vertical_passage = STAIRS_CLIMB } },
-}
-local stairs_presets: { any } = {
-    { id = "stairs_top", label = "Top of the Stairs", substrate = "open", replace_components = construction_components,
-        components = { { component = "stairs_top" } } },
-}
--- A flight covers the plating it stands on and the runs under it.
-for _, facing in ipairs(STAIRS_FACINGS) do
-    table.insert(stairs_components, { id = facing.id, label = "stairs", layer = "cover", sprite = facing.art,
-        cover = barrier_controls(), physical = { vertical_passage = STAIRS_CLIMB } })
-    table.insert(stairs_presets, { id = facing.id, label = facing.label, replace_components = construction_components,
-        components = { { component = "station_base" }, { component = facing.id } } })
 end
 
 local composition_declaration: { [string]: any } = {
@@ -422,9 +382,5 @@ local composition_declaration: { [string]: any } = {
         { id = "remove_catwalk", remove_components = { "catwalk" }, remove_unsupported_networks = { "power" } },
     },
 }
-
-table.move(stairs_components, 1, #stairs_components, #composition_declaration.components + 1,
-    composition_declaration.components)
-table.move(stairs_presets, 1, #stairs_presets, #composition_declaration.presets + 1, composition_declaration.presets)
 
 return composition_declaration

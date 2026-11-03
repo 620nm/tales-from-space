@@ -52,15 +52,58 @@ end
 -- crewman sees.
 local LANDING_MESSAGE_RADIUS = 7
 
+-- A body that tumbles down a flight it fell onto (stairs.dm:345-353
+-- `on_fall`): knocked down 5 s (the 2 s paralysis lies inside it) and
+-- 4-8 brute. Not ported: the stagger and the roll two tiles back.
+local TUMBLE_KNOCKDOWN_SECONDS = 5
+local TUMBLE_BRUTE_MIN = 4
+local TUMBLE_BRUTE_MAX = 8
+
+-- The flight of `structures/stairs/stairs.luau` standing at `at` itself,
+-- never one whose top cell is there.
+local function flight_at(at: TileAddress): Handle?
+    for _, candidate in ipairs(sim.query.range(at, 0, { prototype = "stairs" })) do
+        local tile = candidate.tile
+        if candidate.alive and tile.x == at.x and tile.y == at.y and tile.z == at.z then
+            return candidate
+        end
+    end
+    return nil
+end
+
+-- A flight catches a one-level fall onto it (stairs.dm:324-334
+-- `intercept_zImpact`): no landing line, and only a body out cold tumbles
+-- (`can_fall_down_stairs`, :336-343; tg's knocked-out is `conscious` here,
+-- and nothing in this pack staggers). Divergence: tg also spares a body
+-- someone pulls; no read here says who pulls a body.
+local function caught_by_flight(ev: MotionLandDonePayload): boolean
+    if ev.levels_fallen ~= 1 or flight_at(ev.at) == nil then
+        return false
+    end
+    if ev.actor.kind ~= "body" then
+        return true
+    end
+    local body = sim.body(ev.actor)
+    if body == nil or body.conscious then
+        return true
+    end
+    sim.message.send({ recipient = ev.actor, message = sim.msg("lunatic/tfs:lib.fall.down_stairs", {}) })
+    ev.actor:hold_posture("knockdown", TUMBLE_KNOCKDOWN_SECONDS)
+    local span = TUMBLE_BRUTE_MAX - TUMBLE_BRUTE_MIN + 1
+    local brute = TUMBLE_BRUTE_MIN + math.floor(sim.random("stairs.tumble") * span)
+    sim.damage.apply({ target = ev.actor, amounts = { brute = brute } })
+    return true
+end
+
 -- An item that fell lands: "[src] crashes into [turf]!" for everyone near
 -- (tgstation/code/game/atoms_movable.dm:354-358, `onZImpact`, called per
--- faller at tgstation/code/game/turfs/turf.dm:383). Bodies are not spoken for
--- here: the same anchor fires for them and this line is the item's.
+-- faller at tgstation/code/game/turfs/turf.dm:383), unless a flight caught
+-- it. A body's landing says nothing; a flight may tumble it.
 -- Omitted from tg: "[mover] falls through [prev_turf]!" from the turf above
 -- (turf.dm:376); and the landing text is fixed ("the floor") where tg names
 -- the impacted turf (atoms_movable.dm:358).
 function fall.on_land(ev: MotionLandDonePayload): ()
-    if ev.outcome ~= "completed" or ev.actor.kind ~= "item" then
+    if ev.outcome ~= "completed" or caught_by_flight(ev) or ev.actor.kind ~= "item" then
         return
     end
     sim.message.broadcast({
