@@ -155,6 +155,14 @@ fieldstone-cluster art. The art is greyscale under a `color` that defaults to
 basalt's and a map may override. Both sit in the editor's Natural section.
 Mining one is not implemented. Spec: `tests/terrain/cliff_test.luau`.
 
+Plants are cell matter over the ground, never ground: a mapper paints the
+`meadow` or `moss_carpet` blend, breathable air plus a litre-thin coat of
+`grass` or `moss` (`content/substances/plants/`), drawn by the `grass` and
+`moss` looks. A flame latches a plant tile like any fuel
+(`content/lib/ignition.luau`); `grass_fire` and `moss_fire` burn the coat to
+CO2, steam and ash, and the fire spreads tile to tile until the ground is
+bare. Spec: `tests/terrain/meadow_fire_test.luau`.
+
 ## Decals
 
 `content/compositions.luau` declares eleven floor decals on a `decal` visual
