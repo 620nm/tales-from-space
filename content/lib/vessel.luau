@@ -8,7 +8,8 @@
 --      vessel is sealed, and a refusal in the dispenser's own words if
 --      it is not (docs/BENCH.md 4);
 --   3. your own tile -- a SWIG;
---   4. the deck beside you -- TIP IT OUT.
+--   4. the deck or ground beside you -- TIP IT OUT, or SCOOP from it
+--      where water stands deep.
 --
 -- All four are THE SAME CALL with a different far end
 -- (docs/LUAU-API.md 8.2): `sim.matter.transfer({ from, to, amount,
@@ -102,6 +103,19 @@ local SPILL = "lunatic/tfs:lib.vessel.spill"
 local SOAK = "lunatic/tfs:lib.vessel.soak"
 local SOAK_DRY = "lunatic/tfs:lib.vessel.soak_dry"
 local SOAK_FULL = "lunatic/tfs:lib.vessel.soak_full"
+local SPILL_GROUND = "lunatic/tfs:lib.vessel.spill_ground"
+local SCOOP = "lunatic/tfs:lib.vessel.scoop"
+local SCOOP_SEALED = "lunatic/tfs:lib.vessel.open_before_scooping"
+
+-- A SCOOP from standing water: tg's `rand(5, 10)` units into an open
+-- container (code/datums/elements/reagent_scoopable_atom.dm:28-34), off any
+-- tile standing at least SCOOP_DEPTH_L deep. tg marks scoopable turfs by
+-- type (code/game/turfs/open/water.dm:43,52-53); here depth decides, so a
+-- trench a sea filled scoops and a puddle on the deck tips out. Ten
+-- centimetres on a 1 m tile: deep enough to dip a vessel under.
+local SCOOP_UNITS_MIN = 5
+local SCOOP_UNITS_MAX = 10
+local SCOOP_DEPTH_L = 100
 
 -- One line to say, as the key and the arguments its template asks for.
 local function line(named: string?, shared: string, noun: string): Line
@@ -255,16 +269,25 @@ end
 -- What a stroke finds on one tile, in moles, read before anything moves: an
 -- effect lands at the end of the transaction, so a gesture cannot measure
 -- itself by re-reading its own vessel.
-type DeckReading = { liquid: number, solid: number, pinned: boolean }
+-- `liquid_l` is its depth in litres and `deepest` the name of the liquid
+-- standing most, for the sentence a scoop says.
+type DeckReading = { liquid: number, liquid_l: number, deepest: string?, solid: number, pinned: boolean }
 
 local function read_deck(at: TileAddress, pinned_solids: { [string]: boolean }?): DeckReading
-    local found: DeckReading = { liquid = 0, solid = 0, pinned = false }
+    local found: DeckReading = { liquid = 0, liquid_l = 0, deepest = nil, solid = 0, pinned = false }
     local deck = sim.matter_read(at.matter)
     if deck == nil then
         return found
     end
+    local most_ml = 0
     for substance, entry in pairs(deck.contents) do
         found.liquid = found.liquid + (entry.liquid or 0)
+        local ml = entry.liquid_ml or 0
+        found.liquid_l = found.liquid_l + ml / 1000
+        if ml > most_ml then
+            most_ml = ml
+            found.deepest = entry.name
+        end
         local solid = entry.solid or 0
         if solid >= DREGS_MOL then
             found.solid = found.solid + solid
@@ -320,6 +343,31 @@ local function soak(
     sim.message.send({ recipient = user, message = said(spoken) })
 end
 
+-- DIPPING INTO STANDING WATER: a dose of the tile's own liquid, whatever it
+-- holds, through the same transfer. A sea's ideal puts it back; a lake
+-- stays that much lower. tg's open-container test and "is full" refusal
+-- (reagent_scoopable_atom.dm:28,34-35).
+local function scoop(spec: Spec, self: Handle, user: Handle, at: TileAddress, deck: DeckReading)
+    if assert(sim.matter_read(self)).sealed then
+        sim.message.send({ recipient = user, message = sim.msg(SCOOP_SEALED, { noun = spec.noun }) })
+        return
+    end
+    if (vessel.headspace_l(self) or 0) <= HEADSPACE_L then
+        sim.message.send({ recipient = user, message = sim.msg(SOAK_FULL, { noun = spec.noun }) })
+        return
+    end
+    sim.matter.transfer({
+        from = at.matter,
+        to = self,
+        amount = math.random(SCOOP_UNITS_MIN, SCOOP_UNITS_MAX) * U,
+        phases = { "liquid" },
+    })
+    sim.message.send({
+        recipient = user,
+        message = sim.msg(SCOOP, { noun = spec.noun, liquid = deck.deepest or "" }),
+    })
+end
+
 -- The mops mid-stroke: a second click on a busy mop is not a second stroke
 -- (tg's TRAIT_CURRENTLY_CLEANING, cleaner.dm:96). An entry past its `ends`
 -- is stale, so a stroke that faulted cannot hold its mop busy for the round.
@@ -369,7 +417,8 @@ local function begin_soak(
 end
 
 -- A deck, or the ground outdoors: anything underfoot that is not a wall.
-local function soakable_tile(): action_rules.Selector
+-- Selector facts cannot see ground, so the handler refuses the rest.
+local function underfoot_tile(): action_rules.Selector
     local underfoot: action_rules.Selector = { any = { action_rules.kind("turf"), action_rules.kind("component") } }
     local not_wall: action_rules.Selector = { ["not"] = action_rules.fact("target.has_component", "wall") }
     local not_reinforced: action_rules.Selector = { ["not"] = action_rules.fact("target.has_component", "reinforced_wall") }
@@ -387,7 +436,8 @@ end
 --           this vessel's business, and neither is a charge; `units =
 --           "all"` is a vessel that empties itself in one gesture
 --   sip     { units, message? }
---   spill   { message? } or true -- absent: no tipping it out
+--   spill   { message? } or true -- absent: no tipping it out, and no
+--           scooping from standing water either
 --   soak    SoakSpec -- the deck the OTHER way round: take what is on
 --           that tile up into this vessel instead of tipping this vessel
 --           onto it, in `phases`. Declaring it beside `spill` is
@@ -437,7 +487,9 @@ function vessel.actions(spec: Spec): { action_rules.Action }
             actions,
             action_rules.primary(
                 if spec.soak then "soak" else "spill",
-                if spec.soak then soakable_tile() else action_rules.deck("floor_tiles", "grid_cover", "station_base")
+                if spec.soak
+                    then underfoot_tile()
+                    else { any = { underfoot_tile(), action_rules.deck("floor_tiles", "grid_cover", "station_base") } }
             )
         )
     end
@@ -464,6 +516,7 @@ function vessel.attach(spec: Spec): Definition
     local sip_line = spec.sip and line(spec.sip.message, SIP, spec.noun)
     local named = type(spec.spill) == "table" and spec.spill.message or nil
     local spill_line = line(named, SPILL, spec.noun)
+    local spill_ground_line = line(named, SPILL_GROUND, spec.noun)
     local soak_lines: SoakLines? = nil
     local soak_phases: { string } = spec.phases or { "liquid" }
     if spec.soak ~= nil then
@@ -535,14 +588,25 @@ function vessel.attach(spec: Spec): Definition
                 end
                 return begin_soak(spec.soak, soak_phases, self, user, at, assert(soak_lines))
             end
-            if walled or not sim.has_component(at.x, at.y, "station_base") then
+            if walled then
+                return { replaced = false }
+            end
+            -- Standing water is dipped into, not tipped onto.
+            local deck = read_deck(at, nil)
+            if deck.liquid_l >= SCOOP_DEPTH_L then
+                scoop(spec, self, user, at, deck)
+                return true
+            end
+            -- Plating, or the ground: a tile with a ground material.
+            local plated = sim.has_component(at.x, at.y, "station_base")
+            if not plated and sim.turf.material_at(at) == nil then
                 return { replaced = false }
             end
             if dregs(spec, self, user) then
                 return true
             end
             do_spill(self)
-            sim.message.send({ recipient = user, message = said(spill_line) })
+            sim.message.send({ recipient = user, message = said(if plated then spill_line else spill_ground_line) })
             return true
         end
     )
