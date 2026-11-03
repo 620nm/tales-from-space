@@ -62,15 +62,17 @@ return {
         -- Degrees on a painted deck: a content judgment, not a measurement.
         contact_angle = 75,
     },
+    -- Frozen, a sea or a lake is a sheet of ice in its bed, not dry ground.
+    terrain = { solid = "sheet_ice" },
     color = "#AAAAAA",
     -- What water LOOKS LIKE on a deck (docs/chemistry/substances.md).
     -- The shared `puddle` ladder is neutral grey art, so the liquid
     -- layer's tint carries the blue; `color` above stays the grey the
-    -- reading panels use. Ice keeps the shared crystalline silhouette
-    -- and the grey.
+    -- reading panels use. Ice keeps the shared crystalline silhouette,
+    -- in the pale blue the terrestrial art's ice sheet is drawn for.
     appearance = {
         liquid = { profile = "puddle", tint = "#5F9BD5" },
-        solid = "crystalline",
+        solid = { profile = "crystalline", tint = "#D4EFF7" },
     },
     visible = { mol_per_m3 = 0.25, factor = 20, tint = "#E6EDF7", visual_layer = "gas_haze" },
     -- Where this sits in a tool that offers every substance there is

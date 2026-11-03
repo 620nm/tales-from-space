@@ -64,6 +64,12 @@ local content = {
     visible = { mol_per_m3 = 0.25, factor = 20, tint = "#DFE8C0", visual_layer = "gas_haze" },
     -- What it looks like through glass (tg: other_reagents.dm:1630).
     color = "#404030",
+    -- What it looks like standing open: `color` is a bottle's, and a pool
+    -- or a frozen sheet of it wears the terrestrial art's pale cyans.
+    appearance = {
+        liquid = { profile = "puddle", tint = "#5EB5C4" },
+        solid = { profile = "crystalline", tint = "#D4EFF7" },
+    },
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAP-PROPERTIES.md, the recipe panel). Reachable as room air, and
     -- rarely what a room is commissioned holding.
