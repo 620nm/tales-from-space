@@ -30,6 +30,7 @@
 -- prototype happens in the roster file that calls `attach`, so "which
 -- file declared this" still answers with a name off the shelf.
 local action_rules = require("@lib/action_rules")
+local tile_geometry = require("@lib/tile_geometry")
 
 export type Spec = {
     id: string,
@@ -118,10 +119,10 @@ local SCOOP_SEALED = "lunatic/tfs:lib.vessel.open_before_scooping"
 -- tile standing at least SCOOP_DEPTH_L deep. tg marks scoopable turfs by
 -- type (code/game/turfs/open/water.dm:43,52-53); here depth decides, so a
 -- trench a sea filled scoops and a puddle on the deck tips out. Ten
--- centimetres on a 1 m tile: deep enough to dip a vessel under.
+-- centimetres over the tile: deep enough to dip a vessel under.
 local SCOOP_UNITS_MIN = 5
 local SCOOP_UNITS_MAX = 10
-local SCOOP_DEPTH_L = 100
+local SCOOP_DEPTH_L = 0.1 * tile_geometry.width_m * tile_geometry.depth_m * 1000
 
 -- One line to say, as the key and the arguments its template asks for.
 local function line(named: string?, shared: string, noun: string): Line
