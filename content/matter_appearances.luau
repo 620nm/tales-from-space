@@ -143,6 +143,29 @@ return {
                 { at_ml = 25, shell = { still = "solid_debris_jagged_smooth" } },
             },
         },
+        -- Plants: a thin coat over natural ground (blends/meadow.luau holds
+        -- a litre a tile). It thins as it burns and is gone under 100 mL,
+        -- leaving the ground face and whatever ash the fire made.
+        {
+            key = "grass",
+            visual_layer = "matter_ground",
+            phase = "solid",
+            full_volume_ml = 1000,
+            alpha = { min = 0.4, max = 1.0 },
+            rungs = {
+                { at_ml = 100, shell = { still = "solid_grass_smooth" } },
+            },
+        },
+        {
+            key = "moss",
+            visual_layer = "matter_ground",
+            phase = "solid",
+            full_volume_ml = 1000,
+            alpha = { min = 0.4, max = 1.0 },
+            rungs = {
+                { at_ml = 100, shell = { still = "solid_moss_smooth" } },
+            },
+        },
         -- What a tile's ground material draws as (content/terrain.luau
         -- `face`). Not measured from the cell: the engine fixes a ground
         -- row's amount at the maximum, so the one rung always shows and
