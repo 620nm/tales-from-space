@@ -7,6 +7,7 @@ local MOLAR_MASS = 62.4
 return {
     id = "basalt_cliff",
     name = "Basalt cliff",
+    name_label = "lunatic/tfs:blends.basalt_cliff.name",
     rows = {
         { "basalt:solid", DENSITY_G_PER_ML * 1e6 / MOLAR_MASS },
     },
