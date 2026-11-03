@@ -13,6 +13,7 @@ local MOLAR_MASS = 60.08
 return {
     id = "silica_ground",
     name = "Silica ground",
+    name_label = "lunatic/tfs:blends.silica_ground.name",
     rows = {
         { "silica:solid", DENSITY_G_PER_ML * 1e6 / MOLAR_MASS },
     },

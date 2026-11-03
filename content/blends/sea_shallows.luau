@@ -5,6 +5,7 @@ local MOLAR_MASS = 18.015
 return {
     id = "sea_shallows",
     name = "Sea shallows",
+    name_label = "lunatic/tfs:blends.sea_shallows.name",
     rows = {
         { "water", DENSITY_G_PER_ML * 1e6 / MOLAR_MASS },
     },
