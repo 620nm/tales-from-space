@@ -99,9 +99,10 @@ local prototypes = {
         },
     },
     -- Boulders lie on natural ground; cliffs are terrain-brush blends
-    -- (`basalt_cliff`, `silica_cliff`), listed in the Terrain section.
-    { kind = "structure", id = "outcrop", section = "Natural", category = "" },
-    { kind = "structure", id = "outcrop.cluster", section = "Natural", category = "" },
+    -- (`basalt_cliff`, `silica_cliff`), listed in the Terrain section; the
+    -- boulders file into it under a Natural category.
+    { kind = "structure", id = "outcrop", section = "terrain", category = "Natural" },
+    { kind = "structure", id = "outcrop.cluster", section = "terrain", category = "Natural" },
 }
 
 return {
