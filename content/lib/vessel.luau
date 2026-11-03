@@ -44,11 +44,14 @@ export type Spec = {
 -- What a vessel that takes the deck up says and how it strokes. `seconds`
 -- absent is an instant stroke. `pinned_solids` names substances whose solid
 -- is fast to the deck: while one lies on the tile, solids stay put.
+-- `ground` and `ground_dry` replace `message` and `dry` on natural ground.
 export type SoakSpec = {
     message: string?,
     floating: string?,
     deposit: string?,
     dry: string?,
+    ground: string?,
+    ground_dry: string?,
     full: string?,
     seconds: number?,
     pinned_solids: { [string]: boolean }?,
@@ -103,7 +106,10 @@ local SPILL = "lunatic/tfs:lib.vessel.spill"
 local SOAK = "lunatic/tfs:lib.vessel.soak"
 local SOAK_DRY = "lunatic/tfs:lib.vessel.soak_dry"
 local SOAK_FULL = "lunatic/tfs:lib.vessel.soak_full"
+local SOAK_GROUND = "lunatic/tfs:lib.vessel.soak_ground"
+local SOAK_DRY_GROUND = "lunatic/tfs:lib.vessel.soak_dry_ground"
 local SPILL_GROUND = "lunatic/tfs:lib.vessel.spill_ground"
+local SPILL_NO_FOOTING = "lunatic/tfs:lib.vessel.spill_no_footing"
 local SCOOP = "lunatic/tfs:lib.vessel.scoop"
 local SCOOP_SEALED = "lunatic/tfs:lib.vessel.open_before_scooping"
 
@@ -127,6 +133,17 @@ end
 
 local function said(spoken: Line): Message
     return sim.msg(spoken.key, spoken.args)
+end
+
+-- Plating, the deck's own word for a tile a vessel works on.
+local function plated(at: TileAddress): boolean
+    return sim.has_component(at.x, at.y, "station_base")
+end
+
+-- Natural ground: a tile with a ground material and no plating over it,
+-- which the sentences call the ground rather than the deck.
+local function on_ground(at: TileAddress): boolean
+    return not plated(at) and sim.turf.material_at(at) ~= nil
 end
 
 -- THE TWO READINGS every gesture asks for, off the one reading any body
@@ -297,7 +314,15 @@ local function read_deck(at: TileAddress, pinned_solids: { [string]: boolean }?)
     return found
 end
 
-type SoakLines = { soak: Line, floating: Line, deposit: Line, dry: Line, full: Line }
+type SoakLines = {
+    soak: Line,
+    floating: Line,
+    deposit: Line,
+    dry: Line,
+    soak_ground: Line,
+    dry_ground: Line,
+    full: Line,
+}
 
 -- TAKING THE DECK UP, which is the tile's own matter drawn into a vessel:
 -- the room over a tile is a body of matter like any other
@@ -324,8 +349,9 @@ local function soak(
     local takes_solid = table.find(phases, "solid") ~= nil
     local deck = read_deck(at, spec.pinned_solids)
     local solid_free = takes_solid and not deck.pinned and deck.solid >= DREGS_MOL
+    local ground = on_ground(at)
     if deck.liquid < DREGS_MOL and not solid_free then
-        sim.message.send({ recipient = user, message = said(lines.dry) })
+        sim.message.send({ recipient = user, message = said(if ground then lines.dry_ground else lines.dry) })
         return
     end
     sim.matter.transfer({
@@ -334,7 +360,7 @@ local function soak(
         amount = "all",
         phases = if solid_free then { "solid", "liquid" } else { "liquid" },
     })
-    local spoken = lines.soak
+    local spoken = if ground then lines.soak_ground else lines.soak
     if deck.liquid < DREGS_MOL then
         spoken = lines.deposit
     elseif sim.matter.liquid_settling(at) == "floating" then
@@ -416,16 +442,6 @@ local function begin_soak(
     return true
 end
 
--- A deck, or the ground outdoors: anything underfoot that is not a wall.
--- Selector facts cannot see ground, so the handler refuses the rest.
-local function underfoot_tile(): action_rules.Selector
-    local underfoot: action_rules.Selector = { any = { action_rules.kind("turf"), action_rules.kind("component") } }
-    local not_wall: action_rules.Selector = { ["not"] = action_rules.fact("target.has_component", "wall") }
-    local not_reinforced: action_rules.Selector = { ["not"] = action_rules.fact("target.has_component", "reinforced_wall") }
-    local not_reinforcement: action_rules.Selector = { ["not"] = action_rules.fact("target.has_component", "reinforcement") }
-    return { all = { underfoot, not_wall, not_reinforced, not_reinforcement } }
-end
-
 -- Attaches the gestures to one prototype and declares the behaviour that
 -- carries them. `spec`:
 --
@@ -488,8 +504,13 @@ function vessel.actions(spec: Spec): { action_rules.Action }
             action_rules.primary(
                 if spec.soak then "soak" else "spill",
                 if spec.soak
-                    then underfoot_tile()
-                    else { any = { underfoot_tile(), action_rules.deck("floor_tiles", "grid_cover", "station_base") } }
+                    then action_rules.underfoot_tile()
+                    else {
+                        any = {
+                            action_rules.deck("floor_tiles", "grid_cover", "station_base"),
+                            action_rules.ground(),
+                        },
+                    }
             )
         )
     end
@@ -526,6 +547,8 @@ function vessel.attach(spec: Spec): Definition
             floating = if spec.soak.floating then line(spec.soak.floating, SOAK, spec.noun) else soaked,
             deposit = if spec.soak.deposit then line(spec.soak.deposit, SOAK, spec.noun) else soaked,
             dry = line(spec.soak.dry, SOAK_DRY, spec.noun),
+            soak_ground = line(spec.soak.ground, SOAK_GROUND, spec.noun),
+            dry_ground = line(spec.soak.ground_dry, SOAK_DRY_GROUND, spec.noun),
             full = line(spec.soak.full, SOAK_FULL, spec.noun),
         }
     end
@@ -598,15 +621,24 @@ function vessel.attach(spec: Spec): Definition
                 return true
             end
             -- Plating, or the ground: a tile with a ground material.
-            local plated = sim.has_component(at.x, at.y, "station_base")
-            if not plated and sim.turf.material_at(at) == nil then
+            local ground = on_ground(at)
+            if not ground and not plated(at) then
                 return { replaced = false }
+            end
+            -- Ground a body cannot stand on (a face that blocks) holds no
+            -- spill: the engine refuses it, so the sentence must too.
+            if ground then
+                local state = sim.tile_state(at)
+                if state == nil or not state.walkable then
+                    sim.message.send({ recipient = user, message = sim.msg(SPILL_NO_FOOTING, { noun = spec.noun }) })
+                    return true
+                end
             end
             if dregs(spec, self, user) then
                 return true
             end
             do_spill(self)
-            sim.message.send({ recipient = user, message = said(if plated then spill_line else spill_ground_line) })
+            sim.message.send({ recipient = user, message = said(if ground then spill_ground_line else spill_line) })
             return true
         end
     )

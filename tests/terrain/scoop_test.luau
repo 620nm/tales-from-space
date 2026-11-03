@@ -24,7 +24,7 @@ t.world(
                 "llawww",
             ],
             structures: [(2, 1, "player_spawn")],
-            items: [(2, 1, "beaker")],
+            items: [(2, 1, "beaker"), (2, 1, "water_bottle")],
         ),
     ],
 )]==],
@@ -71,3 +71,34 @@ scoop_at(3)
 for key, moles in pairs(assert(t.contents(beaker))) do
     assert(key == "water" or moles <= (held[key] or 0) + 1e-9, "the sea holds only water, the beaker gained " .. key)
 end
+
+-- A FULL beaker takes no more: scoops trim to the brim, then refuse.
+local refused = nil
+for _ = 1, 80 do
+    composition.click_deck(p, 1, 1)
+    t.tick()
+    local lines = t.messages(p)
+    if lines[#lines] == "The beaker will hold no more." then
+        refused = water()
+        break
+    end
+end
+assert(refused ~= nil, "a full beaker refuses the scoop")
+composition.click_deck(p, 1, 1)
+t.tick()
+assert(math.abs(water() - refused) < 1e-9, "the refused scoop moved nothing")
+
+-- A SEALED bottle is refused before it dips.
+t.drop(p)
+t.tick()
+local bottle = assert(t.target_at(p, 2, 1, "water_bottle"))
+t.click(p, 2, 1, bottle)
+t.tick()
+assert(t.hands(p).held == "water_bottle", "the bottle is in hand")
+local sealed = assert(t.contents(bottle)).water or 0
+t.messages(p)
+composition.click_deck(p, 1, 1)
+t.tick()
+local lines = t.messages(p)
+assert(lines[#lines] == "Open the bottle before scooping with it.", "the sealed bottle refuses: " .. tostring(lines[#lines]))
+assert(math.abs((assert(t.contents(bottle)).water or 0) - sealed) < 1e-9, "the sealed bottle took nothing")

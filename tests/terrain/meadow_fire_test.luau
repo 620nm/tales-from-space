@@ -3,10 +3,12 @@ local ignition_room = require("@helpers/ignition_room")
 -- A MEADOW FIRE WALKS THE GRASS AND LEAVES BARE GROUND.
 --
 -- Three rows of meadow and one of moss on open soil under a warm sky
--- (`warm_outdoors`, whose air refills). A struck burner lights the grass
--- the player stands in, and is snuffed: nothing else is a source.
+-- (`warm_outdoors`, whose air refills). The player stands on bare soil and
+-- lights the grass beside it by clicking the ground with a struck burner,
+-- then snuffs it: nothing else is a source.
 --
 -- * The grass and moss draw their looks before the fire.
+-- * A lit burner clicked on natural ground lights it (`target.has_material`).
 -- * The fire spreads tile to tile: the far end of the meadow and the moss
 --   latch after the tile that was lit, and burn.
 -- * Every plant tile ends bare: no grass or moss drawn, the soil face still
@@ -20,7 +22,7 @@ local AIR_N = 101325.0 / (8.314 * 293.15)
 local ASH = "#515151" -- content/substances/ash.luau
 
 local ROWS = { ".mmmmm", ".mmmmm", ".mmmmm", ".ooooo" }
--- The player spawns on (1, 1), in the grass.
+-- The player spawns on bare soil at (0, 1); the grass at (1, 1) is clicked.
 local LIT_KEY = "1:1"
 local FAR_GRASS_KEY = "5:1"
 local FAR_MOSS_KEY = "5:3"
@@ -68,8 +70,8 @@ t.world(
     levels: [
         (
             rows: [%s],
-            structures: [(1, 1, "player_spawn")],
-            items: [(2, 1, "burner")],
+            structures: [(0, 1, "player_spawn")],
+            items: [(0, 0, "burner")],
             painted: [%s],
         ),
     ],
@@ -104,14 +106,17 @@ for _, plant in ipairs(plants) do
     assert(drawn(plant.x, plant.y, plant.look), plant.look .. " draws" .. at(plant))
 end
 
--- The player stands in the grass; a struck burner in hand lights the tile
--- under it within a second (lib/ignition.luau `tend_flame`). Snuffed, it is
--- no source.
-ignition_room.take_lit_burner(p, 2, 1)
+-- The struck burner in hand stands over bare soil, which has nothing to
+-- burn; clicked on the grass beside it, it lights that tile. Snuffed, it
+-- is no source.
+ignition_room.take_lit_burner(p, 0, 0)
+t.run_seconds(1)
+assert(ignition_room.count(ignition_room.latched_tiles()) == 0, "bare soil does not catch")
+ignition_room.touch(p, 1, 1)
 local caught = ignition_room.run_until(5, 0.5, function()
     return ignition_room.latched_tiles()[LIT_KEY] ~= nil
 end)
-assert(caught ~= nil, "the burner lit the grass it stood over")
+assert(caught ~= nil, "the burner clicked on the grass lit it")
 t.use_self(p)
 t.tick()
 
