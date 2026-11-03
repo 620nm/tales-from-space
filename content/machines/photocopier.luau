@@ -11,8 +11,6 @@ return {
     name_label = "lunatic/tfs:entity.photocopier.name",
     name = "photocopier",
     sprite = "photocopier",
-    states = { "closed", "open", "printing" },
-    state = "closed",
     dense = true,
     corded = true,
     drive = { accepts = { "paper" } },
