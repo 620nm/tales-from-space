@@ -79,6 +79,18 @@ t.run_seconds(1.0)
 local door = assert(t.door_at(DOOR_X, DOOR_Y))
 assert(not door.latches.bolted and not door.latches.emergency, "the leaf starts with neither latch")
 
+-- An unsolicited completion: a hand works the leaf the program never
+-- ordered. Its completion reaches the door's scope, and `settle` keeps
+-- it from the guest.
+local runs_before = #t.ledger_rows("disl_run")
+t.click(crew, DOOR_X, DOOR_Y, assert(t.target_at(crew, DOOR_X, DOOR_Y, "airlock")))
+t.run_seconds(2.0)
+assert(assert(t.door_at(DOOR_X, DOOR_Y)).open, "a hand opened the leaf")
+t.click(crew, DOOR_X, DOOR_Y, assert(t.target_at(crew, DOOR_X, DOOR_Y, "airlock")))
+t.run_seconds(2.0)
+assert(not assert(t.door_at(DOOR_X, DOOR_Y)).open, "and closed it again")
+assert(#t.ledger_rows("disl_run") == runs_before, "the guest heard nothing of a hand's door")
+
 t.click(crew, 6, 2, assert(t.target_at(crew, 6, 2, "airlock_button")))
 -- Two paced guest packets: the press, then the completions that follow it.
 t.run_seconds(3.0)

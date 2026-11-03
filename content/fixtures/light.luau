@@ -187,13 +187,8 @@ if sim ~= nil then
 
     -- OFF THE GRID AND BACK. The engine decides where a fitting draws
     -- from -- the grid, its own cell, or nothing -- and says so on the
-    -- edge; what it looks like on its cell is this file's. Completions
-    -- reach every handler of the anchor, so another prototype's cell is
-    -- somebody else's.
+    -- edge; what it looks like on its cell is this file's.
     script_definition:handle("flow.source.done", { kind = "react" }, function(ev: FlowSourceDonePayload)
-        if ev.subject.prototype ~= content.id then
-            return
-        end
         relight(ev.subject, nil, nil, nil, { source = ev.source, level = ev.level })
     end)
 

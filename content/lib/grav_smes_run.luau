@@ -189,9 +189,6 @@ end
 
 -- `flow.store.done`: the glyph follows the store.
 function grav_smes_run.on_store(ev: FlowStoreDonePayload): ()
-    if ev.subject.prototype ~= BODY then
-        return
-    end
     grav_smes_run.show_status(ev.subject, {
         charging = ev.charging,
         fed = ev.fed,
@@ -202,7 +199,7 @@ end
 
 -- `flow.load.done`: a load the store cannot pay stops the field.
 function grav_smes_run.on_load(ev: FlowLoadDonePayload): ()
-    if ev.subject.prototype ~= BODY or ev.supplied then
+    if ev.supplied then
         return
     end
     local base = base_of(ev.subject.state)
