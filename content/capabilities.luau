@@ -38,8 +38,8 @@ return {
         power = true,
         wind = true,
         tick_hz = 20,
-        -- A cell is a 1 m floor tile under a 3 m deck-to-deck level: 3 m3.
-        -- tg's turf is 2.5 m3 (`#define CELL_VOLUME 2500`,
+        -- A cell is a 1 m floor tile under a 3 m deck-to-deck level: 3 m3
+        -- (lib/tile_geometry.luau). tg's turf is 2.5 m3 (`#define CELL_VOLUME 2500`,
         -- tgstation/code/__DEFINES/atmospherics/atmos_core.dm:152). A fall
         -- drops `height_m` per level.
         tile = {

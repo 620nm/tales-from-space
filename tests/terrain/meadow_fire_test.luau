@@ -14,11 +14,8 @@ local ignition_room = require("@helpers/ignition_room")
 -- * Every plant tile ends bare: no grass or moss drawn, the soil face still
 --   there, and the fire's ash on it.
 -- * With nothing left to burn, every latch lets go.
-local GRASS_G_PER_M2 = 300.0 -- content/blends/meadow.luau
-local MOSS_G_PER_M2 = 200.0 -- content/blends/moss_carpet.luau
-local PLANT_MOLAR_MASS = 162.14
-local TILE_HEIGHT_M = 3.0
-local AIR_N = 101325.0 / (8.314 * 293.15)
+-- The pack's own meadow and moss blends, declared on the map as they are.
+local plant_cover = t.content_module("plant_cover")
 local ASH = "#515151" -- content/substances/ash.luau
 
 local ROWS = { ".mmmmm", ".mmmmm", ".mmmmm", ".ooooo" }
@@ -27,14 +24,18 @@ local LIT_KEY = "1:1"
 local FAR_GRASS_KEY = "5:1"
 local FAR_MOSS_KEY = "5:3"
 
-local function plant_blend(id: string, substance: string, grams: number): string
+local function plant_blend(id: string): string
+    local blend = plant_cover[id] :: any
+    local rows: { string } = {}
+    for _, row in ipairs(blend.rows) do
+        table.insert(rows, string.format('("%s", %.9g)', row[1], row[2]))
+    end
     return string.format(
-        '"%s": (rows: [("o2", %.6f), ("n2", %.6f), ("%s:solid", %.6f)], temperature_k: 293.15, amount: per_m3)',
+        '"%s": (rows: [%s], temperature_k: %.9g, amount: %s)',
         id,
-        AIR_N * 0.21,
-        AIR_N * 0.79,
-        substance,
-        grams / PLANT_MOLAR_MASS / TILE_HEIGHT_M
+        table.concat(rows, ", "),
+        blend.temperature_k,
+        blend.amount
     )
 end
 
@@ -79,8 +80,8 @@ t.world(
 )]==],
         table.concat(quoted, ", "),
         table.concat(painted, ", "),
-        plant_blend("meadow", "grass", GRASS_G_PER_M2),
-        plant_blend("moss_carpet", "moss", MOSS_G_PER_M2)
+        plant_blend("meadow"),
+        plant_blend("moss_carpet")
     ),
     0,
     "free_build"
