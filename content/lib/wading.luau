@@ -74,14 +74,34 @@ local function depth_m(at: TileAddress): number
     return ml / ML_PER_M_DEPTH
 end
 
-local function band_at(at: TileAddress): WadingBand?
-    local depth = depth_m(at)
-    for _, band in ipairs(wading.BANDS) do
-        if depth >= band.min_depth_m then
-            return band
+-- The `layer = "support"` components of content/compositions.luau that
+-- stand above a tile's liquid (not plating, which seals the ground): a body
+-- on one is out of the water, so it neither wades nor swims.
+wading.RAISED_SUPPORTS = { "catwalk", "lattice" }
+
+local function held_above_liquid(at: TileAddress): boolean
+    for _, component in ipairs(wading.RAISED_SUPPORTS) do
+        if sim.has_component(at, component) then
+            return true
         end
     end
-    return nil
+    return false
+end
+
+-- Depth first: the support read only runs on a tile with liquid to avoid.
+local function band_at(at: TileAddress): WadingBand?
+    local depth = depth_m(at)
+    local reached: WadingBand? = nil
+    for _, band in ipairs(wading.BANDS) do
+        if depth >= band.min_depth_m then
+            reached = band
+            break
+        end
+    end
+    if reached == nil or held_above_liquid(at) then
+        return nil
+    end
+    return reached
 end
 
 -- `move.cross` contribute on a body plan: a step costs the band of the

@@ -56,6 +56,10 @@ return {
     -- The housing, which is never tinted: tg's greyscale config paints
     -- only the needle (`color_ids: [1]` on the pressure layer).
     sprite = "meter_base",
+    -- It sits on the line of the layer it reads, on BOTH axes, as tg's
+    -- `PIPING_LAYER_DOUBLE_SHIFT` does (meter.dm:67): a dial on layer 1
+    -- is drawn over layer 1's pipe, not over the middle of the tile.
+    channel_seat = { "x", "y" },
     ui = { modules = { "meter" } },
     dense = false,
     states = { "attached" },
