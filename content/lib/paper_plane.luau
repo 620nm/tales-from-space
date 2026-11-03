@@ -114,8 +114,11 @@ end
 -- plane (`at`). Air at ignition heat counts whatever the air at the plane,
 -- so a plane over an already-hot hole still catches fire: tg's plane burns
 -- whenever it is set alight (paperplane.dm:38, `burn_on_item_ignition`),
--- with no difference test.
-function paper_plane.updraft(at: TileAddress, landing: TileAddress): Updraft?
+-- with no difference test. No landing (a pack with no level height): none.
+function paper_plane.updraft(at: TileAddress, landing: TileAddress?): Updraft?
+    if landing == nil then
+        return nil
+    end
     local below = sim.matter_read(landing.matter)
     local here = sim.matter_read(at.matter)
     if below == nil or here == nil then
@@ -222,8 +225,12 @@ end
 -- `motion.fall.done` on the paper definition: a plane that stayed on an
 -- updraft is shoved on along its heading (and keeps it for the next ask),
 -- or burns when the air below is hot enough. Every other outcome forgets
--- the heading. The shove and its broadcast happen once per hole surfed.
+-- the heading; a fall with no landing changes nothing. The shove and its
+-- broadcast happen once per hole surfed.
 function paper_plane.on_fall_done(ev: MotionFallDonePayload): ()
+    if ev.landing == nil then
+        return
+    end
     local item = ev.entity
     local lift = if not ev.fell and paper_plane.is_folded(item)
         then paper_plane.updraft(ev.at, ev.landing)
