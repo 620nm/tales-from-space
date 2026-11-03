@@ -14,19 +14,17 @@
 --
 -- An item that carries on while it drops answers a nonzero `glide_x` /
 -- `glide_y` from `glide_for`; a thing that stays aloft answers before it.
+local fall_limits = require("@lib/fall_limits")
 local paper_plane = require("@lib/paper_plane")
 
 local fall = {}
 
--- The farthest sideways carry a falling item may answer, in tiles
--- (Chebyshev): `simulation.fall.glide_max` in `content/capabilities.luau`.
--- A folded paper plane asks 2 per level it drops, so 8 covers four levels.
-fall.GLIDE_MAX_TILES = 8
-
 export type FallAnswer = { fall: boolean?, glide_x: number?, glide_y: number? }
 
+-- Never past `simulation.fall.glide_max` (`lib/fall_limits.luau`).
 local function clamp_glide(n: number): number
-    return math.clamp(n, -fall.GLIDE_MAX_TILES, fall.GLIDE_MAX_TILES)
+    local max = fall_limits.glide_max_tiles
+    return math.clamp(n, -max, max)
 end
 
 -- Where a falling item carries sideways, in tiles, never past the cap.
