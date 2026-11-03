@@ -64,7 +64,11 @@ local content = {
 
 content.actions = {
     action_rules.primary("heat", action_rules.fact("target.has_matter", true)),
-    action_rules.primary("ignite", action_rules.any_deck(), action_rules.fact("held.state", "lit")),
+    action_rules.primary(
+        "ignite",
+        { any = { action_rules.any_deck(), action_rules.ground() } },
+        action_rules.fact("held.state", "lit")
+    ),
 }
 table.insert(content.actions, action_rules.self_use("toggle_flame"))
 

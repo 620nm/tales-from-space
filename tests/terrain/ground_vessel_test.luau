@@ -4,8 +4,9 @@ local composition = require("@helpers/composition")
 -- deck, and a mop takes the puddle back up. No sea here: a spill on a
 -- shore runs into it (sea_shore_test).
 --
--- All sand. The player stands at (2, 1) with a bottle of water and a mop,
--- and a litre stands at (3, 1). The bottle's 22 mL is under what the air
+-- Sand, with one basalt cliff at (2, 0) that no spill can lie on. The
+-- player stands at (2, 1) with a bottle of water and a mop, and a litre
+-- stands at (3, 1). The bottle's 22 mL is under what the air
 -- over a tile takes up as vapour, so it is gone in a second or two: the
 -- mop gets the litre.
 t.world(
@@ -15,11 +16,12 @@ t.world(
     environment: (kind: Exact(terrestrial)),
     legend: {
         'a': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sand_ground"), components: [])),
+        'c': (composition: (substrate: Named("cliff"), material: Named("basalt_cliff"), components: [])),
     },
     levels: [
         (
             rows: [
-                "aaaaa",
+                "aacaa",
                 "aaaaa",
                 "aaaaa",
             ],
@@ -79,10 +81,18 @@ t.use_self(p)
 t.tick()
 t.messages(p)
 
--- POURING onto sand: the click reaches the handler on open ground, not
--- only on plating.
 local full = held(bottle)
 assert(full > 1, "a full bottle, got " .. full .. " mol")
+
+-- A CLIFF holds no spill: refused out loud, and the bottle keeps its water.
+composition.click_deck(p, 2, 0)
+t.tick()
+local refused = said()
+assert(refused == "There is no footing there to tip the bottle out onto.", "the cliff refuses: " .. refused)
+assert(math.abs(held(bottle) - full) < 1e-6, "the bottle is still full")
+
+-- POURING onto sand: the click reaches the handler on open ground, not
+-- only on plating.
 composition.click_deck(p, 1, 1)
 t.tick()
 local tipped = said()
@@ -106,6 +116,6 @@ composition.click_deck(p, 3, 1)
 t.tick()
 t.run_seconds(1.6)
 local stroke = said()
-assert(stroke == "You run the mop over the deck.", "the stroke is reported: " .. stroke)
+assert(stroke == "You run the mop over the ground.", "the stroke is reported: " .. stroke)
 local lifted = held(mop) * WATER_ML_PER_MOL / 1000
 assert(lifted > 0.9 * HEAD_L, ("the mop takes a head off the ground: %g L"):format(lifted))
