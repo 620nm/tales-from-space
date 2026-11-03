@@ -742,8 +742,9 @@ if sim ~= nil then
         "move.cross.done",
         { kind = "react" },
         function(ev: MoveCrossDonePayload): ()
-            wading.on_cross_done(ev)
+            -- The seam transfer first: a wading fault must not strand a body.
             map_boot.on_cross_done(ev)
+            wading.on_cross_done(ev)
         end
     )
     script_definition:handle("interaction.drag", { kind = "replace", route = "drag" }, body_drag.on_drag)
