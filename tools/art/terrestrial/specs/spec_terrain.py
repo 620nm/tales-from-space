@@ -4,6 +4,7 @@ terrain, glacial ice, stepped cliffs, and matte boulder outcrops (`TERRAIN_SPRIT
 """
 from __future__ import annotations
 
+from collections.abc import Callable
 import math
 from pathlib import Path
 import sys
@@ -15,6 +16,7 @@ if __package__:
         LIGHT_Y,
         build_basalt_plate_32,
         build_layers,
+        flat_variant_ring_mismatch,
         make_grid,
         prune_lone_pixels_per_block,
         put_exclusive,
@@ -33,6 +35,7 @@ else:
         LIGHT_Y,
         build_basalt_plate_32,
         build_layers,
+        flat_variant_ring_mismatch,
         make_grid,
         prune_lone_pixels_per_block,
         put_exclusive,
@@ -58,18 +61,27 @@ _SILICATE_SEEDS: list[tuple[float, float, float, float]] = [
 ]
 
 
+# Tight 5-step ramp: M(rare pocket <3%) - N(crevice) - A(slope) - C(calm body) - L(sparse lip)
+_SILICATE_PLATE: dict[str, Any] = {
+    "ramp": ("M", "N", "A", "C", "L"),
+    "warp_amp": 2.25,
+    "warp_seed": 1.4,
+    "pocket_thresh": 0.44,
+    "taper_thresh": -0.12,
+    "lip_thresh": 0.12,
+}
+
+# Interior seeds that re-cut the flat block's slabs, one list per flat variant.
+_SILICATE_FLAT_SEEDS: list[list[tuple[float, float, float, float]]] = [
+    [(12.6, 12.2, 1.30, 0.30), (20.4, 21.0, 1.10, -0.40)],
+    [(19.2, 10.8, 1.25, -0.20), (10.8, 20.4, 1.20, 0.45), (22.2, 19.6, 0.80, 0.10)],
+    [(16.0, 16.4, 1.50, 0.60), (9.4, 10.2, 0.90, -0.30)],
+]
+
+
 def gen_terrain_silicate_rough_smooth() -> list[dict[str, Any]]:
     master = make_grid(160, 32)
-    # Tight 5-step ramp: M(rare pocket <3%) - N(crevice) - A(slope) - C(calm body) - L(sparse lip)
-    plate_32 = build_basalt_plate_32(
-        _SILICATE_SEEDS,
-        ramp=("M", "N", "A", "C", "L"),
-        warp_amp=2.25,
-        warp_seed=1.4,
-        pocket_thresh=0.44,
-        taper_thresh=-0.12,
-        lip_thresh=0.12,
-    )
+    plate_32 = build_basalt_plate_32(_SILICATE_SEEDS, **_SILICATE_PLATE)
     inset = 2.35
     r_conv = 2.2
 
@@ -107,15 +119,15 @@ def gen_terrain_silicate_rough_smooth() -> list[dict[str, Any]]:
                     else:
                         master[y][ox + x] = "M" if s < 0.90 else ("C" if ny < 0.0 else "A")
 
-    layers = split_by_token_sets(
-        master,
-        [
-            ("shelf_edge_and_crevices", {"S", "M", "N"}, 255),
-            ("regolith_plates", {"A", "C"}, 255),
-            ("plate_lips", {"L"}, 255),
-        ],
-    )
+    layers = split_by_token_sets(master, _SILICATE_LAYERS)
     return [{"duration_ms": 200, "layers": layers}]
+
+
+_SILICATE_LAYERS: list[tuple[str, set[str], int]] = [
+    ("shelf_edge_and_crevices", {"S", "M", "N"}, 255),
+    ("regolith_plates", {"A", "C"}, 255),
+    ("plate_lips", {"L"}, 255),
+]
 
 
 # ==============================================================================
@@ -131,6 +143,38 @@ _ICE_SEEDS: list[tuple[float, float, float, float]] = [
 ]
 
 
+# Whisper-soft 4-step pale ice ramp: A(170) - C(196) - L(217) - E(238), ZERO dark cracks!
+_ICE_PLATE: dict[str, Any] = {
+    "ramp": ("A", "A", "C", "L", "E"),
+    "warp_amp": 2.10,
+    "warp_seed": 4.3,
+    "pocket_thresh": 0.95,
+    "taper_thresh": -0.05,
+    "lip_thresh": 0.14,
+}
+
+_ICE_FLAT_SEEDS: list[list[tuple[float, float, float, float]]] = [
+    [(15.2, 11.6, 1.35, -0.25), (11.0, 21.2, 1.15, 0.35)],
+    [(20.6, 14.0, 1.30, 0.40), (11.6, 11.4, 1.00, -0.15), (17.4, 22.0, 0.95, 0.20)],
+    [(13.4, 16.2, 1.55, 0.10), (22.0, 9.8, 0.90, -0.45)],
+]
+
+_ICE_FLAT_LAYERS: list[tuple[str, set[str], int]] = [
+    ("planar_ice_sheet", {"A", "C", "L"}, 255),
+    ("specular_brow_glints", {"E", "W"}, 255),
+]
+
+
+def _ice_plate_32(inner_seeds: list[tuple[float, float, float, float]] | None = None) -> list[list[str]]:
+    ice_32 = build_basalt_plate_32(_ICE_SEEDS, inner_seeds=inner_seeds, **_ICE_PLATE)
+    # Soft diagonal glacial sheen so plate interiors aren't dead-flat across quadrant boundaries
+    for y in range(32):
+        for x in range(32):
+            if ice_32[y][x] == "L" and torus_wave(x, y, seed=5.9) < -0.18:
+                ice_32[y][x] = "C"
+    return ice_32
+
+
 def gen_terrain_ice_sheet_smooth() -> list[dict[str, Any]]:
     layer_defs = [
         ("submerged_calving_skirt", 160),
@@ -139,21 +183,7 @@ def gen_terrain_ice_sheet_smooth() -> list[dict[str, Any]]:
         ("specular_brow_glints", 255),
     ]
     grids = [make_grid(160, 32) for _ in layer_defs]
-    # Whisper-soft 4-step pale ice ramp: A(170) - C(196) - L(217) - E(238), ZERO dark cracks!
-    ice_32 = build_basalt_plate_32(
-        _ICE_SEEDS,
-        ramp=("A", "A", "C", "L", "E"),
-        warp_amp=2.10,
-        warp_seed=4.3,
-        pocket_thresh=0.95,
-        taper_thresh=-0.05,
-        lip_thresh=0.14,
-    )
-    # Soft diagonal glacial sheen so plate interiors aren't dead-flat across quadrant boundaries
-    for y in range(32):
-        for x in range(32):
-            if ice_32[y][x] == "L" and torus_wave(x, y, seed=5.9) < -0.18:
-                ice_32[y][x] = "C"
+    ice_32 = _ice_plate_32()
     inset = 3.00
     r_conv = 1.75
 
@@ -227,13 +257,25 @@ _CLIFF_PLATEAU_SEEDS: list[tuple[float, float, float, float]] = [
     (18.2, 27.4, 1.40, 0.24),
 ]
 
-_CLIFF_PLATEAU_32: list[list[str]] = build_basalt_plate_32(
-    _CLIFF_PLATEAU_SEEDS,
-    ramp=("N", "N", "A", "C", "L"),
-    warp_amp=1.35,
-    warp_seed=2.7,
-    pocket_thresh=0.95,
-)
+_CLIFF_PLATE: dict[str, Any] = {
+    "ramp": ("N", "N", "A", "C", "L"),
+    "warp_amp": 1.35,
+    "warp_seed": 2.7,
+    "pocket_thresh": 0.95,
+}
+
+_CLIFF_PLATEAU_32: list[list[str]] = build_basalt_plate_32(_CLIFF_PLATEAU_SEEDS, **_CLIFF_PLATE)
+
+_CLIFF_FLAT_SEEDS: list[list[tuple[float, float, float, float]]] = [
+    [(13.8, 11.0, 1.30, 0.15), (19.6, 21.8, 1.20, -0.30)],
+    [(10.6, 18.4, 1.25, 0.35), (21.4, 12.6, 1.15, -0.10), (15.6, 23.2, 0.85, 0.25)],
+    [(16.6, 15.0, 1.50, -0.40), (10.2, 9.6, 0.95, 0.20)],
+]
+
+_CLIFF_FLAT_LAYERS: list[tuple[str, set[str], int]] = [
+    ("cliff_escarpment_face", {"N"}, 255),
+    ("plateau_strata", {"A", "C", "L"}, 255),
+]
 
 
 def _shade_south_cliff_column(x: int, u_v: float, w_s: float) -> tuple[int, str] | None:
@@ -582,6 +624,70 @@ def gen_prop_rough_outcrop_2() -> list[dict[str, Any]]:
 
 
 # ==============================================================================
+# 6. Flat variants — alternative block-4 pictures for `flats` (anti-wallpaper)
+#    Each re-cuts the plain flat block's interior with extra slab seeds and keeps its
+#    outer band, so any variant joins any neighbour the plain block joins.
+# ==============================================================================
+def _flat_variant_specs(
+    strip_id: str,
+    stem: str,
+    plain: list[list[str]],
+    build: Callable[[list[tuple[float, float, float, float]]], list[list[str]]],
+    seed_sets: list[list[tuple[float, float, float, float]]],
+    layer_sets: list[tuple[str, set[str], int]],
+    category: str,
+    default_tint: str,
+) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for n, seeds in enumerate(seed_sets, start=1):
+        sid = f"{stem}_flat_{n}"
+        tile = build(seeds)
+        if flat_variant_ring_mismatch(plain, tile) != 0:
+            raise ValueError(f"{sid}: outer band differs from {strip_id} block 4")
+        if tile == plain:
+            raise ValueError(f"{sid}: identical to {strip_id} block 4")
+        layers = [lyr for lyr in split_by_token_sets(tile, layer_sets) if any(ch != "." for row in lyr["rows"] for ch in row)]
+        out.append({
+            "id": sid,
+            "title": f"{strip_id} flat variant {n}",
+            "element": "terrestrial",
+            "category": category,
+            "kind": "single",
+            "flat_of": strip_id,
+            "colorable": True,
+            "require_top_light": False,
+            "allow_multipart": False,
+            "ase_relpath": f"assets/originals/art/terrestrial/{sid}.aseprite",
+            "tag": "idle",
+            "default_tint": default_tint,
+            "citation": f"assets/originals/art/terrestrial/{sid}.aseprite (flat block 4 of {strip_id})",
+            "description": f"32x32 alternative flat block for {strip_id}: re-cut interior slabs, outer band identical to block 4.",
+            "frames": [{"duration_ms": 200, "layers": layers}],
+        })
+    return out
+
+
+FLAT_VARIANT_SPRITES: list[dict[str, Any]] = [
+    *_flat_variant_specs(
+        "terrain_silicate_rough_smooth", "terrain_silicate_rough",
+        build_basalt_plate_32(_SILICATE_SEEDS, **_SILICATE_PLATE),
+        lambda s: build_basalt_plate_32(_SILICATE_SEEDS, inner_seeds=s, **_SILICATE_PLATE),
+        _SILICATE_FLAT_SEEDS, _SILICATE_LAYERS, "terrain", "#B85C3C",
+    ),
+    *_flat_variant_specs(
+        "terrain_ice_sheet_smooth", "terrain_ice_sheet",
+        _ice_plate_32(), _ice_plate_32, _ICE_FLAT_SEEDS, _ICE_FLAT_LAYERS, "ice", "#D4EFF7",
+    ),
+    *_flat_variant_specs(
+        "terrain_cliff_stepped_smooth", "terrain_cliff_stepped",
+        _CLIFF_PLATEAU_32,
+        lambda s: build_basalt_plate_32(_CLIFF_PLATEAU_SEEDS, inner_seeds=s, **_CLIFF_PLATE),
+        _CLIFF_FLAT_SEEDS, _CLIFF_FLAT_LAYERS, "cliff", "#9E482C",
+    ),
+]
+
+
+# ==============================================================================
 # Exported Terrain, Ice, Cliff & Outcrop Sprite Specs
 # ==============================================================================
 TERRAIN_SPRITES: list[dict[str, Any]] = [
@@ -665,4 +771,5 @@ TERRAIN_SPRITES: list[dict[str, Any]] = [
         "description": "32x32 craggy stepped basalt boulder cluster with 1px #444444 joint clefts, chiseled NW slab facets, and grounded southern talus base.",
         "frames": gen_prop_rough_outcrop_2(),
     },
+    *FLAT_VARIANT_SPRITES,
 ]

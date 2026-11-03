@@ -130,7 +130,11 @@ return {
                 { at_ml = 1, sprites = { "solid_shards_small" } },
                 { at_ml = 25, sprites = { "solid_shards_large" } },
                 -- A sheet of it, standing in a bed.
-                { at_ml = 400000, alone = true, shell = { still = "terrain_ice_sheet_smooth" } },
+                { at_ml = 400000, alone = true, shell = {
+                    still = "terrain_ice_sheet_smooth",
+                    flats = { "terrain_ice_sheet_smooth_0_4", "terrain_ice_sheet_flat_1",
+                              "terrain_ice_sheet_flat_2", "terrain_ice_sheet_flat_3" },
+                } },
             },
         },
         {
@@ -155,7 +159,11 @@ return {
             phase = "solid",
             alpha = { min = 1, max = 1 },
             rungs = {
-                { at_ml = 1, shell = { still = "terrain_silicate_rough_smooth" } },
+                { at_ml = 1, shell = {
+                    still = "terrain_silicate_rough_smooth",
+                    flats = { "terrain_silicate_rough_smooth_0_4", "terrain_silicate_rough_flat_1",
+                              "terrain_silicate_rough_flat_2", "terrain_silicate_rough_flat_3" },
+                } },
             },
         },
         {

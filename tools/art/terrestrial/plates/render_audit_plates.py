@@ -691,6 +691,25 @@ def _render_partial_4x4(atlas_tinted: Image.Image, bg32: Image.Image) -> Image.I
     return out
 
 
+def _flat_field_4x4(pictures: list[Image.Image]) -> Image.Image:
+    r"""A 4x4 field picking each tile's flat picture by a position hash, as `flats` does."""
+    out = Image.new("RGBA", (128, 128))
+    for gy in range(4):
+        for gx in range(4):
+            h = ((gx * 374761393 + gy * 668265263 + 0x2545F491) & 0xFFFFFFFF) * 1274126177 & 0xFFFFFFFF
+            out.alpha_composite(pictures[(h >> 16) % len(pictures)], (gx * 32, gy * 32))
+    return out
+
+
+def _flat_pictures(bank: AssetBank, strip_id: str, tint: str) -> list[Image.Image]:
+    r"""The strip's own flat block, then every manifest single whose `flat_of` names the strip."""
+    pics = [cell_47(tint_srgb_multiply(bank.atlas(strip_id), tint), 255, 0)]
+    for rec in bank.terrestrial_records:
+        if rec.get("flat_of") == strip_id:
+            pics.append(tint_srgb_multiply(bank.atlas(rec["id"]), tint).crop((0, 0, 32, 32)))
+    return pics
+
+
 def render_plate_09(bank: AssetBank, out_dir: Path) -> Path:
     def load_tinted(asset_id: str, tint: str | None = None) -> Image.Image:
         return tint_srgb_multiply(bank.atlas(asset_id), tint)
@@ -725,10 +744,19 @@ def render_plate_09(bank: AssetBank, out_dir: Path) -> Path:
         ("NEW: moss over grass mix (4x4)", _render_partial_4x4(mo_earth, grass_on_soil), (134, 234, 172, 255)),
         ("REF: tg_grass_damaged (4x4)", _tile_4x4(get_ex_32("tg_grass_damaged_smooth")), (168, 206, 238, 255)),
     ]
+    mars = BIOME_TINT_PRESETS["mars_cryo_ammonia"]
+    for strip_id, short, role in (
+        ("terrain_silicate_rough_smooth", "rock", "silicate"),
+        ("terrain_ice_sheet_smooth", "ice", "ice"),
+        ("terrain_cliff_stepped_smooth", "cliff plateau", "cliff"),
+    ):
+        pics = _flat_pictures(bank, strip_id, mars[role])
+        panels.append((f"OLD: {short} block 4 only (4x4)", _tile_4x4(pics[0]), (238, 170, 120, 255)))
+        panels.append((f"NEW: {short} flats x{len(pics)} (4x4)", _flat_field_4x4(pics), (134, 234, 172, 255)))
 
     f_title, f_sub = load_font(16, bold=True, mono=True), load_font(12, mono=True)
     f_lbl, f_small = load_font(12, bold=True, mono=True), load_font(11, mono=True)
-    W, H = 1664, 1068
+    W, H = 1664, 72 + ((len(panels) + 3) // 4) * 326
     board = Image.new("RGBA", (W, H), (16, 20, 28, 255))
     draw = ImageDraw.Draw(board)
     draw.text((24, 16), "PLATE 09 — 4x4 TILING ANTI-REPETITION & ANTI-GOOSEPIMPLE AUDIT (2x PIXEL + 1x NATIVE GAME SCALE)", font=f_title, fill=(238, 244, 252, 255))
