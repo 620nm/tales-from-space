@@ -7,6 +7,7 @@
 -- NOT PORTED: stamina, athletics, swimmer traits and the high-gravity
 -- doubling (swimming_tile.dm:79-101,145-153): this pack has none of them.
 local airborne = require("@lib/medical/airborne")
+local tile_geometry = require("@lib/tile_geometry")
 
 export type WadingBand = {
     key: string,
@@ -49,14 +50,19 @@ wading.SWIM = {
     breath_capacity = "breathing",
 }
 
--- A tile is one metre square, so a cubic metre of liquid is a metre deep.
-local ML_PER_M_DEPTH = 1e6
+-- Millilitres of liquid that stand one metre deep over a tile's floor.
+local ML_PER_M_DEPTH = tile_geometry.width_m * tile_geometry.depth_m * 1e6
 local LOSE_BREATH_PURPOSE = "wading.lose_breath"
 
 -- A contribute handler must answer a table; this one adds nothing.
 local NO_COST = {}
 
+-- Liquid stands deep only on ground: a tile with no ground material (a
+-- deck) answers dry off one string read, before the matter table is built.
 local function depth_m(at: TileAddress): number
+    if sim.turf.material_at(at) == nil then
+        return 0
+    end
     local read = sim.matter_read(at.matter)
     if read == nil then
         return 0
@@ -180,6 +186,10 @@ function wading.on_cross_done(ev: MoveCrossDonePayload): ()
     sim.spawn_task(body, function()
         while held.generation == generation do
             sim.sleep(interval)
+            -- A step that restarted the pass while this one slept owns it now.
+            if held.generation ~= generation then
+                break
+            end
             if not body.alive or not swims_at(standing_tile(body)) then
                 break
             end

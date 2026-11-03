@@ -2,7 +2,8 @@
 -- the plan's own 200 ms; off the sea's 0.5 m shallows 0.1 s more, tg's
 -- water slowdown; off its 1.5 m deep water 0.8 s more, with tg's deep
 -- swimming modifier on top. A crewman standing in deep water keeps his head
--- out; lying in it he drowns, 2 oxy a second (swimming_tile.dm:166).
+-- out; lying in it he drowns, 2 oxy a second (swimming_tile.dm:166), unless
+-- he is on internals, and the pass ends when he leaves the deep water.
 --
 -- Columns 0-3 are sand, 4-7 shallows, 8-13 sea, under the `warm_outdoors`
 -- sky; the crewman starts on the sand and walks east into the sea.
@@ -93,12 +94,68 @@ assert(step_ticks(0) < step_ticks(WADE_S) and step_ticks(WADE_S) < step_ticks(SW
 t.run_seconds(12)
 assert(oxy(p) == 0, "a crewman standing in deep water does not drown, oxy " .. oxy(p))
 
--- Lying down in it, he drowns: two swim passes put at least 20 oxy on him,
--- and past tg's 50 he passes out (OXYLOSS_PASSOUT_THRESHOLD, mobs.dm:14).
-t.rest(p, true)
-assert(assert(t.body(p)).posture == "lying", "resting lays him in the water")
+local function lie(down: boolean): ()
+    t.rest(p, down)
+    t.run_ticks(2)
+    local posture = assert(t.body(p)).posture
+    assert((posture == "lying") == down, "resting sets his posture, " .. tostring(posture))
+end
+
+-- Hold one direction until he stands on column `goal`; every step lands.
+local function walk_to(goal: number): ()
+    local dir = if goal > t.pos(p) then "east" else "west"
+    for _ = 1, 40 * step_ticks(SWIM_S) do
+        if t.pos(p) == goal then
+            return
+        end
+        t.move(p, dir)
+        t.tick()
+    end
+    error(`the crewman walked to column {goal}, reached {t.pos(p)}`)
+end
+
+-- Lying down in it, he drowns: two swim passes put at least 20 oxy on him.
+lie(true)
 t.run_seconds(11)
-assert(oxy(p) >= 15, "lying in deep water drowns, oxy " .. oxy(p))
+local drowned = oxy(p)
+assert(drowned >= 15, "lying in deep water drowns, oxy " .. drowned)
+
+-- Out on the sand the pass ends: lying there two passes long adds nothing.
+lie(false)
+walk_to(0)
+lie(true)
+t.run_seconds(11)
+assert(oxy(p) <= drowned, `lying on dry sand does not drown, oxy {drowned} -> {oxy(p)}`)
+
+-- On internals he lies in the sea and breathes (swimming_tile.dm:164).
+local function bottle_row(): number
+    for index, id in ipairs(t.stored(p, "back")) do
+        if id == "emergency_tank.oxygen" then
+            return index
+        end
+    end
+    error("the crewman carries a pocket oxygen tank")
+end
+lie(false)
+t.take_from(p, "back", bottle_row())
+t.run_ticks(2)
+t.use_self(p)
+t.run_ticks(2)
+assert(assert(t.vitals(p)).tank ~= nil, "the valve is open")
+walk_to(LAST_X)
+lie(true)
+local tanked = oxy(p)
+t.run_seconds(11)
+assert(oxy(p) <= tanked, `internals keep him from drowning, oxy {tanked} -> {oxy(p)}`)
+
+-- Letting go of the bottle shuts it, and the running pass drowns him: past
+-- tg's 50 he passes out (OXYLOSS_PASSOUT_THRESHOLD, mobs.dm:14).
+t.drop(p)
+t.run_ticks(2)
+assert(assert(t.vitals(p)).tank == nil, "dropping the bottle shuts it")
+t.run_seconds(11)
+-- A breath that lands between passes takes some back, so one pass net.
+assert(oxy(p) >= tanked + 5, `without internals he drowns again, oxy {tanked} -> {oxy(p)}`)
 t.run_seconds(30)
 assert(oxy(p) >= 50, "and keeps drowning, oxy " .. oxy(p))
 assert(not assert(t.body(p)).conscious, "until he passes out")
