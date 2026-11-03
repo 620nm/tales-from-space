@@ -104,19 +104,13 @@ local prototypes = {
     { kind = "structure", id = "outcrop.cluster", section = "Natural", category = "" },
 }
 
-local function mode(label: string)
-    return {
-        label = label,
-        tools = { "select", "paint", "fill", "erase", "clone", "link" },
-        lenses = { "surface", "subfloor", "blend", "networking" },
-        prototypes = prototypes,
-    }
-end
-
 return {
     version = 1,
     pack = "lunatic/tfs",
-    revision = "8",
+    revision = "9",
+    tools = { "select", "paint", "fill", "erase", "clone", "link" },
+    lenses = { "surface", "subfloor", "blend", "networking" },
+    prototypes = prototypes,
     -- New-level fills by band (the engine's docs/mapping/editor-declarations.md):
     -- rock below a planet's ground, whose mined tile keeps the profile's cold
     -- ground (the icemoon mineral leaves snow, minerals.dm:677); blank below
@@ -125,10 +119,5 @@ return {
     levels = {
         terrestrial = { subterrain = { components = { { component = "rock" } } }, terrain = {}, open_air = {} },
         space = { subterrain = {}, terrain = {}, open_air = {} },
-    },
-    default_mode = "space_station",
-    modes = {
-        space_station = mode("Space Station"),
-        free_build = mode("Free Build"),
     },
 }

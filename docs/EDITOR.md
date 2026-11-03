@@ -1,6 +1,6 @@
 # Station editor declarations
 
-`content/editor.luau` configures both station modes using the engine's
+`content/editor.luau` configures the one editor surface using the engine's
 `docs/mapping/editor-declarations.md` declarative schema. Prototype `previews` are ordered
 rules: the first matching `when` selects a bottom-to-top `layers` stack.
 Conditions read placement properties over the roster's defaults, including

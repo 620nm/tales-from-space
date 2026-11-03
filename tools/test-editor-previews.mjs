@@ -27,7 +27,7 @@ if (skip) test("editor previews", { skip }, () => {});
 // rock below a planet's ground, blank below ground in space, blank ground, blank
 // open air (a blank tile above ground is sky).
 test("editor.levels fills a new level by band for both environment kinds", { skip }, () => {
-  assert.equal(manifest.revision, "8", "the served declaration revision");
+  assert.equal(manifest.revision, "9", "the served declaration revision");
   assert.deepEqual(Object.keys(manifest.levels).sort(), ["space", "terrestrial"]);
   for (const [kind, bands] of Object.entries(manifest.levels)) {
     assert.deepEqual(Object.keys(bands).sort(), ["open_air", "subterrain", "terrain"], `${kind} bands`);
@@ -38,10 +38,10 @@ test("editor.levels fills a new level by band for both environment kinds", { ski
     assert.deepEqual(bands.open_air, {}, `${kind} open_air inherits to sky`);
   }
 });
-for (const [mode, declaration] of Object.entries(manifest?.modes ?? {})) {
-  test(`${mode} previews every airlock livery, glazing, position and bolt setting`, () => {
+if (manifest) {
+  test("the editor previews every airlock livery, glazing, position and bolt setting", () => {
     for (const [id, props] of Object.entries(defaults)) {
-      const schema = declaration.prototypes.find((p) => p.kind === "structure" && p.id === id);
+      const schema = manifest.prototypes.find((p) => p.kind === "structure" && p.id === id);
       assert(schema, `${id} has a preview`);
       const base = art[props.paint][0] + (props.glass ? "_glass" : "");
       assert.deepEqual(preview(schema, { open: false, bolted: false, ...props }), [base], `${id} defaults`);
@@ -50,7 +50,7 @@ for (const [mode, declaration] of Object.entries(manifest?.modes ?? {})) {
           const expected = [solid + (glass ? "_glass" : "") + (open ? "_open" : "")];
           if (bolted && !open) expected.push(light);
           assert.deepEqual(preview(schema, { ...props, paint, glass, open, bolted }), expected,
-            JSON.stringify({ mode, id, paint, glass, open, bolted }));
+            JSON.stringify({ id, paint, glass, open, bolted }));
         }
       }
     }

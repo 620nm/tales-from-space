@@ -261,7 +261,7 @@ test("failure-only canister states stay outside the buildable policy", () => {
   assert.throws(() => assertConstructionGraph(fixture), /canister.*no teardown route/);
 });
 
-fact("the roster manifest identifies this pack independently of editor modes", () => {
+fact("the roster manifest identifies this pack independently of the editor declaration", () => {
   assertPackManifest(roster);
 });
 
@@ -291,14 +291,8 @@ fact("the editor rosters full and empty paper bins", () => {
 // `editor: null` is a clean exit: the engine returns Ok when
 // content/editor.luau is merely absent, so presence is the fact.
 fact("the pack ships the editor declaration that declares its palettes", () => {
-  assert(roster.editor, "content/editor.luau declares this pack's modes, palettes, property schemas and previews");
+  assert(roster.editor, "content/editor.luau declares this pack's palettes, property schemas and previews");
   assert.equal(roster.editor.pack, "lunatic/tfs", "content/editor.luau names its pack lunatic/tfs");
-  assert.equal(roster.editor.default_mode, "space_station", "the editor opens a map in Space Station");
-});
-
-fact("the editor offers Space Station and Free Build by those names", () => {
-  assert.equal(roster.editor.modes?.space_station?.label, "Space Station", "the full station round is shown as Space Station");
-  assert.equal(roster.editor.modes?.free_build?.label, "Free Build", "the construction playground is shown as Free Build");
 });
 
 // Every flag reads declared content (the engine's
