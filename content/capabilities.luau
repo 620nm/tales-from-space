@@ -7,6 +7,8 @@
 -- The simulation runs at tg's own 20 Hz: TICKLAG 0.5 deciseconds
 -- (tgstation/config/config.txt:268-273) mirrors an fps default of 20
 -- (tgstation/code/controllers/configuration/entries/general.dm:216-247).
+local tile_geometry = require("@lib/tile_geometry")
+
 return {
     interactions = {
         body = true,
@@ -36,11 +38,15 @@ return {
         power = true,
         wind = true,
         tick_hz = 20,
-        -- A cell is a 1 m floor tile under a 3 m deck-to-deck level: 3 m3.
-        -- tg's turf is 2.5 m3 (`#define CELL_VOLUME 2500`,
+        -- A cell is a 1 m floor tile under a 3 m deck-to-deck level: 3 m3
+        -- (lib/tile_geometry.luau). tg's turf is 2.5 m3 (`#define CELL_VOLUME 2500`,
         -- tgstation/code/__DEFINES/atmospherics/atmos_core.dm:152). A fall
         -- drops `height_m` per level.
-        tile = { width_m = 1, depth_m = 1, height_m = 3 },
+        tile = {
+            width_m = tile_geometry.width_m,
+            depth_m = tile_geometry.depth_m,
+            height_m = tile_geometry.height_m,
+        },
         -- The farthest sideways carry an item may answer when it falls, in
         -- tiles. A folded paper plane asks 2 per level it drops
         -- (`content/lib/paper_plane.luau`), so 8 covers a four-level fall.

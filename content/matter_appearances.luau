@@ -130,7 +130,11 @@ return {
                 { at_ml = 1, sprites = { "solid_shards_small" } },
                 { at_ml = 25, sprites = { "solid_shards_large" } },
                 -- A sheet of it, standing in a bed.
-                { at_ml = 400000, alone = true, shell = { still = "terrain_ice_sheet_smooth" } },
+                { at_ml = 400000, alone = true, shell = {
+                    still = "terrain_ice_sheet_smooth",
+                    flats = { "terrain_ice_sheet_smooth_0_4", "terrain_ice_sheet_flat_1",
+                              "terrain_ice_sheet_flat_2", "terrain_ice_sheet_flat_3" },
+                } },
             },
         },
         {
@@ -141,6 +145,29 @@ return {
             rungs = {
                 { at_ml = 1, sprites = { "solid_scattering" } },
                 { at_ml = 25, shell = { still = "solid_debris_jagged_smooth" } },
+            },
+        },
+        -- Plants: a thin coat over natural ground (blends/meadow.luau holds
+        -- a litre a tile). It thins as it burns and is gone under 100 mL,
+        -- leaving the ground face and whatever ash the fire made.
+        {
+            key = "grass",
+            visual_layer = "matter_ground",
+            phase = "solid",
+            full_volume_ml = 1000,
+            alpha = { min = 0.4, max = 1.0 },
+            rungs = {
+                { at_ml = 100, shell = { still = "solid_grass_smooth" } },
+            },
+        },
+        {
+            key = "moss",
+            visual_layer = "matter_ground",
+            phase = "solid",
+            full_volume_ml = 1000,
+            alpha = { min = 0.4, max = 1.0 },
+            rungs = {
+                { at_ml = 100, shell = { still = "solid_moss_smooth" } },
             },
         },
         -- What a tile's ground material draws as (content/terrain.luau
@@ -155,7 +182,26 @@ return {
             phase = "solid",
             alpha = { min = 1, max = 1 },
             rungs = {
-                { at_ml = 1, shell = { still = "terrain_silicate_rough_smooth" } },
+                { at_ml = 1, shell = {
+                    still = "terrain_silicate_rough_smooth",
+                    flats = { "terrain_silicate_rough_smooth_0_4", "terrain_silicate_rough_flat_1",
+                              "terrain_silicate_rough_flat_2", "terrain_silicate_rough_flat_3" },
+                } },
+            },
+        },
+        -- A cliff's face (terrain.luau `cliff`): the stepped escarpment,
+        -- drawn as `ground_shell` is, so a cliff joins only cliff of one tint.
+        {
+            key = "cliff_shell",
+            visual_layer = "ground_face",
+            phase = "solid",
+            alpha = { min = 1, max = 1 },
+            rungs = {
+                { at_ml = 1, shell = {
+                    still = "terrain_cliff_stepped_smooth",
+                    flats = { "terrain_cliff_stepped_smooth_0_4", "terrain_cliff_stepped_flat_1",
+                              "terrain_cliff_stepped_flat_2", "terrain_cliff_stepped_flat_3" },
+                } },
             },
         },
         {

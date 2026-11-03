@@ -94,6 +94,15 @@ floor up at once for its one glass tile and leaves plating, as tg does
 (`floor.dm:144-174`, `glass.dm:16,74,92,108`). Laying a glass tile, crafting one
 from sheets and the starlight glow are not implemented.
 
+Stairs (tg `stairs.dm`) are a climb passage: a flight on plating, one per way
+up and drawn that way, under the top of the stairs on the level above, an
+undrawn, unsealed component over an open substrate that holds a body. Stepping
+onto the flight climbs to the top over it and stepping onto the top climbs back
+down, at a human step's pace; a flight with no top over it refuses the step
+(the engine's `docs/sim/level-movement.md`). tg's climb onto the tile ahead,
+merged art, tumbling and stairs frames are not ported.
+`tests/maps/stairwell.ron` is a walkable pair.
+
 Seeing down has tg's multi-z look (`levels.view` in `content/capabilities.luau`;
 the engine's `docs/architecture/map-instancing/levels.md` "Seeing down"): three
 levels below the eye, each 0.9 darker and 0.965 smaller about it, straight down.
@@ -139,6 +148,31 @@ substrate, under cover, decals, residue and matter. A plated tile draws none.
 `warm_outdoors` and `mars_surface` are the skies for soil and basalt; their
 `sink_k` equals `surface_temperature_k`, so dry ground sleeps. No mode rolls
 them yet. Spec: `tests/matter_look/ground_face_test.luau`.
+
+A cliff (tg `/turf/open/cliff`) is ground laid by the `cliff` terrain profile:
+its bed is the `cliff` substrate and its face the `cliff_shell` look, the
+stepped escarpment, joined to cliff of the same tint. Blends `basalt_cliff` and
+`silica_cliff` take it, coloured by their rock, so the terrain brush paints a
+cliff in one stroke. It is a solid barrier: dense as tg's (`cliff.dm:5`), so no
+body steps onto it, and there is no fall from its top edge; real height is
+levels. As tg's is an open turf, air, sight and shots pass it. Thrown items
+stop at it, unlike tg's (`cliff.dm:79`): the engine sweeps a throw against
+`movement_blocking`, and no primitive lets one mover pass. Climbing and mining
+it are not implemented.
+
+A boulder, `outcrop` (tg `/obj/structure/flora/rock`, `flora.dm:1027-1041`), is
+a dense, bolted structure that sight passes; `outcrop.cluster` is its
+fieldstone-cluster art. The art is greyscale under a `color` that defaults to
+basalt's and a map may override. Both sit in the editor's Natural section.
+Mining one is not implemented. Spec: `tests/terrain/cliff_test.luau`.
+
+Plants are cell matter over the ground, never ground: a mapper paints the
+`meadow` or `moss_carpet` blend, breathable air plus a litre-thin coat of
+`grass` or `moss` (`content/substances/plants/`), drawn by the `grass` and
+`moss` looks. A flame latches a plant tile like any fuel
+(`content/lib/ignition.luau`); `grass_fire` and `moss_fire` burn the coat to
+CO2, steam and ash, and the fire spreads tile to tile until the ground is
+bare. Spec: `tests/terrain/meadow_fire_test.luau`.
 
 ## Decals
 

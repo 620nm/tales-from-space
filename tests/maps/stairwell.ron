@@ -1,0 +1,37 @@
+// Two stacked rooms joined by one flight of stairs going up north at (3, 2):
+// the stairs on level zero, the top of the stairs over them on level one.
+// A wrench lies on each level so a viewer can tell them apart.
+(
+    name: "Stairwell",
+    tags: ["space"],
+    environment: (gravity_m_s2: Exact(9.80665)),
+    legend: {
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '^': (composition: (components: [(component: "station_base"), (component: "stairs_north")])),
+        'o': (composition: (substrate: Open, components: [(component: "stairs_top")])),
+    },
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#..^..#",
+                "#.....#",
+                "#######",
+            ],
+            structures: [(1, 2, "player_spawn")],
+            items: [(1, 1, "wrench")],
+        ),
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#..o..#",
+                "#.....#",
+                "#######",
+            ],
+            items: [(5, 3, "wrench")],
+        ),
+    ],
+)

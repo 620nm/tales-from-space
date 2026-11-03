@@ -27,6 +27,7 @@ local UNDERCOOL_K = 10.0
 return {
     id = "ice_block",
     name = "Ice",
+    name_label = "lunatic/tfs:blends.ice_block.name",
     rows = {
         { "water:solid", MOLES },
     },

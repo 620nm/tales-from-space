@@ -263,31 +263,35 @@ test("no_sprite_is_a_bare_colour_mask", { skip }, () => {
   // Name prefixes whose whole family is flat paint: the renderer
   // multiplies each sprite by the colour its record carries.
   const FLAT_FAMILIES = ["decal_"];
-  for (const name of bake().atlas.index.keys()) {
+  const { atlas } = bake();
+  for (const name of atlas.index.keys()) {
     if (FLAT_BY_DESIGN.includes(name) || FLAT_FAMILIES.some((p) => name.startsWith(p))) continue;
-    const pixels = cell(name);
-    const histogram = new Map();
-    let area = 0;
-    for (let i = 0; i < pixels.length; i += 4) {
-      if (pixels[i + 3] === 0) continue;
-      const key = (pixels[i] << 16) | (pixels[i + 1] << 8) | pixels[i + 2];
-      histogram.set(key, (histogram.get(key) ?? 0) + 1);
-      area++;
+    // Every frame: an animated strip can fall flat on any one of them.
+    for (let frame = 0; frame < atlas.frameCount(name); frame++) {
+      const pixels = cell(name, frame);
+      const histogram = new Map();
+      let area = 0;
+      for (let i = 0; i < pixels.length; i += 4) {
+        if (pixels[i + 3] === 0) continue;
+        const key = (pixels[i] << 16) | (pixels[i + 1] << 8) | pixels[i + 2];
+        histogram.set(key, (histogram.get(key) ?? 0) + 1);
+        area++;
+      }
+      // Tiny sprites (in-hand fragments) have too few pixels for the ratio
+      // to mean anything.
+      if (area < 40) continue;
+      let [colour, dominant] = [0, 0];
+      for (const [key, count] of histogram) if (count > dominant) [colour, dominant] = [key, count];
+      const channels = [(colour >> 16) & 0xff, (colour >> 8) & 0xff, colour & 0xff];
+      // Chromatic: drawn art, however flat. A greyscale config's silhouette
+      // is grey by construction, so this cannot excuse one.
+      if (Math.max(...channels) - Math.min(...channels) > 6) continue;
+      const frac = dominant / area;
+      assert.ok(frac < 0.85,
+        `${name} frame ${frame} is ${(frac * 100).toFixed(0)}% one colour over ${area}px — that is `
+        + "a greyscale MASK, not art. Check tg's code/datums/greyscale/json_configs for the sibling "
+        + "layers it needs, and bake them with DmiBlend.");
     }
-    // Tiny sprites (in-hand fragments) have too few pixels for the ratio
-    // to mean anything.
-    if (area < 40) continue;
-    let [colour, dominant] = [0, 0];
-    for (const [key, count] of histogram) if (count > dominant) [colour, dominant] = [key, count];
-    const channels = [(colour >> 16) & 0xff, (colour >> 8) & 0xff, colour & 0xff];
-    // Chromatic: drawn art, however flat. A greyscale config's silhouette
-    // is grey by construction, so this cannot excuse one.
-    if (Math.max(...channels) - Math.min(...channels) > 6) continue;
-    const frac = dominant / area;
-    assert.ok(frac < 0.85,
-      `${name} is ${(frac * 100).toFixed(0)}% one colour over ${area}px — that is a greyscale `
-      + "MASK, not art. Check tg's code/datums/greyscale/json_configs for the sibling layers it "
-      + "needs, and bake them with DmiBlend.");
   }
 });
 

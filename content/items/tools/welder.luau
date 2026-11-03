@@ -61,10 +61,15 @@ local content = {
     sealed = true,
 }
 
--- A lit torch held to a deck lights what burns there. Construction
--- targets answer a welder first, so welding on plating is unchanged.
+-- A lit torch held to a deck or natural ground lights what burns there.
+-- Construction targets answer a welder first, so welding on plating is
+-- unchanged.
 content.actions = {
-    action_rules.primary("ignite", action_rules.any_deck(), action_rules.fact("held.state", "lit")),
+    action_rules.primary(
+        "ignite",
+        { any = { action_rules.any_deck(), action_rules.ground() } },
+        action_rules.fact("held.state", "lit")
+    ),
 }
 
 if sim ~= nil then

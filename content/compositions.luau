@@ -198,9 +198,31 @@ for index, channel in ipairs(pipe_channels) do
 end
 local supported = { substrate_support = true, any_component = { "station_base", "catwalk" } }
 
+-- tg /obj/structure/stairs (stairs.dm:10-47): a flight whose `dir` is the way
+-- up, one per facing, under open space (openspace.dm:1-6). The engine climbs a
+-- body that steps onto a stair to the top directly over it, and back down from
+-- the top (the engine's docs/sim/level-movement.md); tg ascends on stepping off
+-- the last stair in `dir` to the tile ahead (stairs.dm:181-191,274-283) and
+-- descends by a fall the stairs catch (stairs.dm:324-334). The facing is art
+-- only. A stair with no top over it refuses the step, as tg's needs open space.
+-- tg adds no time to the climb (`zMove` at once, stairs.dm:283): the pace is a
+-- human step (content/bodies/human.luau `pace.base_ms`), so a climb costs one.
+local STAIRS_CLIMB = { kind = "climb", pace_seconds = 0.2 }
+type StairsFacing = { id: string, art: string, label: string }
+local STAIRS_FACINGS: { StairsFacing } = {
+    { id = "stairs_north", art = "stairs_n", label = "Stairs, Up North" },
+    { id = "stairs_east", art = "stairs_e", label = "Stairs, Up East" },
+    { id = "stairs_south", art = "stairs_s", label = "Stairs, Up South" },
+    { id = "stairs_west", art = "stairs_w", label = "Stairs, Up West" },
+}
+
 local construction_components = { "station_base", "floor_tiles", "grid_cover", "reinforcement",
     "lattice", "catwalk", "wall", "reinforced_wall", "rock",
-    "glass_floor", "reinforced_glass_floor", "plasma_glass_floor", "reinforced_plasma_glass_floor" }
+    "glass_floor", "reinforced_glass_floor", "plasma_glass_floor", "reinforced_plasma_glass_floor",
+    "stairs_top" }
+for _, facing in ipairs(STAIRS_FACINGS) do
+    table.insert(construction_components, facing.id)
+end
 
 -- tg /turf/open/floor/glass: in what is ported, the four variants differ in name
 -- and art only (glass.dm:2-114; the glow is not ported). Floor
@@ -219,7 +241,25 @@ local function glass_floor(id: string, label: string, light_transmission: { r: n
             light_transmission = light_transmission, thermal = thermal(20000, 0.02, 0.5) } }
 end
 
-return {
+local stairs_components: { any } = {
+    -- The top of a flight, over an open substrate: unsealed and undrawn, so the
+    -- air and the eye pass down to the stairs as through tg's open space.
+    { id = "stairs_top", label = "top of the stairs", layer = "cover",
+        physical = { support = true, receives_gravity = true, vertical_passage = STAIRS_CLIMB } },
+}
+local stairs_presets: { any } = {
+    { id = "stairs_top", label = "Top of the Stairs", substrate = "open", replace_components = construction_components,
+        components = { { component = "stairs_top" } } },
+}
+-- A flight covers the plating it stands on and the runs under it.
+for _, facing in ipairs(STAIRS_FACINGS) do
+    table.insert(stairs_components, { id = facing.id, label = "stairs", layer = "cover", sprite = facing.art,
+        cover = barrier_controls(), physical = { vertical_passage = STAIRS_CLIMB } })
+    table.insert(stairs_presets, { id = facing.id, label = facing.label, replace_components = construction_components,
+        components = { { component = "station_base" }, { component = facing.id } } })
+end
+
+local composition_declaration: { [string]: any } = {
     layers = {
         { id = "world" },
         { id = "substrate", parent = "world" },
@@ -277,6 +317,13 @@ return {
         -- /turf/open/misc heat_capacity and thermal_conductivity (misc.dm:20-21), the pack's emissivity.
         { id = "rock_floor", label = "rock floor", layer = "substrate", sprite = "rock_floor", substrate = { vacuum_boundary = false },
             physical = { ambient = 0, support = true, receives_gravity = true, thermal = thermal(20000, 0.02, 0.5) } },
+        -- tg /turf/open/cliff: dense (cliff.dm:5) but an open turf, so air and sight pass
+        -- (turf.dm:39 `blocks_air = FALSE`; no `opacity`), and so do shots (`protected_types`,
+        -- cliff.dm:15,76). The bed of the `cliff` terrain profile: the terrain brush lays it
+        -- with its face. No fall from the top edge: a cliff is a barrier; height is levels.
+        { id = "cliff", label = "cliff", layer = "substrate", sprite = "ground", substrate = { vacuum_boundary = false },
+            physical = { ambient = 0, support = true, movement_blocking = true, projectile_blocking = false,
+                thermal = thermal(20000, 0.02, 0.5) } },
         { id = "station_base", occludes_substrate = true, label = "plating", layer = "support", sprite = "plating",
             physical = { ambient = 0.10, support = true, receives_gravity = true, substrate_seal = true, thermal = thermal(62500, 0.025, 0.5) } },
         { id = "floor_tiles", label = "floor", layer = "cover", sprite = "floor", cover = controls(false, "open_floor", "exposed_cover"),
@@ -375,3 +422,9 @@ return {
         { id = "remove_catwalk", remove_components = { "catwalk" }, remove_unsupported_networks = { "power" } },
     },
 }
+
+table.move(stairs_components, 1, #stairs_components, #composition_declaration.components + 1,
+    composition_declaration.components)
+table.move(stairs_presets, 1, #stairs_presets, #composition_declaration.presets + 1, composition_declaration.presets)
+
+return composition_declaration

@@ -6,6 +6,7 @@ local MOLAR_MASS = 18.015
 return {
     id = "sheet_ice",
     name = "Sheet ice",
+    name_label = "lunatic/tfs:blends.sheet_ice.name",
     rows = {
         { "water:solid", DENSITY_G_PER_ML * 1e6 / MOLAR_MASS },
     },

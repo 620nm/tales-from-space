@@ -27,7 +27,7 @@ if (skip) test("editor previews", { skip }, () => {});
 // rock below a planet's ground, blank below ground in space, blank ground, blank
 // open air (a blank tile above ground is sky).
 test("editor.levels fills a new level by band for both environment kinds", { skip }, () => {
-  assert.equal(manifest.revision, "7", "the served declaration revision");
+  assert.equal(manifest.revision, "8", "the served declaration revision");
   assert.deepEqual(Object.keys(manifest.levels).sort(), ["space", "terrestrial"]);
   for (const [kind, bands] of Object.entries(manifest.levels)) {
     assert.deepEqual(Object.keys(bands).sort(), ["open_air", "subterrain", "terrain"], `${kind} bands`);
