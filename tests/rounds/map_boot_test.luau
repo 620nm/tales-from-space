@@ -115,3 +115,60 @@ assert(
     second_to[1] == 2 and second_to[2] == 1 and second_to[3] == 0 and second_to[4] == 0,
     "traveler lands back on (2, 1) level 0 of plane 0"
 )
+
+-- A fall onto a seam crosses too. A fall runs no `move.cross`, so the seam
+-- answers the body's landing (`motion.land.done`): the traveler walks onto a
+-- hole on level 1 whose cell below carries `seam_east`, and the engine's
+-- unanswered guess drops it there.
+local map_drop = [==[(
+    name: "seam drop",
+    tags: ["terrestrial"],
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
+    legend: {
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        'o': (composition: (substrate: Open)),
+    },
+    levels: [
+        (
+            tagged_areas: [
+                (bounds: (min: (x: 2, y: 1), max: (x: 2, y: 1)), tags: ["seam_east"]),
+            ],
+            rows: [
+                "#####",
+                "#...#",
+                "#####",
+            ],
+        ),
+        (
+            rows: [
+                "#####",
+                "#.o.#",
+                "#####",
+            ],
+            structures: [(1, 1, "player_spawn")],
+        ),
+    ],
+)]==]
+t.world(map_drop, 7, "free_build", {
+    key = "lunatic/tfs:seam_west",
+    second_map = {
+        source = map_east,
+        key = "lunatic/tfs:seam_east",
+        plane = 1,
+    },
+})
+local before = #t.ledger_rows("entity_transferred")
+local diver = t.join()
+t.tick()
+t.move(diver, "east")
+t.run_seconds(3)
+local falls = t.ledger_rows("level_changed")
+assert(#falls >= 1 and falls[#falls].via == "fall", "the diver fell through the hole")
+transfers = t.ledger_rows("entity_transferred")
+assert(#transfers == before + 1, "landing on seam_east transfers the diver once, got " .. #transfers - before)
+local drop_to = (transfers[#transfers] :: any).to :: { number }
+assert(
+    drop_to[1] == 1 and drop_to[2] == 1 and drop_to[3] == 1 and drop_to[4] == 1,
+    "the diver lands on (1, 1) level 1 of plane 1"
+)

@@ -161,14 +161,12 @@ local function swim_pass(body: Handle): ()
     end
 end
 
--- `move.cross.done` react on a body plan: a step into swimming depth
--- starts the body's pass unless one already runs (dip_in,
--- swimming_tile.dm:46-63,76-101); it ends when the body is out.
-function wading.on_cross_done(ev: MoveCrossDonePayload): ()
-    if ev.outcome ~= "completed" or not swims_at(ev.to) then
+-- Arriving in swimming depth starts the body's pass unless one already
+-- runs (dip_in, swimming_tile.dm:46-63,76-101); it ends when the body is out.
+local function start_swim(body: Handle, at: TileAddress): ()
+    if not swims_at(at) then
         return
     end
-    local body = ev.mover
     local now = sim.tick()
     local swimmer = swimmer_of(body)
     if swimmer ~= nil and now <= swimmer.due_tick then
@@ -200,6 +198,21 @@ function wading.on_cross_done(ev: MoveCrossDonePayload): ()
             forget(held)
         end
     end)
+end
+
+-- `move.cross.done` react on a body plan: a step into swimming depth.
+function wading.on_cross_done(ev: MoveCrossDonePayload): ()
+    if ev.outcome == "completed" then
+        start_swim(ev.mover, ev.to)
+    end
+end
+
+-- `motion.land.done` react on a body plan: a fall into swimming depth
+-- (a fall runs no `move.cross`).
+function wading.on_land_done(ev: MotionLandDonePayload): ()
+    if ev.outcome == "completed" and ev.actor.kind == "body" then
+        start_swim(ev.actor, ev.at)
+    end
 end
 
 return wading

@@ -14,8 +14,8 @@ export type TileStep = { x: number, y: number }
 export type Updraft = { below_k: number, here_k: number }
 -- The facts a heading is read from, shared by the ask and its completion.
 export type FallFacts = {
-    item: Handle,
-    cause: ItemFallCause,
+    entity: Handle,
+    cause: MotionCause,
     direction_x: number?,
     direction_y: number?,
 }
@@ -81,7 +81,7 @@ local function heading(facts: FallFacts): TileStep?
         end
         return dominant_step(dx, dy)
     elseif facts.cause == "slide" then
-        local vars = facts.item.vars
+        local vars = facts.entity.vars
         local dx, dy = vars[paper_plane.HEADING_X_VAR], vars[paper_plane.HEADING_Y_VAR]
         if type(dx) ~= "number" or type(dy) ~= "number" then
             return nil
@@ -98,8 +98,8 @@ end
 
 -- How far a folded plane carries along its heading: twice the levels it
 -- would drop. Anything else, or a plane with no heading, drops straight.
-function paper_plane.glide(ev: ItemFallPayload): TileStep
-    if not paper_plane.is_folded(ev.item) then
+function paper_plane.glide(ev: MotionFallPayload): TileStep
+    if not paper_plane.is_folded(ev.entity) then
         return NO_GLIDE
     end
     local step = heading(ev)
@@ -110,16 +110,13 @@ function paper_plane.glide(ev: ItemFallPayload): TileStep
     return { x = step.x * reach, y = step.y * reach }
 end
 
--- The air in the cell under the hole against the air at the plane. Air at
--- ignition heat counts whatever the air at the plane, so a plane over an
--- already-hot hole still catches fire: tg's plane burns whenever it is set
--- alight (paperplane.dm:38, `burn_on_item_ignition`), with no difference test.
-function paper_plane.updraft(at: TileAddress): Updraft?
-    local lower = sim.map_tile(at, at.x, at.y, at.z - 1)
-    if lower == nil then
-        return nil
-    end
-    local below = sim.matter_read(lower.matter)
+-- The air where the fall would land (`landing`) against the air at the
+-- plane (`at`). Air at ignition heat counts whatever the air at the plane,
+-- so a plane over an already-hot hole still catches fire: tg's plane burns
+-- whenever it is set alight (paperplane.dm:38, `burn_on_item_ignition`),
+-- with no difference test.
+function paper_plane.updraft(at: TileAddress, landing: TileAddress): Updraft?
+    local below = sim.matter_read(landing.matter)
     local here = sim.matter_read(at.matter)
     if below == nil or here == nil then
         return nil
@@ -150,7 +147,7 @@ local function has_surfed(item: Handle, at: TileAddress): boolean
 end
 
 -- A throw, drop or support loss starts a fresh surf; a slide extends it.
-local function mark_surfed(item: Handle, at: TileAddress, cause: ItemFallCause): ()
+local function mark_surfed(item: Handle, at: TileAddress, cause: MotionCause): ()
     local held = item.vars[paper_plane.SURFED_VAR]
     local surfed: { string } = {}
     if cause == "slide" and type(held) == "table" then
@@ -167,11 +164,11 @@ end
 -- A folded plane over rising warm air stays aloft instead of falling, but a
 -- slide that settles it on a hole it already surfed (a wall or a bounce
 -- brought it back) ends the surf: it falls, so heat cannot loop it.
-function paper_plane.rides_thermal(ev: ItemFallPayload): boolean
-    if not paper_plane.is_folded(ev.item) or paper_plane.updraft(ev.at) == nil then
+function paper_plane.rides_thermal(ev: MotionFallPayload): boolean
+    if not paper_plane.is_folded(ev.entity) or paper_plane.updraft(ev.at, ev.landing) == nil then
         return false
     end
-    return not (ev.cause == "slide" and has_surfed(ev.item, ev.at))
+    return not (ev.cause == "slide" and has_surfed(ev.entity, ev.at))
 end
 
 local function say(at: TileAddress, key: string): ()
@@ -222,14 +219,14 @@ local function ignite(item: Handle, at: TileAddress): ()
     end)
 end
 
--- `item.fall.done` on the paper definition: a plane that stayed on an
+-- `motion.fall.done` on the paper definition: a plane that stayed on an
 -- updraft is shoved on along its heading (and keeps it for the next ask),
 -- or burns when the air below is hot enough. Every other outcome forgets
 -- the heading. The shove and its broadcast happen once per hole surfed.
-function paper_plane.on_fall_done(ev: ItemFallDonePayload): ()
-    local item = ev.item
+function paper_plane.on_fall_done(ev: MotionFallDonePayload): ()
+    local item = ev.entity
     local lift = if not ev.fell and paper_plane.is_folded(item)
-        then paper_plane.updraft(ev.at)
+        then paper_plane.updraft(ev.at, ev.landing)
         else nil
     if lift == nil then
         paper_plane.forget(item)

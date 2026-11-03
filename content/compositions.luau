@@ -347,7 +347,7 @@ local composition_declaration: { [string]: any } = {
         -- (LINDA_turf_tile.dm:5), unrepresentable; the tile keeps its substrate's.
         -- `receives_gravity` matches the walls and is unobservable: no step enters blocking rock, and
         -- a fall neither starts onto it nor lands in it (the engine's
-        -- crates/lunatic-server/src/sim/movement/level_change.rs:resolve_fall_step).
+        -- crates/lunatic-server/src/sim/movement/levels/level_body.rs:resolve_fall_step).
         { id = "rock", occludes_substrate = true, label = "rock", layer = "cover", sprite = "rock-0", cover = barrier_controls(),
             physical = { ambient = 0, support = true, receives_gravity = true, substrate_seal = true, movement_blocking = true,
                 gas_blocking = true, opaque = true } },

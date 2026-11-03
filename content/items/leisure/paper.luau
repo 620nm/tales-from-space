@@ -141,7 +141,7 @@ if sim ~= nil then
         return { replaced = false }
     end)
 
-    behavior:handle("item.fall.done", { kind = "react", route = "land" }, paper_plane.on_fall_done)
+    behavior:handle("motion.fall.done", { kind = "react", route = "land" }, paper_plane.on_fall_done)
 end
 
 return content

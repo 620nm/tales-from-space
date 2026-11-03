@@ -34,7 +34,7 @@ native_edges = [
     "entity.pull",
     "throw.land",
     "motion.land",
-    "motion.item_fall",
+    "motion.fall",
     "matter.rupture",
     "matter.ignition",
     "matter.extinguished",

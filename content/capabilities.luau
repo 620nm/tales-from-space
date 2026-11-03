@@ -7,6 +7,7 @@
 -- The simulation runs at tg's own 20 Hz: TICKLAG 0.5 deciseconds
 -- (tgstation/config/config.txt:268-273) mirrors an fps default of 20
 -- (tgstation/code/controllers/configuration/entries/general.dm:216-247).
+local fall = require("@lib/fall")
 local tile_geometry = require("@lib/tile_geometry")
 
 return {
@@ -48,9 +49,8 @@ return {
             height_m = tile_geometry.height_m,
         },
         -- The farthest sideways carry an item may answer when it falls, in
-        -- tiles. A folded paper plane asks 2 per level it drops
-        -- (`content/lib/paper_plane.luau`), so 8 covers a four-level fall.
-        fall = { glide_max = 8 },
+        -- tiles: the one copy `content/lib/fall.luau` clamps its glides to.
+        fall = { glide_max = fall.GLIDE_MAX_TILES },
     },
     -- Seeing down is tg's multi-z look (the engine's
     -- docs/architecture/map-instancing/levels.md "Seeing down"): three levels
