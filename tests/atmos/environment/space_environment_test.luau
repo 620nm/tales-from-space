@@ -45,6 +45,7 @@ for _, map in ipairs({
     "flooded_alcove.ron",
     "plant_loop.ron",
     "programmable_airlock.ron",
+    "stairwell.ron",
     "tank_row.ron",
 }) do
     t.world_file(map, 7)

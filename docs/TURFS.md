@@ -94,6 +94,15 @@ floor up at once for its one glass tile and leaves plating, as tg does
 (`floor.dm:144-174`, `glass.dm:16,74,92,108`). Laying a glass tile, crafting one
 from sheets and the starlight glow are not implemented.
 
+Stairs (tg `stairs.dm`) are a climb passage: a flight on plating, one per way
+up and drawn that way, under the top of the stairs on the level above, an
+undrawn, unsealed component over an open substrate that holds a body. Stepping
+onto the flight climbs to the top over it and stepping onto the top climbs back
+down, at a human step's pace; a flight with no top over it refuses the step
+(the engine's `docs/sim/level-movement.md`). tg's climb onto the tile ahead,
+merged art, tumbling and stairs frames are not ported.
+`tests/maps/stairwell.ron` is a walkable pair.
+
 Seeing down has tg's multi-z look (`levels.view` in `content/capabilities.luau`;
 the engine's `docs/architecture/map-instancing/levels.md` "Seeing down"): three
 levels below the eye, each 0.9 darker and 0.965 smaller about it, straight down.

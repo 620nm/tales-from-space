@@ -1,0 +1,15 @@
+// Stairs: tg's plain flight, one picture per way up. One family of
+// `tfs/assets/sprites.ron`'s roster; baked in file-name order.
+//
+// tg draws `/obj/structure/stairs` from `stairs.dmi` "stairs" in its `dir`
+// (code/game/objects/structures/stairs.dm:14-18). NOT PORTED: the merged
+// "stairs-l"/"-m"/"-r" states a flight picks by its neighbours
+// (stairs.dm:155-179), the wood, stone and material flights and the frames.
+(
+    sheets: [
+        ("stairs", "obj/stairs.dmi"),
+    ],
+    groups: [
+        (sheet: "stairs", sprites: [Directions("stairs", "stairs")]),
+    ],
+)
