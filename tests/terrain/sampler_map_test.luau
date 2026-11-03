@@ -2,6 +2,7 @@
 -- tools/terrain-sampler.mjs) boots: sand and soil draw a ground face, the
 -- sea stands 1.5 m deep, and the cliff south of the spawn stops a body.
 -- Spawn (36, 35) is sand; the sea starts east of x = 44, the cliff at y = 38.
+-- Booting under the default mode's warm sky is `lunatic-server maps`'s check.
 t.world_file("terrain_sampler.ron", 0, "free_build")
 t.set_breathing(false)
 

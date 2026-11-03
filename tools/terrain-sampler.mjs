@@ -1,6 +1,7 @@
 // Writes maps/terrain_sampler.ron: a 64x64 shore, lake, cliff and meadow
-// sampler with a rock basement. Run `node tools/terrain-sampler.mjs`; edit the
-// map in the editor or here, never by hand. Layout is in the header comment.
+// sampler with a rock basement. Edit this file and run
+// `node tools/terrain-sampler.mjs`; a run overwrites any editor save of the map.
+// Layout is in the header comment.
 import { writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
