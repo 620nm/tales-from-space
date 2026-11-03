@@ -1,7 +1,7 @@
 -- Paper folds into a plane (content/lib/paper_plane.luau): a folded sheet
 -- thrown over an open hole glides twice the levels it drops, a flat sheet
 -- drops straight, a glide into a wall falls straight with an
--- `item_glide_refused` row (no script error),
+-- `fall_glide_refused` row (no script error),
 -- and over a hot cell the plane stays aloft, is shoved on, and burns up
 -- when the air is hot enough.
 -- A plane over heat surfs a hole once, then falls (or burns) in bounded time.
@@ -147,7 +147,7 @@ assert(#t.items_at(5, 1, LOWER) == 1, "the plane is where it landed")
 
 -- 4. A glide the lower level's wall at (4, 4) blocks falls straight, on the
 -- record: a world-state refusal row, not a script error.
-local refusals = #t.ledger_rows("item_glide_refused")
+local refusals = #t.ledger_rows("fall_glide_refused")
 fold(p, 1, 2)
 pick_up(p, 1, 2)
 t.throw(p, 3, 3)
@@ -156,7 +156,7 @@ assert(level_rows() == falls + 2, "the blocked plane fell")
 landed = t.items_at(3, 3, LOWER)
 assert(#landed == 1 and landed[1] == "paper", "it drops straight under the hole")
 assert(#t.items_at(5, 5, LOWER) == 0, "it did not reach the far side of the wall")
-assert(#t.ledger_rows("item_glide_refused") == refusals + 1, "the refused glide is on the record")
+assert(#t.ledger_rows("fall_glide_refused") == refusals + 1, "the refused glide is on the record")
 assert(#t.script_errors() == 0, "a refused glide is not a script error")
 
 -- Air under a hole: a corridor with one hole, hot air painted beneath it.
@@ -260,7 +260,7 @@ local flier = throw_plane_over_heat(HOT_WORLD, 480)
 t.run_seconds(3)
 assert(count_said(flier, "rides the rising warm air") == 1, "it rode the air once")
 assert(level_rows() == 0, "the plane never fell")
-assert(#t.ledger_rows("item_fall_stayed") >= 1, "it stayed aloft over the hole")
+assert(#t.ledger_rows("fall_stayed") >= 1, "it stayed aloft over the hole")
 assert(#t.items_at(3, 1, UPPER) == 0, "it was shoved off the hole")
 local ridden = false
 for x = 4, 8 do
@@ -289,7 +289,7 @@ assert((t.matter_totals().substances["ash"] or 0) > 0, "it left ash")
 local walled = throw_plane_over_heat(WALL_WORLD, 590)
 t.run_seconds(4)
 assert(count_said(walled, "rides the rising warm air") == 1, "the hole was surfed once")
-assert(#t.ledger_rows("item_fall_stayed") == 1, "it stayed aloft once")
+assert(#t.ledger_rows("fall_stayed") == 1, "it stayed aloft once")
 assert(level_rows() == 1, "then it fell")
 assert(#t.items_at(3, 1, UPPER) == 0, "the plane does not hover over the hole")
 assert(#t.items_at(3, 1, LOWER) == 1, "it lies under the hole")

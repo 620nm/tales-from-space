@@ -156,7 +156,7 @@ end
 assert(t.set_composition(2, 1, "bare", ROOF), "the bare preset digs the roof tile")
 t.run_ticks(4)
 assert(#t.ledger_rows("level_changed") == 0, "a weightless opening drops nothing")
-assert(#t.ledger_rows("item_fall_stayed") == 0, "nor asks: open space pulls nothing")
+assert(#t.ledger_rows("fall_stayed") == 0, "nor asks: open space pulls nothing")
 assert(#t.items_at(2, 1, ROOF) == 1, "the crowbar floats over the dug roof tile")
 
 -- 7. Rock floor receives the station field in orbit. A patch of it in open

@@ -1560,7 +1560,7 @@
   "lunatic/tfs:lib.illness.sore_throat": "Your throat feels sore.",
   "lunatic/tfs:lib.illness.mucus": "Mucus runs down the back of your throat.",
   "lunatic/tfs:lib.illness.feels_better": "You feel better.",
-  "lunatic/tfs:lib.item_fall.landed": "{item} crashes into the floor!",
+  "lunatic/tfs:lib.fall.landed": "{item} crashes into the floor!",
   "lunatic/tfs:lib.analyzer_pathogens.rhinovirus_body": "Warning: Virus detected. Name: {name}. Type: Airborne. Stage: {stage}/{max_stages}. Cure: Rest.",
   "lunatic/tfs:lib.analyzer_pathogens.rhinovirus_vessel": "Warning: Virus detected. Name: {name}. Type: Airborne. Stage: Carried in fluid. Host cure: Rest.",
   "lunatic/tfs:lib.analyzer_pathogens.none": "No pathogens detected.",

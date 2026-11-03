@@ -644,19 +644,32 @@ function vessel.attach(spec: Spec): Definition
         end
     )
 
-    -- A thrown open vessel tips itself out wherever it comes to rest.
-    -- The native verb moves all and only condensed phases, conserves
-    -- energy with them, validates the standable landing tile, and writes
-    -- the attributed `Spilled` row. Every landing is an impact for this
-    -- purpose; sealing is the content-visible way to prevent it.
+    -- A thrown open vessel tips itself out wherever it comes to rest, and
+    -- one that falls down a hole tips out where it lands. The native verb
+    -- moves all and only condensed phases, conserves energy with them,
+    -- validates the standable landing tile, and writes the attributed
+    -- `Spilled` row. Every landing is an impact for this purpose; sealing
+    -- is the content-visible way to prevent it.
     if spec.spill ~= nil then
+        local function tip_out(entity: Handle, at: TileAddress): ()
+            local reading = sim.matter_read(entity)
+            if reading ~= nil and not reading.sealed then
+                sim.matter.spill({ from = entity, at = at })
+            end
+        end
         definition:handle(
             "throw.land.done",
             { kind = "react", route = "land" },
             function(ev: ThrowLandDonePayload)
-                local reading = sim.matter_read(ev.entity)
-                if reading ~= nil and not reading.sealed then
-                    sim.matter.spill({ from = ev.entity, at = ev.at })
+                tip_out(ev.entity, ev.at)
+            end
+        )
+        definition:handle(
+            "motion.fall.done",
+            { kind = "react", route = "land" },
+            function(ev: MotionFallDonePayload)
+                if ev.fell then
+                    tip_out(ev.entity, ev.at)
                 end
             end
         )

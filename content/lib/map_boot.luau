@@ -88,11 +88,10 @@ local function find_seam_landing(map_selector: string, wanted_tag: string): Tile
     return nil
 end
 
-function map_boot.on_cross_done(ev: MoveCrossDonePayload): ()
-    if ev.outcome ~= "completed" then
-        return
-    end
-    local tags = sim.area_tags(ev.to)
+-- A body that came to stand on a seam's tagged area crosses to the other
+-- instance's landing.
+local function cross_seam(mover: Handle, at: TileAddress): ()
+    local tags = sim.area_tags(at)
     if #tags == 0 then
         return
     end
@@ -102,11 +101,29 @@ function map_boot.on_cross_done(ev: MoveCrossDonePayload): ()
             local landing = find_seam_landing(PREFIX .. route.target_map, route.landing_tag)
                 or find_seam_landing(route.target_map, route.landing_tag)
             if landing ~= nil then
-                sim.entity.transfer({ entity = ev.mover, to = landing })
+                sim.entity.transfer({ entity = mover, to = landing })
             end
             return
         end
     end
+end
+
+-- `move.cross.done` on a body plan: a step onto a seam.
+function map_boot.on_cross_done(ev: MoveCrossDonePayload): ()
+    if ev.outcome ~= "completed" then
+        return
+    end
+    cross_seam(ev.mover, ev.to)
+end
+
+-- `motion.land.done` on a body plan: a fall onto a seam. A fall runs no
+-- `move.cross`, and mid-air the transfer refuses `in_motion`, so the seam
+-- waits for the touchdown.
+function map_boot.on_land_done(ev: MotionLandDonePayload): ()
+    if ev.outcome ~= "completed" or ev.actor.kind ~= "body" then
+        return
+    end
+    cross_seam(ev.actor, ev.at)
 end
 
 local function record_failure(stage: string, source: string?, reason: string?)

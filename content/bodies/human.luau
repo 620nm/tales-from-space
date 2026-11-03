@@ -747,6 +747,15 @@ if sim ~= nil then
             wading.on_cross_done(ev)
         end
     )
+    -- A fall runs no `move.cross`: its landing takes the seam and the swim.
+    script_definition:handle(
+        "motion.land.done",
+        { kind = "react", route = "land" },
+        function(ev: MotionLandDonePayload): ()
+            map_boot.on_land_done(ev)
+            wading.on_land_done(ev)
+        end
+    )
     script_definition:handle("interaction.drag", { kind = "replace", route = "drag" }, body_drag.on_drag)
     script_definition:handle("climb.done", { kind = "react" }, climbing.on_done)
     -- The body's carried access; a body plan added later binds the same handler.
