@@ -1,0 +1,21 @@
+return {
+	id = "family_names",
+	entries = {
+		"McHands",
+		"Voss",
+		"Okafor",
+		"Delacroix",
+		"Hardt",
+		"Ives",
+		"Katsaros",
+		"Lindqvist",
+		"Moroz",
+		"Nakamura",
+		"Osei",
+		"Pike",
+		"Quintana",
+		"Reyes",
+		"Sokolov",
+		"Thistlewood",
+	},
+}
