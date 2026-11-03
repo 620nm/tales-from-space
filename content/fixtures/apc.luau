@@ -112,16 +112,11 @@ if sim ~= nil then
         end
     )
 
-    -- THE LADDER, per panel on each pass its report changed.
-    -- Completions reach every handler of the anchor, so a bank's
-    -- report is somebody else's. A
+    -- THE LADDER, per panel on each pass its report changed. A
     -- gate is thrown only when it disagrees with the ladder, class by
     -- class in the network's own order, so a steady cell writes
     -- nothing and a falling one writes the same rows every shift.
     script_definition:handle("flow.store.done", { kind = "react" }, function(ev: FlowStoreDonePayload)
-        if ev.subject.prototype ~= content.id then
-            return
-        end
         local store = sim.flow.store(ev.subject)
         local gates = store and store.gates
         if gates == nil then
@@ -152,9 +147,6 @@ if sim ~= nil then
     -- the two directions are one set and one clear of the same named
     -- flag.
     script_definition:handle("flow.reserve.done", { kind = "react" }, function(ev: FlowReserveDonePayload)
-        if ev.subject.prototype ~= content.id then
-            return
-        end
         sim.link.emit({
             subject = ev.subject,
             payload = netmsg.light_flag(ev.on and "set" or "clear", "low_power"),

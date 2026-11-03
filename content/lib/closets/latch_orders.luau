@@ -1,6 +1,6 @@
 -- The closet family's latch switches. Each is an order whose completion
--- (`latch.set.done`) reaches every definition's handler, so an order is
--- matched by its subject, latch and request id before it is answered.
+-- (`latch.set.done`) reaches the closet's scope whoever switched it, so an
+-- order is matched by its subject, latch and request id before it is answered.
 
 local actor_context = require("@lib/closets/actor_context")
 local data = require("@lib/closets/data")
