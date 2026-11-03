@@ -174,7 +174,11 @@ return {
             phase = "solid",
             alpha = { min = 1, max = 1 },
             rungs = {
-                { at_ml = 1, shell = { still = "terrain_cliff_stepped_smooth" } },
+                { at_ml = 1, shell = {
+                    still = "terrain_cliff_stepped_smooth",
+                    flats = { "terrain_cliff_stepped_smooth_0_4", "terrain_cliff_stepped_flat_1",
+                              "terrain_cliff_stepped_flat_2", "terrain_cliff_stepped_flat_3" },
+                } },
             },
         },
         {
