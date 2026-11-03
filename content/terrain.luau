@@ -57,6 +57,15 @@ return {
             depth_m = 1,
             evaporation = 0,
         },
+        -- A cliff: the `cliff` substrate blocks a body, and the face draws
+        -- the stepped escarpment, joined to the cliff beside it.
+        {
+            key = "cliff",
+            phase = "solid",
+            substrate = "cliff",
+            face = "cliff_shell",
+            under_shade = 0.7,
+        },
         -- A bed dug and left dry: whatever it reaches runs in.
         {
             key = "dry_bed",

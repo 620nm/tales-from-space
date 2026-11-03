@@ -158,6 +158,17 @@ return {
                 { at_ml = 1, shell = { still = "terrain_silicate_rough_smooth" } },
             },
         },
+        -- A cliff's face (terrain.luau `cliff`): the stepped escarpment,
+        -- drawn as `ground_shell` is, so a cliff joins only cliff of one tint.
+        {
+            key = "cliff_shell",
+            visual_layer = "ground_face",
+            phase = "solid",
+            alpha = { min = 1, max = 1 },
+            rungs = {
+                { at_ml = 1, shell = { still = "terrain_cliff_stepped_smooth" } },
+            },
+        },
         {
             key = "mist",
             visual_layer = "gas_haze",
