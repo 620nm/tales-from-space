@@ -43,7 +43,14 @@ local content = {
         shift = shift_rules,
         environment = {
             rolls = {
-                { id = "cold_outdoors", required_tags = { "terrestrial" }, weight = 1 },
+                {
+                    id = "cold_outdoors",
+                    required_tags = { "terrestrial" },
+                    excluded_tags = { "warm_outdoors" },
+                    weight = 1,
+                },
+                -- Only a map that carries the tag stands under this sky.
+                { id = "warm_outdoors", required_tags = { "terrestrial", "warm_outdoors" }, weight = 1 },
                 { id = "dead_space", excluded_tags = { "terrestrial" }, weight = 4 },
                 { id = "orbit", excluded_tags = { "terrestrial" }, weight = 3 },
                 { id = "sunward", excluded_tags = { "terrestrial" }, weight = 1 },
