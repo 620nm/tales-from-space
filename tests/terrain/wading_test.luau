@@ -6,7 +6,9 @@
 -- he is on internals, and the pass ends when he leaves the deep water.
 --
 -- Columns 0-3 are sand, 4-7 shallows, 8-13 sea, under the `warm_outdoors`
--- sky; the crewman starts on the sand and walks east into the sea.
+-- sky; the crewman starts on the sand and walks east into the sea. Last, a
+-- second crewman falls through a hole into deep sea: a fall runs no
+-- `move.cross`, so its landing (`motion.land.done`) starts the swim.
 t.world(
     [==[(
     name: "wading",
@@ -159,3 +161,54 @@ assert(oxy(p) >= tanked + 5, `without internals he drowns again, oxy {tanked} ->
 t.run_seconds(30)
 assert(oxy(p) >= 50, "and keeps drowning, oxy " .. oxy(p))
 assert(not assert(t.body(p)).conscious, "until he passes out")
+
+-- A fall into deep water swims too. A deck on level 1 over the sea has a
+-- hole east of the spawn; the diver steps in, lands in the sea, stands with
+-- his head out, then lies down and drowns as a walker in would.
+t.world(
+    [==[(
+    name: "wading fall",
+    tags: ["terrestrial", "warm_outdoors"],
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
+    legend: {
+        'w': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sea_water"), components: [])),
+        '.': (outdoors: true, composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        'o': (outdoors: true, composition: (substrate: Open)),
+    },
+    levels: [
+        (
+            rows: [
+                "wwww",
+                "wwww",
+                "wwww",
+            ],
+        ),
+        (
+            rows: [
+                "oooo",
+                ".ooo",
+                "oooo",
+            ],
+            structures: [(0, 1, "player_spawn")],
+        ),
+    ],
+)]==],
+    0,
+    "free_build"
+)
+
+local diver = t.join()
+t.run_ticks(4)
+t.move(diver, "east")
+t.run_seconds(3)
+local falls = t.ledger_rows("level_changed")
+assert(#falls == 1 and falls[1].via == "fall", "the diver fell into the sea, got " .. #falls .. " rows")
+local dx, dy = t.pos(diver)
+assert(dx == 1 and dy == 1, `the diver lies under the hole, at ({dx}, {dy})`)
+t.run_seconds(12)
+assert(oxy(diver) == 0, "standing in the sea he keeps his head out, oxy " .. oxy(diver))
+t.rest(diver, true)
+t.run_ticks(2)
+assert(assert(t.body(diver)).posture == "lying", "the diver lies down")
+t.run_seconds(11)
+assert(oxy(diver) >= 15, "the fall started his swim: lying in it drowns, oxy " .. oxy(diver))

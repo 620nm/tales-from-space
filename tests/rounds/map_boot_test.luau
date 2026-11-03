@@ -118,8 +118,8 @@ assert(
 
 -- A fall onto a seam crosses too. A fall runs no `move.cross`, so the seam
 -- answers the body's landing (`motion.land.done`): the traveler walks onto a
--- hole on level 1 whose cell below carries `seam_east`, and the engine's
--- unanswered guess drops it there.
+-- hole on level 1 whose cell below carries `seam_east`, and the pack's `{}`
+-- answer keeps the engine's guess, which drops it there.
 local map_drop = [==[(
     name: "seam drop",
     tags: ["terrestrial"],
