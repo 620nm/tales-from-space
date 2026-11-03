@@ -309,29 +309,25 @@ def sdf_outward_normal(
     return (-gx / mag, -gy / mag)
 
 
-def build_basalt_plate_32(
-    seeds: list[tuple[float, float, float, float]],
-    ramp: tuple[str, str, str, str, str],
-    warp_amp: float = 1.85,
-    warp_seed: float = 1.0,
-    pocket_thresh: float = 0.45,
-    taper_thresh: float = -0.22,
-    lip_thresh: float = 0.08,
-) -> list[list[str]]:
-    r"""
-    Build a `32x32`-periodic stone/ice tile modeled directly on `tgstation` `basalt`
-    (`icons/turf/floors.dmi:"basalt"`, `asteroid.dm:177-183`):
-      1. Multi-scale asymmetric slabs + strong domain warp + open-ended crack tapering ->
-         wandering stepped ledges & branching crevices over broad calm stone (ZERO uniform
-         cobblestone/honeycomb pavement!).
-      2. Discrete orthogonal boundary detection + 2x2 diagonal elbow completion ->
-         100% 4-connected crevices with ZERO missing pixels and ZERO corner-only dots!
-      3. Graded `tg_basalt` cushioning (sparse `t5` crest glints -> `t1/t2` 4-connected
-         crevice -> `t2/t3` tucked shadow recovery -> `t4` calm flat stone body).
-    """
-    t1_pocket, t2_crev, t3_slope, t4_body, t5_lip = ramp
+def edge_distance_32(x: int, y: int) -> int:
+    r"""Pixels from (x, y) to the nearest edge of a `32x32` tile (`0` on the outer ring)."""
+    return min(x, y, 31 - x, 31 - y)
 
+
+def _plate_cells_32(
+    seeds: list[tuple[float, float, float, float]],
+    warp_amp: float,
+    warp_seed: float,
+    inner_seeds: list[tuple[float, float, float, float]],
+    inner_reach: float,
+) -> list[list[int]]:
+    r"""
+    Warped anisotropic Voronoi cell ids over `seeds`, then `inner_seeds` (ids continue).
+    An inner seed's distance grows by `inner_reach / (1 + edge distance)`, so inner cells
+    stay off the tile's outer band and only re-cut its interior.
+    """
     cid = [[0 for _ in range(32)] for _ in range(32)]
+    all_seeds = [(s, False) for s in seeds] + [(s, True) for s in inner_seeds]
     for y in range(32):
         for x in range(32):
             w1 = torus_wave(x, y, warp_seed)
@@ -346,19 +342,61 @@ def build_basalt_plate_32(
                     + 0.28 * torus_wave(x * 2, y * 2, warp_seed + 5.2)
                 )
             ) % 32.0
+            edge = edge_distance_32(x, y)
             best_d = 1e9
             best_i = 0
-            for idx, (sx, sy, sc, ang) in enumerate(seeds):
+            for idx, ((sx, sy, sc, ang), inner) in enumerate(all_seeds):
                 dx = periodic_delta(wx, sx, 32.0)
                 dy = periodic_delta(wy, sy, 32.0)
                 ca, sa = math.cos(ang), math.sin(ang)
                 ux = (dx * ca + dy * sa) * 0.82
                 uy = (-dx * sa + dy * ca) * 1.22
                 d = math.hypot(ux, uy) / sc
+                if inner:
+                    d += inner_reach / (1.0 + edge)
                 if d < best_d:
                     best_d = d
                     best_i = idx
             cid[y][x] = best_i
+    return cid
+
+
+def build_basalt_plate_32(
+    seeds: list[tuple[float, float, float, float]],
+    ramp: tuple[str, str, str, str, str],
+    warp_amp: float = 1.85,
+    warp_seed: float = 1.0,
+    pocket_thresh: float = 0.45,
+    taper_thresh: float = -0.22,
+    lip_thresh: float = 0.08,
+    inner_seeds: list[tuple[float, float, float, float]] | None = None,
+    inner_reach: float = 6.0,
+    edge_keep: int = 4,
+) -> list[list[str]]:
+    r"""
+    Build a `32x32`-periodic stone/ice tile modeled directly on `tgstation` `basalt`
+    (`icons/turf/floors.dmi:"basalt"`, `asteroid.dm:177-183`):
+      1. Multi-scale asymmetric slabs + strong domain warp + open-ended crack tapering ->
+         wandering stepped ledges & branching crevices over broad calm stone (ZERO uniform
+         cobblestone/honeycomb pavement!).
+      2. Discrete orthogonal boundary detection + 2x2 diagonal elbow completion ->
+         100% 4-connected crevices with ZERO missing pixels and ZERO corner-only dots!
+      3. Graded `tg_basalt` cushioning (sparse `t5` crest glints -> `t1/t2` 4-connected
+         crevice -> `t2/t3` tucked shadow recovery -> `t4` calm flat stone body).
+    With `inner_seeds` it builds a flat variant: cells within `edge_keep` px of the tile
+    edge are the plain tile's, so the variant's outer pixels match it and it joins any
+    neighbour the plain tile joins (`flat_variant_ring_mismatch` checks the result).
+    """
+    t1_pocket, t2_crev, t3_slope, t4_body, t5_lip = ramp
+
+    cid = _plate_cells_32(seeds, warp_amp, warp_seed, [], 0.0)
+    if inner_seeds:
+        plain = cid
+        cid = _plate_cells_32(seeds, warp_amp, warp_seed, inner_seeds, inner_reach)
+        for y in range(32):
+            for x in range(32):
+                if edge_distance_32(x, y) < edge_keep:
+                    cid[y][x] = plain[y][x]
 
     # Clean 1px boundary spurs so plate contours step cleanly
     for _ in range(2):
@@ -484,3 +522,13 @@ def build_basalt_plate_32(
                 tile[y][x] = t4_body
 
     return tile
+
+
+def flat_variant_ring_mismatch(plain: list[list[str]], variant: list[list[str]], ring: int = 2) -> int:
+    r"""Count tokens within `ring` px of the tile edge where a flat variant leaves the plain tile."""
+    return sum(
+        1
+        for y in range(32)
+        for x in range(32)
+        if edge_distance_32(x, y) < ring and plain[y][x] != variant[y][x]
+    )

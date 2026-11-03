@@ -7,6 +7,7 @@ CLI modes:
   --check-specs      Pure-Python validation of SPRITES without invoking Aseprite or MCP.
   (default)          Read-only audit + PNG/47-atlas/manifest export from existing .aseprite files.
   --rebuild-sources  Redraw .aseprite files in ORIGINALS_DIR via aseprite_mcp, then export & audit.
+Every run that exports a strip with its `flat_of` variants also runs the flat repetition audit.
 """
 from __future__ import annotations
 
@@ -714,7 +715,8 @@ def export_and_audit_sprite(
         "ase_relpath": spec["ase_relpath"], "tag": bake_tag(spec), "cell_w": 32, "cell_h": 32,
         "offset_x": 0, "offset_y": 0, "frame_count": n_frames, "durations_ms": durations_ms,
         "rewind": False, "colorable": colorable, "require_top_light": require_top_light,
-        "allow_multipart": allow_multipart, "default_tint": spec.get("default_tint", "#FFFFFF"),
+        "allow_multipart": allow_multipart, "flat_of": spec.get("flat_of"),
+        "default_tint": spec.get("default_tint", "#FFFFFF"),
         "citation": spec.get("citation", spec["ase_relpath"]), "description": spec.get("description", ""),
     }
 
@@ -809,6 +811,72 @@ def export_and_audit_sprite(
     }
 
 
+FLAT_VARIANTS_MIN = 3
+FLAT_PAIR_DIFF_MIN = 0.05
+# Share of non-body pixels a hashed field repeats at a 32 px lag; plain wallpaper is 1.0.
+FLAT_FIELD_LAG_MATCH_MAX = 0.85
+FLAT_FIELD_TILES = 16
+
+
+def _field_pick(gx: int, gy: int, n: int) -> int:
+    h = (((gx & 0xFFFF) * 374761393) + ((gy & 0xFFFF) * 668265263) + 0x2545F491) & 0xFFFFFFFF
+    h = ((h ^ (h >> 13)) * 1274126177) & 0xFFFFFFFF
+    return (h ^ (h >> 16)) % n
+
+
+def audit_flat_repetition(records: list[dict[str, Any]], out_dir: Path) -> list[dict[str, Any]]:
+    """Gate each strip's `flat_of` variants: count, shared outer ring, distinctness, field lattice."""
+    png_dir = out_dir / "png"
+    by_strip: dict[str, list[str]] = defaultdict(list)
+    for sp in SPRITES:
+        if sp.get("flat_of"):
+            by_strip[sp["flat_of"]].append(sp["id"])
+    exported = {rec["id"] for rec in records}
+    results: list[dict[str, Any]] = []
+    for strip_id, variant_ids in by_strip.items():
+        if strip_id not in exported or not set(variant_ids) <= exported:
+            print(f"[SKIP] flat repetition {strip_id}: strip and all variants must be exported together")
+            continue
+        if len(variant_ids) < FLAT_VARIANTS_MIN:
+            raise ValueError(f"{strip_id}: {len(variant_ids)} flat variants < {FLAT_VARIANTS_MIN}")
+        plain = Image.open(png_dir / f"{strip_id}_f1.png").convert("RGBA").crop((128, 0, 160, 32))
+        tiles = [plain] + [Image.open(png_dir / f"{vid}_f1.png").convert("RGBA") for vid in variant_ids]
+        names = [f"{strip_id}[4]"] + variant_ids
+        pixels = [list(rgba_pixels(t)) for t in tiles]
+        ring = [i for i in range(1024) if min(i % 32, i // 32, 31 - i % 32, 31 - i // 32) == 0]
+        for name, px in zip(names[1:], pixels[1:], strict=True):
+            bad = sum(1 for i in ring if px[i] != pixels[0][i])
+            if bad:
+                raise ValueError(f"{name}: {bad} outer-ring pixels differ from {names[0]}; it would not join")
+        min_diff, min_pair = 1.0, ""
+        for a in range(len(tiles)):
+            for b in range(a + 1, len(tiles)):
+                share = sum(1 for p, q in zip(pixels[a], pixels[b], strict=True) if p != q) / 1024
+                if share < min_diff:
+                    min_diff, min_pair = share, f"{names[a]}~{names[b]}"
+        if min_diff < FLAT_PAIR_DIFF_MIN:
+            raise ValueError(f"{strip_id}: {min_pair} differ on {min_diff:.3f} of pixels < {FLAT_PAIR_DIFF_MIN}")
+        n = FLAT_FIELD_TILES
+        body = Counter(pixels[0]).most_common(1)[0][0]
+        field = [[_field_pick(gx, gy, len(tiles)) for gx in range(n)] for gy in range(n)]
+        same = total = 0
+        for gy in range(n):
+            for gx in range(n):
+                for dx, dy in ((1, 0), (0, 1)):
+                    if gx + dx >= n or gy + dy >= n:
+                        continue
+                    for p, q in zip(pixels[field[gy][gx]], pixels[field[gy + dy][gx + dx]], strict=True):
+                        if p != body or q != body:
+                            total += 1
+                            same += p == q
+        lag_match = same / total
+        if lag_match > FLAT_FIELD_LAG_MATCH_MAX:
+            raise ValueError(f"{strip_id}: 32 px lag match {lag_match:.3f} > {FLAT_FIELD_LAG_MATCH_MAX} on a {n}x{n} field")
+        print(f"[PASS] flat repetition {strip_id:30s} | pictures={len(tiles)} | minPairDiff={min_diff:.3f} | lag32={lag_match:.3f}")
+        results.append({"strip": strip_id, "variants": variant_ids, "min_pair_diff": round(min_diff, 3), "lag32_match": round(lag_match, 3)})
+    return results
+
+
 def select_specs(only: list[str] | None) -> list[dict[str, Any]]:
     if not isinstance(SPRITES, list) or not SPRITES:
         raise ValueError("specs.SPRITES must be a non-empty list")
@@ -862,6 +930,8 @@ async def run_kit(out_dir: Path, rebuild_sources: bool = False, only: list[str] 
                 f"j255_dom={j255['dominant_rgb_share']:.3f} (max47={tel['worst_47xframes_dom_rgb_share']:.3f}, maxBlk={tel['worst_block_dom_rgb_share']:.3f}) | "
                 f"alphaMAX={seams['max_alpha_diff']} | seamRatio={seams['max_seam_ratio']:.2f}"
             )
+
+    audit_flat_repetition(records, out_dir)
 
     manifests_dir = assert_inside_out_dir(out_dir / "manifests", out_dir)
     manifests_dir.mkdir(parents=True, exist_ok=True)
