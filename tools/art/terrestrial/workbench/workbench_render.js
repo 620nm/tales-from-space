@@ -324,7 +324,7 @@
     },
     {
       id: "mars_pack",
-      label: "2. Mars Pack #404030 NH3",
+      label: "2. Mars Pack NH3 colours",
       build() {
         SCENE_PRESETS[0].build();
         state.tintsPrimary = { ...DATA.biomePresets.mars_pack_ammonia };

@@ -13,7 +13,7 @@ to the checkout pinned by [assets/tg-revision](../../assets/tg-revision).
 
 ## 1. Scope & Roster
 
-`assets/originals/art/terrestrial/*.aseprite` holds 11 first-party neutral-greyscale
+`assets/originals/art/terrestrial/*.aseprite` holds 20 first-party neutral-greyscale
 originals rostered in [assets/sprites/94-terrestrial.ron](../../assets/sprites/94-terrestrial.ron).
 They pair directly with `solid_debris_jagged_smooth`
 (`assets/originals/art/matter/solids/solid_debris_jagged_smooth.aseprite` in
@@ -34,6 +34,9 @@ scree and rubble blend across planetary shelves.
 | `solid_moss_smooth` | `160×32` smooth strip | `idle-s` | `1` | `255` | `146..217` (`#929292..#D9D9D9`) | Broadband bryophyte cushion mat decal with creeping lobes |
 | `prop_rough_outcrop_1` | `32×32` single | `idle` | `1` | `255` | `43..196` (`#2B2B2B..#C4C4C4`) | Multi-stone matte fieldstone cluster and satellite cobbles |
 | `prop_rough_outcrop_2` | `32×32` single | `idle` | `1` | `255` | `43..196` (`#2B2B2B..#C4C4C4`) | Single-piece craggy stepped basalt outcrop with talus base |
+| `terrain_silicate_rough_flat_1..3` | `32×32` single | `idle` | `1` | `255` | as its strip's block `4` | Flat variants of `terrain_silicate_rough_smooth` (§6.1) |
+| `terrain_ice_sheet_flat_1..3` | `32×32` single | `idle` | `1` | `255` | as its strip's block `4` | Flat variants of `terrain_ice_sheet_smooth` (§6.1) |
+| `terrain_cliff_stepped_flat_1..3` | `32×32` single | `idle` | `1` | `255` | as its strip's block `4` | Flat variants of the `terrain_cliff_stepped_smooth` plateau (§6.1) |
 
 ---
 
@@ -64,6 +67,11 @@ scree and rubble blend across planetary shelves.
   - **Earth-like coastal basin**: coastal waters (`#3889C9`) and foam (`#F4FAFF`) lapping
     weathered stone or sand (`#947B62` / `#CBB68C`) with meadow grass (`#86C44A`) and
     bryophyte moss (`#5A9842`) decals.
+- **Plate tints come from the pack where it declares them**: a preset role in
+  `tools/art/terrestrial/schema_contract.py` is either a `PackTint` address (a substance's
+  `color`, `appearance.<phase>.tint` or `visible.tint`, or a terrain profile's `face_tint`),
+  read from `content/` when the kit loads and refused if absent, or a `#RRGGBB` art
+  proposal for a colour the pack does not declare yet.
 
 ---
 
@@ -114,26 +122,37 @@ multi-scale plates rather than raw Voronoi distance rings:
 
 Planetary surf replaces manual 8-direction shoreline tiles (`tgstation`
 `icons/turf/beach.dmi:beach`, `code/game/turfs/open/sand.dm:63-73`) with four synchronized
-`12f @ 200 ms` (`2.4 s` loop) smooth strips composited in strict order:
+`12f @ 200 ms` (`2.4 s` loop) smooth strips. All four are one rung of the sea's matter
+look: `ocean_body_smooth` is the shell's `still` and the other three are its `over`
+strips, each `edges_only` with its own tint (the engine's `docs/looks/matter-rungs.md`
+§1, §3). The client draws them in this order:
 
-1. **`ocean_body_smooth`** (drawn beneath dry coastal terrain and extended 1 tile under
-   calving ice edges over neighboring-quadrant land/ice underlays): steps nearshore alpha
-   (`112 -> 168 -> 216 -> 255`) so coastal margins refract the shore substrate with zero
-   bare-substrate gaps.
-2. **`ocean_backwash_smooth`** (blocks `0..3` over dry shore): lays a dark wet-substrate
-   soak (`#2B2B2B..#626262` across `@110`, `@78` and `@44` soaked-glaze, backwash-sheen
-   and drying-fringe alpha tiers) as waves crest and drain down-slope.
-3. **`ocean_swash_smooth`** (blocks `0..3`): sweeps a translucent water tongue
-   (`@96 -> @152 -> @204`) and unbroken curved `#FFFFFF` / `#EEEEEE` (`255`) leading lip
-   along a harmonic cosine turnaround with symmetric longshore phase lag (`sym_cos`),
-   eliminating high-water piston stalls and pixel shatter.
-4. **`ocean_foam_lace_smooth`** (blocks `0..3`): rolls a phase-offset secondary nearshore
-   crest (`@168/@112`) shoreward while dissolving a `@58` high-water foam veil behind the
-   receding swash lip. Block `4` stays empty across `backwash`, `swash` and `foam_lace`
-   so open ocean remains free of whitecap clutter.
+1. **The ground face under the sea.** A sea tile's bed draws its own ground face (a plain
+   seabed tint from the bed profile, `content/terrain.luau` `face_tint`), joined like any
+   ground. Nothing else lies under the water: no shore underlay per quadrant, no ocean
+   dilated under ice, no rock joined across sea or ice.
+2. **`ocean_body_smooth`**, on sea tiles only, joined to sea neighbours. Its nearshore
+   alpha steps (`112 -> 168 -> 216 -> 255`) let the bed read through the shallows at the
+   edge. A whole-sea tile draws the flat block.
+3. **`ocean_backwash_smooth`**, **`ocean_swash_smooth`**, **`ocean_foam_lace_smooth`**, in
+   that order, on the same sea tiles and joins. Blocks `0..3` carry the surf on the sea
+   side of the shoreline; block `4` is empty in all three, and `edges_only` skips flat
+   quadrants, so open sea draws no surf. Surf never draws over dry land: a land tile
+   shows its own ground face, and the shoreline reads from the sea tile's edge.
+   - backwash lays a dark wet-substrate soak (`#2B2B2B..#626262` across `@110`, `@78`
+     and `@44` glaze, sheen and fringe tiers) as waves crest and drain;
+   - swash sweeps a translucent tongue (`@96 -> @152 -> @204`) behind an unbroken curved
+     `#FFFFFF` / `#EEEEEE` (`255`) lip along a harmonic cosine turnaround (`sym_cos`);
+   - foam lace rolls a phase-offset secondary crest (`@168/@112`) and dissolves a `@58`
+     foam veil behind the receding lip.
+- One clock drives all four (`Atlas::loop_uv`), so equal frame counts and durations keep
+  them in step with no engine work.
 - **Turnaround & loop telemetry gates**: Across all 12 frames, every active junction tile
   requires `zero_delta_count == 0` (zero frozen transitions), step-to-step RGBA byte MAE
   ratio `max/min <= 3.0`, and seamless `F12 -> F1` loop closure `0.45 <= wrap_ratio <= 1.75`.
+- The kit's biome plates (`plates/scene_compositor.py`) are art-review dioramas. Their
+  extra compositing (shore underlays, joins across ocean and ice) is a picture aid, not
+  the draw order above.
 
 ---
 
@@ -158,6 +177,23 @@ and over-relaxed point lattices into visible `32 px` grid bands or hexagonal pol
   heightfield from the NNW (`#929292..#D9D9D9`, matching
   `icons/turf/floors/grass_damaged.dmi:grass_damaged`, `code/game/turfs/open/grass.dm:20-26`)
   with zero repeating substrate holes and deeply scalloped creeping lobes on blocks `0..3`.
+
+### 6.1 Flat variants for rock, ice and cliff plateau
+
+Slab grammar (§4) cannot follow the spectral rule: its plates are the picture, so one
+flat block tiles as a `32 px` lattice. Each of the three strips therefore ships three
+`32×32` flat variants, listed with the strip's own block `4` in its look's `flats`
+(the engine's `docs/looks/matter-rungs.md` §3), so a whole-flat tile picks one of four:
+
+- **Shared outer band**: a variant re-cuts only the interior with extra slab seeds
+  (`build_basalt_plate_32(inner_seeds=...)`); cells within `4 px` of the edge are block
+  `4`'s, so its outer 2 px ring is block `4`'s pixel for pixel and it joins every
+  neighbour block `4` joins.
+- **Repetition audit** (`terrestrial_kit.py`, every run exporting a strip and its
+  variants): at least three variants; outer ring identical to block `4`; every pair of
+  the four pictures differs on `>= 5%` of pixels; and on a hashed `16×16` field, at most
+  `85%` of non-body pixels repeat at a `32 px` lag (one picture alone repeats `100%`).
+- Plate 09 shows each material as block `4` alone beside a hashed field of all four.
 
 ---
 
