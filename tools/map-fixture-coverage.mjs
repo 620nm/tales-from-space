@@ -25,6 +25,7 @@ export const mapFixtures = [
     map: "programmable_airlock.ron",
     specs: ["devices/programmable_airlock_test.luau", "devices/programmable_airlock_ready_test.luau"],
   },
+  { map: "stairwell.ron", specs: ["levels/stairs_test.luau"] },
   { map: "tank_row.ron", specs: ["atmos/pipenet/tank_row_test.luau"] },
 ];
 
