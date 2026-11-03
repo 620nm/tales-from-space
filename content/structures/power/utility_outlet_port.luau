@@ -15,7 +15,6 @@ return {
     -- reading whichever state the cap is in.
     sprite = "utility_outlet_port",
     states = { "closed", "open" },
-    state = "closed",
     state_sprites = {
         closed = "utility_outlet_port",
         open = "utility_outlet_port_open",
