@@ -10,6 +10,7 @@ local MOLAR_MASS = 60.0
 return {
     id = "soil_ground",
     name = "Soil ground",
+    name_label = "lunatic/tfs:blends.soil_ground.name",
     rows = {
         { "soil:solid", DENSITY_G_PER_ML * 1e6 / MOLAR_MASS },
     },

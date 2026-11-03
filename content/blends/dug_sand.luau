@@ -5,6 +5,7 @@ local MOLAR_MASS = 60.08
 return {
     id = "dug_sand",
     name = "Dug sand",
+    name_label = "lunatic/tfs:blends.dug_sand.name",
     rows = {
         { "sand:solid", DENSITY_G_PER_ML * 1e6 / MOLAR_MASS },
     },
