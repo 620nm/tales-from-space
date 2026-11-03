@@ -52,6 +52,30 @@ function rules.any_deck(): Selector
     )
 end
 
+-- The clauses of `underfoot_tile`, flat, so a selector can extend them
+-- without nesting deeper (a condition allows depth 4).
+local function underfoot_clauses(): { Selector }
+    return {
+        { any = { rules.kind("turf"), rules.kind("component") } },
+        { ["not"] = rules.fact("target.has_component", "wall") },
+        { ["not"] = rules.fact("target.has_component", "reinforced_wall") },
+        { ["not"] = rules.fact("target.has_component", "reinforcement") },
+    }
+end
+
+-- A deck, or the ground outdoors: anything underfoot that is not a wall.
+function rules.underfoot_tile(): Selector
+    return { all = underfoot_clauses() }
+end
+
+-- Natural ground: underfoot, with a ground material (engine
+-- `target.has_material`). Space, lattice and bare plating have none.
+function rules.ground(): Selector
+    local clauses = underfoot_clauses()
+    table.insert(clauses, rules.fact("target.has_material", true))
+    return { all = clauses }
+end
+
 function rules.exposed_deck(network: string): Selector
     return {
         all = { { any = { rules.kind("turf"), rules.kind("component") } },

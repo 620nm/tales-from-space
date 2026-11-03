@@ -2,14 +2,13 @@
 -- and the tile decides at that instant; a spark that finds nothing
 -- leaves nothing (tg LINDA_fire.dm:23-58 `hotspot_expose`).
 --
--- A spark sets the cell column `alight` to 1; the burn rule in
--- `reactions/ethanol_fire.luau` requires it. One task tends each latched
--- cell: it spreads to the cardinals once the cell has burned and clears
--- the column when the cell cannot burn, or when `QUIET_SPREADS` pass with
--- no fire at all (a spark that lit nothing is gone; a fire paused over its
--- ceiling is not). The scratch table below is Lua
--- heap, not world state: a stale entry ages out (the engine's
--- docs/scripting/execution-model.md §1.4).
+-- A spark sets the cell column `alight` to 1; every burn rule in FIRES
+-- requires it. One task tends each latched cell: it spreads to the
+-- cardinals once the cell has burned and clears the column when the cell
+-- cannot burn, or when `QUIET_SPREADS` pass with no fire at all (a spark
+-- that lit nothing is gone; a fire paused over its ceiling is not). The
+-- scratch table below is Lua heap, not world state: a stale entry ages
+-- out (the engine's docs/scripting/execution-model.md §1.4).
 local ignition = {}
 
 -- tg __DEFINES/atmospherics/atmos_core.dm:130 (fire needs 373.15 K).
@@ -20,15 +19,30 @@ local SPARK_K = 1000
 local FLAME_K = 700
 -- tg LINDA_fire.dm:32 (no fire under half a mole of oxygen).
 local MIN_O2_MOL = 0.5
--- The burn rule's `requires` and `column_below` (reactions/ethanol_fire.luau).
-local MIN_FUEL_GAS_MOL = 0.01
+-- The burn rules' `requires` and `column_below` (reactions/*_fire.luau).
+local MIN_FUEL_MOL = 0.01
+-- A plant coat thinner than this carries no flame (reactions/grass_fire.luau).
+local MIN_PLANT_MOL = 0.1
 local RESIN_FLOOR = 0.1
--- Substances the latch can light; acetone and naphtha are unmodelled.
-local FUELS = { "ethanol" }
+
+-- A substance in one phase the latch can light: present when it holds
+-- more than nothing and at least `min_mol`.
+type Fuel = { id: string, phase: "gas" | "liquid" | "solid", min_mol: number }
+
+-- Ethanol burns as vapour over its pool; plants burn where they stand.
+-- Acetone and naphtha are unmodelled.
+local FUELS: { Fuel } = {
+    { id = "ethanol", phase = "gas", min_mol = MIN_FUEL_MOL },
+    { id = "ethanol", phase = "liquid", min_mol = 0 },
+    { id = "grass", phase = "solid", min_mol = MIN_PLANT_MOL },
+    { id = "moss", phase = "solid", min_mol = MIN_PLANT_MOL },
+}
 -- Rules whose firing lights the neighbours; other reactions also raise
 -- `matter.ignition.done` (the engine's docs/reactions/fire.md).
 local FIRES = {
     ["lunatic/reaction:ethanol_fire"] = true,
+    ["lunatic/reaction:grass_fire"] = true,
+    ["lunatic/reaction:moss_fire"] = true,
     ["lunatic/reaction:plasma_fire"] = true,
     ["lunatic/reaction:plasma_fire_supersaturated"] = true,
 }
@@ -57,7 +71,7 @@ ignition.IGNITE_K = IGNITE_K
 ignition.SPARK_K = SPARK_K
 ignition.FLAME_K = FLAME_K
 ignition.MIN_O2_MOL = MIN_O2_MOL
-ignition.MIN_FUEL_GAS_MOL = MIN_FUEL_GAS_MOL
+ignition.MIN_FUEL_MOL = MIN_FUEL_MOL
 ignition.RESIN_FLOOR = RESIN_FLOOR
 ignition.FUELS = FUELS
 ignition.SPREAD_SECONDS = SPREAD_SECONDS
@@ -93,9 +107,19 @@ local function burnable(reading: MatterRead): boolean
     if (reading.columns.atmos_resin or 0) >= RESIN_FLOOR then
         return false
     end
-    for _, id in FUELS do
-        local fuel = reading.contents[id]
-        if fuel ~= nil and ((fuel.gas or 0) >= MIN_FUEL_GAS_MOL or (fuel.liquid or 0) > 0) then
+    for _, fuel in FUELS do
+        local held = reading.contents[fuel.id]
+        local moles: number? = nil
+        if held == nil then
+            moles = nil
+        elseif fuel.phase == "gas" then
+            moles = held.gas
+        elseif fuel.phase == "liquid" then
+            moles = held.liquid
+        else
+            moles = held.solid
+        end
+        if moles ~= nil and moles > 0 and moles >= fuel.min_mol then
             return true
         end
     end

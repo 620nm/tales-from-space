@@ -10,6 +10,8 @@ import shutil
 import sys
 from typing import Any
 
+from pack_tints import PackTint, resolve_presets
+
 # tools/art/terrestrial/schema_contract.py -> pack/worktree root is 3 levels up.
 PACK_ROOT = Path(__file__).resolve().parents[3]
 TERRESTRIAL_DIR = Path(__file__).resolve().parent
@@ -95,37 +97,40 @@ NEUTRAL_GREYS: dict[str, str] = {
     "W": "#FFFFFF",  # 255 white-glint
 }
 
-# Curated planetary & biome multiply tints for spotcheck plates and workbench
-BIOME_TINT_PRESETS: dict[str, dict[str, str]] = {
+# Biome multiply tints for plates and the workbench. A `PackTint` role is read from the
+# pack's content at import (`pack_tints.py`), so it draws what the pack declares; a
+# `#RRGGBB` role is an art-direction proposal the pack does not declare yet.
+_SUB = lambda entry, path: PackTint("substance", entry, path)  # noqa: E731
+BIOME_TINT_SOURCES: dict[str, dict[str, str | PackTint]] = {
     "mars_cryo_ammonia": {
         "label": "Mars — Cryo-Ammonia Sea & Rust Silicates",
         "silicate": "#B85C3C",
         "silicate_low": "#82402A",
-        "ice": "#D4EFF7",
+        "ice": _SUB("ammonia", "appearance.solid.tint"),
         "cliff": "#9E482C",
-        "ocean": "#5EB5C4",
+        "ocean": _SUB("ammonia", "appearance.liquid.tint"),
         "backwash": "#4A2218",
         "swash": "#E6F7F5",
         "grass": "#BC8444",
         "moss": "#96A670",
-        "haze": "#DFE8C0",  # content/substances/ammonia.luau visible.tint
+        "haze": _SUB("ammonia", "visible.tint"),
     },
     "mars_pack_ammonia": {
-        "label": "Mars — Pack Literal Ammonia (#404030) & Hematite",
-        "silicate": "#8B4513",  # content/substances/iron_oxide.luau
+        "label": "Mars — Pack Ammonia Colour & Hematite",
+        "silicate": _SUB("iron_oxide", "color"),
         "silicate_low": "#693514",
-        "ice": "#AAAAAA",       # content/substances/water.luau solid
+        "ice": _SUB("water", "appearance.solid.tint"),
         "cliff": "#7A3B18",
-        "ocean": "#404030",     # content/substances/ammonia.luau color
+        "ocean": _SUB("ammonia", "color"),
         "backwash": "#2E1A0E",
-        "swash": "#DFE8C0",
+        "swash": _SUB("ammonia", "visible.tint"),
         "grass": "#9C841A",
         "moss": "#6E6646",
-        "haze": "#DFE8C0",
+        "haze": _SUB("ammonia", "visible.tint"),
     },
     "mars_polar_ice": {
         "label": "Mars — Calving Polar Ice Sheet & Basalt",
-        "silicate": "#5E626E",
+        "silicate": _SUB("basalt", "color"),
         "silicate_low": "#42454F",
         "ice": "#DCF2FA",
         "cliff": "#8798A6",
@@ -134,12 +139,12 @@ BIOME_TINT_PRESETS: dict[str, dict[str, str]] = {
         "swash": "#F0FAFF",
         "grass": "#88D0C2",
         "moss": "#92C0B0",
-        "haze": "#E6EDF7",  # content/substances/water.luau visible.tint
+        "haze": _SUB("water", "visible.tint"),
     },
     "earth_coastal_meadow": {
         "label": "Earth — Coastal Meadow, Granite Cliffs & Sea",
         "silicate": "#947B62",
-        "silicate_low": "#CBB68C",
+        "silicate_low": PackTint("terrain", "deep_liquid", "face_tint"),
         "ice": "#D8EEF8",
         "cliff": "#7D7A74",
         "ocean": "#3889C9",
@@ -147,7 +152,7 @@ BIOME_TINT_PRESETS: dict[str, dict[str, str]] = {
         "swash": "#F4FAFF",
         "grass": "#86C44A",
         "moss": "#5A9842",
-        "haze": "#E6EDF7",
+        "haze": _SUB("water", "visible.tint"),
     },
     "earth_lush_jungle": {
         "label": "Earth — Lush Jungle Basin & Mossy Crags",
@@ -163,3 +168,5 @@ BIOME_TINT_PRESETS: dict[str, dict[str, str]] = {
         "haze": "#D8ECE4",
     },
 }
+
+BIOME_TINT_PRESETS: dict[str, dict[str, str]] = resolve_presets(PACK_ROOT / "content", BIOME_TINT_SOURCES)

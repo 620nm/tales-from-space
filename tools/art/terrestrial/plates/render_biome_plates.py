@@ -258,7 +258,7 @@ def main() -> None:
         vignettes=[
             (
                 f"1B. PACK-LITERAL AMMONIA ({mars_pack['ocean']})",
-                "ammonia.luau:66 + iron_oxide.luau:30 + water.luau:65",
+                "read from ammonia, iron_oxide and water substances",
                 mars_1b_im,
                 [
                     (mars_pack["ocean"], "NH3 color"),

@@ -56,6 +56,8 @@ local vessel_spec: vessel.Spec = {
         floating = "lunatic/tfs:items.mop.you_chase_the_beads",
         deposit = "lunatic/tfs:items.mop.you_scrape_the_deposit",
         dry = "lunatic/tfs:items.mop.the_deck_here_is_dry",
+        ground = "lunatic/tfs:items.mop.you_run_the_mop_over_ground",
+        ground_dry = "lunatic/tfs:items.mop.the_ground_here_is_dry",
         full = "lunatic/tfs:items.mop.the_mop_is_soaked_through",
     },
 }

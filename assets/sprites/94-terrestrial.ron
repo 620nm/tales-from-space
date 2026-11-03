@@ -27,6 +27,17 @@
     sprites: [
         ("prop_rough_outcrop_1", Ase("art/terrestrial/prop_rough_outcrop_1.aseprite", "idle")),
         ("prop_rough_outcrop_2", Ase("art/terrestrial/prop_rough_outcrop_2.aseprite", "idle")),
+        // Alternative flat blocks for a look's `flats`: each keeps its
+        // strip's block-4 outer ring, so any one joins any neighbour.
+        ("terrain_silicate_rough_flat_1", Ase("art/terrestrial/terrain_silicate_rough_flat_1.aseprite", "idle")),
+        ("terrain_silicate_rough_flat_2", Ase("art/terrestrial/terrain_silicate_rough_flat_2.aseprite", "idle")),
+        ("terrain_silicate_rough_flat_3", Ase("art/terrestrial/terrain_silicate_rough_flat_3.aseprite", "idle")),
+        ("terrain_ice_sheet_flat_1", Ase("art/terrestrial/terrain_ice_sheet_flat_1.aseprite", "idle")),
+        ("terrain_ice_sheet_flat_2", Ase("art/terrestrial/terrain_ice_sheet_flat_2.aseprite", "idle")),
+        ("terrain_ice_sheet_flat_3", Ase("art/terrestrial/terrain_ice_sheet_flat_3.aseprite", "idle")),
+        ("terrain_cliff_stepped_flat_1", Ase("art/terrestrial/terrain_cliff_stepped_flat_1.aseprite", "idle")),
+        ("terrain_cliff_stepped_flat_2", Ase("art/terrestrial/terrain_cliff_stepped_flat_2.aseprite", "idle")),
+        ("terrain_cliff_stepped_flat_3", Ase("art/terrestrial/terrain_cliff_stepped_flat_3.aseprite", "idle")),
     ],
     groups: [
         (sheet: "solid_grass_smooth", sprites: [Slice(5, 1, Sprite("solid_grass_smooth", "idle", s))]),

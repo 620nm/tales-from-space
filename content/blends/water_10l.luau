@@ -24,6 +24,7 @@ local n = LITRES * ML_PER_L * DENSITY_G_PER_ML / MOLAR_MASS_G_PER_MOL
 return {
     id = "water_10l",
     name = "Water, ten litres",
+    name_label = "lunatic/tfs:blends.water_10l.name",
     rows = {
         { "water", n },
     },

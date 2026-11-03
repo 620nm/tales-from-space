@@ -60,6 +60,15 @@ _SPRITE_ORDER: tuple[str, ...] = (
     "solid_moss_smooth",
     "prop_rough_outcrop_1",
     "prop_rough_outcrop_2",
+    "terrain_silicate_rough_flat_1",
+    "terrain_silicate_rough_flat_2",
+    "terrain_silicate_rough_flat_3",
+    "terrain_ice_sheet_flat_1",
+    "terrain_ice_sheet_flat_2",
+    "terrain_ice_sheet_flat_3",
+    "terrain_cliff_stepped_flat_1",
+    "terrain_cliff_stepped_flat_2",
+    "terrain_cliff_stepped_flat_3",
 )
 
 _BY_ID: dict[str, dict[str, Any]] = {

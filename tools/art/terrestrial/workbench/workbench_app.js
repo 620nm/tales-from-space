@@ -751,7 +751,7 @@
     const recolorWrap = document.getElementById("recolor-only-buttons");
     const morphPalettes = [
       ["mars_cryo_ammonia", "Mars Cryo-NH3", false],
-      ["mars_pack_ammonia", "Mars #404030", false],
+      ["mars_pack_ammonia", "Mars Pack", false],
       ["mars_polar_ice", "Mars Polar", false],
       ["earth_coastal_meadow", "Earth Meadow", true],
       ["earth_lush_jungle", "Earth Jungle", true],
