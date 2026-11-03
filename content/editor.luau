@@ -98,6 +98,10 @@ local prototypes = {
             },
         },
     },
+    -- Boulders lie on natural ground; cliffs are terrain-brush blends
+    -- (`basalt_cliff`, `silica_cliff`), listed in the Terrain section.
+    { kind = "structure", id = "outcrop", section = "Natural", category = "" },
+    { kind = "structure", id = "outcrop.cluster", section = "Natural", category = "" },
 }
 
 local function mode(label: string)
@@ -112,7 +116,7 @@ end
 return {
     version = 1,
     pack = "lunatic/tfs",
-    revision = "7",
+    revision = "8",
     -- New-level fills by band (the engine's docs/mapping/editor-declarations.md):
     -- rock below a planet's ground, whose mined tile keeps the profile's cold
     -- ground (the icemoon mineral leaves snow, minerals.dm:677); blank below
