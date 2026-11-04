@@ -2,9 +2,9 @@
 -- stairs.dm): leaving it east climbs to the landing one level up, stepping
 -- back onto its top walks down onto it, a step onto it from the landing's
 -- side is refused, an open landing refuses the climb, a one-level fall onto
--- it is caught (content/lib/fall.luau), a tumble staggers the next steps, a
--- pulled crate follows up it, an item it catches lands without a line and a
--- body pulled as it falls onto it does not tumble.
+-- it is caught (content/lib/fall.luau), a tumble rolls the body off and
+-- staggers its next steps, a pulled crate follows up it, an item it catches
+-- lands without a line and a body pulled as it falls onto it does not tumble.
 -- `t.target_at` names only the viewer's own level.
 local FLIGHT = { x = 3, y = 2 }
 local LANDING = { x = 4, y = 2 }
@@ -146,6 +146,12 @@ assert_moves(6, "fall", "the second fall")
 assert(tumble_heard:find(DOWN_STAIRS, 1, true), "the sleeper falls down the stairs")
 assert(before - t.health(p).health >= 4, "the tumble bruises")
 
+-- 6a. The tumble rolls the body away from the foot (stairs.dm:353): a step
+-- west every 0.4 s for 1 s; the crate at (1, 2) stops the second.
+t.run_ticks(17)
+assert_at(2, 2, "the tumble rolls the body a tile off the flight")
+assert(#t.ledger_rows("level_changed") == 6, "the roll changes no level")
+
 -- 6b. The tumble staggers for 2 s (stairs.dm:349): stood up at once, each
 -- step costs 0.085 s more (lib/fall.luau), 4 ticks at 20 Hz becoming 6.
 assert(t.staff_restore(p), "staff stands the tumbled body up")
@@ -170,11 +176,11 @@ local _ = landing_ticks("south", 1)
 local staggered = landing_ticks("east", 2)
 t.run_seconds(2)
 local steady = landing_ticks("east", 2)
-assert_at(7, 3, "walked east along the south row")
+assert_at(6, 3, "walked east along the south row")
 local staggered_gap = staggered[2] - staggered[1]
 local steady_gap = steady[2] - steady[1]
 assert(staggered_gap > steady_gap, "a staggered step is slower: " .. staggered_gap .. " ticks against " .. steady_gap)
-walk(p, { "west", "west", "west", "west", "north" })
+walk(p, { "west", "west", "west", "north" })
 assert_at(FLIGHT.x, FLIGHT.y, "back on the flight")
 t.set_health(p, { oxy = 0, brute = 0 })
 t.run_seconds(6)

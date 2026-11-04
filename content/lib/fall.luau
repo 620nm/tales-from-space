@@ -63,12 +63,20 @@ local LANDING_MESSAGE_RADIUS = 7
 -- `on_fall`). tg's paralysis is this pack's knockdown hold, as a closet's
 -- is (`lib/closets/data.luau`), so AdjustParalyzed(2 SECONDS) (:348) lies
 -- inside the 5 s knockdown and holds nothing of its own. Not ported: the
--- spin (:351, presentation) and the roll two tiles back (:353,
--- `move_towards`): no effect moves a body a step from a handler.
+-- spin (:351, presentation).
 local TUMBLE_STAGGER_SECONDS = 2 -- adjust_staggered(2 SECONDS), :349
 local TUMBLE_KNOCKDOWN_SECONDS = 5 -- AdjustKnockdown(5 SECONDS), :350
 local TUMBLE_BRUTE_MIN = 4 -- rand(4, 8), :352
 local TUMBLE_BRUTE_MAX = 8
+
+-- The roll (:353): `move_towards` the turf two tiles behind the flight,
+-- `get_ranged_target_turf(src, REVERSE_DIR(dir), 2)`, a step every
+-- `delay = 0.4 SECONDS` until `timeout = 1 SECONDS`: two ordinary steps,
+-- each one a wall or a dense thing may stop.
+local ROLL_TILES = 2
+local ROLL_STEP_SECONDS = 0.4
+local ROLL_TIMEOUT_SECONDS = 1
+local REVERSE: { [string]: string } = { north = "south", south = "north", east = "west", west = "east" }
 
 -- tg's staggered status (code/datums/status_effects/debuffs/staggered.dm):
 -- never on the dead (:17, :36), and while it runs each step costs
@@ -112,6 +120,26 @@ function fall.stagger_step_add_s(mover: Handle): number
     return if is_staggered(mover) then STAGGER_STEP_ADD_SECONDS else 0
 end
 
+-- Rolls `body` away from the foot of `flight`, a step at a time (:353).
+local function roll(body: Handle, flight: Handle): ()
+    local away = REVERSE[flight.facing or ""]
+    if away == nil then
+        return
+    end
+    sim.spawn_task(body, function()
+        for step = 1, ROLL_TILES do
+            if step * ROLL_STEP_SECONDS > ROLL_TIMEOUT_SECONDS then
+                return
+            end
+            sim.sleep(sim.ticks(ROLL_STEP_SECONDS))
+            if not body.alive then
+                return
+            end
+            sim.entity.step({ entity = body, direction = away })
+        end
+    end)
+end
+
 -- The flight of `structures/stairs/stairs.luau` standing at `at` itself,
 -- never one whose top cell is there.
 local function flight_at(at: TileAddress): Handle?
@@ -147,7 +175,8 @@ local function caught_by_flight(ev: MotionLandDonePayload): boolean
     local key = tostring(ev.actor)
     local pulled = pulled_fallers[key] ~= nil
     pulled_fallers[key] = nil
-    if ev.levels_fallen ~= 1 or flight_at(ev.at) == nil then
+    local flight = if ev.levels_fallen == 1 then flight_at(ev.at) else nil
+    if flight == nil then
         return false
     end
     if ev.actor.kind ~= "body" or not tumbles(ev.actor, pulled) then
@@ -159,6 +188,7 @@ local function caught_by_flight(ev: MotionLandDonePayload): boolean
     local span = TUMBLE_BRUTE_MAX - TUMBLE_BRUTE_MIN + 1
     local brute = TUMBLE_BRUTE_MIN + math.floor(sim.random("stairs.tumble") * span)
     sim.damage.apply({ target = ev.actor, amounts = { brute = brute } })
+    roll(ev.actor, flight)
     return true
 end
 
