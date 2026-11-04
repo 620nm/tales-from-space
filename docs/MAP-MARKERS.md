@@ -54,9 +54,9 @@ role combination its mode admits.
 
 `map_markers.threat_location()` performs the same weighted selection over
 `threat_spawn`. `map_markers.spawn_threat(definition)` chooses a location and
-then calls the typed `sim.mob.spawn({ definition, at })` command. The command
-validates the mob roster, tile and per-round spawn limit and records the
-result. The helper returns `false` when no location is available.
+then calls the typed `sim.body.spawn({ plan, at })` command, the definition
+naming the plan. The command validates the plan, tile and per-round spawn
+limit and records the result. The helper returns `false` when no location is available.
 
 Threat markers do not create encounters at map load. An actorless world
 handler, such as a round or clock handler, calls `spawn_threat` and chooses the

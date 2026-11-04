@@ -43,6 +43,7 @@ assert(#sky.name > 0, "a sky has something to call it: " .. tostring(sky.name))
 for _, map in ipairs({
     "cold_outpost.ron",
     "flooded_alcove.ron",
+    "morgue.ron",
     "plant_loop.ron",
     "programmable_airlock.ron",
     "stairwell.ron",

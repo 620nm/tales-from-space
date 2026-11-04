@@ -2,7 +2,8 @@
 -- the thing medbay keeps the dead in until somebody fetches them. Here it is a
 -- closet in the shape of a slab cabinet: open, it can be walked onto and lain
 -- on; shut, it holds what lay there (`fixtures/cadaver_chamber.luau`), and a
--- pass a second reads what it holds (`lib/closets/chamber_watch.luau`).
+-- pass a second reads what it holds (`lib/closets/chamber_watch.luau`). A map
+-- boots with three of the dead in its shut chambers (`lib/cadaver_stock.luau`).
 --
 -- It runs on station power, which tg's does not: `morgue.dm` declares a plain
 -- `/obj/structure` with no `use_power`, so a tg morgue cools and beeps whatever
@@ -28,8 +29,6 @@
 --   occupant does not suffocate.
 -- - Preservation of loose and nested organs: an organ condition holds seated
 --   organs only, so a chamber preserves the corpses in it and nothing else.
--- - The stocked corpse (`dead_body_placer`, code/modules/mapping/
---   mapping_helpers.dm:975-1026): a pack has no way to mint a dressed, dead body.
 -- - The `morgue4` lamp (:404-406) for an occupant who has not stopped: a lit state
 --   would take their push, air and speech (`chamber_watch`), so the alarm says so.
 -- - A lit chamber's occupants in staff's projected contents, and the view of a

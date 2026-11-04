@@ -146,7 +146,7 @@ function map_markers.spawn_threat(definition: unknown): boolean
     if at == nil then
         return false
     end
-    sim.mob.spawn({ definition = definition, at = at })
+    sim.body.spawn({ plan = definition, at = at })
     return true
 end
 

@@ -20,6 +20,7 @@ export const mapFixtures = [
   },
   { map: "diagonal_wall_mount.ron", specs: ["construction/diagonal_wall_mount_test.luau"] },
   { map: "flooded_alcove.ron", specs: ["atmos/environment/flooded_alcove_test.luau"] },
+  { map: "morgue.ron", specs: ["bodies/cadaver_stock_test.luau"] },
   { map: "plant_loop.ron", specs: ["atmos/pipenet/plant_loop_test.luau"] },
   {
     map: "programmable_airlock.ron",

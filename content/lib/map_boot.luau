@@ -7,7 +7,10 @@
 -- directory, so a server started without one has nothing to instantiate:
 -- it says so in the ledger and no round begins.
 --
--- Both modes bind the two handlers below with `map_boot.install`.
+-- Both modes bind the two handlers below with `map_boot.install`. A map that
+-- installs is stocked (`lib/cadaver_stock.luau`) before its round begins.
+
+local cadaver_stock = require("@lib/cadaver_stock")
 
 local map_boot = {}
 
@@ -176,9 +179,11 @@ function map_boot.install(behavior: Definition): ()
             record_failure(ev.outcome, ev.source, ev.reason)
             return
         end
+        cadaver_stock.stock()
         sim.round.begin({ map = ev.logical or ev.source })
     end
     behavior:handle("maps.instantiate.done", { kind = "react" }, on_instantiated)
+    cadaver_stock.install(behavior)
 end
 
 return map_boot
