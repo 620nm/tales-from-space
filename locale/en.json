@@ -188,6 +188,7 @@
   "lunatic/tfs:entity.human_pelvis.name": "pelvis",
   "lunatic/tfs:entity.human_r_arm.name": "right arm",
   "lunatic/tfs:entity.human_r_leg.name": "right leg",
+  "lunatic/tfs:entity.ice_floor.name": "ice",
   "lunatic/tfs:entity.id_assistant.name": "assistant ID card",
   "lunatic/tfs:entity.id_captain.name": "captain's ID card",
   "lunatic/tfs:entity.id_engineering.name": "engineering ID card",
