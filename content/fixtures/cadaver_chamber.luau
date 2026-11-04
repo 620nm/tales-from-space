@@ -3,8 +3,8 @@
 -- states, so the click that opens one steps it back to `closed` first. A push
 -- from inside meets a lamp only for the second until the next pass reads a corpse
 -- revived in there, and goes nowhere until then (`lib/closets/chamber_watch.luau`).
--- Every open is queued here, so its answer slides the contents out onto the
--- tray's tile (`lib/closets/tray.luau`).
+-- Every open, whoever makes it, raises `container.open.done` here, and that
+-- slides the contents out onto the tray's tile (`lib/closets/tray.luau`).
 local breakout = require("@lib/closets/breakout")
 local chamber_watch = require("@lib/closets/chamber_watch")
 local closing = require("@lib/closets/closing")
@@ -23,10 +23,6 @@ if sim ~= nil then
         local chamber: Handle = ev.subject
         if chamber.state == data.chamber_items_state or chamber.state == data.chamber_bodies_state then
             sim.appearance.set_state({ entity = chamber, state = data.closed_state })
-            sim.container.open({ container = chamber })
-            return true
-        end
-        if chamber.state == data.closed_state then
             sim.container.open({ container = chamber })
             return true
         end

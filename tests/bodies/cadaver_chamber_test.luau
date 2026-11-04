@@ -173,6 +173,16 @@ assert(assert(t.structure_at(2, 1)).state == "closed", "the chamber shuts with t
 assert(#t.bodies_at(2, 2) == 0 and #t.items_at(2, 2) == 0, "and takes them in with the headset")
 assert(t.body_id(patient) ~= nil, "the body has no tile, but exists")
 
+-- A plain click open is the engine's, not the chamber script's: the tray hears
+-- its `container.open.done` all the same and slides them back out.
+t.click(attendant, 2, 1, chamber)
+t.run_ticks(2)
+assert(assert(t.structure_at(2, 1)).state == "open", "a plain click opens the shut chamber")
+px, py = t.pos(patient)
+assert(px == 2 and py == 2, "and the tray slides the patient out onto its tile")
+assert(has(t.items_at(2, 2), "headset"), "with the headset")
+assert(#t.script_errors() == 0, "the engine's open reaches the tray cleanly")
+
 -- ---- stuffing somebody in from the next tile --------------------------
 -- The closet's drag: four seconds, then the close takes the body off its own
 -- tile (lib/body_drag.luau). tg's own body drag is onto the tray
