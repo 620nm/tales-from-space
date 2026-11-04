@@ -113,7 +113,7 @@ assert(
 t.move(patient, "west")
 t.run_ticks(3)
 assert(assert(t.structure_at(2, 1)).state == "open", "the push from inside opened it")
--- tg's `open()` puts what it held on the tray's turf (morgue.dm:139-144).
+-- tg's `open()` puts what it held on the tray's turf (morgue.dm:141-144).
 px, py = t.pos(patient)
 assert(px == 2 and py == 2, "and slid the patient out onto the tile it faces")
 assert(has(t.items_at(2, 2), "headset"), "everything else came out with them")
@@ -157,6 +157,21 @@ assert(#t.ledger_rows("container_opened") == 3, "every open is attributed")
 assert(#t.ledger_rows("container_closed") == 2, "every close is attributed")
 assert(t.ledger_has("ContainerClosed", "cadaver chamber"), "the row names the thing")
 assert(#t.script_errors() == 0, "the chamber's handlers run cleanly")
+
+-- Somebody standing on the tray's tile is slid in by the close, as tg's
+-- `close()` takes any living mob there (morgue.dm:157-167); only one standing
+-- on the slab itself refuses it.
+t.move(patient, "south")
+t.run_ticks(4)
+t.move(patient, "west")
+t.run_ticks(4)
+px, py = t.pos(patient)
+assert(px == 2 and py == 2, "the patient stands on the tray's tile")
+t.click(attendant, 2, 1, chamber)
+t.tick()
+assert(assert(t.structure_at(2, 1)).state == "closed", "the chamber shuts with them standing there")
+assert(#t.bodies_at(2, 2) == 0 and #t.items_at(2, 2) == 0, "and takes them in with the headset")
+assert(t.body_id(patient) ~= nil, "the body has no tile, but exists")
 
 -- ---- stuffing somebody in from the next tile --------------------------
 -- The closet's drag: four seconds, then the close takes the body off its own
@@ -228,7 +243,7 @@ assert(#t.script_errors() == 0, "the stuff runs cleanly")
 -- ---- a chamber facing a wall ------------------------------------------
 -- Nothing steps into a wall, so what it held stays on the chamber's own tile;
 -- tg's `forceMove` puts it on the tray's turf whatever stands there
--- (morgue.dm:139-144). Unwired: the lamps are not the claim.
+-- (morgue.dm:141-144). Unwired: the lamps are not the claim.
 t.world(
     [==[(
     name: "cadaver chamber against a wall",

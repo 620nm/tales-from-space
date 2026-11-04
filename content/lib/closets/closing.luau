@@ -56,13 +56,18 @@ function closing.expect(container: Handle, actor: Handle, body: Handle): boolean
 end
 
 -- What stands where a close takes from: the container's own tile, then its
--- tray's (`lib/closets/tray.luau`; tg's `close_loc`, `morgue.dm:155`).
-local function candidates(container: Handle): { Handle }
-	local found = sim.query.range(container.tile, 0, {})
+-- tray's (`lib/closets/tray.luau`; tg's `close_loc`, `morgue.dm:156`), each
+-- with whether it lies on the tray.
+type Candidate = { entity: Handle, on_tray: boolean }
+local function candidates(container: Handle): { Candidate }
+	local found: { Candidate } = {}
+	for _, entity in ipairs(sim.query.range(container.tile, 0, {})) do
+		table.insert(found, { entity = entity, on_tray = false })
+	end
 	local tray_tile = tray.tile(container)
 	if tray_tile ~= nil then
-		for _, candidate in ipairs(sim.query.range(tray_tile, 0, {})) do
-			table.insert(found, candidate)
+		for _, entity in ipairs(sim.query.range(tray_tile, 0, {})) do
+			table.insert(found, { entity = entity, on_tray = true })
 		end
 	end
 	return found
@@ -78,7 +83,7 @@ end
 
 -- Tg's `can_close` (`closets.dm:493-505`): another closet in the way, or a
 -- standing mob a horizontal closet cannot take, on its own tile; one on its
--- tray's tile is left out by `gather` instead. Returns the message key and
+-- tray's tile is taken in by `gather` instead. Returns the message key and
 -- the name it says, or nil. `actor`'s pending entrant (`closing.expect`) is exempt
 -- as pack judgment: tg has no standing self-hide (`closets.dm:990-991`), but
 -- the pack's hide drag (`lib/body_drag.luau`) enters standing. `riders_leave`
@@ -128,12 +133,14 @@ end
 
 -- Tg's `insertion_allowed` for a mob (`closets.dm:575-592`), over what a
 -- script can read: a standing mob in a horizontal closet, and a plan with no
--- known size or one over `max_body_size`, stay out.
-local function body_taken(container: Handle, readout: { [any]: any }): boolean
+-- known size or one over `max_body_size`, stay out. A standing mob on the
+-- tray's tile goes in, as tg's tray `close()` takes any living mob that is
+-- not incorporeal (`morgue.dm:157-167`).
+local function body_taken(container: Handle, readout: { [any]: any }, on_tray: boolean): boolean
 	local size = data.plan_containment_size[readout.plan]
 	return size ~= nil
 		and size <= data.max_body_size
-		and not standing_in_horizontal(container, readout)
+		and (on_tray or not standing_in_horizontal(container, readout))
 end
 
 -- Tg's `take_contents` (`closets.dm:521-531`): the tile's things in turf
@@ -158,7 +165,8 @@ function closing.gather(ev: ContainerClosingPayload)
 			bodies += 1
 		end
 	end
-	for _, candidate in ipairs(candidates(container)) do
+	for _, place in ipairs(candidates(container)) do
+		local candidate = place.entity
 		if candidate ~= container and candidate ~= entrant then
 			if total >= data.item_capacity then
 				break
@@ -166,7 +174,7 @@ function closing.gather(ev: ContainerClosingPayload)
 			if data.family_of(candidate.prototype) == nil then
 				local readout = sim.body(candidate)
 				if readout ~= nil then
-					if bodies < data.body_capacity and body_taken(container, readout) then
+					if bodies < data.body_capacity and body_taken(container, readout, place.on_tray) then
 						sim.container.insert({ container = container, entity = candidate })
 						bodies += 1
 						total += 1

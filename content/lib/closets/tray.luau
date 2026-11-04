@@ -30,7 +30,7 @@ end
 
 -- `container.open.done`: each item and body the open left on the closet's
 -- tile steps one tile out the tray's way (tg's `forceMove(dump_turf)`,
--- `morgue.dm:139-144`). Other closets stay, as `closing` never takes them.
+-- `morgue.dm:141-144`). Other closets stay, as `closing` never takes them.
 function tray.slide_out(ev: ContainerOpenDonePayload): ()
 	local container: Handle = ev.subject
 	local family = data.family_of(container.prototype)

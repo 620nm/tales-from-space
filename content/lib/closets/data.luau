@@ -66,7 +66,7 @@ data.holding_latches = { data.locked_latch, data.welded_latch }
 -- Crate and freezer are tg's `horizontal` closets (`crates.dm:8`); the
 -- locker is not. A cadaver chamber takes bodies lying, as tg's tray does,
 -- and its tray slides out south: it wears the `morgue*_s` face, and tg's
--- tray lands on `get_step(src, dir)` (`morgue.dm:139`).
+-- tray lands on `get_step(src, dir)` (`morgue.dm:141`).
 local families: { [string]: Family } = {
 	cadaver_chamber = { horizontal = true, tray = "south" },
 	crate = { horizontal = true },

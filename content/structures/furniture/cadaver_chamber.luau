@@ -13,7 +13,7 @@
 -- Opening slides what it held out onto the tile it faces, a step each through
 -- the ordinary movement rules (`open()`, :134-147; `lib/closets/tray.luau`),
 -- and closing takes back what lies there (`close()`, :149-169). Divergence: tg
--- `forceMove`s onto that tile whatever stands there (:143); here a wall or a
+-- `forceMove`s onto that tile whatever stands there (:144); here a wall or a
 -- dense thing keeps what cannot step out on the chamber's own tile, which the
 -- close also gathers from.
 --
