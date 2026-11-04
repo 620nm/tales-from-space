@@ -50,7 +50,10 @@ local TERRESTRIAL_STATION = STATION:gsub(
 local function assert_retained(x: number, y: number, authored: string?, resolved: string?)
     local tile = assert(t.composition(x, y))
     assert(tile.substrate == authored, "authored substrate provenance is retained")
-    assert(tile.resolved_substrate == resolved, "the selected substrate is resolved")
+    assert(
+        tile.resolved_substrate == resolved,
+        "the resolved substrate is the effective one: expected " .. tostring(resolved) .. ", got " .. tostring(tile.resolved_substrate)
+    )
     assert(t.outdoors(x, y), "the tile keeps its authored outdoor flag")
     return tile
 end
@@ -71,9 +74,10 @@ local function take(player: number, id: string)
     error("the player could not take " .. id)
 end
 
--- `built` is the build tile's authored substrate, `inherited` what an
--- omitted substrate resolves to on the tile itself, `floor` the substrate
--- sprite a player sees there once the deck is gone.
+-- `built` is the build tile's authored substrate, `inherited` the effective
+-- substrate an omitted one resolves to (the floor of the generated block
+-- under the tile; none in space), `floor` the substrate sprite a player sees
+-- there once the deck is gone.
 local function exercise(
     map: string,
     expected_kind: string,
@@ -181,7 +185,7 @@ local function exercise(
 end
 
 exercise(SPACE_STATION, "space", "space", nil, "space", nil)
-exercise(TERRESTRIAL_STATION, "terrestrial", nil, nil, "ice_floor", "ice_floor-0")
+exercise(TERRESTRIAL_STATION, "terrestrial", nil, "ice_floor", "ice_floor", "ice_floor-0")
 
 -- The spec harness intentionally exposes composition/network reads and
 -- `t.world`, but no live map-export query. Server map-export tests cover the

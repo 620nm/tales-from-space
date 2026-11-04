@@ -10,9 +10,14 @@ local atmosphere = assert(assert(sky.profile).atmosphere)
 assert(sky.id == "cold_outdoors")
 assert(sky.kind == "terrestrial")
 assert(atmosphere.blend == "refrigerated_air")
--- A blank outdoor tile names no substrate: it stands on the generated ground.
+-- A blank outdoor tile names no substrate: it stands on the generated ground,
+-- so its effective substrate is the floor of the surface block's profile.
 local blank = assert(t.composition(0, 0))
-assert(#blank.components == 0 and blank.substrate == nil and blank.resolved_substrate == nil)
+assert(#blank.components == 0 and blank.substrate == nil, "the blank outdoor tile authors nothing")
+assert(
+    blank.resolved_substrate == "ice_floor",
+    "the blank tile resolves to the sheet-ice surface block's floor, got " .. tostring(blank.resolved_substrate)
+)
 assert(composition.bare(8, 3, "ground"))
 assert(composition.bare(9, 5, "space"), "authored vacuum stays vacuum")
 assert(math.abs(assert(t.room_temperature(0, 0)) - 259.15) < 0.01)

@@ -1,7 +1,8 @@
 -- A rock basement on a planet: rock blocks a body, shows itself but hides
 -- what is under and behind it, can be painted into a room, and digging it
 -- out (the `bare` preset) stands the tile on the ground the environment
--- generates below the basement (its surface blend's floor); on ground level one rock
+-- generates below the basement (its deep blend's floor: only the block at
+-- z = -1 is the surface, every deeper one is deep); on ground level one rock
 -- between two pockets keeps a gas apart. tg /turf/closed/mineral
 -- (minerals.dm:6-51). Level -1 lists first: `levels_below_ground: 1`.
 local composition = require("@helpers/composition")
@@ -110,7 +111,10 @@ assert(rock_at(p, 4, 3) == "rock-127", "the rock below the painted tile gains it
 assert(t.set_composition(1, 1, "bare", BASEMENT), "the bare preset removes the rock")
 t.run_ticks(2)
 local dug = composition.seen_sprites(p, 1, 1, BASEMENT)
-assert(dug.substrates[1] == "ice_floor-0", "the dug tile shows the generated ice ground's floor, got " .. tostring(dug.substrates[1]))
+assert(
+    dug.substrates[1] == GROUND_SPRITE,
+    "the dug basement tile shows the deep generated block's ground floor, got " .. tostring(dug.substrates[1])
+)
 assert(#dug.components == 0, "the dug tile has no rock row")
 assert(rock_at(p, 2, 1) == "rock-21", "the rock east of the dug tile loses its west and NW bits")
 assert(rock_at(p, 0, 1) == "rock-3", "the rock west of the dug tile loses its east and NE bits")
