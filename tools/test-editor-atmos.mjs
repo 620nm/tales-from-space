@@ -14,19 +14,15 @@ const editor = await read("../docs/EDITOR.md");
 const breathable = await read("../content/blends/breathable_air.luau");
 const compositions = await read("../content/compositions.luau");
 
-test("both modes offer the blend lens turf paint breathes under", { skip }, () => {
-  for (const [mode, declaration] of Object.entries(manifest.modes)) {
-    assert(declaration.lenses.includes("surface"), `${mode} keeps surface`);
-    assert(declaration.lenses.includes("blend"), `${mode} offers blend`);
-  }
+test("the editor offers the blend lens turf paint breathes under", { skip }, () => {
+  assert(manifest.lenses.includes("surface"), "the editor keeps surface");
+  assert(manifest.lenses.includes("blend"), "the editor offers blend");
 });
 
-test("lattice is turf, not a placement prototype in any mode", { skip }, () => {
-  for (const [mode, declaration] of Object.entries(manifest.modes)) {
-    const ids = declaration.prototypes.map((p) => p.id);
-    assert(!ids.includes("lattice"), `${mode} has no lattice prototype`);
-    assert(!ids.includes("catwalk"), `${mode} has no catwalk prototype`);
-  }
+test("lattice is turf, not a placement prototype", { skip }, () => {
+  const ids = manifest.prototypes.map((p) => p.id);
+  assert(!ids.includes("lattice"), "no lattice prototype");
+  assert(!ids.includes("catwalk"), "no catwalk prototype");
 });
 
 test("lattice and catwalk are compositions, and the editor doc says so", () => {

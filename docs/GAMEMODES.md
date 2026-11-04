@@ -172,8 +172,8 @@ air remains a tile-specific choice.
 ## Playtesting
 
 `free_build` sets `playtest = true`, making it the default for
-`POST /maps/playtest` when the editor leaves the mode blank. Otherwise the
-posted map uses the editor's selected mode. At most one mode may claim the
+`POST /maps/playtest` when the server runs no mode of its own; otherwise the
+posted map uses the mode the server runs. At most one mode may claim the
 flag. The server's `--playtest` flag exposes this route; launcher startup
 still uses its ordinary mode.
 

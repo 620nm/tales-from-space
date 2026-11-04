@@ -163,7 +163,7 @@ it are not implemented.
 A boulder, `outcrop` (tg `/obj/structure/flora/rock`, `flora.dm:1027-1041`), is
 a dense, bolted structure that sight passes; `outcrop.cluster` is its
 fieldstone-cluster art. The art is greyscale under a `color` that defaults to
-basalt's and a map may override. Both sit in the editor's Natural section.
+basalt's and a map may override. Both sit in the Terrain section's Natural category.
 Mining one is not implemented. Spec: `tests/terrain/cliff_test.luau`.
 
 Plants are cell matter over the ground, never ground: a mapper paints the
