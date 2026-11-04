@@ -253,7 +253,7 @@ local function charge(
     end
     local want = head_kpa * 1000.0 * (mine.headspace_l / 1000.0) / (R_J_PER_MOL_K * line.temp_k)
     do_charge(self, source, math.min(want, STROKE_MOL))
-    sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = at })
+    sim.sound.play({ sound = "spray", at = at })
     sim.message.send({
         recipient = user,
         message = sim.msg(CHARGED, { noun = spec.noun }),
@@ -591,7 +591,7 @@ function vessel.attach(spec: Spec): Definition
                 if dregs(spec, self, user) then
                     return true
                 end
-                sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = at })
+                sim.sound.play({ sound = "drink", at = at })
                 do_sip(self, user, spec.sip.units * U)
                 sim.message.send({ recipient = user, message = said(assert(sip_line)) })
                 return true

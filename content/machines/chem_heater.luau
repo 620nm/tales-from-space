@@ -36,6 +36,7 @@ return {
     -- script (fixtures/chem_heater.luau).
     script = "chem_heater",
     ui = { modules = { "thermostat_dock", "parts" } },
+    sounds = { toggle = "click", teardown = "smash" },
     examine = {
         flavor = "A hotplate with a dial and a cradle for one vessel. It "
             .. "holds a temperature steadier than any hand over a flame.",

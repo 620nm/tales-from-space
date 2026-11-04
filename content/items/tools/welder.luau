@@ -80,7 +80,7 @@ if sim ~= nil then
         local user: Handle = ev.actor
         if self.state == "lit" then
             sim.set_flame(self, false)
-            sim.sound.play({ asset = "lunatic/tfs:sound/welder_deactivate", at = ev.at })
+            sim.sound.play({ sound = "welder_deactivate", at = ev.at })
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.welder.you_extinguish_the_welder", {}),
@@ -98,7 +98,7 @@ if sim ~= nil then
             end
             sim.set_flame(self, true)
             ignition.tend_flame(self)
-            sim.sound.play({ asset = "lunatic/tfs:sound/welder_activate", at = ev.at })
+            sim.sound.play({ sound = "welder_activate", at = ev.at })
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.welder.you_flip_the_welder_on", {}),

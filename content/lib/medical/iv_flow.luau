@@ -43,7 +43,7 @@ local BEEPS_MESSAGE = "lunatic/tfs:iv_drip.beeps"
 
 -- Tg uses sound/machines/beep/twobeep_high.ogg
 -- (code/game/machinery/iv_drip.dm:265).
-local BEEPS_SOUND = "lunatic/tfs:sound/twobeep_high"
+local BEEPS_SOUND = "twobeep_high"
 -- Match the pack's nearby broadcast pattern as a local range judgment;
 -- it does not claim tg hearing fidelity (content/lib/controller.luau:186-190).
 local ROOM_MESSAGE_RADIUS = 5
@@ -135,7 +135,7 @@ local function beep(connection: FlowConnection): ()
     end
     notify_room(connection, BEEPS_MESSAGE)
     notify_patient(connection, BEEPS_MESSAGE)
-    sim.sound.play({ asset = BEEPS_SOUND, at = connection.drip.tile })
+    sim.sound.play({ sound = BEEPS_SOUND, at = connection.drip.tile })
 end
 
 local function stroke(

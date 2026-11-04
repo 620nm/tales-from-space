@@ -95,7 +95,7 @@ if sim ~= nil then
                 return true
             end
             sim.place_network(x, y, "pipe", channel, "he_pipe", 15, nil, self, 1)
-            sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = ev.at })
+            sim.sound.play({ sound = "ratchet", at = ev.at })
         end)
         return true
     end)

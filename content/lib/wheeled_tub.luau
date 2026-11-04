@@ -169,7 +169,7 @@ function wheeled_tub.attach(spec: Spec): Definition
             sim.message.send({ recipient = user, message = sim.msg("lunatic/tfs:lib.wheeled_tub.source_empty", {}) })
             return true
         end
-        sim.sound.play({ asset = "lunatic/tfs:sound/slosh", at = ev.at })
+        sim.sound.play({ sound = "slosh", at = ev.at })
         -- `pour`: what will not fit runs onto the deck under the tub.
         table.insert(pours, user)
         sim.matter.pour({ from = held, to = tub, amount = "all" })

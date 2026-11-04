@@ -127,7 +127,7 @@ if sim ~= nil then
                     recipient = user,
                     message = sim.msg("lunatic/tfs:items.wrench.you_fasten_the_pipe", {}),
                 })
-                sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = ev.at })
+                sim.sound.play({ sound = "ratchet", at = ev.at })
             end)
             return true
         end
@@ -158,7 +158,7 @@ if sim ~= nil then
             if not sim.network_accessible(x, y, instance) then
                 return true
             end
-            sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = ev.at })
+            sim.sound.play({ sound = "ratchet", at = ev.at })
             sim.remove_network(x, y, instance, returned_item)
             sim.message.send({
                 recipient = user,

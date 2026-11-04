@@ -62,7 +62,7 @@ if sim ~= nil then
                 temperature_k = CHILLED_K,
             },
         })
-        sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = returned.at })
+        sim.sound.play({ sound = "vend", at = returned.at })
         sim.message.send({
             recipient = returned.user,
             message = sim.msg("lunatic/tfs:fixtures.vendor.traded", {

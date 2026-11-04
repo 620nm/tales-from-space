@@ -58,7 +58,7 @@ if sim ~= nil then
         end
         -- The sustained heave: tg's `operating_sound`, played while
         -- forcing something open (crowbar_prying.ogg).
-        sim.sound.play({ asset = "lunatic/tfs:sound/crowbar_pry", at = ev.at })
+        sim.sound.play({ sound = "crowbar_pry", at = ev.at })
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:items.crowbar.you_jam_the_crowbar_into", {}),

@@ -21,6 +21,7 @@ return {
     name = "ChemDrobe",
     sprite = "chemdrobe",
     ui = { modules = { "shelf" }, opens_on_click = false },
+    sounds = { dispense = "vend" },
     dense = true,
     script = "vendor",
     actions = {

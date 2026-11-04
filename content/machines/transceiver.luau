@@ -35,6 +35,7 @@ return {
         states = { "transceiver_on" },
     },
     ui = { modules = { "link", "parts", "files", "editor" } },
+    sounds = { teardown = "smash" },
     -- What signs this rack up for the four relay stages: every powered,
     -- unsuspended one of these is walked once per `;` line
     -- (docs/content-schema/radio.md).

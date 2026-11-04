@@ -211,7 +211,7 @@ if sim ~= nil then
         sim.set_light(fitting, { status = "ok", color = TUBE_COLOR })
         relight(fitting, TUBE_COLOR)
         if refit.replacer then
-            sim.sound.play({ asset = "lunatic/tfs:sound/click", at = fitting.tile })
+            sim.sound.play({ sound = "click", at = fitting.tile })
             sim.message.send({
                 recipient = refit.user,
                 message = sim.msg("lunatic/tfs:fixtures.light.you_replace_the_light_tube", {}),
@@ -344,7 +344,7 @@ if sim ~= nil then
             return true
         end
         sim.set_light(self, { status = "broken" })
-        sim.sound.play({ asset = "lunatic/tfs:sound/glass_break", at = self.tile })
+        sim.sound.play({ sound = "glass_break", at = self.tile })
         -- Only a tube that was on sparks when it breaks (tg light.dm:690-702).
         if l.lit then
             ignition.spark(self.tile)

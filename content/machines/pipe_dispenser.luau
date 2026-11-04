@@ -32,6 +32,7 @@ local content = {
     name = "pipe dispenser",
     sprite = "pipe_dispenser",
     ui = { modules = { "shelf" }, opens_on_click = false },
+    sounds = { dispense = "vend" },
     dense = true,
     -- Its own file, not the vendor's: a dispenser also takes fittings
     -- BACK, and a softdrinks machine must never learn how to swallow

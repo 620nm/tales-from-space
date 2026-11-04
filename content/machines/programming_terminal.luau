@@ -42,6 +42,7 @@ return {
             .. "flap in grease pencil and then crossed it out.",
     },
     ui = { modules = { "files", "editor" }, opens_on_click = true },
+    sounds = { teardown = "smash" },
     dense = true,
     corded = true,
     -- Everything the pack declares. A terminal that could not read a

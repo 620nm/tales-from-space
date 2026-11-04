@@ -8,7 +8,6 @@ local content = {
 }
 
 if sim ~= nil then
-    sim.define("sound", "lunatic/tfs:sound/twobeep_high", { asset = "twobeep_high" })
     local definition = sim.define("behavior", "lunatic/tfs:iv_drip", { prototype = content.id })
 
     sim.define("message", "lunatic/tfs:action.iv_drip.deconstruct_occupied", { placeholders = {} })

@@ -39,7 +39,7 @@ if sim ~= nil then
         -- (code/_onclick/item_attack.dm:321-326), and it is what keeps
         -- a hammer from being a scalpel.
         sim.damage.apply({ target = target, amounts = { brute = 10 }, aim = sim.zone(user) })
-        sim.sound.play({ asset = "lunatic/tfs:sound/smash", at = target.tile })
+        sim.sound.play({ sound = "smash", at = target.tile })
         -- One whole sentence per message, the name passed as an
         -- argument rather than glued on with `..`: a fragment joined in
         -- content is a fragment no catalog can decline (docs/WORDS.md).

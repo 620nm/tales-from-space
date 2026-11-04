@@ -126,7 +126,7 @@ function cards.slide_in(returned: CardReturn): ()
     local restored = order == "" and returned.key or (returned.key .. "," .. order)
     deck.vars["order"] = restored
     deck.vars["picture"] = cards.picture(cards.count(restored))
-    sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = returned.at })
+    sim.sound.play({ sound = "card_flip", at = returned.at })
     sim.message.send({
         recipient = returned.user,
         message = sim.msg("lunatic/tfs:lib.cards.slid_in", {}),

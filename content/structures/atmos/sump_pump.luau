@@ -32,6 +32,7 @@ return {
     name = "sump pump",
     sprite = "sump_pump_off_n",
     ui = { modules = { "scrubber" } },
+    sounds = { adjust = "click", toggle = "click" },
     dense = false,
     examine = {
         flavor = "A squat pump with its intake on the deck. It leaves nothing behind.",

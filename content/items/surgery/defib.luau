@@ -103,7 +103,7 @@ if sim ~= nil then
         end
         local why = refusal(patient)
         if why ~= nil then
-            sim.sound.play({ asset = "lunatic/tfs:sound/defib_failed", at = ev.at })
+            sim.sound.play({ sound = "defib_failed", at = ev.at })
             sim.message.send({ recipient = user, message = why })
             return true
         end
@@ -126,7 +126,7 @@ if sim ~= nil then
             -- shock. `options.subject` ends the wait the moment they
             -- stop being in front of the medic (docs/LUAU-API.md §6).
             if sim.do_after(user, sim.ticks(5), { subject = patient }) ~= "ok" then
-                sim.sound.play({ asset = "lunatic/tfs:sound/defib_failed", at = user.tile })
+                sim.sound.play({ sound = "defib_failed", at = user.tile })
                 sim.message.send({
                     recipient = user,
                     message = sim.msg("lunatic/tfs:items.defib.the_paddles_slip", {}),
@@ -138,11 +138,11 @@ if sim ~= nil then
             -- somebody else.
             local still = refusal(patient)
             if still ~= nil then
-                sim.sound.play({ asset = "lunatic/tfs:sound/defib_failed", at = user.tile })
+                sim.sound.play({ sound = "defib_failed", at = user.tile })
                 sim.message.send({ recipient = user, message = still })
                 return
             end
-            sim.sound.play({ asset = "lunatic/tfs:sound/defib_zap", at = user.tile })
+            sim.sound.play({ sound = "defib_zap", at = user.tile })
             -- The shock itself: it takes the heart out of failure and
             -- nothing else. It does not heal a part, close a wound or
             -- clear a threshold -- if the body is otherwise fit to live,
@@ -153,7 +153,7 @@ if sim ~= nil then
                     sim.mend_component(patient, "heart", assert(sim.organ(part.organs.heart)).max)
                 end
             end
-            sim.sound.play({ asset = "lunatic/tfs:sound/defib_success", at = user.tile })
+            sim.sound.play({ sound = "defib_success", at = user.tile })
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.defib.the_patient_s_heart_restarts", {}),

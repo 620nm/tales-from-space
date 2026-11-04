@@ -34,6 +34,7 @@ return {
     name = "digital valve",
     sprite = "dvalve_shut_ns",
     ui = { modules = { "flow" } },
+    sounds = { toggle = "click" },
     -- ON THE ROOM'S NETWORK. An endpoint carries its own address and
     -- joins one hub, which is how an air alarm comes to draw this
     -- machine's settings instead of a crewman kneeling at it. The class

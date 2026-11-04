@@ -82,7 +82,7 @@ if sim ~= nil then
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
         local result = math.random(1, SIDES)
-        sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = user.tile })
+        sim.sound.play({ sound = "dice_roll", at = user.tile })
         sim.appearance.set_state({ entity = self, state = tostring(result) })
         -- tg says this to the roller and a fuller sentence to the room
         -- (dice.dm:102-107). We have no visible-message effect yet, so
@@ -98,7 +98,7 @@ if sim ~= nil then
     script_definition:handle("throw.land.done", { kind = "react", route = "land" }, function(ev)
         local self, user, x, y = ev.entity, ev.thrower, ev.at.x, ev.at.y
         local result = math.random(1, SIDES)
-        sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = ev.at })
+        sim.sound.play({ sound = "dice_roll", at = ev.at })
         sim.appearance.set_state({ entity = self, state = tostring(result) })
         sim.message.send({
             recipient = user,

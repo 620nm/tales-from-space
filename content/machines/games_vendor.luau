@@ -60,6 +60,7 @@ return {
     name = "Good Clean Fun",
     sprite = "games_vendor",
     ui = { modules = { "shelf" }, opens_on_click = false },
+    sounds = { dispense = "vend" },
     dense = true,
     script = "vendor",
     actions = {

@@ -94,7 +94,7 @@ function blast.cast(at: TileAddress): ()
     sim.visual.shake({ at = at, strength = 8, duration = 0.6 })
     sim.visual.glow({ at = at, strength = 2, duration = 0.6 })
     sim.visual.spawn({ visual_layer = "effects", at = at, sprite = "blast_fire", duration = 1.0 })
-    sim.sound.play({ asset = "lunatic/tfs:sound/explosion", at = at })
+    sim.sound.play({ sound = "explosion", at = at })
     -- A hotspot per flame tile (tg explosions.dm:703-704) at the spark's heat.
     ignition.expose(at, ignition.SPARK_K)
     for dy = -1, 1 do

@@ -139,7 +139,7 @@ if sim ~= nil then
     local behavior = sim.define("behavior", "lunatic/tfs:laptop", { prototype = "laptop" })
 
     local function sound(asset: string, at: TileAddress)
-        sim.sound.play({ asset = "lunatic/tfs:sound/" .. asset, at = at })
+        sim.sound.play({ sound = asset, at = at })
     end
 
     local function document(self: Handle, powered: boolean)

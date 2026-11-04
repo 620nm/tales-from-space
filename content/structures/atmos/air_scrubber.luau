@@ -63,6 +63,7 @@ return {
     name = "air scrubber",
     sprite = "scrubber_off_n",
     ui = { modules = { "scrubber" } },
+    sounds = { adjust = "click", toggle = "click" },
     -- ON THE ROOM'S NETWORK. An endpoint carries its own address and
     -- joins one hub, which is how an air alarm comes to draw this
     -- machine's settings instead of a crewman kneeling at it. The class

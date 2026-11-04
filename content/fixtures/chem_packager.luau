@@ -225,7 +225,7 @@ if sim ~= nil then
                 end
                 sim.matter.pour({ from = vessel, to = blank, amount = share })
             end
-            sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = self.tile })
+            sim.sound.play({ sound = "vend", at = self.tile })
             sim.message.send({
                 recipient = user,
                 message = sim.msg(

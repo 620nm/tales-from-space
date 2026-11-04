@@ -100,7 +100,7 @@ if sim ~= nil then
                 ),
             })
         else
-            sim.sound.play({ asset = "lunatic/tfs:sound/part_swap", at = ev.at })
+            sim.sound.play({ sound = "part_swap", at = ev.at })
             sim.message.send({
                 recipient = ev.actor,
                 message = sim.msg("lunatic/tfs:items.part_replacer.swapped", {

@@ -14,7 +14,7 @@ local preserved_organ = require("@lib/medical/preserved_organ")
 
 local chamber_watch = {}
 
-local ALERT_SOUND = "lunatic/tfs:sound/cadaver_alert"
+local ALERT_SOUND = "cadaver_alert"
 -- tg's once a minute (`morgue.dm:241,281-283`).
 local ALARM_SECONDS = 60.0
 local PASS_SECONDS = 1.0
@@ -141,7 +141,7 @@ local function pass(watch: ChamberWatch): boolean
 	end
 	local at = chamber.tile
 	if powered and reading.living and at ~= nil and sim.tick() >= watch.next_alarm_tick then
-		sim.sound.play({ asset = ALERT_SOUND, at = at })
+		sim.sound.play({ sound = ALERT_SOUND, at = at })
 		watch.next_alarm_tick = sim.tick() + sim.ticks(ALARM_SECONDS)
 	end
 	return reading.items or reading.living or #reading.dead > 0

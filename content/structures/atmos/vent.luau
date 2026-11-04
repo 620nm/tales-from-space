@@ -58,6 +58,7 @@ return {
     -- have in common (the switch, the room, the mains, the line behind
     -- them) rather than keeping two copies of it.
     ui = { modules = { "vent" } },
+    sounds = { toggle = "click" },
     -- ON THE ROOM'S NETWORK. An endpoint carries its own address and
     -- joins one hub, which is how an air alarm comes to draw this
     -- machine's settings instead of a crewman kneeling at it. The class

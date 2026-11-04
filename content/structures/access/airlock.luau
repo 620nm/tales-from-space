@@ -37,6 +37,7 @@ return {
     name = "airlock",
     sprite = "door",
     fixture = "Door",
+    sounds = { open = "airlock_open", close = "airlock_close" },
     -- tg's two door latches (the engine's docs/construction/doors.md §Latches): bolts
     -- hold the leaf where it is and need power and a still leaf to
     -- throw (airlock.dm:1333,1410); the emergency latch waives every

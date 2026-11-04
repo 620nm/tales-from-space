@@ -81,7 +81,7 @@ if sim ~= nil then
         sim.set_mode(self, next_index)
         local direction = DIRECTIONS[next_index + 1]
         sim.appearance.set_state({ entity = self, state = direction })
-        sim.sound.play({ asset = "lunatic/tfs:sound/switch_click", at = user.tile })
+        sim.sound.play({ sound = "switch_click", at = user.tile })
         if direction == "off" then
             sim.message.send({
                 recipient = user,

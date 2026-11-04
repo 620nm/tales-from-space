@@ -107,6 +107,7 @@ return {
     name = "chem dispenser",
     sprite = "chem_dispenser",
     ui = { modules = { "mint_dock", "parts" } },
+    sounds = { dispense = "click", adjust = "click", teardown = "smash" },
     examine = {
         flavor = "A shelf of taps over a single dock. Every button on it "
             .. "is somewhere a shift's chemistry could start.",

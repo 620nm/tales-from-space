@@ -29,6 +29,7 @@ return {
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.manual_valve.name",
     name = "manual valve",
+    sounds = { toggle = "valve" },
     sprite = "valve_shut_ns",
     dense = false,
     states = { "shut", "open" },

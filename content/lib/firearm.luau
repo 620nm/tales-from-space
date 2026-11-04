@@ -155,7 +155,7 @@ function firearm.reload(weapon: Handle, actor: Handle): ()
         tell(actor, "lunatic/tfs:lib.firearm.no_magazine")
         return
     end
-    sim.sound.play({ asset = "lunatic/tfs:sound/smg_rack", at = actor.tile })
+    sim.sound.play({ sound = "smg_rack", at = actor.tile })
     tell(actor, "lunatic/tfs:lib.firearm.reloaded")
 end
 

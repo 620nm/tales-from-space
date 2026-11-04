@@ -66,6 +66,14 @@ return {
         view = { depth = 3, tint = 0.9, scale = 0.965, offset = { x = 0, y = 0 } },
         light = { level_distance = 1 },
     },
+    -- A sound reaches 15 tiles (`SOUND_RANGE`, tgstation/code/__DEFINES/sound.dm:36),
+    -- Euclidean (tgstation/code/game/sound/sound.dm:75), unless content/sounds.luau
+    -- says otherwise. Up through a hole it is heard 2 tiles past the opening. tg
+    -- has no per-level drop (its falloff, sound.dm:124, measures x and y only,
+    -- tgstation/code/__HELPERS/spatial_info.dm:331-335); here each deck between
+    -- halves the volume, so a sound from another level never passes for one in
+    -- the room.
+    hearing = { range = 15, opening_reach = 2, gain_per_level = 0.5 },
     -- A loose thing on a tile without gravity bobs 2 px up and 2 px down, 1 s
     -- each way (`DO_FLOATING_ANIM`, tgstation/code/__HELPERS/visual_effects.dm:8-10).
     -- tg sets it on living mobs (TRAIT_MOVE_FLOATING,

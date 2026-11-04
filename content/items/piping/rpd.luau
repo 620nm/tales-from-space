@@ -113,7 +113,7 @@ local function lay_run(
         end
         local paint = if recipe.paints ~= false then paint_of(self).name else nil
         sim.place_network(x, y, "pipe", channel, kind, 15, paint)
-        sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = at })
+        sim.sound.play({ sound = "ratchet", at = at })
     end)
 end
 
@@ -248,7 +248,7 @@ if sim ~= nil then
         if broken == nil or ev.outcome ~= "completed" then
             return
         end
-        sim.sound.play({ asset = "lunatic/tfs:sound/smash", at = broken.at })
+        sim.sound.play({ sound = "smash", at = broken.at })
         sim.message.send({
             recipient = broken.user,
             message = sim.msg("lunatic/tfs:items.rpd.broke_down", {
@@ -392,7 +392,7 @@ if sim ~= nil then
                 fitting_mode = assert(sim.dial(self, "layer")).index
             end
             sim.fit(x, y, structure, fitting_mode)
-            sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = ev.at })
+            sim.sound.play({ sound = "ratchet", at = ev.at })
         end)
         return true
     end)

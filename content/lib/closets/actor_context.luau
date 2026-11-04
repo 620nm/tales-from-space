@@ -21,7 +21,7 @@ end
 
 function actor_context.play_sound_at(at: TileAddress?, sound: string)
 	if at ~= nil then
-		sim.sound.play({ asset = "lunatic/tfs:sound/" .. sound, at = at })
+		sim.sound.play({ sound = sound, at = at })
 	end
 end
 

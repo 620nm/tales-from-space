@@ -46,6 +46,7 @@ return {
     visual_layer = "pipe",
     name_label = "lunatic/tfs:entity.he_junction.name",
     name = "junction",
+    sounds = { toggle = "click" },
     sprite = "he_junction_s",
     dense = false,
     states = { "anchored" },

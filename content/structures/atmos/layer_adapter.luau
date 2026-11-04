@@ -37,6 +37,7 @@ return {
     visual_layer = "pipe",
     name_label = "lunatic/tfs:entity.layer_adapter.name",
     name = "layer adapter",
+    sounds = { toggle = "click" },
     sprite = "layer_adapter_ns",
     dense = false,
     states = { "anchored" },

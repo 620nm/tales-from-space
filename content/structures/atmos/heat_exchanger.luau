@@ -31,6 +31,7 @@ return {
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.heat_exchanger.name",
     name = "heat exchanger",
+    sounds = { toggle = "click" },
     sprite = "he_plate_n",
     dense = false,
     -- One state. A plate is bolted down or it is a fitting in your

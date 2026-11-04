@@ -14,7 +14,6 @@ local tray = require("@lib/closets/tray")
 local content = { id = "cadaver_chamber" }
 
 if sim ~= nil then
-    sim.define("sound", "lunatic/tfs:sound/cadaver_alert", { asset = "cadaver_alert" })
     local behavior = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     behavior:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
         if ev.gesture ~= "primary" or ev.implement ~= nil then

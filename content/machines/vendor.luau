@@ -12,6 +12,7 @@ return {
     name = "Robust Softdrinks vending machine",
     sprite = "vendor",
     ui = { modules = { "shelf" }, opens_on_click = false },
+    sounds = { dispense = "vend" },
     dense = true,
     script = "vendor",
     actions = {

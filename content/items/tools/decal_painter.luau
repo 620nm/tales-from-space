@@ -181,7 +181,7 @@ if sim ~= nil then
         -- tg plays `spray2.ogg` at volume 50 out of `use_paint`
         -- (airlock_painter.dm:52-55); this roster carries no per-clip
         -- gain, so the volume is NOT PORTED.
-        sim.sound.play({ asset = "lunatic/tfs:sound/paint_spray", at = ev.at })
+        sim.sound.play({ sound = "paint_spray", at = ev.at })
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:items.decal_painter.painted", { decal = decal.label }),

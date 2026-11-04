@@ -52,7 +52,7 @@ if sim ~= nil then
                 return
             end
             sim.matter.set_column({ owner = shot.cell, column = "atmos_resin", value = 1.0 })
-            sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = shot.at })
+            sim.sound.play({ sound = "spray", at = shot.at })
             sim.message.send({
                 recipient = shot.user,
                 message = sim.msg(

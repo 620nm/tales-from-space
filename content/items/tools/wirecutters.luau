@@ -76,7 +76,7 @@ if sim ~= nil then
             if not sim.network_accessible(x, y, instance) then
                 return true
             end
-            sim.sound.play({ asset = "lunatic/tfs:sound/wirecutter", at = ev.at })
+            sim.sound.play({ sound = "wirecutter", at = ev.at })
             sim.remove_network(x, y, instance, "cable_coil")
             sim.message.send({
                 recipient = user,

@@ -35,6 +35,7 @@ return {
     sprite = "network_router",
     script = "network_router",
     ui = { modules = { "link", "parts" } },
+    sounds = { teardown = "smash" },
     dense = true,
     corded = true,
     examine = {

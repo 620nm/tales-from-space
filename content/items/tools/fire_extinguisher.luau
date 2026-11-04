@@ -165,7 +165,7 @@ if sim ~= nil then
     end)
 
     definition:handle("matter.rupture.done", { kind = "react", route = "rupture" }, function(ev)
-        sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = ev.at })
+        sim.sound.play({ sound = "spray", at = ev.at })
     end)
 end
 

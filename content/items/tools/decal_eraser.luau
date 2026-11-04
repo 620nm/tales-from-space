@@ -64,7 +64,7 @@ if sim ~= nil then
         sim.remove_decal(x, y, newest)
         -- The same hiss the painter makes, because it is the same
         -- nozzle with solvent in it (airlock_painter.dm:52-55).
-        sim.sound.play({ asset = "lunatic/tfs:sound/paint_spray", at = ev.at })
+        sim.sound.play({ sound = "paint_spray", at = ev.at })
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:items.decal_eraser.erased", {}),

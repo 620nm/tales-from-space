@@ -70,7 +70,7 @@ if sim ~= nil then
                 return true
             end
             place_at(at, "pipe", channel, "adapter", 15, nil, self, 1)
-            sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = at })
+            sim.sound.play({ sound = "ratchet", at = at })
         end)
         return true
     end)

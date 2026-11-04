@@ -235,7 +235,7 @@ function grav_smes.set_ring(ev: InteractionUsePayload): boolean
         return true
     end
     send(actor, MESSAGE .. "ring_start")
-    sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = assert(cart.tile) })
+    sim.sound.play({ sound = "ratchet", at = assert(cart.tile) })
     sim.spawn_task(actor, function()
         if sim.do_after(actor, sim.ticks(RING_SECONDS), {}) ~= "ok" then
             if actor.alive then
@@ -253,7 +253,7 @@ function grav_smes.set_ring(ev: InteractionUsePayload): boolean
             return
         end
         sim.structure.replace(command)
-        sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = assert(cart.tile) })
+        sim.sound.play({ sound = "ratchet", at = assert(cart.tile) })
         send(actor, MESSAGE .. "ring_done")
     end)
     return true

@@ -12,6 +12,7 @@ return {
     sprite = "bidirectional_vent_off",
     script = "bidirectional_vent",
     ui = { modules = { "vent" } },
+    sounds = { toggle = "click" },
     link = { network_interface = true, role = "endpoint", class = "atmos" },
     dense = false,
     states = { "off", "blowing", "siphoning" },

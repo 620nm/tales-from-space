@@ -19,7 +19,7 @@ local function send_line(user: Handle, suffix: string, args: MessageArgs): ()
 end
 
 local function play_scan_sound(user: Handle): ()
-    sim.sound.play({ asset = "lunatic/tfs:sound/health_analyzer_scan", at = user.tile })
+    sim.sound.play({ sound = "health_analyzer_scan", at = user.tile })
 end
 
 local function rounded(value: number): number
@@ -179,7 +179,6 @@ local content = {
 }
 
 if sim ~= nil then
-    sim.define("sound", "lunatic/tfs:sound/health_analyzer_scan", { asset = "health_analyzer_scan" })
     local definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     definition:handle("attack.swing", { kind = "replace", route = "attack" }, function(ev)

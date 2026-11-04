@@ -151,7 +151,7 @@ function bloodshed.shed(target: Handle, brute: number, audible: boolean, animate
         return
     end
     local at = target.tile
-    sim.sound.play({ asset = "lunatic/tfs:sound/punch", at = at })
+    sim.sound.play({ sound = "punch", at = at })
     sim.matter.deposit({
         owner = at.matter,
         substance = "blood",

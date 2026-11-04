@@ -75,7 +75,7 @@ if sim ~= nil then
             if swallow == nil or ev.outcome ~= "completed" then
                 return
             end
-            sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = swallow.at })
+            sim.sound.play({ sound = "drink", at = swallow.at })
             sim.message.send({
                 recipient = swallow.user,
                 message = sim.msg("lunatic/tfs:items.pill.you_swallow_the_pill", {}),

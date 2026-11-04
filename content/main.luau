@@ -1,75 +1,7 @@
--- Script-visible sound resources. The namespaced registry id is the command
--- capability; `asset` is the logical delivery key baked from assets/sounds.ron.
--- Keeping the mapping in content means Rust validates ownership without
--- learning any Tales from Space vocabulary.
 local bloodshed = require("@lib/bloodshed")
 local disinfection = require("@lib/medical/disinfection")
 local fall = require("@lib/fall")
 local ignition = require("@lib/ignition")
-
-local sounds = {
-    "computer_start",
-    "computer_end",
-    "computer_mid1",
-    "computer_mid2",
-    "keyboard_clicks_1",
-    "keyboard_clicks_2",
-    "keyboard_clicks_3",
-    "keyboard_clicks_4",
-    "keyboard_clicks_5",
-    "keyboard_clicks_6",
-    "keyboard_clicks_7",
-    "paper_insert",
-    "card_slide",
-    "terminal_insert_disc",
-    "airlock_bolts_up",
-    "airlock_bolts_down",
-    "card_flip",
-    "card_shuffle",
-    "click",
-    "crowbar",
-    "crowbar_pry",
-    "closet_lock",
-    "closet_unlock",
-    -- The defibrillator's three outcomes (content/items/defib.luau).
-    "defib_failed",
-    "defib_success",
-    "defib_zap",
-    "dice_roll",
-    "drink",
-    -- The grenade's arm click and the near-field blast
-    -- (content/items/weapons/frag_grenade.luau, content/lib/blast.luau).
-    "grenade_arm",
-    "explosion",
-    "glass_break",
-    -- The nozzle on both decal tools (content/items/tools/decal_painter.luau).
-    "paint_spray",
-    "part_swap",
-    -- Flesh hitting flesh, played by the wound handler under every
-    -- wounding blow (content/lib/bloodshed.luau).
-    "punch",
-    "ratchet",
-    -- The reload stroke, played by the firearm handler after a
-    -- successful top-up (content/lib/firearm.luau). The shot itself
-    -- rides the ranged claim's native delivery, not this registry.
-    "smg_rack",
-    "smash",
-    -- First authored human clips for the base-cold emotes
-    -- (code/modules/mob/living/emote.dm:379-420).
-    "sneeze",
-    "cough",
-    "spray",
-    "switch_click",
-    "welder_activate",
-    "welder_deactivate",
-    "weld",
-    "vend",
-    "wirecutter",
-}
-
-for _, asset in sounds do
-    sim.define("sound", "lunatic/tfs:sound/" .. asset, { asset = asset })
-end
 
 sim.define("message", "lunatic/tfs:lib.illness.sneeze", { placeholders = { "name" } })
 sim.define("message", "lunatic/tfs:lib.illness.cough", { placeholders = { "name" } })

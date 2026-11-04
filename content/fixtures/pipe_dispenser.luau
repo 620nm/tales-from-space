@@ -58,7 +58,7 @@ if sim ~= nil then
         if returned == nil or ev.outcome ~= "completed" then
             return
         end
-        sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = returned.at })
+        sim.sound.play({ sound = "vend", at = returned.at })
         sim.message.send({
             recipient = returned.user,
             message = sim.msg("lunatic/tfs:fixtures.pipe_dispenser.put_back", {

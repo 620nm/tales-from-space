@@ -776,8 +776,7 @@ function controller.latch(ev: LatchSetDonePayload): ()
     if ev.success and ev.latch == "bolted" then
         sim.sound.play({
             at = ev.subject.tile,
-            asset = ev.on and "lunatic/tfs:sound/airlock_bolts_down"
-                or "lunatic/tfs:sound/airlock_bolts_up",
+            sound = ev.on and "airlock_bolts_down" or "airlock_bolts_up",
         })
     end
     device_queue.completion(
@@ -792,7 +791,7 @@ function controller.pressure(ev: AtmosPressureTargetDonePayload): ()
     )
 end
 function controller.button(ev: InteractionUsePayload): ()
-    sim.sound.play({ at = ev.subject.tile, asset = "lunatic/tfs:sound/click" })
+    sim.sound.play({ at = ev.subject.tile, sound = "click" })
     -- Every press takes a number; hosts dedupe per sender, so a hostless one costs nothing.
     local sequence = ((sim.var("mod", "button_sequence") :: number?) or 0) + 1
     sim.script_var.set({ scope = "mod", key = "button_sequence", value = sequence })

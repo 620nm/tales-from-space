@@ -243,7 +243,7 @@ if sim ~= nil then
         if target and target.kind == "machine" then
             local can = sim.matter_read(target.entity)
             if can then
-                sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
+                sim.sound.play({ sound = "click", at = ev.at })
                 report(user, "the canister", can)
                 return true
             end
@@ -259,7 +259,7 @@ if sim ~= nil then
             if network and network.network == "pipe" then
                 local pipe = sim.matter_read(ev.at:network(target.instance))
                 if pipe then
-                    sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
+                    sim.sound.play({ sound = "click", at = ev.at })
                     report(user, "the layer " .. string.sub(network.channel, 2) .. " pipe", pipe)
                     return true
                 end
@@ -277,7 +277,7 @@ if sim ~= nil then
             })
             return true
         end
-        sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
+        sim.sound.play({ sound = "click", at = ev.at })
         report(user, "the air", room)
         return true
     end)

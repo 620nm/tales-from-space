@@ -135,7 +135,7 @@ if sim ~= nil then
         end
         self.vars["armed"] = true
         sim.appearance.set_state({ entity = self, state = "armed" })
-        sim.sound.play({ asset = "lunatic/tfs:sound/grenade_arm", at = user.tile })
+        sim.sound.play({ sound = "grenade_arm", at = user.tile })
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:items.frag_grenade.you_prime_the_frag_grenade", {}),

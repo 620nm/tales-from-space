@@ -117,14 +117,14 @@ if sim ~= nil then
         assert(key, "card state must name a face")
         if face_up then
             sim.appearance.set_state({ entity = self, state = "down_" .. key })
-            sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = user.tile })
+            sim.sound.play({ sound = "card_flip", at = user.tile })
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.card.you_turn_the_card_face", {}),
             })
         else
             sim.appearance.set_state({ entity = self, state = "up_" .. key })
-            sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = user.tile })
+            sim.sound.play({ sound = "card_flip", at = user.tile })
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.card.turned", {

@@ -13,6 +13,7 @@ return {
     energy_network = "power",
     name_label = "lunatic/tfs:entity.tv.name",
     name = "television set",
+    sounds = { teardown = "smash" },
     sprite = "tv",
     dense = true,
     script = "tv",

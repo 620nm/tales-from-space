@@ -189,7 +189,7 @@ if sim ~= nil then
             held[i], held[j] = held[j], held[i]
         end
         self.vars["order"] = table.concat(held, ",")
-        sim.sound.play({ asset = "lunatic/tfs:sound/card_shuffle", at = user.tile })
+        sim.sound.play({ sound = "card_shuffle", at = user.tile })
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:items.card_deck.you_shuffle_the_deck", {}),
@@ -318,7 +318,7 @@ if sim ~= nil then
             },
         })
         self.vars["picture"] = cards.picture(cards.count(rest))
-        sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
+        sim.sound.play({ sound = "card_flip", at = ev.at })
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:items.card_deck.you_deal_a_card", {}),

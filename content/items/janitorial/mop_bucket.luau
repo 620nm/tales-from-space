@@ -31,7 +31,6 @@ local spec: wheeled_tub.Spec = { id = content.id, noun = "mop bucket", dump_seco
 content.actions = wheeled_tub.actions(spec)
 
 if sim ~= nil then
-    sim.define("sound", "lunatic/tfs:sound/slosh", { asset = "slosh" })
     wheeled_tub.attach(spec)
 end
 

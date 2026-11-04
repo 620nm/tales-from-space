@@ -269,7 +269,7 @@ local function public_symptom(
         radius = 7,
         message = sim.msg("lunatic/tfs:lib.illness." .. symptom, { name = name }),
     })
-    sim.sound.play({ asset = "lunatic/tfs:sound/" .. symptom, at = tile })
+    sim.sound.play({ sound = symptom, at = tile })
 end
 
 local function private_symptom(

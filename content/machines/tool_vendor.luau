@@ -23,6 +23,7 @@ return {
     name = "YouTool vending machine",
     sprite = "tool_vendor",
     ui = { modules = { "shelf" }, opens_on_click = false },
+    sounds = { dispense = "vend" },
     dense = true,
     script = "vendor",
     actions = {

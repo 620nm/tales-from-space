@@ -97,7 +97,7 @@ if sim ~= nil then
         { kind = "react", route = "rupture" },
         function(ev)
             local self, user, x, y = ev.owner, ev.actor, ev.at.x, ev.at.y
-            sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = ev.at })
+            sim.sound.play({ sound = "spray", at = ev.at })
         end
     )
     script_definition:handle(

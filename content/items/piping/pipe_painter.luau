@@ -88,7 +88,7 @@ if sim ~= nil then
         end
         local paint = COLORS[assert(sim.mode(self)).index + 1]
         sim.paint_network(x, y, target.instance, paint.name)
-        sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
+        sim.sound.play({ sound = "click", at = ev.at })
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:items.pipe_painter.painted", { color = paint.name }),
