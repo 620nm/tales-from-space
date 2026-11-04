@@ -166,7 +166,7 @@ sim.handle("damage.resolved.done", { kind = "react" }, bloodshed.on_wound)
 -- the whole pack and the current mode, and two answers would leave only
 -- the engine's guess, so no gamemode file binds `motion.fall` as well. The
 -- landing line is the item's own; a flight of stairs catches a one-level
--- fall and tumbles a body out cold.
+-- fall and tumbles a body out cold or staggered that nobody pulled.
 sim.handle("motion.fall", { kind = "transform", route = "lifecycle" }, fall.answer)
 sim.handle("motion.land.done", { kind = "react", route = "land" }, fall.on_land)
 sim.define("message", "lunatic/tfs:lib.fall.landed", { placeholders = { "item" } })

@@ -98,9 +98,10 @@ up: a flight on plating and an undrawn top cell over open space a level up
 (the engine's `docs/sim/step-links.md`). Leaving the flight forward climbs to
 the tile ahead a level up, unless that landing is open or the space over the
 flight closed; stepping back onto the top walks down; stepping onto the flight
-from ahead is refused. A one-level fall onto the flight is caught and tumbles a
-body out cold (`content/lib/fall.luau`). Merged art, chained flights, the roll
-down and frames are not ported. `tests/maps/stairwell.ron` is a walkable pair.
+from ahead is refused. A one-level fall onto the flight is caught without a
+landing line, and tumbles a body out cold or staggered that nobody pulled as it
+fell: knocked down, staggered and bruised (`content/lib/fall.luau`). Merged
+art, chained flights, the roll down and frames are not ported. `tests/maps/stairwell.ron` is a walkable pair.
 
 Seeing down has tg's multi-z look (`levels.view` in `content/capabilities.luau`;
 the engine's `docs/architecture/map-instancing/levels.md` "Seeing down"): three

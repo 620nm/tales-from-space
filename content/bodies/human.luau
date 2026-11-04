@@ -734,10 +734,21 @@ if sim ~= nil then
     local body_drag = require("@lib/body_drag")
     local climbing = require("@lib/climbing")
     local wading = require("@lib/wading")
+    local fall = require("@lib/fall")
     host_illness.attach()
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("move.cross", { kind = "contribute" }, wading.on_cross)
+    -- A step pays the water it wades out of and a stagger's slowdown.
+    script_definition:handle("move.cross", { kind = "contribute" }, function(ev: MoveCrossPayload)
+        local answer = wading.on_cross(ev)
+        local stagger_s = fall.stagger_step_add_s(ev.mover)
+        if stagger_s == 0 then
+            return answer
+        end
+        local wade = answer.move_cost
+        local wade_add = if wade ~= nil then wade.add else 0
+        return { move_cost = { add = wade_add + stagger_s * sim.tick_hz() } }
+    end)
     script_definition:handle(
         "move.cross.done",
         { kind = "react" },

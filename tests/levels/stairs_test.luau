@@ -2,21 +2,32 @@
 -- stairs.dm): leaving it east climbs to the landing one level up, stepping
 -- back onto its top walks down onto it, a step onto it from the landing's
 -- side is refused, an open landing refuses the climb, a one-level fall onto
--- it is caught (content/lib/fall.luau) and a pulled crate follows up it.
+-- it is caught (content/lib/fall.luau), a pulled crate follows up it, an
+-- item it catches lands without a line and a body pulled as it falls onto it
+-- does not tumble.
 -- `t.target_at` names only the viewer's own level.
 local FLIGHT = { x = 3, y = 2 }
 local LANDING = { x = 4, y = 2 }
 local UPPER = 1
 local DOWN_STAIRS = "You fall down the stairs!"
+local CRASHES = "wrench crashes into the floor!"
 
 t.set_breathing(false)
 t.world_file("stairwell.ron", 0)
 local p = t.join()
 t.run_ticks(4)
 
-local function step(direction: "north" | "south" | "east" | "west")
-    t.move(p, direction)
-    t.run_seconds(1)
+type Direction = "north" | "south" | "east" | "west"
+
+local function walk(who: number, directions: { Direction })
+    for _, direction in ipairs(directions) do
+        t.move(who, direction)
+        t.run_seconds(1)
+    end
+end
+
+local function step(direction: Direction)
+    walk(p, { direction })
 end
 
 local function assert_at(x: number, y: number, why: string)
@@ -36,8 +47,19 @@ local function assert_moves(count: number, via: string, why: string)
     assert(last.via == via and last.levels == 1, why .. ": one level via " .. via .. ", got " .. tostring(last.via))
 end
 
+local function heard_by(who: number): string
+    return table.concat(t.messages(who), " | ")
+end
+
 local function heard(): string
-    return table.concat(t.messages(p), " | ")
+    return heard_by(p)
+end
+
+local function pick_up_wrench(x: number, y: number)
+    local wrench = assert(t.target_at(p, x, y, "wrench"), "a wrench to pick up")
+    t.click(p, x, y, wrench)
+    t.run_ticks(2)
+    assert(t.hands(p).held == "wrench", "the wrench is in hand")
 end
 
 assert_at(2, 2, "the body spawns at the foot of the flight")
@@ -133,3 +155,48 @@ step("east")
 assert_at(LANDING.x + 1, LANDING.y, "the puller walks on")
 assert_moves(8, "link", "the crate's climb")
 assert(t.same_target(assert(t.target_at(p, LANDING.x, LANDING.y, "crate")), crate), "the crate followed up")
+
+-- 8. An item lands with a line on a floor, and without one on a flight that
+-- catches it (intercept_zImpact's FALL_NO_MESSAGE, stairs.dm:334).
+walk(p, { "east", "east", "south" })
+t.stop_pull(p)
+assert_at(7, 3, "on the upper wrench, the crate parked north of it")
+pick_up_wrench(7, 3)
+assert(t.set_composition(6, 3, "open", UPPER), "a hole beside the wrench")
+local _ = heard()
+t.throw(p, 6, 3)
+t.run_seconds(2)
+assert(heard():find(CRASHES, 1, true), "a wrench landing on the floor crashes")
+assert(t.set_composition(6, 3, "floor", UPPER), "the hole is floored again")
+walk(p, { "west", "west", "west", "north", "west", "west", "north" })
+assert_at(2, 1, "beside the lower wrench")
+pick_up_wrench(1, 1)
+walk(p, { "south", "east", "east" })
+assert_at(LANDING.x, LANDING.y, "back up on the landing")
+t.throw(p, FLIGHT.x, FLIGHT.y)
+t.run_seconds(2)
+assert(t.hands(p).held == nil, "the wrench left the hand")
+assert(not heard():find(CRASHES, 1, true), "the flight catches the wrench without a line")
+
+-- 9. A body out cold pulled as it falls onto the flight does not tumble
+-- (`can_fall_down_stairs`, stairs.dm:338).
+walk(p, { "north", "west", "west", "south" })
+assert_at(2, 2, "upstairs beside the top")
+local sleeper = t.join()
+t.run_ticks(4)
+walk(sleeper, { "east", "east" })
+assert(t.set_composition(FLIGHT.x, FLIGHT.y, "floor", UPPER), "the top is floored over again")
+walk(sleeper, { "north", "west", "south" })
+local sx, sy = t.pos(sleeper)
+assert(sx == FLIGHT.x and sy == FLIGHT.y, "the sleeper stands on the floored top")
+t.pull(p, FLIGHT.x, FLIGHT.y, t.body_target(p, sleeper))
+t.tick()
+t.set_health(sleeper, { oxy = 60 })
+assert(not assert(t.body(sleeper)).conscious, "the sleeper is out cold")
+local falls_before = #t.ledger_rows("level_changed")
+local _ = heard_by(sleeper)
+assert(t.set_composition(FLIGHT.x, FLIGHT.y, "open", UPPER), "the floor opens under the sleeper")
+t.run_seconds(2)
+local rows = t.ledger_rows("level_changed")
+assert(#rows > falls_before and rows[#rows].via == "fall", "the pulled sleeper fell")
+assert(not heard_by(sleeper):find(DOWN_STAIRS, 1, true), "a body pulled as it fell does not tumble")
