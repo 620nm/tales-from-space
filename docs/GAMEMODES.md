@@ -149,7 +149,7 @@ weight comes only from a running gravity battery
 both modes, so it is available whenever the map leaves gravity unconstrained.
 
 A roll entry is eligible when its profile `meets` every need the map lists
-(`content/ground.luau` declares them; the four ground profiles meet
+(`content/rosters/needs.luau` declares them; the four ground profiles meet
 `gravity`) and satisfies the map's saved physical preferences. The ground
 profiles are `fallback = true` entries, considered only when no space entry is
 eligible: a map with `kind: Exact(terrestrial)` or `needs: ["gravity"]` stands
