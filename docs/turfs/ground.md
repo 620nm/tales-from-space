@@ -3,11 +3,21 @@
 The generated ground a map's tiles stand on, and what lies on it; decks and
 covers are `docs/TURFS.md`.
 
-A tile's ground material is a blend it names (`material = Named("sand_ground")`)
-or the block under it. A ground environment's `ground` (`content/environments/`)
-generates blocks under the map, `surface` atop each column over `deep`
-`basalt_ground`: `sheet_ice` for `cold_outdoors`, `soil_ground` for
-`warm_outdoors`, `basalt_ground` for the rest. A blank tile over a block stands
+A tile's ground material is a blend it names on its own substrate
+(`substrate: Named("ground"), material: Named("sand_ground")`) or the block
+under it; a blank tile names none, its column's ground hint does (the
+engine's docs/mapping/format.md §Ground). A ground environment's `ground`
+(`content/environments/`) generates blocks under the map, `surface` atop each
+column over `deep` `basalt_ground`: `sheet_ice` for `cold_outdoors`,
+`soil_ground` for `warm_outdoors`, `basalt_ground` for the rest.
+
+Roles: a hint names a role, never a world's rock. The engine's `surface` and
+`deep` and the pack's `rock` (`content/rosters/ground_roles.luau`, bedrock
+for a ridge or outcrop column) are filled by every ground environment:
+`rock` is `silica_ground` in `warm_outdoors`, `basalt_ground` elsewhere. A
+map naming a role an environment leaves unfilled is refused there. The
+editor draws a `rock` column with `terrain_silicate_rough_flat_1`
+(`content/editor.luau` `ground_roles`). A blank tile over a block stands
 on its blend's terrain `floor` and shows its face; with no ground (space) a
 blank tile is open onto the beyond. Blends `silica_ground`, `basalt_ground`,
 `sand_ground` and `soil_ground` are each one solid at its real bulk density.

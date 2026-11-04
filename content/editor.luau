@@ -105,11 +105,27 @@ local prototypes = {
     { kind = "structure", id = "outcrop.cluster", section = "terrain", category = "Natural" },
 }
 
+-- One click lays a tiled floor here and the plating that roofs it on the
+-- level above (`dz = 1`); refused whole on the top level.
+local composed_tools = {
+    {
+        id = "roofed_floor",
+        label = "Floor, Roofed",
+        ops = {
+            { op = "composition_preset", dx = 0, dy = 0, preset = "floor" },
+            { op = "composition_preset", dx = 0, dy = 0, dz = 1, preset = "plating" },
+        },
+    },
+}
+
 return {
     version = 1,
     pack = "lunatic/tfs",
-    revision = "10",
+    revision = "11",
     tools = { "select", "paint", "fill", "erase", "clone", "link" },
     lenses = { "surface", "subfloor", "blend", "networking" },
     prototypes = prototypes,
+    composed_tools = composed_tools,
+    -- A column hinted with a ground role draws as bare rock in the editor.
+    ground_roles = { rock = { sprite = "terrain_silicate_rough_flat_1" } },
 }

@@ -3,7 +3,8 @@
 -- cannot lay it at all (the engine's docs/content-schema/terrain.md). A sea
 -- on a world this cold is the same ice, at its own depth. Ice laid as ground
 -- stands on its profile's own floor and draws the ice face in ice's colour
--- (content/terrain.luau `sheet_ice`).
+-- (content/terrain.luau `sheet_ice`); the blank tile at (0, 3) takes it
+-- from its column's ground hint, the block under it.
 t.world(
     [==[(
     name: "ice sheet",
@@ -13,8 +14,9 @@ t.world(
         'a': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sand_ground"), components: [])),
         'i': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sheet_ice"), components: [])),
         's': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sea_water"), components: [])),
-        'f': (outdoors: true, composition: (material: Named("sheet_ice"), components: [])),
+        'f': (outdoors: true, composition: ()),
     },
+    ground: (legend: { 'i': (material: Some(Blend("sheet_ice"))) }, rows: [".....", ".....", ".....", "i...."]),
     levels: [
         (
             rows: [

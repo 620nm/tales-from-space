@@ -7,8 +7,9 @@ return {
     sink_k = 2.7,
     insolation = 0,
     surface_temperature_k = 259.15,
-    -- The ground generated under a map: `surface` tops each column, rock
-    -- (`deep`) lies under it.
-    ground = { surface = "basalt_ground", deep = "basalt_ground" },
+    -- The ground generated under a map: `surface` tops each column, `deep`
+    -- lies under it, and a map's `rock` hint (rosters/ground_roles.luau) is
+    -- the bedrock named here.
+    ground = { surface = "basalt_ground", deep = "basalt_ground", rock = "basalt_ground" },
     sides_open_from = 0,
 }
