@@ -24,7 +24,7 @@ t.world(
         'g': (composition: (substrate: Open, components: [(component: "glass_floor")])),
         'r': (composition: (substrate: Open, components: [(component: "reinforced_glass_floor")])),
         'R': (composition: (components: [(component: "rock")])),
-        'c': (composition: ()),
+        'c': (composition: (substrate: Named("ground"))),
     },
     levels: [
         (
@@ -144,17 +144,17 @@ end
 assert(pipe_rows > 0, "the pipe under the window is shown")
 assert(t.network_exposed(7, 1, "pipe") == false, "but cannot be tooled through the glass")
 
--- 6. The lowest level refuses a floor whose preset opens the substrate.
--- The fallen body, beside the basement floor tile (3, 1), sees it.
+-- 6. On a world with ground the basement is not the lowest level: the
+-- environment generates ground under it, so a floor whose preset opens the
+-- substrate stands on that ground. The fallen body, beside the basement floor
+-- tile (3, 1), sees it.
 local before = composition.seen_sprites(hole_body, 3, 1, BASEMENT)
 assert(before.substrates[1] ~= nil, "the basement floor tile shows its substrate")
-assert(not t.set_composition(3, 1, "glass_floor", BASEMENT), "an Open substrate is refused on the lowest level")
+assert(t.set_composition(3, 1, "glass_floor", BASEMENT), "an Open substrate over generated ground is accepted")
 t.run_ticks(2)
 local after = composition.seen_sprites(hole_body, 3, 1, BASEMENT)
-assert(
-    after.substrates[1] == before.substrates[1] and #after.components == #before.components,
-    "the refused tile is unchanged"
-)
+assert(#after.components == #before.components + 1, "the glass floor is laid")
+assert(after.substrates[1] ~= nil, "and the ground under it still shows")
 
 -- 7. Gravity in orbit: glass receives the station field, so a body stepping
 -- onto it from station base stops there. Without it the glass would be

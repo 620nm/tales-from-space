@@ -40,11 +40,11 @@ t.world(
     environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
-        '.': (composition: (components: [(component: "station_base")])),
-        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'c': (composition: (components: [(component: "station_base")])),
-        'a': (composition: (components: [(component: "station_base")])),
-        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        '.': (composition: (substrate: Named("space"), components: [(component: "station_base")])),
+        '#': (composition: (substrate: Named("space"), components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (substrate: Named("space"), components: [(component: "station_base")])),
+        'a': (composition: (substrate: Named("space"), components: [(component: "station_base")])),
+        'g': (composition: (substrate: Named("space"), components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     levels: [
         (
@@ -207,11 +207,11 @@ t.world(
     environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),
-        '.': (composition: (components: [(component: "station_base")])),
-        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'c': (composition: (components: [(component: "station_base")])),
-        'a': (composition: (components: [(component: "station_base")])),
-        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        '.': (composition: (substrate: Named("space"), components: [(component: "station_base")])),
+        '#': (composition: (substrate: Named("space"), components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (substrate: Named("space"), components: [(component: "station_base")])),
+        'a': (composition: (substrate: Named("space"), components: [(component: "station_base")])),
+        'g': (composition: (substrate: Named("space"), components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     levels: [
         (

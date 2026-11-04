@@ -57,7 +57,8 @@ for _, substrate in ipairs({ "space", "ground" }) do
     assert(t.ledger_has("StructureStep", "plating", "remove_component"), "the base removal is attributed")
 end
 
--- An omitted substrate is still retained when the inherited station deck opens.
+-- An omitted substrate stays omitted when the deck opens: with no ground
+-- below, a blank tile in a groundless environment is an open hole.
 local inherited = bench(nil, nil, false)
 assert(assert(t.composition(2, 1)).substrate == nil, "the default substrate is inherited")
 take(inherited, 1, 2, "welder")
@@ -65,7 +66,8 @@ t.use_self(inherited)
 t.run_ticks(2)
 t.click_component(inherited, 2, 1, assert(t.component_instance(2, 1, "station_base")))
 t.run_seconds(4.5)
-assert(composition.bare(2, 1, "space"), "the map inherits its environment's space substrate")
+local opened = assert(t.composition(2, 1))
+assert(#opened.components == 0 and opened.resolved_substrate == nil, "the opened deck is an open hole")
 assert(assert(t.composition(2, 1)).substrate == nil, "opening the deck does not invent an override")
 
 for _, cover in ipairs({ "floor_tiles", "grid_cover" }) do

@@ -10,7 +10,9 @@ local atmosphere = assert(assert(sky.profile).atmosphere)
 assert(sky.id == "cold_outdoors")
 assert(sky.kind == "terrestrial")
 assert(atmosphere.blend == "refrigerated_air")
-assert(composition.bare(0, 0, "ground"))
+-- A blank outdoor tile names no substrate: it stands on the generated ground.
+local blank = assert(t.composition(0, 0))
+assert(#blank.components == 0 and blank.substrate == nil and blank.resolved_substrate == nil)
 assert(composition.bare(8, 3, "ground"))
 assert(composition.bare(9, 5, "space"), "authored vacuum stays vacuum")
 assert(math.abs(assert(t.room_temperature(0, 0)) - 259.15) < 0.01)
@@ -57,7 +59,13 @@ ui_controls.build(builder, "floor_tile", "plating", 2, 1)
 t.run_seconds(0.75)
 assert(composition.matches(2, 1, { "station_base", "floor_tiles" }), "the deck can be tiled normally")
 
+-- The bare preset writes the inherited substrate: the tile then stands on
+-- the ground the environment generates, and shows that ground's floor.
 assert(t.set_composition(2, 1, "bare"))
-assert(composition.bare(2, 1, "ground"), "removing the deck retains its authored ground")
+t.run_ticks(2)
+local cleared = assert(t.composition(2, 1))
+assert(#cleared.components == 0 and cleared.substrate == nil, "the bare preset clears the deck: " .. composition.describe(2, 1))
+local shown = composition.seen_sprites(builder, 2, 1).substrates[1]
+assert(shown == "ice_floor-0", "the cleared tile shows the generated ice floor, got " .. tostring(shown))
 assert(t.set_composition(2, 1, "plating"))
-assert(assert(t.composition(2, 1)).resolved_substrate == "ground", "replacing the deck retains ground")
+assert(composition.matches(2, 1, { "station_base" }), "a deck can be laid again over the generated ground")

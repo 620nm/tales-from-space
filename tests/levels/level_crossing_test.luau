@@ -47,7 +47,7 @@ t.world(
         'o': (composition: (substrate: Open)),
         'g': (composition: (substrate: Open, components: [(component: "glass_floor")])),
         'R': (composition: (components: [(component: "rock")])),
-        'c': (composition: ()),
+        'c': (composition: (substrate: Named("ground"))),
     },
     levels: [
         (
@@ -132,7 +132,7 @@ local TEXT_HEADER = [==[(
         'o': (composition: (substrate: Open)),
         'g': (composition: (substrate: Open, components: [(component: "glass_floor")])),
         'R': (composition: (components: [(component: "rock")])),
-        'c': (composition: ()),
+        'c': (composition: (substrate: Named("ground"))),
     },
     levels: [
 ]==]

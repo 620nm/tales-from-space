@@ -240,8 +240,8 @@ t.world(
     name: "transfer",
     legend: {
         ' ': (composition: (substrate: Named("space"))),
-        '.': (composition: (components: [(component: "station_base")])),
-        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '.': (composition: (substrate: Named("space"), components: [(component: "station_base")])),
+        '#': (composition: (substrate: Named("space"), components: [(component: "station_base"), (component: "wall")])),
     },
     levels: [
         (
@@ -442,8 +442,8 @@ t.world(
     name: "parallel mains",
     legend: {
         ' ': (composition: (substrate: Named("space"))),
-        '.': (composition: (components: [(component: "station_base")])),
-        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '.': (composition: (substrate: Named("space"), components: [(component: "station_base")])),
+        '#': (composition: (substrate: Named("space"), components: [(component: "station_base"), (component: "wall")])),
     },
     levels: [
         (

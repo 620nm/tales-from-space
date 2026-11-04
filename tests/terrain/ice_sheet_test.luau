@@ -31,6 +31,7 @@ t.world(
 )
 t.set_breathing(false)
 
+local composition = require("@helpers/composition")
 local matter_look = require("@helpers/matter_look")
 
 local ICE = "#D4EFF7" -- content/substances/water.luau
@@ -42,8 +43,8 @@ local sheet = assert(matter_look.find(p, 3, 1, "crystalline", 3), "a metre of ic
 assert(sheet.tint == ICE, "in ice's own colour, got " .. sheet.tint)
 assert(#matter_look.parts(p, 3, 1, "crystalline") == 1, "and only the sheet")
 assert(matter_look.find(p, 3, 3, "crystalline", 3), "a frozen sea is the same sheet")
-local ice_ground = assert(t.composition(0, 3))
-assert(ice_ground.resolved_substrate == "ice_floor", "ice ground stands on the ice floor, got " .. tostring(ice_ground.resolved_substrate))
+local ice_ground = composition.seen_sprites(p, 0, 3)
+assert(ice_ground.substrates[1] == "ice_floor-0", "ice ground shows the ice floor, got " .. tostring(ice_ground.substrates[1]))
 
 t.set_environment({ sink_k = 259.15, insolation = 1e7 })
 t.run_seconds(600)

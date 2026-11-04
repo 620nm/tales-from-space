@@ -1,6 +1,7 @@
 -- A rock basement on a planet: rock blocks a body, shows itself but hides
 -- what is under and behind it, can be painted into a room, and digging it
--- out (the `bare` preset) reveals the planet's ground; on ground level one rock
+-- out (the `bare` preset) stands the tile on the ground the environment
+-- generates below the basement (its surface blend's floor); on ground level one rock
 -- between two pockets keeps a gas apart. tg /turf/closed/mineral
 -- (minerals.dm:6-51). Level -1 lists first: `levels_below_ground: 1`.
 local composition = require("@helpers/composition")
@@ -37,7 +38,7 @@ t.world(
     environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
     legend: {
         '#': (composition: (components: [(component: "rock")])),
-        '.': (composition: ()),
+        '.': (composition: (substrate: Named("ground"))),
     },
     levels: [
         (
@@ -109,7 +110,7 @@ assert(rock_at(p, 4, 3) == "rock-127", "the rock below the painted tile gains it
 assert(t.set_composition(1, 1, "bare", BASEMENT), "the bare preset removes the rock")
 t.run_ticks(2)
 local dug = composition.seen_sprites(p, 1, 1, BASEMENT)
-assert(dug.substrates[1] == GROUND_SPRITE, "the dug tile shows the planet's ground, got " .. tostring(dug.substrates[1]))
+assert(dug.substrates[1] == "ice_floor-0", "the dug tile shows the generated ice ground's floor, got " .. tostring(dug.substrates[1]))
 assert(#dug.components == 0, "the dug tile has no rock row")
 assert(rock_at(p, 2, 1) == "rock-21", "the rock east of the dug tile loses its west and NW bits")
 assert(rock_at(p, 0, 1) == "rock-3", "the rock west of the dug tile loses its east and NE bits")
@@ -158,9 +159,10 @@ assert(
 
 -- 7. A hole cut in the ground closes under the natural fill. The `open` preset
 -- opens ground-level terrain; rock and bare (the `inherit` substrate word) close
--- it. The lowest level refuses an Open tile, so the editor's stuck-validation
--- case (a hole painted over with rock) is checked here on level 0.
-assert(not t.set_composition(1, 1, "open", BASEMENT), "the lowest level refuses the open preset")
+-- it. Generated ground lies under the basement, so the basement takes an Open
+-- tile too; the editor's stuck-validation case (a hole painted over with rock)
+-- is checked here on level 0.
+assert(t.set_composition(1, 1, "open", BASEMENT), "over generated ground the basement takes the open preset")
 assert(t.set_composition(1, 1, "open", 0), "the open preset cuts a hole in ground-level terrain")
 assert(t.composition(1, 1).substrate == "open", "the cut tile's substrate is open")
 assert(t.set_composition(1, 1, "rock", 0), "rock fills the hole")

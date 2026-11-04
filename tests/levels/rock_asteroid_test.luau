@@ -8,7 +8,6 @@ local composition = require("@helpers/composition")
 
 -- Rock wears `rock-<junction>`; the arithmetic is in rock_basement_test.luau (the
 -- carved room is no rock, so it counts like the open room there).
-local SPACE_SPRITE = "space"
 local ROCK_FLOOR_SPRITE = "rock_floor"
 local BASEMENT = -1
 
@@ -76,7 +75,8 @@ local east = composition.seen_sprites(p, 2, 1, BASEMENT)
 assert(east.components[1] == "rock-157", "the rock east of the future dig joins W, N, E and both upper corners")
 
 -- 5. The rock floor preset digs to rock floor, which holds the body; the bare
--- preset writes the inherited substrate, so it reveals space instead.
+-- preset writes the inherited substrate, which in a groundless environment
+-- is an open hole: it draws no substrate at all.
 assert(t.set_composition(1, 1, "rock_floor", BASEMENT), "the rock floor preset removes the rock")
 t.run_ticks(2)
 local dug = composition.seen_sprites(p, 1, 1, BASEMENT)
@@ -91,7 +91,7 @@ assert(x == 1 and y == 1, "the body steps onto the dug rock floor, got (" .. x .
 assert(t.set_composition(1, 3, "bare", BASEMENT), "the bare preset removes the rock")
 t.run_ticks(2)
 local bare = composition.seen_sprites(p, 1, 3, BASEMENT)
-assert(bare.substrates[1] == SPACE_SPRITE, "the bare tile shows space, got " .. tostring(bare.substrates[1]))
+assert(#bare.substrates == 0, "the bare tile is an open hole, got " .. tostring(bare.substrates[1]))
 
 -- 6. Rock roofs what is under it: on a level above ground a rock over the
 -- inherited sky leaves no opening to the room below, which keeps its air where

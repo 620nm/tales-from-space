@@ -4,9 +4,9 @@
     name: "Flooded Alcove",
     environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
     legend: {
-        ' ': (composition: (), outdoors: true),
-        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        ' ': (composition: (substrate: Named("space")), outdoors: true),
+        '#': (composition: (substrate: Named("space"), components: [(component: "station_base"), (component: "wall")])),
+        '.': (composition: (substrate: Named("space"), components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     levels: [
         (

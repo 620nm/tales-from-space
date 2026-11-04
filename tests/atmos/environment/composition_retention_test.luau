@@ -2,9 +2,12 @@ local composition = require("@helpers/composition")
 local network_channels = require("@helpers/network_channels")
 local ui_controls = require("@helpers/ui_controls")
 
--- One station drawing is exercised under both kinds of sky. Only the mode's
--- tag differs: the authored composition, outdoor flags, and network rows do
--- not get a second fixture for terrestrial play.
+-- One station drawing is exercised under both kinds of sky. Only the
+-- environment differs: the authored composition, outdoor flags, and network
+-- rows do not get a second fixture for terrestrial play. An omitted
+-- substrate in space is an open hole, so the space drawing names space
+-- under the deck it builds; on land the omitted tile stands on the ground
+-- the environment generates (its floor, never the tile's own substrate).
 local STATION = [==[(
     name: "composition retention",
     legend: {
@@ -33,13 +36,18 @@ local STATION = [==[(
     ],
 )]==]
 
+local SPACE_STATION = STATION:gsub(
+    "'g': %(composition: %(components",
+    "'g': (composition: (substrate: Named(\"space\"), components"
+)
+
 local TERRESTRIAL_STATION = STATION:gsub(
     'name: "composition retention",',
     'name: "terrestrial composition retention", needs: ["gravity"],'
         .. ' environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(259.15)),'
 )
 
-local function assert_retained(x: number, y: number, authored: string?, resolved: string)
+local function assert_retained(x: number, y: number, authored: string?, resolved: string?)
     local tile = assert(t.composition(x, y))
     assert(tile.substrate == authored, "authored substrate provenance is retained")
     assert(tile.resolved_substrate == resolved, "the selected substrate is resolved")
@@ -63,14 +71,24 @@ local function take(player: number, id: string)
     error("the player could not take " .. id)
 end
 
-local function exercise(map: string, expected_kind: string, substrate: string, recipe: string)
+-- `built` is the build tile's authored substrate, `inherited` what an
+-- omitted substrate resolves to on the tile itself, `floor` the substrate
+-- sprite a player sees there once the deck is gone.
+local function exercise(
+    map: string,
+    expected_kind: string,
+    built: string?,
+    inherited: string?,
+    recipe: string,
+    floor: string?
+)
     t.world(map, 7, "free_build")
     local environment = t.environment()
     assert(environment.kind == expected_kind, "the map uses the requested environment profile")
 
     -- The omitted value stays omitted while its selected environment changes;
     -- an authored space substrate remains an explicit override on land too.
-    assert_retained(3, 1, nil, substrate)
+    assert_retained(3, 1, nil, inherited)
     assert_retained(4, 1, "space", "space")
     assert(composition.matches(5, 1, { "station_base" }), "the network deck starts complete")
     local power = assert(t.network_instance(5, 1, "power", "l2"))
@@ -88,14 +106,14 @@ local function exercise(map: string, expected_kind: string, substrate: string, r
     take(player, "floor_tile")
     ui_controls.build(player, "floor_tile", recipe, 2, 1)
     t.run_seconds(2)
-    assert(composition.matches(2, 1, { "station_base" }), "the ordinary base is built")
+    assert(composition.matches(2, 1, { "station_base" }), "the ordinary base is built: " .. table.concat(t.messages(player), " | ") .. " / " .. composition.describe(2, 1))
     local base = assert(t.component_instance(2, 1, "station_base"))
-    assert_retained(2, 1, nil, substrate)
+    assert_retained(2, 1, built, built or inherited)
     ui_controls.build(player, "floor_tile", "plating", 2, 1)
     t.run_seconds(1)
     assert(composition.matches(2, 1, { "station_base", "floor_tiles" }), "the floor cover is built")
     assert(t.component_instance(2, 1, "station_base") == base, "floor construction keeps the base identity")
-    assert_retained(2, 1, nil, substrate)
+    assert_retained(2, 1, built, built or inherited)
 
     -- The crowbar is the real deconstruction transition; the retained base,
     -- substrate provenance, and outdoors flag survive it.
@@ -106,7 +124,7 @@ local function exercise(map: string, expected_kind: string, substrate: string, r
     t.tick()
     assert(composition.matches(2, 1, { "station_base" }), "floor deconstruction leaves the base")
     assert(t.component_instance(2, 1, "station_base") == base, "floor removal keeps the base identity")
-    assert_retained(2, 1, nil, substrate)
+    assert_retained(2, 1, built, built or inherited)
 
     -- Grid is a declared composition preset. Its cover is then removed by
     -- the same ordinary crowbar transition as floor tiles.
@@ -114,12 +132,12 @@ local function exercise(map: string, expected_kind: string, substrate: string, r
     t.tick()
     assert(composition.matches(2, 1, { "station_base", "grid_cover" }), "the grid cover is installed")
     local grid_base = assert(t.component_instance(2, 1, "station_base"))
-    assert_retained(2, 1, nil, substrate)
+    assert_retained(2, 1, built, built or inherited)
     composition.click_deck(player, 2, 1)
     t.tick()
     assert(composition.matches(2, 1, { "station_base" }), "grid deconstruction leaves the base")
     assert(t.component_instance(2, 1, "station_base") == grid_base, "grid removal keeps the base identity")
-    assert_retained(2, 1, nil, substrate)
+    assert_retained(2, 1, built, built or inherited)
 
     -- Removing the station base exposes the retained substrate, including an
     -- inherited one, without changing outdoors or inventing an override.
@@ -140,9 +158,11 @@ local function exercise(map: string, expected_kind: string, substrate: string, r
     t.run_ticks(5)
     t.click_component(player, 3, 1, assert(t.component_instance(3, 1, "station_base")))
     t.run_seconds(4.5)
-    assert(composition.bare(3, 1, substrate), "base removal exposes the inherited substrate")
-    assert_retained(3, 1, nil, substrate)
-    assert(t.is_breached(3, 1) == (substrate == "space"), "the exposed substrate owns the boundary")
+    local opened = assert(t.composition(3, 1))
+    assert(#opened.components == 0, "base removal leaves the tile bare")
+    assert_retained(3, 1, nil, inherited)
+    local seen = composition.seen_sprites(player, 3, 1)
+    assert(seen.substrates[1] == floor, "the bare tile shows " .. tostring(floor) .. ", got " .. tostring(seen.substrates[1]))
 
     t.move(player, "east")
     t.run_ticks(5)
@@ -160,8 +180,8 @@ local function exercise(map: string, expected_kind: string, substrate: string, r
     assert(network_channels.at(5, 1, "pipe") == "l4", "pipe authoring remains named")
 end
 
-exercise(STATION, "space", "space", "space")
-exercise(TERRESTRIAL_STATION, "terrestrial", "ground", "ground")
+exercise(SPACE_STATION, "space", "space", nil, "space", nil)
+exercise(TERRESTRIAL_STATION, "terrestrial", nil, nil, "ice_floor", "ice_floor-0")
 
 -- The spec harness intentionally exposes composition/network reads and
 -- `t.world`, but no live map-export query. Server map-export tests cover the
