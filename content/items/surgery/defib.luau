@@ -56,7 +56,7 @@ local content = {
 -- still past that line would revive it into a corpse on the next
 -- evaluation, so the refusal is the same refusal.
 local function refusal(patient: Handle): Message?
-    local body = sim.body(patient)
+    local body = sim.body.read(patient)
     if body == nil then
         return nil -- not a body at all; the swing is somebody else's business
     end
@@ -98,7 +98,7 @@ if sim ~= nil then
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("attack.swing", { kind = "replace", route = "attack" }, function(ev)
         local user, patient = ev.actor, ev.target
-        if sim.body(patient) == nil then
+        if sim.body.read(patient) == nil then
             return { replaced = false }
         end
         local why = refusal(patient)

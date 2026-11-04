@@ -79,7 +79,7 @@ end
 -- Always claims: a ranged claim is terminal, and silence reads as a
 -- broken gun.
 function firearm.fire(subject: Handle, actor: Handle, primary: Handle?): ()
-    if primary == nil or sim.body(primary) == nil then
+    if primary == nil or sim.body.read(primary) == nil then
         tell(actor, "lunatic/tfs:lib.firearm.no_target")
         return
     end

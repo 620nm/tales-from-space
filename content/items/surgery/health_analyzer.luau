@@ -187,7 +187,7 @@ if sim ~= nil then
         if target == nil then
             return { replaced = false }
         end
-        local state = sim.body(target)
+        local state = sim.body.read(target)
         if state == nil then
             return { replaced = false }
         end
@@ -203,7 +203,7 @@ if sim ~= nil then
 
     definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local user = ev.actor
-        local state = sim.body(user)
+        local state = sim.body.read(user)
         if state == nil then
             return { replaced = false }
         end

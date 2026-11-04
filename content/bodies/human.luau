@@ -795,7 +795,7 @@ if sim ~= nil then
         function(ev)
             local body = ev.body
             local stop, hold, dead = false, false, false
-            local snapshot = sim.body(body)
+            local snapshot = sim.body.read(body)
             if snapshot == nil then
                 return
             end

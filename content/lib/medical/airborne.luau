@@ -144,7 +144,7 @@ function airborne.on_life(ev: MobLifePayload): ()
     if not source.alive then
         return
     end
-    local source_facts = sim.body(source)
+    local source_facts = sim.body.read(source)
     if source_facts == nil or source_facts.animate ~= true then
         return
     end
@@ -174,7 +174,7 @@ function airborne.on_life(ev: MobLifePayload): ()
 
                     for _, candidate in ipairs(sim.query.range(source_tile, RANGE_QUERY_RADIUS, {})) do
                         if candidate ~= source and candidate.alive then
-                            local target_facts = sim.body(candidate)
+                            local target_facts = sim.body.read(candidate)
                             if target_facts ~= nil
                                 and target_facts.animate == true
                                 and can_breathe(candidate)

@@ -34,7 +34,7 @@ local function knock_off_riders(actor: Handle, support: Handle): ()
 	end
 	for _, candidate in ipairs(sim.query.range(support_tile, 0, {})) do
 		if candidate ~= actor
-			and sim.body(candidate) ~= nil
+			and sim.body.read(candidate) ~= nil
 			and sim.is_supported_by(candidate, support)
 		then
 			local candidate_tile = candidate.tile

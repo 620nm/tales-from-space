@@ -97,7 +97,7 @@ function closing.refusal(container: Handle, actor: Handle, riders_leave: boolean
 				return "lunatic/tfs:lib.closets.close_blocked_closet",
 					actor_context.subject_name(candidate, candidate.prototype or "closet")
 			end
-			local readout = sim.body(candidate)
+			local readout = sim.body.read(candidate)
 			if readout ~= nil
 				and candidate ~= entrant
 				and not (riders_leave and sim.is_supported_by(candidate, container))
@@ -161,7 +161,7 @@ function closing.gather(ev: ContainerClosingPayload)
 	local bodies = total
 	for _, held in ipairs(container.contents or {}) do
 		total += 1
-		if sim.body(held) ~= nil then
+		if sim.body.read(held) ~= nil then
 			bodies += 1
 		end
 	end
@@ -172,7 +172,7 @@ function closing.gather(ev: ContainerClosingPayload)
 				break
 			end
 			if data.family_of(candidate.prototype) == nil then
-				local readout = sim.body(candidate)
+				local readout = sim.body.read(candidate)
 				if readout ~= nil then
 					if bodies < data.body_capacity and body_taken(container, readout, place.on_tray) then
 						sim.container.insert({ container = container, entity = candidate })

@@ -159,7 +159,7 @@ end
 -- up keeps its head out, a body that does not breathe cannot drown, and
 -- internals breathe for it.
 local function drowning(body: Handle): boolean
-    local reading = sim.body(body)
+    local reading = sim.body.read(body)
     if reading == nil or reading.animate ~= true or reading.posture ~= "lying" then
         return false
     end

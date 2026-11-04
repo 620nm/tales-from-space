@@ -184,7 +184,7 @@ function bloodshed.on_wound(ev: DamageResolvedDonePayload): ()
     if brute <= 0 then
         return
     end
-    local body = sim.body(ev.target)
+    local body = sim.body.read(ev.target)
     if body == nil or body.blood == nil then
         return
     end

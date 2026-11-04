@@ -164,7 +164,7 @@ function blood_identity.stamp(body: Handle): ()
     if blood_identity.type_of(body) ~= nil then
         return
     end
-    local state = sim.body(body)
+    local state = sim.body.read(body)
     local blood = state and state.blood or nil
     if blood == nil or blood <= 0 then
         return

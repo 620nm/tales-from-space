@@ -172,7 +172,7 @@ end
 -- exclusion: send per onlooker. `heard` goes to those in earshot without sight.
 local function tell_onlookers(body: Handle, at: TileAddress, seen: Message, heard: Message?): ()
 	for _, onlooker in ipairs(sim.query.range(at, BREAKOUT_ONLOOKER_RADIUS, {})) do
-		if onlooker ~= body and sim.body(onlooker) ~= nil then
+		if onlooker ~= body and sim.body.read(onlooker) ~= nil then
 			if sim.query.los(onlooker, at) then
 				sim.message.send({ recipient = onlooker, message = seen })
 			elseif heard ~= nil then

@@ -102,7 +102,7 @@ local function live_body(connection: FlowConnection): { [any]: any }?
         disconnect_if_current(connection)
         return nil
     end
-    local body = sim.body(connection.patient)
+    local body = sim.body.read(connection.patient)
     if body == nil then
         disconnect_if_current(connection)
         return nil

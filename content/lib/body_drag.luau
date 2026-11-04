@@ -20,7 +20,7 @@ local function actor_ready(actor: Handle): boolean
     if actor.alive ~= true then
         return false
     end
-    local body = sim.body(actor)
+    local body = sim.body.read(actor)
     return body ~= nil and body.controllable == true
 end
 
@@ -29,7 +29,7 @@ local function entry_context_ready(actor: Handle, body: Handle, receiver: Handle
         or body.alive ~= true
         or receiver.alive ~= true
         or receiver.state ~= "open"
-        or sim.body(body) == nil
+        or sim.body.read(body) == nil
     then
         return false
     end
@@ -85,7 +85,7 @@ end
 function body_drag.on_drag(ev: InteractionDragPayload): { replaced: boolean }
     local receiver = ev.target
     local prototype = receiver.prototype
-    if type(prototype) ~= "string" or sim.body(ev.subject) == nil then
+    if type(prototype) ~= "string" or sim.body.read(ev.subject) == nil then
         return { replaced = false }
     end
 

@@ -145,7 +145,7 @@ local function own_tile(handle: Handle): TileAddress?
 end
 
 local function body_exists(handle: Handle): boolean
-    local ok, body = pcall(sim.body, handle)
+    local ok, body = pcall(sim.body.read, handle)
     return ok and body ~= nil
 end
 

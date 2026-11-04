@@ -38,12 +38,12 @@ local blast = {}
 -- Every body the blast can see. The query is Euclidean, so 1.5 reaches
 -- exactly the eight tiles round the blast (a diagonal is root two);
 -- the bands are Chebyshev, so the tile itself is the center and
--- everything else the ring. `sim.body` is the filter: items, machines
+-- everything else the ring. `sim.body.read` is the filter: items, machines
 -- and ghosts on those tiles are not bodies and take nothing.
 function blast.apply(at: TileAddress): ()
     bloodshed.note_blast(at)
     for _, target in ipairs(sim.query.range(at, RADIUS, {})) do
-        if sim.body(target) ~= nil then
+        if sim.body.read(target) ~= nil then
             local tile = target.tile
             if sim.query.los(at, tile) then
                 local distance = math.max(math.abs(tile.x - at.x), math.abs(tile.y - at.y))

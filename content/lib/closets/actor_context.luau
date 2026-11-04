@@ -34,7 +34,7 @@ function actor_context.actor_ready(actor: Handle): boolean
 	if actor.alive ~= true then
 		return false
 	end
-	local body = sim.body(actor)
+	local body = sim.body.read(actor)
 	return body ~= nil and body.controllable == true
 end
 

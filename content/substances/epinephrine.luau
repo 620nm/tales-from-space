@@ -57,7 +57,7 @@ if sim ~= nil then
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
         local down = false
-        local snapshot = sim.body(mob)
+        local snapshot = sim.body.read(mob)
         if snapshot == nil then
             return
         end

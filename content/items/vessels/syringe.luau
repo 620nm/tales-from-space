@@ -226,7 +226,7 @@ if sim ~= nil then
         if clicked == nil or clicked.entity == nil then
             return { replaced = false } -- bare deck is not a syringe's business
         end
-        if sim.body(clicked.entity) ~= nil then
+        if sim.body.read(clicked.entity) ~= nil then
             if tostring(clicked.entity) ~= tostring(user) then
                 return { replaced = false } -- other patients use the delayed attack route
             end
@@ -278,7 +278,7 @@ if sim ~= nil then
         local target, victim, item = ev.target, ev.target, ev.target
         local info = { surgery_refusal = ev.refusal }
         local _self, _target, _item, _info = self, target, item, info
-        if victim == nil or sim.body(victim) == nil then
+        if victim == nil or sim.body.read(victim) == nil then
             return { replaced = false } -- not a body; let the click mean something else
         end
         local mode = assert(sim.mode(self)).index
@@ -339,7 +339,7 @@ if sim ~= nil then
             -- The guard watched the TILE this started on; the patient
             -- walks. Revalidate against where they are NOW, and that
             -- they are still a body at all.
-            if sim.body(victim) == nil then
+            if sim.body.read(victim) == nil then
                 return true
             end
             local ux, uy = user.tile.x, user.tile.y

@@ -87,7 +87,7 @@ local STAGGER_STEP_ADD_SECONDS = 0.085
 local staggered_until: { [string]: number } = {}
 
 local function animate(body: Handle): boolean
-    local snapshot = sim.body(body)
+    local snapshot = sim.body.read(body)
     return snapshot ~= nil and snapshot.animate
 end
 
@@ -160,7 +160,7 @@ local function tumbles(body: Handle, pulled: boolean): boolean
     if pulled then
         return false
     end
-    local snapshot = sim.body(body)
+    local snapshot = sim.body.read(body)
     if snapshot == nil then
         return false
     end

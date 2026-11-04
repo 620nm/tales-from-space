@@ -22,7 +22,7 @@ local STEPS: { Step } = {
 -- until it hits something. tg asks no hand either (`get_spacemove_backup`,
 -- code/modules/mob/mob_movement.dm:306).
 local function grips(actor: Handle): boolean
-    local body = sim.body(actor)
+    local body = sim.body.read(actor)
     return body ~= nil and body.conscious == true
 end
 

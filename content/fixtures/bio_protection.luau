@@ -45,7 +45,7 @@ if sim ~= nil then
 
         local nearby_internals_user = false
         for _, candidate in ipairs(sim.query.range(actor.tile, 3, {})) do
-            if candidate ~= actor and sim.body(candidate) ~= nil then
+            if candidate ~= actor and sim.body.read(candidate) ~= nil then
                 if airborne.uses_internals(candidate) then
                     assert(airborne.body_source_is_blocked(candidate), "the active internals body cannot emit")
                     nearby_internals_user = true

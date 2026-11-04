@@ -27,7 +27,7 @@ local function refusal_reason(actor: Handle): string?
     if actor.alive ~= true then
         return "body_unavailable"
     end
-    local body = sim.body(actor)
+    local body = sim.body.read(actor)
     if body == nil then
         return "body_observer"
     end

@@ -91,7 +91,7 @@ local function pay_for_missing_blood(
     if target <= 0 then
         return
     end
-    -- `sim.body` flattens the declared pools onto the row.
+    -- `sim.body.read` flattens the declared pools onto the row.
     local oxy: number = state.oxy or 0
     if oxy < target or (target >= OXYLOSS_PASSOUT_THRESHOLD and not state.conscious) then
         local per_second = math.floor(OXY_PER_MISSING_MOLE * (normal - blood) / OXY_QUANTUM + 0.5)
@@ -105,7 +105,7 @@ end
 -- The body cadence handler. A plan with no blood has nothing to keep.
 function blood_harmony.on_life(ev: MobLifePayload): ()
     local body = ev.entity
-    local state = sim.body(body)
+    local state = sim.body.read(body)
     if state == nil or not state.animate then
         return
     end

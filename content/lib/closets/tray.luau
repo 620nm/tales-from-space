@@ -40,7 +40,7 @@ function tray.slide_out(ev: ContainerOpenDonePayload): ()
 	for _, candidate in ipairs(sim.query.range(container.tile, 0, {})) do
 		if candidate ~= container
 			and data.family_of(candidate.prototype) == nil
-			and (candidate.kind == "item" or sim.body(candidate) ~= nil)
+			and (candidate.kind == "item" or sim.body.read(candidate) ~= nil)
 		then
 			sim.entity.step({ entity = candidate, direction = family.tray })
 		end

@@ -49,7 +49,7 @@ end
 local function read_contents(chamber: Handle): ChamberContents
 	local reading: ChamberContents = { items = false, living = false, dead = {} }
 	for _, held in ipairs(chamber.contents or {}) do
-		local body = sim.body(held)
+		local body = sim.body.read(held)
 		if body == nil then
 			reading.items = true
 		elseif body.animate == true then

@@ -131,7 +131,7 @@ function host_illness.expose(body: Handle, indices: { number }, route: ExposureR
         return
     end
 
-    local state = sim.body(body)
+    local state = sim.body.read(body)
     if state == nil then
         contagion.replace_indices(body, {})
         return
@@ -205,7 +205,7 @@ function host_illness.on_life(ev: MobLifePayload): ()
         return
     end
 
-    local state = sim.body(body)
+    local state = sim.body.read(body)
     if not can_host(body, state) then
         return
     end
@@ -242,7 +242,7 @@ function host_illness.on_life(ev: MobLifePayload): ()
     if resistance_changed then
         write_resistance(body, resistance)
     end
-    synchronize_blood(body, next_records, sim.body(body))
+    synchronize_blood(body, next_records, sim.body.read(body))
 end
 
 return host_illness
