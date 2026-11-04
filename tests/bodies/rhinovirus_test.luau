@@ -1,7 +1,7 @@
 local composition = require("@helpers/composition")
 local illness_actions = require("@helpers/illness_actions")
 
-local SEED = 3
+local SEED = 281
 local COLD = 0
 local O_MINUS = 0
 local A_PLUS = 3
@@ -9,8 +9,9 @@ local WAIT_LIMIT_SECONDS = 240
 local SYMPTOM_WAIT_SECONDS = 900
 local SYMPTOM_CHUNK_SECONDS = 10
 
--- Pinned to SEED 3's draw stream: an engine change that moves keyed draws
--- (the engine's docs/scripting/determinism-and-testing.md §6.2) can flip it.
+-- Pinned to SEED 281's draw stream: an engine change that moves keyed draws
+-- (the engine's docs/scripting/determinism-and-testing.md §6.2), including
+-- one more entity allocated at boot, can flip it; re-pin by scanning seeds.
 -- About a quarter of streams (simulated) miss the symptom window because the
 -- donor is cured first; a cure grants resistance, so no retry is possible.
 -- This is a player-action proof. The water route is deliberately a water
@@ -177,9 +178,9 @@ assert(medic_x == 2 and medic_y == 1, "the medic starts at the middle spawn")
 assert(incompatible_x == 9 and incompatible_y == 1, "the O- assistant starts remote from the infected donor")
 assert(donor_x == 3 and donor_y == 1, "the engineer starts east of the medic")
 assert(drinker_x == 16 and drinker_y == 1, "the water recipient starts remote from the ward")
-assert(rider_number(t.body_target(medic, medic), "blood_identity", "type") == A_PLUS, "seed 3 gives the medic A+")
-assert(rider_number(t.body_target(incompatible, incompatible), "blood_identity", "type") == O_MINUS, "seed 3 gives the recipient O-")
-assert(rider_number(t.body_target(donor, donor), "blood_identity", "type") == A_PLUS, "seed 3 gives the donor A+")
+assert(rider_number(t.body_target(medic, medic), "blood_identity", "type") == A_PLUS, "seed 281 gives the medic A+")
+assert(rider_number(t.body_target(incompatible, incompatible), "blood_identity", "type") == O_MINUS, "seed 281 gives the recipient O-")
+assert(rider_number(t.body_target(donor, donor), "blood_identity", "type") == A_PLUS, "seed 281 gives the donor A+")
 assert(not body_illness(medic) and not body_illness(incompatible) and not body_illness(donor), "the three ward patients start without rhinovirus")
 
 -- The culture starts with blood and a rhinovirus rider, but no blood type.
