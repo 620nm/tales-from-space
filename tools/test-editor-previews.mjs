@@ -24,7 +24,7 @@ function preview(schema, values) {
 // With no roster one skipped test records why, instead of zero tests.
 if (skip) test("editor previews", { skip }, () => {});
 test("the editor declaration serves its revision and no level bands", { skip }, () => {
-  assert.equal(manifest.revision, "10", "the served declaration revision");
+  assert.equal(manifest.revision, "11", "the served declaration revision");
   assert.equal(manifest.levels, undefined, "a new level is blank; the environment's ground fills it");
 });
 if (manifest) {
