@@ -46,6 +46,13 @@ stop at it, unlike tg's (`cliff.dm:79`): the engine sweeps a throw against
 `movement_blocking`, and no primitive lets one mover pass. Climbing and mining
 it are not implemented.
 
+Height: a column's ground `height` hint moves its surface between levels.
+Height 1 raises a full block onto level 0, a ridge no body walks into; -1
+opens level -1 down to the generated level, a room cut into rock. Spec:
+`tests/terrain/ground_height_test.luau`. The shipped sampler
+(`maps/terrain_sampler.ron`, written by `tools/maps/terrain-sampler.mjs`)
+shows both, its ridge hinted `rock`, over a level -1 of generated rock.
+
 Steps: `content/terrain.luau` `steps` declares `half`, a block half a tile
 high that a map lays with a solid override (`Step("half")`). It is a floor,
 not a wall: air, sight and shots pass it. A body walks along it and down off
