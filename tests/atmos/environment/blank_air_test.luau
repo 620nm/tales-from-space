@@ -47,7 +47,7 @@ t.world(
     [==[(
     name: "blank space pocket",
     levels_below_ground: 1,
-    environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
+    environment: (kind: Exact(space)),
     legend: {
         ' ': (composition: ()),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
@@ -111,10 +111,14 @@ t.world(
 )]==],
     0
 )
+-- The readouts are pushed when a pool moves, so nudge one on each body.
 t.set_breathing(false)
 local aired = t.join("assistant")
 local starved = t.join("engineer")
 t.run_ticks(2)
+t.set_health(aired, { brute = 1 })
+t.set_health(starved, { brute = 1 })
+t.run_ticks(1)
 local lit = assert(t.vitals(aired), "a body in air has a HUD")
 assert(lit.pressure ~= nil and lit.temperature ~= nil, "and it reads the air's pressure and temperature")
 local dark = assert(t.vitals(starved), "a body in a wisp has a HUD")
