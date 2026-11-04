@@ -1,4 +1,5 @@
--- The same water, half a metre deep: sea_water's own shore.
+-- The same water, half a metre deep: sea_water's own shore, laid by the
+-- `shallows` terrain profile (terrain.luau).
 local DENSITY_G_PER_ML = 1.0 -- substances/water.luau
 local MOLAR_MASS = 18.015
 
@@ -11,5 +12,5 @@ return {
     },
     temperature_k = 293.15,
     amount = "per_m3",
-    terrain = { depth_m = 0.5 },
+    terrain = { profile = "shallows" },
 }

@@ -147,8 +147,8 @@ return {
                 { at_ml = 25, shell = { still = "solid_debris_jagged_smooth" } },
             },
         },
-        -- Plants: a thin coat over natural ground (blends/meadow.luau holds
-        -- a litre a tile). It thins as it burns and is gone under 100 mL,
+        -- Plants: a thin coat over natural ground (terrain.luau's `grass`
+        -- cover lays a litre a tile). It thins as it burns and is gone under 100 mL,
         -- leaving the ground face and whatever ash the fire made.
         {
             key = "grass",

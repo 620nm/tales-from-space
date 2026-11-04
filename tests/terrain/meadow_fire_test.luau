@@ -2,7 +2,7 @@ local ignition_room = require("@helpers/ignition_room")
 
 -- A MEADOW FIRE WALKS THE GRASS AND LEAVES BARE GROUND.
 --
--- Three rows of meadow and one of moss on open soil under a warm sky
+-- Three rows of grass and one of moss on open soil under a warm sky
 -- (`warm_outdoors`, whose air refills). The player stands on bare soil and
 -- lights the grass beside it by clicking the ground with a struck burner,
 -- then snuffs it: nothing else is a source.
@@ -14,40 +14,22 @@ local ignition_room = require("@helpers/ignition_room")
 -- * Every plant tile ends bare: no grass or moss drawn, the soil face still
 --   there, and the fire's ash on it.
 -- * With nothing left to burn, every latch lets go.
--- The pack's own meadow and moss blends, declared on the map as they are.
-local plant_cover = t.content_module("plant_cover")
+-- The plants are the pack's own `grass` and `moss` covers (content/terrain.luau),
+-- laid by the map's ground hints on each column's soil tile.
 local ASH = "#515151" -- content/substances/ash.luau
 
-local ROWS = { ".mmmmm", ".mmmmm", ".mmmmm", ".ooooo" }
+local ROWS = { ".ggggg", ".ggggg", ".ggggg", ".mmmmm" }
 -- The player spawns on bare soil at (0, 1); the grass at (1, 1) is clicked.
 local LIT_KEY = "1:1"
 local FAR_GRASS_KEY = "5:1"
 local FAR_MOSS_KEY = "5:3"
 
-local function plant_blend(id: string): string
-    local blend = plant_cover[id] :: any
-    local rows: { string } = {}
-    for _, row in ipairs(blend.rows) do
-        table.insert(rows, string.format('("%s", %.9g)', row[1], row[2]))
-    end
-    return string.format(
-        '"%s": (rows: [%s], temperature_k: %.9g, amount: %s)',
-        id,
-        table.concat(rows, ", "),
-        blend.temperature_k,
-        blend.amount
-    )
-end
-
-local painted: { string } = {}
 local plants: { { x: number, y: number, look: string } } = {}
 for y, row in ipairs(ROWS) do
     for x = 1, #row do
         local glyph = string.sub(row, x, x)
         if glyph ~= "." then
-            local blend = if glyph == "m" then "meadow" else "moss_carpet"
-            local look = if glyph == "m" then "grass" else "moss"
-            table.insert(painted, string.format('(%d, %d, "%s")', x - 1, y - 1, blend))
+            local look = if glyph == "g" then "grass" else "moss"
             table.insert(plants, { x = x - 1, y = y - 1, look = look })
         end
     end
@@ -65,23 +47,17 @@ t.world(
     environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(293.15)),
     legend: {
         '.': (outdoors: true, composition: (substrate: Named("ground"), material: Named("soil_ground"), components: [])),
-        'm': (outdoors: true, composition: (substrate: Named("ground"), material: Named("soil_ground"), components: [])),
-        'o': (outdoors: true, composition: (substrate: Named("ground"), material: Named("soil_ground"), components: [])),
     },
+    ground: (legend: { 'g': (cover: Some("grass")), 'm': (cover: Some("moss")) }, rows: [%s]),
     levels: [
         (
-            rows: [%s],
+            rows: ["......", "......", "......", "......"],
             structures: [(0, 1, "player_spawn")],
             items: [(0, 0, "burner")],
-            painted: [%s],
         ),
     ],
-    blends: {%s, %s},
 )]==],
-        table.concat(quoted, ", "),
-        table.concat(painted, ", "),
-        plant_blend("meadow"),
-        plant_blend("moss_carpet")
+        table.concat(quoted, ", ")
     ),
     0,
     "free_build"

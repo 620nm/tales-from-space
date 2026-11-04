@@ -1719,5 +1719,7 @@
   "lunatic/tfs:lib.grav_smes_run.stopping": "The gravity battery begins to spin down.",
   "lunatic/tfs:ui.message.ignite": "The flame catches in the air.",
   "lunatic/tfs:ground.need.gravity": "Weight underfoot without a generator",
-  "lunatic/tfs:ground.role.rock": "Bedrock"
+  "lunatic/tfs:ground.role.rock": "Bedrock",
+  "lunatic/tfs:ground.cover.grass": "Grass",
+  "lunatic/tfs:ground.cover.moss": "Moss"
 }

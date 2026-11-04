@@ -1,5 +1,5 @@
--- How a condensed phase of ground reads (the engine's
--- docs/content-schema/terrain.md). A tile names a ground material, a
+-- How a condensed phase of ground reads, and the covers a map lays on it
+-- (the engine's docs/content-schema/terrain.md). A tile names a ground material, a
 -- blend; the profile that blend gets says which substrate component a
 -- tile over a block of it carries (`floor`), which matter look is drawn as
 -- the face (`face`, in matter_appearances.luau) and how much darker that
@@ -35,6 +35,20 @@ return {
             face_tint = SEABED,
             fill = true,
             depth_m = 1.5,
+            evaporation = 0,
+            rest_head_m = 0.001,
+            ideal = { half_life_s = 120 },
+        },
+        -- The sea's own shore: `deep_liquid` half a metre deep
+        -- (blends/sea_shallows.luau).
+        {
+            key = "shallows",
+            phase = "liquid",
+            floor = "ground",
+            face = "ground_shell",
+            face_tint = SEABED,
+            fill = true,
+            depth_m = 0.5,
             evaporation = 0,
             rest_head_m = 0.001,
             ideal = { half_life_s = 120 },
@@ -77,6 +91,26 @@ return {
             face = "ground_shell",
             under_shade = 0.7,
             depth_m = 2,
+        },
+    },
+    -- Plants a map lays on a column's surface tile (`ground.cover`): real
+    -- dry plant matter in the tile's cell beside the air, drawn by the
+    -- substance's own look and burnt by reactions/{grass,moss}_fire.luau.
+    -- 300 g of grass a square metre, a temperate grassland's standing crop,
+    -- and 200 g of moss (chosen figures): about a litre a tile at grass's
+    -- 0.3 g/mL and moss's 0.2 (substances/plants/).
+    covers = {
+        {
+            id = "grass",
+            label = "lunatic/tfs:ground.cover.grass",
+            substance = "grass:solid",
+            kg_per_m2 = 0.3,
+        },
+        {
+            id = "moss",
+            label = "lunatic/tfs:ground.cover.moss",
+            substance = "moss:solid",
+            kg_per_m2 = 0.2,
         },
     },
 }
