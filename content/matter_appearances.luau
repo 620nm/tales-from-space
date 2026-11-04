@@ -205,8 +205,9 @@ return {
                 } },
             },
         },
-        -- A cliff's face (terrain.luau `cliff`): the stepped escarpment,
-        -- drawn as `ground_shell` is, so a cliff joins only cliff of one tint.
+        -- A cliff's face, the `half` step's (terrain.luau `steps`): the
+        -- stepped escarpment, drawn as `ground_shell` is, so a cliff joins
+        -- only cliff of one tint.
         {
             key = "cliff_shell",
             visual_layer = "ground_face",

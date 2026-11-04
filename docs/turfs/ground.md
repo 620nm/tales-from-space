@@ -35,17 +35,6 @@ yet. Specs: `tests/matter_look/ground_face_test.luau`,
 `tests/matter_look/environment_ground_test.luau`,
 `tests/terrain/ice_sheet_test.luau`.
 
-A cliff (tg `/turf/open/cliff`) is ground laid by the `cliff` terrain profile:
-its `floor` is the `cliff` substrate and its face the `cliff_shell` look, the
-stepped escarpment, joined to cliff of the same tint. Blends `basalt_cliff` and
-`silica_cliff` take it, coloured by their rock, so the terrain brush paints a
-cliff in one stroke. It is a solid barrier: dense as tg's (`cliff.dm:5`), so no
-body steps onto it, and there is no fall from its top edge; real height is
-levels. As tg's is an open turf, air, sight and shots pass it. Thrown items
-stop at it, unlike tg's (`cliff.dm:79`): the engine sweeps a throw against
-`movement_blocking`, and no primitive lets one mover pass. Climbing and mining
-it are not implemented.
-
 Height: a column's ground `height` hint moves its surface between levels.
 Height 1 raises a full block onto level 0, a ridge no body walks into; -1
 opens level -1 down to the generated level, a room cut into rock. Spec:
@@ -59,8 +48,18 @@ not a wall: air, sight and shots pass it. A body walks along it and down off
 it freely, as on tg's `climb_walkable` table tops, but a walk up onto it is
 vetoed (`content/bodies/human.luau` `move.cross`) and becomes a 2 s climb
 (`content/lib/climbing.luau`, tg `climbable.dm:13`); a pulled body is held
-back. A body on it draws 12 px up, tg's table elevation
+back, and a shove or the wind still carries a body up (the engine skips the
+mover's veto there). A body on it draws 12 px up, tg's table elevation
 (`tables_racks.dm:110`).
+
+A cliff (tg `/turf/open/cliff`) is a band of `half` steps on blank tiles,
+`StepOf("half", Blend("silica_ground"))` or of any rock blend: its face is
+the step's `cliff_shell` look, the stepped escarpment, tinted by the rock
+and joined to cliff of the same tint. tg's is dense (`cliff.dm:5`) and has
+no climb; here it is climbed, and a throw flies over it as tg's does
+(`cliff.dm:79`). A cliff higher than a step is a raised column (`height`)
+fronted by steps. Mining it is not implemented. Specs:
+`tests/terrain/cliff_test.luau`, `tests/terrain/sampler_map_test.luau`.
 
 A boulder, `outcrop` (tg `/obj/structure/flora/rock`, `flora.dm:1027-1041`), is
 a dense, bolted structure that sight passes; `outcrop.cluster` is its
