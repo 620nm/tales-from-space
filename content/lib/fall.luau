@@ -61,10 +61,10 @@ local LANDING_MESSAGE_RADIUS = 7
 
 -- A body that tumbles down a flight it fell onto (stairs.dm:347-354
 -- `on_fall`). tg's paralysis is this pack's knockdown hold, as a closet's
--- is (`lib/closets/data.luau`), so the 2 s lies inside the 5 s knockdown.
--- Not ported: the spin (:351, presentation) and the roll two tiles back
--- (:353, `move_towards`): no effect moves a body a step from a handler.
-local TUMBLE_PARALYSIS_SECONDS = 2 -- AdjustParalyzed(2 SECONDS), :348
+-- is (`lib/closets/data.luau`), so AdjustParalyzed(2 SECONDS) (:348) lies
+-- inside the 5 s knockdown and holds nothing of its own. Not ported: the
+-- spin (:351, presentation) and the roll two tiles back (:353,
+-- `move_towards`): no effect moves a body a step from a handler.
 local TUMBLE_STAGGER_SECONDS = 2 -- adjust_staggered(2 SECONDS), :349
 local TUMBLE_KNOCKDOWN_SECONDS = 5 -- AdjustKnockdown(5 SECONDS), :350
 local TUMBLE_BRUTE_MIN = 4 -- rand(4, 8), :352
@@ -141,7 +141,8 @@ end
 
 -- A flight catches a one-level fall onto it (stairs.dm:324-334
 -- `intercept_zImpact`): no landing line, and the body that tumbles falls
--- down it.
+-- down it. Divergence: tg's catch also returns FALL_RETAIN_PULL (:334), so
+-- a caught body keeps its puller; here the fall has already ended the pull.
 local function caught_by_flight(ev: MotionLandDonePayload): boolean
     local key = tostring(ev.actor)
     local pulled = pulled_fallers[key] ~= nil
@@ -153,8 +154,6 @@ local function caught_by_flight(ev: MotionLandDonePayload): boolean
         return true
     end
     sim.message.send({ recipient = ev.actor, message = sim.msg("lunatic/tfs:lib.fall.down_stairs", {}) })
-    -- Two holds on one posture in one occurrence keep the longer.
-    ev.actor:hold_posture("knockdown", TUMBLE_PARALYSIS_SECONDS)
     ev.actor:hold_posture("knockdown", TUMBLE_KNOCKDOWN_SECONDS)
     stagger(ev.actor, TUMBLE_STAGGER_SECONDS)
     local span = TUMBLE_BRUTE_MAX - TUMBLE_BRUTE_MIN + 1
