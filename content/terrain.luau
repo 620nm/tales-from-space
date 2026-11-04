@@ -113,4 +113,12 @@ return {
             kg_per_m2 = 0.2,
         },
     },
+    -- Blocks shorter than a tile, which a map's solid override lays
+    -- (`Step("half")`). `half` is a table-high ledge: a body climbs onto it
+    -- (lib/climbing.luau) and stands drawn 12 px up, tg's table
+    -- (`tables_racks.dm:110` elevation `pixel_shift = 12`); its face is the
+    -- stepped escarpment (`cliff_shell`, matter_appearances.luau).
+    steps = {
+        { id = "half", height = 0.5, face = "cliff_shell", elevation_px = 12 },
+    },
 }

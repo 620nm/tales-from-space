@@ -46,6 +46,15 @@ stop at it, unlike tg's (`cliff.dm:79`): the engine sweeps a throw against
 `movement_blocking`, and no primitive lets one mover pass. Climbing and mining
 it are not implemented.
 
+Steps: `content/terrain.luau` `steps` declares `half`, a block half a tile
+high that a map lays with a solid override (`Step("half")`). It is a floor,
+not a wall: air, sight and shots pass it. A body walks along it and down off
+it freely, as on tg's `climb_walkable` table tops, but a walk up onto it is
+vetoed (`content/bodies/human.luau` `move.cross`) and becomes a 2 s climb
+(`content/lib/climbing.luau`, tg `climbable.dm:13`); a pulled body is held
+back. A body on it draws 12 px up, tg's table elevation
+(`tables_racks.dm:110`).
+
 A boulder, `outcrop` (tg `/obj/structure/flora/rock`, `flora.dm:1027-1041`), is
 a dense, bolted structure that sight passes; `outcrop.cluster` is its
 fieldstone-cluster art. The art is greyscale under a `color` that defaults to
