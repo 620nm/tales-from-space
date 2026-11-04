@@ -5,7 +5,7 @@
 -- it is caught (content/lib/fall.luau), a tumble rolls the body off and
 -- staggers its next steps, a pulled crate follows up it, an item it catches
 -- lands without a line and a body pulled as it falls onto it does not tumble.
--- `t.target_at` names only the viewer's own level.
+-- `t.target_at` with no level offset names the viewer's own level.
 local FLIGHT = { x = 3, y = 2 }
 local LANDING = { x = 4, y = 2 }
 local UPPER = 1
