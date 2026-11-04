@@ -277,6 +277,12 @@ local composition_declaration: { [string]: any } = {
         -- /turf/open/misc heat_capacity and thermal_conductivity (misc.dm:20-21), the pack's emissivity.
         { id = "rock_floor", label = "rock floor", layer = "substrate", sprite = "rock_floor", substrate = { vacuum_boundary = false },
             physical = { ambient = 0, support = true, receives_gravity = true, thermal = thermal(20000, 0.02, 0.5) } },
+        -- tg /turf/open/misc/ice (ice.dm:1-5): the floor only frozen water's profile names, drawn as
+        -- tg's unsmoothed `ice_turf-0`. Like `ground` it holds a body and is no vacuum boundary.
+        -- Thermal: tg /turf/open/misc (misc.dm:20-21) verbatim, the pack's emissivity (the engine's
+        -- docs/PORTING.md rules 3-4); tg's ice temperature (ice.dm:9) is not a floor's to carry.
+        { id = "ice_floor", label = "ice sheet", layer = "substrate", sprite = "ice_floor-0", substrate = { vacuum_boundary = false },
+            physical = { ambient = 0, support = true, thermal = thermal(20000, 0.02, 0.5) } },
         -- tg /turf/open/cliff: dense (cliff.dm:5) but an open turf, so air and sight pass
         -- (turf.dm:39 `blocks_air = FALSE`; no `opacity`), and so do shots (`protected_types`,
         -- cliff.dm:15,76). The bed of the `cliff` terrain profile: the terrain brush lays it

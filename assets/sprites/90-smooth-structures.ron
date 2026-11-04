@@ -30,6 +30,7 @@
         ("plasma_glass_floor", "turf/floors/plasma_glass.dmi"),
         ("reinforced_plasma_glass_floor", "turf/floors/reinf_plasma_glass.dmi"),
         ("smoothrocks", "turf/smoothrocks.dmi"),
+        ("ice_floor", "turf/floors/ice_turf.dmi"),
     ],
     // `rock-<n>` is the 47 reachable junctions of tg's `smoothrocks`
     // family (minerals.dm:6-21; icon_state `smoothrocks-<n>`). Its cells
@@ -149,6 +150,15 @@
             sheet: "reinforced_plasma_glass_floor",
             sprites: [
                 Junctions("reinforced_plasma_glass_floor", "reinf_plasma_glass"),
+            ],
+        ),
+        // tg's ice sheet (ice.dm:4-5) is cut by the glass floors' template
+        // (ice_turf.png.toml, bitmask/diagonal_32x32) but wears only
+        // `ice_turf-0`; the family bakes whole so the check can find it.
+        (
+            sheet: "ice_floor",
+            sprites: [
+                Junctions("ice_floor", "ice_turf"),
             ],
         ),
     ],
