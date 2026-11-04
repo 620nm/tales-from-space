@@ -20,11 +20,13 @@ function level_crossing.sense(ev: LevelSensePayload): { crosses: string, through
     return { crosses = "down" }
 end
 
--- A hand never reaches another level: tg's `/turf/Adjacent` refuses a turf on
--- another z (code/_onclick/adjacent.dm:34). Bound so the refusal is the pack's
--- own decision, not the engine's default.
-function level_crossing.reach(_ev: LevelReachPayload): { allowed: boolean }
-    return { allowed = false }
+-- A hand reaches the level above only from a flight that views its landing
+-- (stairs.luau `view_landing`): what a climber sees ahead at the top is in
+-- reach, as on a ramp. Never through an opening. Beyond tg, whose
+-- `/turf/Adjacent` refuses any turf on another z (code/_onclick/adjacent.dm:33)
+-- and whose stairs show only an arrow (code/game/objects/structures/stairs.dm:196-221).
+function level_crossing.reach(ev: LevelReachPayload): { allowed: boolean }
+    return { allowed = ev.via == "link" }
 end
 
 function level_crossing.install(behavior: Definition): ()

@@ -1,8 +1,9 @@
 -- What crosses a level is the pack's answer (`content/lib/level_crossing.luau`,
 -- bound by both modes): sound and speech pass an open hole or a glass floor
--- both ways, and a visible message reaches only viewers above. The hand's
--- refusal is not specced here: `t.target_at` names only the viewer's own
--- level. Sound comes
+-- both ways, and a visible message reaches only viewers above. A hand
+-- reaches another level only from a flight (`reach`, `via = "link"`;
+-- tests/levels/flight_view_test.luau); its refusal through a hole is not
+-- specced: `t.target_at` names only the viewer's own level. Sound comes
 -- from picking up a wrench (the wrench's own `wrench_pickup`,
 -- tests/verbs/handling_test.luau), a visible message from the IV stand's
 -- needle (`iv_drip.attach_start`, a room broadcast).

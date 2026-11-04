@@ -100,8 +100,10 @@ the tile ahead a level up, unless that landing is open or the space over the
 flight closed; stepping back onto the top walks down; stepping onto the flight
 from ahead is refused. A one-level fall onto the flight is caught without a
 landing line, and tumbles a body out cold or staggered that nobody pulled as it
-fell: knocked down, staggered and bruised (`content/lib/fall.luau`). Merged
-art, chained flights, the roll down and frames are not ported. `tests/maps/stairwell.ron` is a walkable pair.
+fell: knocked down, staggered and bruised (`content/lib/fall.luau`). Standing
+on the flight shows the landing ahead and puts it in reach (`view_landing`;
+`content/lib/level_crossing.luau` allows a reach only from a flight), beyond
+tg's arrow. Merged art, chained flights, the roll down and frames are not ported. `tests/maps/stairwell.ron` is a walkable pair.
 
 Seeing down has tg's multi-z look (`levels.view` in `content/capabilities.luau`;
 the engine's `docs/architecture/map-instancing/levels.md` "Seeing down"): three

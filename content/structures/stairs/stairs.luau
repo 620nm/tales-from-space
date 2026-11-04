@@ -10,6 +10,9 @@
 -- walks down onto the flight. tg adds no time to the climb (`zMove` at
 -- once, :283): each link costs the mover's own step. A fall onto the flight
 -- is caught in content/lib/fall.luau (`intercept_zImpact`, :324-334).
+-- Standing on the flight shows the landing ahead and puts it in reach
+-- (`view_landing`; the engine's docs/sim/flight-view.md), beyond tg's arrow
+-- (:196-221).
 -- Not ported: merged art (:155-179), chained flights (:355-367), frames.
 return {
     id = "stairs",
@@ -24,7 +27,7 @@ return {
         {
             at = { 0, 0, 0 },
             step_links = {
-                { on = "leave", toward = "north", to = { 0, -1, 1 } },
+                { on = "leave", toward = "north", to = { 0, -1, 1 }, view_landing = true },
                 { on = "block", toward = "south" },
             },
         },
