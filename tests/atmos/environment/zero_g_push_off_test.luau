@@ -6,7 +6,6 @@ local function world(object: string): number
         string.format(
             [==[(
                 name: "zero g push off",
-                tags: ["space"],
                 environment: (kind: Exact(space), gravity_m_s2: Exact(0.0)),
                 legend: {
                     's': (composition: (substrate: Named("space"))),

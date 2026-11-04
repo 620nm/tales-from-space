@@ -6,7 +6,7 @@ local liquid_bench = {}
 -- Water on painted deck, litres on a square metre.
 liquid_bench.FILM_L = 3.317
 liquid_bench.ONE_G = "environment: (gravity_m_s2: Exact(9.80665)),"
-liquid_bench.ZERO_G = 'tags: ["space"],\n    environment: (kind: Exact(space), gravity_m_s2: Exact(0.0)),'
+liquid_bench.ZERO_G = "environment: (kind: Exact(space), gravity_m_s2: Exact(0.0)),"
 
 export type Tile = { x: number, y: number }
 export type Pool = { x: number, y: number, litres: number }

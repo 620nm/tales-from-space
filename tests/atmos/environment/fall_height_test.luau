@@ -20,8 +20,8 @@ local STANDARD_GRAVITY_M_S2 = 9.80665
 t.world(
     [==[(
     name: "open space fall",
-    tags: ["terrestrial"],
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),

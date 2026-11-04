@@ -133,13 +133,13 @@ edge.
 ## Skies
 
 `rules.environment.rolls` names profiles from `content/environments/`. Selection
-happens before geometry, on the round's seeded RNG, and map tags decide which
-entries are eligible.
+happens before geometry, on the round's seeded RNG; the map's physical
+preferences and `needs` decide which entries are eligible.
 
-| Mode | Terrestrial map | Otherwise |
+| Mode | Ground fallback | Otherwise |
 |---|---|---|
-| `space_station` | `cold_outdoors` | `dead_space` 4, `orbit` 3, `sunward` 1, `microgravity` 1 |
-| `free_build` | `cold_outdoors` | `dead_space` 1, `microgravity` 1 |
+| `space_station` | `cold_outdoors` 1, `warm_outdoors` 1 | `dead_space` 4, `orbit` 3, `sunward` 1, `microgravity` 1 |
+| `free_build` | `cold_outdoors` 1, `warm_outdoors` 1 | `dead_space` 1, `microgravity` 1 |
 
 The space profiles use the `space_backdrop` atlas background. `orbit` and
 `sunward` retain standard gravity (`9.80665` m/s²); `dead_space` and
@@ -148,12 +148,13 @@ weight comes only from a running gravity battery
 (`content/structures/power/grav_smes.luau`). `microgravity` has weight one in
 both modes, so it is available whenever the map leaves gravity unconstrained.
 
-Each roll entry is a filter as well as a weight. Every `required_tags` value
-must be present on the map, and every `excluded_tags` value must be absent. The
-ordinary entries that pass those tag filters and the map's saved physical
-preferences are the candidates. A `fallback = true` entry is considered only
-when no ordinary entry passes; it is unconditional for tags but still must
-satisfy the map's physical preferences. If no candidate survives, the map is
+A roll entry is eligible when its profile `meets` every need the map lists
+(`content/ground.luau` declares them; the four ground profiles meet
+`gravity`) and satisfies the map's saved physical preferences. The ground
+profiles are `fallback = true` entries, considered only when no space entry is
+eligible: a map with `kind: Exact(terrestrial)` or `needs: ["gravity"]` stands
+on ground, and one pinning `surface_temperature_k: Exact(293.15)` or
+`Exact(259.15)` picks warm or cold. If no candidate survives, the map is
 rejected before the round starts.
 
 This pack ships no maps under `maps/`; focused fixtures under `tests/maps/`

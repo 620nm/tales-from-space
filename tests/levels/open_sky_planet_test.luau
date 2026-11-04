@@ -29,8 +29,8 @@ local START_NITROGEN = atmos_cell.cell_moles(STATION_DENSITY * 0.79)
 -- `%s` takes the map's own fixed-air preference and recipe, or nothing.
 local MAP = [==[(
     name: "open sky planet",
-    tags: ["terrestrial"],
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)%s),
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)%s),
     blends: {%s},
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),

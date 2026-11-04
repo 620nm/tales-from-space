@@ -62,8 +62,8 @@ local function power_world(joint: string)
     end
     local basement = run_piece("power", 2, 2, "l2", "cable") .. run_piece("power", 3, 2, "l2", joint)
     t.world(
-        '(name: "stacked power", tags: ["terrestrial"], levels_below_ground: 1,'
-            .. " environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),"
+        '(name: "stacked power", needs: ["gravity"], levels_below_ground: 1,'
+            .. " environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),"
             .. " legend: {\n"
             .. LEGEND
             .. "\n    }, levels: ["
@@ -129,8 +129,8 @@ local function pipe_world(joint: string, floor: string)
             .. run_piece("pipe", 5, 1, "l3", joint)
     end
     t.world(
-        '(name: "stacked pipes", tags: ["terrestrial"], levels_below_ground: 1,'
-            .. " environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),"
+        '(name: "stacked pipes", needs: ["gravity"], levels_below_ground: 1,'
+            .. " environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),"
             .. " legend: {\n"
             .. [==[
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),

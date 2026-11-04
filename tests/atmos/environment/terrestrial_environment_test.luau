@@ -31,7 +31,8 @@ assert(assert(t.room_temperature(4, 3)) < 293.15, "outside air cools the opened 
 -- Building a deck on land uses the ordinary material construction path.
 t.world(
     [==[(
-    name: "ground construction", tags: ["terrestrial"],
+    name: "ground construction", needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(259.15)),
     legend: { '#': (composition: (components: [(component: "station_base"), (component: "wall")])), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), 'g': (composition: (substrate: Named("ground")), outdoors: true) },
     levels: [
         (

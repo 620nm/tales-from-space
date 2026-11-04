@@ -61,8 +61,8 @@ t.world(
     string.format(
         [==[(
     name: "meadow fire",
-    tags: ["terrestrial", "warm_outdoors"],
-    environment: (kind: Exact(terrestrial)),
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(293.15)),
     legend: {
         '.': (outdoors: true, composition: (substrate: Named("ground"), material: Named("soil_ground"), components: [])),
         'm': (outdoors: true, composition: (substrate: Named("ground"), material: Named("soil_ground"), components: [])),

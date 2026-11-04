@@ -12,8 +12,8 @@
 t.world(
     [==[(
     name: "wading",
-    tags: ["terrestrial", "warm_outdoors"],
-    environment: (kind: Exact(terrestrial)),
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(293.15)),
     legend: {
         'a': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sand_ground"), components: [])),
         's': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sea_shallows"), components: [])),
@@ -168,8 +168,8 @@ assert(not assert(t.body(p)).conscious, "until he passes out")
 t.world(
     [==[(
     name: "wading fall",
-    tags: ["terrestrial", "warm_outdoors"],
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(293.15)),
     legend: {
         'w': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sea_water"), components: [])),
         '.': (outdoors: true, composition: (components: [(component: "station_base"), (component: "floor_tiles")])),

@@ -15,7 +15,6 @@ local BASEMENT = -1
 t.world(
     [==[(
     name: "rock asteroid",
-    tags: ["space"],
     levels_below_ground: 1,
     environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
     legend: {
@@ -107,7 +106,6 @@ assert(bare.substrates[1] == SPACE_SPRITE, "the bare tile shows space, got " .. 
 t.world(
     [==[(
     name: "rock roof",
-    tags: ["space"],
     environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
@@ -165,7 +163,6 @@ assert(#t.items_at(2, 1, ROOF) == 1, "the crowbar floats over the dug roof tile"
 t.world(
     [==[(
     name: "rock floor patch",
-    tags: ["space"],
     environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
     legend: {
         's': (composition: (substrate: Named("space"))),
@@ -203,7 +200,6 @@ assert(x == 4 and y == 3, "the body steps along rock floor in orbit, got (" .. x
 t.world(
     [==[(
     name: "rock floor room",
-    tags: ["space"],
     environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
     legend: {
         '#': (composition: (components: [(component: "rock")])),

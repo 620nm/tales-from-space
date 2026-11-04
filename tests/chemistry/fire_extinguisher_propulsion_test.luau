@@ -1,7 +1,6 @@
 -- Orthogonal bursts add recoil without erasing existing vacuum drift.
 t.world([==[(
     name: "extinguisher vacuum steering",
-    tags: ["space"],
     environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
     legend: {
         's': (composition: (substrate: Named("space"))),

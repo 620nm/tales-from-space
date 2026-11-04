@@ -1,8 +1,8 @@
 // One enclosed warm room opens through an airlock onto cold surroundings.
 (
     name: "Cold outpost",
-    tags: ["space", "terrestrial", "no_gravity_generator"],
-    environment: (gravity_m_s2: Exact(9.80665)),
+    needs: ["gravity"],
+    environment: (gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
     legend: {
         ' ': (composition: (), outdoors: true),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),

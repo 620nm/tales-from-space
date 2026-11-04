@@ -6,7 +6,6 @@ local composition = require("@helpers/composition")
 t.world(
     [==[(
     name: "weightless deck",
-    tags: ["space"],
     environment: (kind: Exact(space), gravity_m_s2: Exact(0.0)),
     legend: {
         ' ': (composition: (substrate: Named("space"))),

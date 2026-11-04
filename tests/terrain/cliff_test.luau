@@ -6,8 +6,8 @@
 t.world(
     [==[(
     name: "cliff",
-    tags: ["terrestrial"],
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
     legend: {
         'a': (composition: (substrate: Named("ground"), material: Named("sand_ground"), components: [])),
         'c': (composition: (substrate: Named("cliff"), material: Named("basalt_cliff"), components: [])),

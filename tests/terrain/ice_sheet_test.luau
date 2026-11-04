@@ -5,8 +5,8 @@
 t.world(
     [==[(
     name: "ice sheet",
-    tags: ["terrestrial"],
-    environment: (kind: Exact(terrestrial)),
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(259.15)),
     legend: {
         'a': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sand_ground"), components: [])),
         'i': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sheet_ice"), components: [])),

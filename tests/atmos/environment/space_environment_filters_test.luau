@@ -1,6 +1,6 @@
 -- Map preferences filter the sky roster (the roll itself is
 -- `space_environment_test.luau`): a map's saved physical preference and
--- tags narrow which of a mode's skies a shift may be parked under.
+-- needs narrow which of a mode's skies a shift may be parked under.
 local space_environment = require("@helpers/space_environment")
 
 local STANDARD_GRAVITY = space_environment.STANDARD_GRAVITY
@@ -25,8 +25,10 @@ local UNRESTRICTED_MAP = [==[(
     ],
 )]==]
 
-local TERRESTRIAL_MAP =
-    UNRESTRICTED_MAP:gsub('name: "unrestricted",', 'name: "terrestrial", tags: ["terrestrial"],')
+local TERRESTRIAL_MAP = UNRESTRICTED_MAP:gsub(
+    'name: "unrestricted",',
+    'name: "terrestrial", needs: ["gravity"], environment: (surface_temperature_k: Exact(259.15)),'
+)
 
 local ZERO_GRAVITY_MAP = [==[(
     name: "zero gravity",

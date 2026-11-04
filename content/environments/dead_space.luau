@@ -2,7 +2,6 @@ return {
     id = "dead_space",
     name = "dead space",
     kind = "space",
-    substrate = "space",
     -- No field of its own: a running gravity battery gives its connected
     -- deck weight (structures/power/grav_smes.luau).
     gravity_m_s2 = 0,

@@ -1,9 +1,9 @@
 -- How a condensed phase of ground reads (the engine's
 -- docs/content-schema/terrain.md). A tile names a ground material, a
--- blend; the profile that blend gets says what component lies under the
--- face (`substrate`), which matter look is drawn as the face (`face`, in
--- matter_appearances.luau) and how much darker the substrate's own
--- picture shows at a shell's edge (`under_shade`).
+-- blend; the profile that blend gets says which substrate component a
+-- tile over a block of it carries (`floor`), which matter look is drawn as
+-- the face (`face`, in matter_appearances.luau) and how much darker that
+-- floor's own picture shows at a shell's edge (`under_shade`).
 --
 -- 0.7 is the art's `silicate_low` over its `silicate` (#82402A over
 -- #B85C3C in tools/art/terrestrial/schema_contract.py), so an edge pixel
@@ -21,14 +21,14 @@ return {
         {
             key = "bare_ground",
             phase = "solid",
-            substrate = "ground",
+            floor = "ground",
             face = "ground_shell",
             under_shade = 0.7,
         },
         {
             key = "deep_liquid",
             phase = "liquid",
-            substrate = "ground",
+            floor = "ground",
             face = "ground_shell",
             face_tint = SEABED,
             fill = true,
@@ -40,7 +40,7 @@ return {
         {
             key = "still_liquid",
             phase = "liquid",
-            substrate = "ground",
+            floor = "ground",
             face = "ground_shell",
             face_tint = SEABED,
             fill = true,
@@ -50,19 +50,19 @@ return {
         {
             key = "sheet_ice",
             phase = "solid",
-            substrate = "ground",
+            floor = "ground",
             face = "ground_shell",
             face_tint = SEABED,
             fill = true,
             depth_m = 1,
             evaporation = 0,
         },
-        -- A cliff: the `cliff` substrate blocks a body, and the face draws
+        -- A cliff: the `cliff` floor blocks a body, and the face draws
         -- the stepped escarpment, joined to the cliff beside it.
         {
             key = "cliff",
             phase = "solid",
-            substrate = "cliff",
+            floor = "cliff",
             face = "cliff_shell",
             under_shade = 0.7,
         },
@@ -70,7 +70,7 @@ return {
         {
             key = "dry_bed",
             phase = "solid",
-            substrate = "ground",
+            floor = "ground",
             face = "ground_shell",
             under_shade = 0.7,
             depth_m = 2,

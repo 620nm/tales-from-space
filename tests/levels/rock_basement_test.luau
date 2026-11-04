@@ -32,9 +32,9 @@ end
 t.world(
     [==[(
     name: "rock basement",
-    tags: ["terrestrial"],
+    needs: ["gravity"],
     levels_below_ground: 1,
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
     legend: {
         '#': (composition: (components: [(component: "rock")])),
         '.': (composition: ()),
