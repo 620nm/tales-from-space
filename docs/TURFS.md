@@ -150,7 +150,7 @@ substrate, under cover, decals, residue and matter. A plated tile draws none.
 them yet. Spec: `tests/matter_look/ground_face_test.luau`.
 
 A cliff (tg `/turf/open/cliff`) is ground laid by the `cliff` terrain profile:
-its bed is the `cliff` substrate and its face the `cliff_shell` look, the
+its `floor` is the `cliff` substrate and its face the `cliff_shell` look, the
 stepped escarpment, joined to cliff of the same tint. Blends `basalt_cliff` and
 `silica_cliff` take it, coloured by their rock, so the terrain brush paints a
 cliff in one stroke. It is a solid barrier: dense as tg's (`cliff.dm:5`), so no
