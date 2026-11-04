@@ -69,7 +69,7 @@ assert(#t.ledger_rows("level_changed") == 2, "the block changes no level")
 assert(#t.ledger_rows("level_step_refused") == 0, "a block writes no refusal row")
 
 -- 4. An open landing refuses the climb.
-assert(t.set_composition(LANDING.x, LANDING.y, "bare", UPPER), "the landing is dug out")
+assert(t.set_composition(LANDING.x, LANDING.y, "open", UPPER), "the landing is cut open")
 step("south")
 step("west")
 step("north")
@@ -109,7 +109,7 @@ t.set_health(p, { oxy = 60 })
 assert(not assert(t.body(p)).conscious, "the body is out cold")
 local before = t.health(p).health
 local _ = heard()
-assert(t.set_composition(FLIGHT.x, FLIGHT.y, "bare", UPPER), "the floor opens under the body")
+assert(t.set_composition(FLIGHT.x, FLIGHT.y, "open", UPPER), "the floor opens under the body")
 t.run_seconds(2)
 assert_at(FLIGHT.x, FLIGHT.y, "the body fell onto the flight")
 assert_moves(6, "fall", "the second fall")
