@@ -50,7 +50,7 @@ return {
         {
             key = "sheet_ice",
             phase = "solid",
-            substrate = "ground",
+            floor = "ice_floor",
             face = "ground_shell",
             face_tint = SEABED,
             fill = true,
