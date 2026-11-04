@@ -47,9 +47,10 @@ high that a map lays with a solid override (`Step("half")`). It is a floor,
 not a wall: air, sight and shots pass it. A body walks along it and down off
 it freely, as on tg's `climb_walkable` table tops, but a walk up onto it is
 vetoed (`content/bodies/human.luau` `move.cross`) and becomes a 2 s climb
-(`content/lib/climbing.luau`, tg `climbable.dm:13`); a pulled body is held
-back, and a shove or the wind still carries a body up (the engine skips the
-mover's veto there). A body on it draws 12 px up, tg's table elevation
+(`content/lib/climbing.luau`, tg `climbable.dm:13`). Only a crossing on one
+level is judged: a stair or a level move lands on a step freely, and a body
+standing on a crate or rack steps across onto a ledge. A pull, a shove or
+the wind carries a body up (an external move runs no `move.cross`). A body on it draws 12 px up, tg's table elevation
 (`tables_racks.dm:110`).
 
 A cliff (tg `/turf/open/cliff`) is a band of `half` steps on blank tiles,

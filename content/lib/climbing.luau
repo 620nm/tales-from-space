@@ -1,3 +1,5 @@
+local tile_geometry = require("@lib/tile_geometry")
+
 local climbing = {}
 
 -- One timed climb per actor: onto a climbable structure (`support`) or
@@ -56,27 +58,56 @@ local function send(actor: Handle, key: string): ()
     end
 end
 
--- How high the ground stands on a tile, in metres: the height of a step
--- lying there, else 0 (a full block is never walked onto). A pack with no
--- tile height still ranks a step over flat ground.
-local function step_height(at: TileAddress): number
+-- How high the ground stands on a tile over its level's floor, in metres:
+-- the engine's step height (the step's share times the pack's tile height,
+-- `lib/tile_geometry.luau`), else 0 (a full block is never walked onto).
+local function step_height_m(at: TileAddress): number
     local block = sim.ground.block(at)
     if block == nil or block.step == nil then
         return 0
     end
-    return block.height_m or 1
+    return block.height_m or tile_geometry.height_m
 end
 
-local function committing_onto(actor: Handle, at: TileAddress): boolean
-    for _, attempt in ipairs(active_attempts) do
-        local onto = attempt.onto
+-- Whether `mover` stands on a climbable structure on tile `at`: a body on a
+-- crate or rack is up already and steps across onto a ledge beside it.
+local function on_support(mover: Handle, at: TileAddress): boolean
+    for _, candidate in ipairs(sim.query.range(at, 0, {})) do
         if
-            attempt.actor == actor
-            and attempt.committing
-            and onto ~= nil
-            and same_tile(onto, at)
+            candidate.alive
+            and candidate.climbable ~= nil
+            and same_tile(candidate.tile, at)
+            and sim.is_supported_by(mover, candidate)
         then
             return true
+        end
+    end
+    return false
+end
+
+-- Whether a step from `from` to `to` walks up onto a ledge. Only a crossing
+-- on one level rises onto one: a stair or a level move between levels owns
+-- its own rise, so it lands on a step freely.
+local function rises_onto_ledge(mover: Handle, from: TileAddress, to: TileAddress): boolean
+    if from.z ~= to.z or step_height_m(to) <= step_height_m(from) then
+        return false
+    end
+    return not on_support(mover, from)
+end
+
+-- Whether `actor`'s issued climb lands on tile `at`: its ground step, or
+-- the tile of its support.
+local function committing_to(actor: Handle, at: TileAddress): boolean
+    for _, attempt in ipairs(active_attempts) do
+        if attempt.actor == actor and attempt.committing then
+            local onto = attempt.onto
+            local support = attempt.support
+            if onto ~= nil and same_tile(onto, at) then
+                return true
+            end
+            if support ~= nil and support.alive and same_tile(support.tile, at) then
+                return true
+            end
         end
     end
     return false
@@ -187,49 +218,42 @@ end
 
 -- `move.cross` veto: a body walks along a ledge or down off one freely, as
 -- tg's `climb_walkable` table top, but must climb up onto one. Only the
--- climb's own crossing passes. A pulled body is held back too.
+-- climb's own crossing passes. A pulled body is towed up freely: a pull is
+-- an external move, which runs no `move.cross`.
 function climbing.on_cross_veto(ev: MoveCrossPayload): { cancelled: boolean }
-    if step_height(ev.to) <= step_height(ev.from) then
+    if not rises_onto_ledge(ev.mover, ev.from, ev.to) then
         return { cancelled = false }
     end
-    return { cancelled = not committing_onto(ev.mover, ev.to) }
+    return { cancelled = not committing_to(ev.mover, ev.to) }
 end
 
--- `move.cross.done`: a body's own walk refused at a ledge starts its climb.
+-- `move.cross.done`: a body's own walk refused at a ledge on its level
+-- starts its climb.
 function climbing.on_cross_done(ev: MoveCrossDonePayload): ()
     if ev.outcome ~= "cancelled" or ev.pulled_by ~= nil then
         return
     end
-    if step_height(ev.to) <= step_height(ev.from) then
+    if not rises_onto_ledge(ev.mover, ev.from, ev.to) then
         return
     end
     climbing.begin_onto(ev.mover, ev.to)
 end
 
+-- `climb.done`: the attempt whose request it answers ends here, whatever
+-- the answer carries (`onto` is nil once its instance retired); the kind of
+-- climb asked for only picks the message.
 function climbing.on_done(ev: ClimbDonePayload): ()
     for index = #active_attempts, 1, -1 do
         local attempt = active_attempts[index]
         if attempt.request == ev.request then
-            if attempt.actor ~= ev.body or attempt.support ~= ev.support then
-                return
-            end
-            local onto = attempt.onto
-            local landed = ev.onto
-            if onto ~= nil and (landed == nil or not same_tile(onto, landed)) then
-                return
-            end
             table.remove(active_attempts, index)
-            if ev.outcome == "completed" then
-                local key = if onto ~= nil
-                    then "lunatic/tfs:lib.climbing.completed_step"
-                    else "lunatic/tfs:lib.climbing.completed"
-                send(ev.body, key)
-            else
-                local key = if ev.reason == nil
+            local key = if ev.outcome ~= "completed"
+                then (if ev.reason == nil
                     then "lunatic/tfs:lib.climbing.failed"
-                    else "lunatic/tfs:lib.climbing.refused." .. ev.reason
-                send(ev.body, key)
-            end
+                    else "lunatic/tfs:lib.climbing.refused." .. ev.reason)
+                elseif attempt.onto ~= nil then "lunatic/tfs:lib.climbing.completed_step"
+                else "lunatic/tfs:lib.climbing.completed"
+            send(attempt.actor, key)
             return
         end
     end
