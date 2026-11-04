@@ -5,6 +5,8 @@
 export type Family = {
 	-- Tg's `horizontal` closets take no standing mob (`closets.dm:50,501,583`).
 	horizontal: boolean,
+	-- The way a tray slides out (`lib/closets/tray.luau`), for a closet with one.
+	tray: string?,
 }
 
 local data = {}
@@ -62,9 +64,11 @@ data.broken_latch = "broken"
 data.holding_latches = { data.locked_latch, data.welded_latch }
 
 -- Crate and freezer are tg's `horizontal` closets (`crates.dm:8`); the
--- locker is not. A cadaver chamber takes bodies lying, as tg's tray does.
+-- locker is not. A cadaver chamber takes bodies lying, as tg's tray does,
+-- and its tray slides out south: it wears the `morgue*_s` face, and tg's
+-- tray lands on `get_step(src, dir)` (`morgue.dm:139`).
 local families: { [string]: Family } = {
-	cadaver_chamber = { horizontal = true },
+	cadaver_chamber = { horizontal = true, tray = "south" },
 	crate = { horizontal = true },
 	freezer = { horizontal = true },
 	locker = { horizontal = false },

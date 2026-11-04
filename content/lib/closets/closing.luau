@@ -5,6 +5,7 @@
 
 local actor_context = require("@lib/closets/actor_context")
 local data = require("@lib/closets/data")
+local tray = require("@lib/closets/tray")
 
 local closing = {}
 
@@ -54,6 +55,19 @@ function closing.expect(container: Handle, actor: Handle, body: Handle): boolean
 	return true
 end
 
+-- What stands where a close takes from: the container's own tile, then its
+-- tray's (`lib/closets/tray.luau`; tg's `close_loc`, `morgue.dm:155`).
+local function candidates(container: Handle): { Handle }
+	local found = sim.query.range(container.tile, 0, {})
+	local tray_tile = tray.tile(container)
+	if tray_tile ~= nil then
+		for _, candidate in ipairs(sim.query.range(tray_tile, 0, {})) do
+			table.insert(found, candidate)
+		end
+	end
+	return found
+end
+
 -- Tg's `horizontal && density` (`closets.dm:501,583`): a standing body is
 -- dense, a lying one is not. A rider on an open crate stands on its tile and
 -- counts (`crates.dm:118-121`, `climbable.dm:110-129`).
@@ -63,7 +77,8 @@ local function standing_in_horizontal(container: Handle, readout: { [any]: any }
 end
 
 -- Tg's `can_close` (`closets.dm:493-505`): another closet in the way, or a
--- standing mob a horizontal closet cannot take. Returns the message key and
+-- standing mob a horizontal closet cannot take, on its own tile; one on its
+-- tray's tile is left out by `gather` instead. Returns the message key and
 -- the name it says, or nil. `actor`'s pending entrant (`closing.expect`) is exempt
 -- as pack judgment: tg has no standing self-hide (`closets.dm:990-991`), but
 -- the pack's hide drag (`lib/body_drag.luau`) enters standing. `riders_leave`
@@ -122,12 +137,12 @@ local function body_taken(container: Handle, readout: { [any]: any }): boolean
 end
 
 -- Tg's `take_contents` (`closets.dm:521-531`): the tile's things in turf
--- order. Every content, mobs included, counts toward `storage_capacity`
--- and the first candidate met at that total ends the gather
--- (`closets.dm:56,525-529,563`); a mob over the mob count is skipped alone
--- (`closets.dm:587-591`). Structures and machines stay out, as tg skips
--- anchored things. The pending entrant is admitted first, wherever it stands
--- beside the container, and the entry is spent.
+-- order, then the tray tile's. Every content, mobs included, counts toward
+-- `storage_capacity` and the first candidate met at that total ends the
+-- gather (`closets.dm:56,525-529,563`); a mob over the mob count is
+-- skipped alone (`closets.dm:587-591`). Structures and machines stay out,
+-- as tg skips anchored things. The pending entrant is admitted first,
+-- wherever it stands beside the container, and the entry is spent.
 function closing.gather(ev: ContainerClosingPayload)
 	local container: Handle = ev.subject
 	local entrant = pending_entrant(container, ev.actor)
@@ -143,7 +158,7 @@ function closing.gather(ev: ContainerClosingPayload)
 			bodies += 1
 		end
 	end
-	for _, candidate in ipairs(sim.query.range(container.tile, 0, {})) do
+	for _, candidate in ipairs(candidates(container)) do
 		if candidate ~= container and candidate ~= entrant then
 			if total >= data.item_capacity then
 				break

@@ -202,12 +202,12 @@ assert(held ~= nil, "the corpse still has its brain in it")
 t.run_seconds(600)
 assert(t.organ_damage(patient, "brain") == held, "nothing shut in a live chamber goes off at all")
 
--- Open it and the same corpse is in the room again. A click on a lit chamber
--- steps the lamp back first.
+-- Open it and the same corpse is in the room again, slid out onto the tray's
+-- tile. A click on a lit chamber steps the lamp back first.
 t.click(attendant, 2, 1, chamber)
 t.run_ticks(2)
 assert(assert(t.structure_at(2, 1)).state == "open", "the lit chamber opens to a click")
-local corpse_name = assert(t.bodies_at(2, 1)[1]).name
+local corpse_name = assert(t.bodies_at(2, 2)[1]).name
 t.run_seconds(600)
 local out = t.organ_damage(patient, "brain")
 assert(assert(out) > held, "a corpse in an open chamber goes off like any other")

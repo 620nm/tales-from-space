@@ -10,10 +10,19 @@
 -- so one somebody has cut the power to stops preserving, stops beeping and goes
 -- dark: a thing nobody can switch off is a thing nobody can sabotage.
 --
+-- Opening slides what it held out onto the tile it faces, a step each through
+-- the ordinary movement rules (`open()`, :134-147; `lib/closets/tray.luau`),
+-- and closing takes back what lies there (`close()`, :149-169). Divergence: tg
+-- `forceMove`s onto that tile whatever stands there (:143); here a wall or a
+-- dense thing keeps what cannot step out on the chamber's own tile, which the
+-- close also gathers from.
+--
 -- NOT PORTED:
--- - The tray on the tile it faces (`open()`, :134-147; :615-628). Contents land
---   on the chamber's own tile, and a body goes in by the closet stuff drag, not
---   a two-second lay.
+-- - The tray as a thing (`/obj/structure/tray/m_tray`, :536-628): a dense,
+--   anchored structure there would refuse the very step out, so the contents
+--   land on the bare tile, nothing marks it, and clicking the tile does not
+--   close the chamber. A body goes in by the closet stuff drag, not a
+--   two-second lay onto the tray (:589-600).
 -- - Aiming the placement (:233): a container has one facing, so `morgue*_s`.
 -- - The sealed air (:278-298): a closed holder supplies room air, so a living
 --   occupant does not suffocate.
