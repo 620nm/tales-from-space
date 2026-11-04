@@ -2,7 +2,8 @@
 -- melted: nothing walks it back to ice while the heat holds. A warm map
 -- cannot lay it at all (the engine's docs/content-schema/terrain.md). A sea
 -- on a world this cold is the same ice, at its own depth. Ice laid as ground
--- stands on its profile's own floor (content/terrain.luau `sheet_ice`).
+-- stands on its profile's own floor and draws the ice face in ice's colour
+-- (content/terrain.luau `sheet_ice`).
 t.world(
     [==[(
     name: "ice sheet",
@@ -45,6 +46,10 @@ assert(#matter_look.parts(p, 3, 1, "crystalline") == 1, "and only the sheet")
 assert(matter_look.find(p, 3, 3, "crystalline", 3), "a frozen sea is the same sheet")
 local ice_ground = composition.seen_sprites(p, 0, 3)
 assert(ice_ground.substrates[1] == "ice_floor-0", "ice ground shows the ice floor, got " .. tostring(ice_ground.substrates[1]))
+local ice_face = t.seen_ground(p, 0, 3)
+assert(#ice_face == 1, "ice ground draws one face, got " .. #ice_face)
+assert(ice_face[1].look == "ice_shell", "ice ground draws the ice sheet face, got " .. ice_face[1].look)
+assert(ice_face[1].tint == ICE, "in ice's own colour, not sand's, got " .. ice_face[1].tint)
 
 t.set_environment({ sink_k = 259.15, insolation = 1e7 })
 t.run_seconds(600)

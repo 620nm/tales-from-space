@@ -7,12 +7,14 @@
 --
 -- 0.7 is the art's `silicate_low` over its `silicate` (#82402A over
 -- #B85C3C in tools/art/terrestrial/schema_contract.py), so an edge pixel
--- reads as the ledge the art drew.
+-- reads as the ledge the art drew. A profile with no `face_tint` takes
+-- its material's own colour, so ice, basalt and soil read apart.
 --
--- The last profiles stand real matter in a bed (`fill`, `depth_m`): a bed
--- of 1.5 m of a 3 m tile is safe under a body's pressure bands. A sea does
--- not evaporate (`evaporation = 0`), or every tile of it would stay awake
--- for good, and ignores a level difference under a millimetre.
+-- The liquid and ice profiles stand real matter in a bed (`fill`,
+-- `depth_m`): a bed of 1.5 m of a 3 m tile is safe under a body's pressure
+-- bands. A sea does not evaporate (`evaporation = 0`), or every tile of it
+-- would stay awake for good, and ignores a level difference under a
+-- millimetre. A seabed shows sand under the liquid (`face_tint`).
 local SEABED = "#CBB68C"
 
 return {
@@ -47,12 +49,13 @@ return {
             depth_m = 1,
             rest_head_m = 0.001,
         },
+        -- Ice draws its own sheet, tinted by the ice itself.
         {
             key = "sheet_ice",
             phase = "solid",
             floor = "ice_floor",
-            face = "ground_shell",
-            face_tint = SEABED,
+            face = "ice_shell",
+            under_shade = 0.7,
             fill = true,
             depth_m = 1,
             evaporation = 0,
