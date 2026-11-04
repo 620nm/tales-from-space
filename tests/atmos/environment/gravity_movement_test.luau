@@ -4,14 +4,14 @@
 -- (`dead_space`) is weightless without a running gravity battery
 -- (power/grav_smes_power_test.luau).
 local function world(center: string, brace: string, terrestrial: boolean, microgravity: boolean): number
-    local tags = if terrestrial then '["terrestrial"]' else '["space"]'
+    local needs = if terrestrial then '["gravity"]' else "[]"
     local kind = if terrestrial then "terrestrial" else "space"
     local gravity = if microgravity then "0.0" else "9.80665"
     t.world(
         string.format(
             [==[(
                 name: "gravity movement",
-                tags: %s,
+                needs: %s,
                 environment: (kind: Exact(%s), gravity_m_s2: Exact(%s)),
                 legend: {
                     's': (composition: (substrate: Named("space"))),
@@ -26,7 +26,7 @@ local function world(center: string, brace: string, terrestrial: boolean, microg
                     ),
                 ],
             )]==],
-            tags,
+            needs,
             kind,
             gravity,
             brace,
