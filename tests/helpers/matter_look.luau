@@ -82,7 +82,7 @@ function matter_look.room(spills: { Spill }, gravity: number?): number
     if gravity ~= nil then
         if gravity > 0 then
             environment = string.format(
-                '\n    tags: ["terrestrial"],\n    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(%.5f)),',
+                '\n    needs: ["gravity"],\n    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(%.5f), surface_temperature_k: Exact(259.15)),',
                 gravity
             )
         else

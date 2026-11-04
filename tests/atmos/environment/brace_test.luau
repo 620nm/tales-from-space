@@ -6,7 +6,6 @@ local function weightless(below: string, rows: string, structures: string): numb
         string.format(
             [==[(
                 name: "brace",
-                tags: ["space"],
                 levels_below_ground: %s,
                 environment: (kind: Exact(space), gravity_m_s2: Exact(0.0)),
                 legend: {

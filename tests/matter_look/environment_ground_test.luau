@@ -5,8 +5,8 @@
 t.world(
     [==[(
     name: "environment ground",
-    tags: ["terrestrial", "warm_outdoors"],
-    environment: (kind: Exact(terrestrial)),
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(293.15)),
     legend: {
         'c': (composition: ()),
         'n': (composition: (material: None)),

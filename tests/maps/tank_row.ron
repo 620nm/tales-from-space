@@ -1,8 +1,7 @@
 // Seven unplumbed pressure vessels, each charged by its placement.
 (
     name: "Tank Row",
-    tags: ["space"],
-    environment: (gravity_m_s2: Exact(9.80665)),
+    environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base")])),

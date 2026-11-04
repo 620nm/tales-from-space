@@ -43,9 +43,9 @@ end
 t.world(
     [==[(
     name: "paper plane glide",
-    tags: ["terrestrial"],
+    needs: ["gravity"],
     levels_below_ground: 1,
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -162,9 +162,9 @@ assert(#t.script_errors() == 0, "a refused glide is not a script error")
 -- Air under a hole: a corridor with one hole, hot air painted beneath it.
 local HOT_WORLD = [==[(
     name: "paper plane updraft",
-    tags: ["terrestrial"],
+    needs: ["gravity"],
     levels_below_ground: 1,
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), atmosphere: Exact(true)),
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15), atmosphere: Exact(true)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -199,9 +199,9 @@ local HOT_WORLD = [==[(
 -- one shove: the surf's shove has nowhere to go.
 local WALL_WORLD = [==[(
     name: "paper plane wall",
-    tags: ["terrestrial"],
+    needs: ["gravity"],
     levels_below_ground: 1,
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), atmosphere: Exact(true)),
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15), atmosphere: Exact(true)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),

@@ -35,7 +35,8 @@ local STATION = [==[(
 
 local TERRESTRIAL_STATION = STATION:gsub(
     'name: "composition retention",',
-    'name: "terrestrial composition retention", tags: ["terrestrial"],'
+    'name: "terrestrial composition retention", needs: ["gravity"],'
+        .. ' environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(259.15)),'
 )
 
 local function assert_retained(x: number, y: number, authored: string?, resolved: string)

@@ -47,16 +47,13 @@ local content = {
         -- temperature reading in it a question about the weather.
         environment = {
             rolls = {
-                {
-                    id = "cold_outdoors",
-                    required_tags = { "terrestrial" },
-                    excluded_tags = { "warm_outdoors" },
-                    weight = 1,
-                },
-                -- Only a map that carries the tag stands under this sky.
-                { id = "warm_outdoors", required_tags = { "terrestrial", "warm_outdoors" }, weight = 1 },
-                { id = "dead_space", excluded_tags = { "terrestrial" }, weight = 1 },
-                { id = "microgravity", excluded_tags = { "terrestrial" }, weight = 1 },
+                { id = "dead_space", weight = 1 },
+                { id = "microgravity", weight = 1 },
+                -- The grounds stand in only when no space sky fits the map
+                -- (a terrestrial kind, or a need such as `gravity`); a map
+                -- picks the warm one by its surface temperature.
+                { id = "cold_outdoors", weight = 1, fallback = true },
+                { id = "warm_outdoors", weight = 1, fallback = true },
             },
         },
     },

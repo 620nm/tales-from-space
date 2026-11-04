@@ -3,6 +3,7 @@ return {
     name = "Cold outdoors",
     kind = "terrestrial",
     substrate = "ground",
+    meets = { "gravity" },
     gravity_m_s2 = 9.80665,
     sink_k = 259.15,
     insolation = 0,

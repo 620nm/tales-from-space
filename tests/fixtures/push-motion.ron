@@ -18,6 +18,6 @@
     ],
     // Exact gravity: without it a shove is a zero-g push-off, not a walk.
     // On the ground, since space in free_build is weightless.
-    tags: ["terrestrial"],
-    environment: (gravity_m_s2: Exact(9.80665)),
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
 )

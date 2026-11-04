@@ -44,8 +44,7 @@ export type TileXY = { x: number, y: number }
 
 local WORLD = [==[(
     name: "ignition room",
-    tags: ["space"],
-    environment: (gravity_m_s2: Exact(9.80665)),
+    environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (composition: (), outdoors: true),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),

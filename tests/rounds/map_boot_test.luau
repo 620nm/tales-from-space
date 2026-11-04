@@ -122,8 +122,8 @@ assert(
 -- answer keeps the engine's guess, which drops it there.
 local map_drop = [==[(
     name: "seam drop",
-    tags: ["terrestrial"],
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),

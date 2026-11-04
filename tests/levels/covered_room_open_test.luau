@@ -36,7 +36,6 @@ end
 t.world(
     [==[(
     name: "covered room",
-    tags: ["space"],
     levels_below_ground: 1,
     environment: (kind: Exact(space), gravity_m_s2: Exact(0.0)),
     legend: {
@@ -154,7 +153,6 @@ assert(wx == HOLE.x and wy == HOLE.y, "the walker landed under the hole, got (" 
 t.world(
     [==[(
     name: "room under a room",
-    tags: ["space"],
     environment: (kind: Exact(space), gravity_m_s2: Exact(0.0)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),

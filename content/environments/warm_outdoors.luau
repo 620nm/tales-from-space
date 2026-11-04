@@ -6,13 +6,14 @@
 -- sleeps. A sink colder than the surface keeps every outdoor cell
 -- radiating into air that ambient refills, and the map never rests.
 --
--- `free_build` rolls this profile for a map tagged `warm_outdoors`, and only
--- `tests/matter_look/environment_ground_test.luau` carries the tag yet.
+-- The modes roll this profile as a ground fallback; a terrestrial map that
+-- pins `surface_temperature_k: Exact(293.15)` gets it rather than the cold.
 return {
     id = "warm_outdoors",
     name = "Warm outdoors",
     kind = "terrestrial",
     substrate = "ground",
+    meets = { "gravity" },
     gravity_m_s2 = 9.80665,
     sink_k = 293.15,
     insolation = 0,

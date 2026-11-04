@@ -4,8 +4,7 @@
 // A wrench lies on each level so a viewer can tell them apart.
 (
     name: "Stairwell",
-    tags: ["space"],
-    environment: (gravity_m_s2: Exact(9.80665)),
+    environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),

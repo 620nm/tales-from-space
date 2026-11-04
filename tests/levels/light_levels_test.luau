@@ -33,8 +33,8 @@ local LEGEND = [==[
 
 local function world(name: string, lower: string, upper: string)
     t.world(
-        `(name: "{name}", tags: ["terrestrial"], levels_below_ground: 1,`
-            .. ` environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),`
+        `(name: "{name}", needs: ["gravity"], levels_below_ground: 1,`
+            .. ` environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),`
             .. ` legend: \{\n{LEGEND}\n    }, levels: [{lower}, {upper}])`,
         7
     )

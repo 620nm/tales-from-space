@@ -3,8 +3,8 @@ local atmos_cell = require("@helpers/atmos_cell")
 
 -- Map air fixes the outdoor mix; an omitted mix leaves the cold profile free.
 local MAP = [==[(
-    name: "Authored surroundings", tags: ["terrestrial"],
-    environment: (atmosphere: Exact(true), %s),
+    name: "Authored surroundings", needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(259.15), atmosphere: Exact(true), %s),
     legend: { 'e': (composition: (substrate: Named("ground")), outdoors: true), '#': (composition: (components: [(component: "station_base"), (component: "wall")])), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])) },
     levels: [
         (

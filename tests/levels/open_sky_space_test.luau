@@ -15,7 +15,6 @@ local atmos_cell = require("@helpers/atmos_cell")
 t.world(
     [==[(
     name: "open sky orbit",
-    tags: ["space"],
     environment: (kind: Exact(space), gravity_m_s2: Exact(0.0)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),

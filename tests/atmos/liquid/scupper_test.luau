@@ -38,7 +38,7 @@ assert(bench.standing(3, 1) > 49.9, "nothing goes back up a scupper")
 -- Weight comes from the deck: the bare ground of the outfall tile has none
 -- under this sky, so the same line discharges into a weightless room.
 local p = bench.world({
-    environment = 'tags: ["space"],\n    environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),',
+    environment = "environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),",
     rows = { "#######", "#.#z..#", "#######" },
     structures = `(5, 1, "player_spawn"), {FEED}, {SCUPPER}`,
     run = { { x = 2, y = 1 } },

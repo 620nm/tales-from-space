@@ -38,9 +38,9 @@ end
 t.world(
     [==[(
     name: "level crossing sound",
-    tags: ["terrestrial"],
+    needs: ["gravity"],
     levels_below_ground: 1,
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -123,9 +123,9 @@ assert(said(above_hole, "up through the hole"), "the body beside the hole hears 
 -- watcher on the other, and the stand sits under the hole or on the glass.
 local TEXT_HEADER = [==[(
     name: "level crossing text",
-    tags: ["terrestrial"],
+    needs: ["gravity"],
     levels_below_ground: 1,
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),

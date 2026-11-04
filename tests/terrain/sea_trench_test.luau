@@ -6,8 +6,8 @@
 t.world(
     [==[(
     name: "sea trench",
-    tags: ["terrestrial", "warm_outdoors"],
-    environment: (kind: Exact(terrestrial)),
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(293.15)),
     legend: {
         'a': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sand_ground"), components: [])),
         'w': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sea_water"), components: [])),

@@ -10,9 +10,9 @@
 t.world(
     [==[(
     name: "ground face",
-    tags: ["terrestrial"],
+    needs: ["gravity"],
     levels_below_ground: 1,
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
     legend: {
         'f': (composition: (substrate: Named("rock_floor"))),
         'a': (composition: (substrate: Named("ground"), material: Named("sand_ground"), components: [])),

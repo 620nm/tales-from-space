@@ -26,7 +26,6 @@ local VENT_SPAN_S = 8
 t.world(
     [==[(
     name: "hole in the bottom",
-    tags: ["space"],
     environment: (kind: Exact(space)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
@@ -67,7 +66,6 @@ end
 t.world(
     [==[(
     name: "edge of the map",
-    tags: ["space"],
     environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
