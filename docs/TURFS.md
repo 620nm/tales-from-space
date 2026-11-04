@@ -3,7 +3,8 @@
 `content/compositions.luau` declares the visual tree, substrate and installed
 components, cover controls, network channels, and composition presets.
 Maps retain an optional authored substrate and an ordered installed component
-list. An omitted substrate inherits the selected environment. Installing or
+list. An omitted substrate stands on the generated ground under it, if any
+(see Ground), and is otherwise open. Installing or
 removing deck components preserves that choice and the independently authored
 outdoor flag.
 
@@ -52,8 +53,8 @@ boundary; an exposed space substrate remains a boundary below a catwalk.
 ## Levels
 
 Rock (tg `/turf/closed/mineral`) blocks movement, gas and sight, supports and
-seals, and hides what is under it. It sits over the map's substrate (inherited
-by default: ground on a planet, space in orbit), which removing it shows. It wears tg's
+seals, and hides what is under it. It sits over the map's substrate (by
+default the generated ground on a planet, open in space), which removing it shows. It wears tg's
 `smoothrocks` bitmask art (`minerals.dm:6-21`) and smooths with neighbouring
 rock; each `rock-<junction>` frame is the 40x40 cell's centre 32x32 window, so
 tg's 4 px overhang is lost, and the map edge is not a neighbour (no
@@ -65,18 +66,16 @@ vacuum boundary, so a carved room in orbit holds a body with no station base.
 Its picture is the asteroid sand state; tg's random floor variance is not drawn.
 The `rock_floor` preset paints it and replaces the installed components; an
 authored asteroid lays rock over it, because tg's mineral turf leaves asteroid
-floor by default (`minerals.dm:29`). The editor's terrestrial subterrain fill
-keeps the profile's cold ground, as the icemoon mineral leaves snow
-(`minerals.dm:677`); its space subterrain fill is blank and inherits space
-(`content/editor.luau`). Laying plating on rock floor is not ported.
+floor by default (`minerals.dm:29`). Laying plating on rock floor is not
+ported.
 
 Open sky above ground and what seals it are the engine's contract (the
 engine's `docs/content-schema/compositions.md` "Tile values and replacement"
 and `docs/mapping/environment.md` "Exposure"). Station base and rock seal the
 substrate, so either one roofs open sky. The `open` preset cuts a hole on any
 level, ground-level terrain included, but not on the lowest. `bare` and `rock`
-write the `inherit` substrate, so painting either over a hole at or below ground
-closes it; above ground it is open sky, so a hole there stays open.
+write the `inherit` substrate: at or below ground it stands on a ground block
+beneath, else it is open; above ground it is open sky.
 
 The four glass floors (tg `glass.dm`) are floor windows over an open substrate.
 They hold a body and the air, show the level below, and show runs beneath
@@ -139,15 +138,20 @@ independent composition properties.
 ## Ground
 
 A tile's ground material is a blend it names (`material = Named("sand_ground")`)
-or its environment names (`material` in `content/environments/`). Blends
-`silica_ground`, `basalt_ground`, `sand_ground` and `soil_ground` are each one
-solid at its real bulk density. `content/terrain.luau` gives them one profile,
-`bare_ground`, whose `ground_shell` look
-(`content/matter_appearances.luau`) draws on the `ground_face` layer: over the
-substrate, under cover, decals, residue and matter. A plated tile draws none.
-`warm_outdoors` and `mars_surface` are the skies for soil and basalt; their
-`sink_k` equals `surface_temperature_k`, so dry ground sleeps. No mode rolls
-them yet. Spec: `tests/matter_look/ground_face_test.luau`.
+or the block under it. A ground environment's `ground` (`content/environments/`)
+generates blocks under the map, `surface` atop each column over `deep`
+`basalt_ground`: `sheet_ice` for `cold_outdoors`, `soil_ground` for
+`warm_outdoors`, `basalt_ground` for the rest. A blank tile over a block stands
+on its blend's terrain `floor` and shows its face; with no ground (space) a
+blank tile is open onto the beyond. Blends `silica_ground`, `basalt_ground`,
+`sand_ground` and `soil_ground` are each one solid at its real bulk density.
+`content/terrain.luau` gives them one profile, `bare_ground`, whose
+`ground_shell` look (`content/matter_appearances.luau`) draws on the
+`ground_face` layer: over the substrate, under cover, decals, residue and
+matter. A plated tile draws none. `warm_outdoors` and `mars_surface` have
+`sink_k` equal to `surface_temperature_k`, so dry ground sleeps; no mode rolls
+`mars_surface` yet. Specs: `tests/matter_look/ground_face_test.luau`,
+`tests/matter_look/environment_ground_test.luau`.
 
 A cliff (tg `/turf/open/cliff`) is ground laid by the `cliff` terrain profile:
 its `floor` is the `cliff` substrate and its face the `cliff_shell` look, the

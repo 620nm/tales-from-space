@@ -33,14 +33,9 @@ their art, and no `prototypes` entry admits them to placement checks.
 
 ## Levels
 
-`levels` fills a new level by band for `terrestrial` and `space`: `subterrain`
-is a `rock` component on `terrestrial` (a mined tile keeps the profile's ground,
-`docs/TURFS.md`) and blank in `space`, which inherits space,
-`terrain` is blank and inherits, and `open_air` is blank, which above ground is
-open sky (explicit `open` would not be sky-exposed). The fills are drawn and
-supplied; every tile they place stays paintable. The engine's
-`docs/mapping/editor-declarations.md` owns the schema,
-`tools/test-editor-previews.mjs` pins the served bands.
+A new level is blank: its tiles stand on the environment's generated ground
+(`docs/TURFS.md` Ground) or open onto the level below. `content/editor.luau`
+declares no level fills; `tools/test-editor-previews.mjs` pins that.
 
 ## Air in the editor
 

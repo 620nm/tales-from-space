@@ -108,17 +108,8 @@ local prototypes = {
 return {
     version = 1,
     pack = "lunatic/tfs",
-    revision = "9",
+    revision = "10",
     tools = { "select", "paint", "fill", "erase", "clone", "link" },
     lenses = { "surface", "subfloor", "blend", "networking" },
     prototypes = prototypes,
-    -- New-level fills by band (the engine's docs/mapping/editor-declarations.md):
-    -- rock below a planet's ground, whose mined tile keeps the profile's cold
-    -- ground (the icemoon mineral leaves snow, minerals.dm:677); blank below
-    -- ground in space, which inherits space. Every kind inherits at ground; a
-    -- blank tile above ground resolves to open sky, so `open_air` stays empty.
-    levels = {
-        terrestrial = { subterrain = { components = { { component = "rock" } } }, terrain = {}, open_air = {} },
-        space = { subterrain = {}, terrain = {}, open_air = {} },
-    },
 }

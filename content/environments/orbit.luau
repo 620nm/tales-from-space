@@ -2,7 +2,6 @@ return {
     id = "orbit",
     name = "orbit",
     kind = "space",
-    substrate = "space",
     gravity_m_s2 = 9.80665,
     background = "space_backdrop",
     sink_k = 2.7,

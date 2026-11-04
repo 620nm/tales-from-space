@@ -1,7 +1,6 @@
--- A blank tile reads its ground from the sky it stands under: the tag rolls
--- `warm_outdoors`, whose `material` is soil. Only a tile that inherits its
--- substrate inherits the material; a tile can still say it has none, or
--- name its own.
+-- A blank tile shows the ground generated under it: the map's surface
+-- temperature picks `warm_outdoors`, whose `ground` tops each column with
+-- soil. A tile that names its own substrate or material keeps it.
 t.world(
     [==[(
     name: "environment ground",
@@ -9,7 +8,6 @@ t.world(
     environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(293.15)),
     legend: {
         'c': (composition: ()),
-        'n': (composition: (material: None)),
         'b': (composition: (substrate: Named("ground"))),
         'a': (composition: (substrate: Named("ground"), material: Named("sand_ground"), components: [])),
     },
@@ -19,7 +17,7 @@ t.world(
                 "cccccc",
                 "cccccc",
                 "cccccc",
-                "nnbbaa",
+                "ccbbaa",
             ],
             structures: [(0, 0, "player_spawn")],
         ),
@@ -36,6 +34,8 @@ local SAND = "#D9C48F" -- content/substances/ground/sand.luau
 local p = t.join()
 t.run_ticks(4)
 
+assert(t.environment().id == "warm_outdoors", "293.15 K picks the warm ground, got " .. t.environment().id)
+
 local function face(x: number, y: number): SpecSeenMatterPart
     local parts = t.seen_ground(p, x, y)
     assert(#parts == 1, "tile (" .. x .. ", " .. y .. ") draws one ground part, got " .. #parts)
@@ -43,27 +43,10 @@ local function face(x: number, y: number): SpecSeenMatterPart
 end
 
 local blank = face(2, 1)
-assert(blank.tint == SOIL, "a blank tile takes the sky's material, got " .. blank.tint)
+assert(blank.tint == SOIL, "a blank tile shows the soil block under it, got " .. blank.tint)
 assert(blank.look == "ground_shell", "through the same profile a named material takes")
-assert(blank.whole, "two blank tiles are one ground: no edge between them")
-assert(#t.seen_matter(p, 2, 1) == 0, "inherited ground is no cell matter either")
+assert(blank.whole, "two blank tiles over one ground: no edge between them")
+assert(#t.seen_matter(p, 2, 1) == 0, "generated ground is no cell matter either")
 
-assert(#t.seen_ground(p, 0, 3) == 0, "a tile that says it has no material draws none")
-assert(#t.seen_ground(p, 2, 3) == 0, "a named substrate does not inherit the sky's material")
-assert(face(4, 3).tint == SAND, "a named material outranks the sky's")
-
--- The ground changes under the round: what inherits follows, what said
--- otherwise does not, and a player sees it without moving.
-local sky = t.environment()
-t.set_environment({ sink_k = sky.sink_k, insolation = sky.insolation, material = "sand_ground" })
-t.run_ticks(4)
-assert(face(2, 1).tint == SAND, "a blank tile follows its sky's ground")
-assert(face(2, 1).whole, "and stays one ground with its neighbours")
-assert(#t.seen_ground(p, 0, 3) == 0, "a tile with no material stays without")
-assert(#t.seen_ground(p, 2, 3) == 0, "a named substrate still inherits nothing")
-
-local refused = pcall(function()
-    t.set_environment({ sink_k = sky.sink_k, insolation = sky.insolation, material = "no_such_ground" })
-end)
-assert(not refused, "a ground the pack does not define is refused")
-assert(face(2, 1).tint == SAND, "and changes nothing")
+assert(#t.seen_ground(p, 2, 3) == 0, "a named substrate with no material draws no ground")
+assert(face(4, 3).tint == SAND, "a named material outranks the generated ground")
