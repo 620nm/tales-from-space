@@ -151,6 +151,11 @@ assert(before - t.health(p).health >= 4, "the tumble bruises")
 t.run_ticks(17)
 assert_at(2, 2, "the tumble rolls the body a tile off the flight")
 assert(#t.ledger_rows("level_changed") == 6, "the roll changes no level")
+local roll_refusals = t.ledger_rows("entity_step_refused")
+assert(
+    #roll_refusals == 1 and roll_refusals[1].reason == "blocked" and roll_refusals[1].toward == "West",
+    "the crate refuses the second step, and the refusal is the script's"
+)
 
 -- 6b. The tumble staggers for 2 s (stairs.dm:349): stood up at once, each
 -- step costs 0.085 s more (lib/fall.luau), 4 ticks at 20 Hz becoming 6.
