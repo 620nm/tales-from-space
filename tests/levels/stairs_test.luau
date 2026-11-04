@@ -2,9 +2,9 @@
 -- stairs.dm): leaving it east climbs to the landing one level up, stepping
 -- back onto its top walks down onto it, a step onto it from the landing's
 -- side is refused, an open landing refuses the climb, a one-level fall onto
--- it is caught (content/lib/fall.luau), a pulled crate follows up it, an
--- item it catches lands without a line and a body pulled as it falls onto it
--- does not tumble.
+-- it is caught (content/lib/fall.luau), a tumble staggers the next steps, a
+-- pulled crate follows up it, an item it catches lands without a line and a
+-- body pulled as it falls onto it does not tumble.
 -- `t.target_at` names only the viewer's own level.
 local FLIGHT = { x = 3, y = 2 }
 local LANDING = { x = 4, y = 2 }
@@ -132,11 +132,50 @@ assert(not assert(t.body(p)).conscious, "the body is out cold")
 local before = t.health(p).health
 local _ = heard()
 assert(t.set_composition(FLIGHT.x, FLIGHT.y, "open", UPPER), "the floor opens under the body")
-t.run_seconds(2)
+-- Only until the tumble, so its stagger has not yet run out (6b).
+local tumble_heard = ""
+for _ = 1, 40 do
+    t.tick()
+    tumble_heard ..= heard()
+    if tumble_heard:find(DOWN_STAIRS, 1, true) then
+        break
+    end
+end
 assert_at(FLIGHT.x, FLIGHT.y, "the body fell onto the flight")
 assert_moves(6, "fall", "the second fall")
-assert(heard():find(DOWN_STAIRS, 1, true), "the sleeper falls down the stairs")
+assert(tumble_heard:find(DOWN_STAIRS, 1, true), "the sleeper falls down the stairs")
 assert(before - t.health(p).health >= 4, "the tumble bruises")
+
+-- 6b. The tumble staggers for 2 s (stairs.dm:349): stood up at once, each
+-- step costs 0.085 s more (lib/fall.luau), 4 ticks at 20 Hz becoming 6.
+assert(t.staff_restore(p), "staff stands the tumbled body up")
+local function landing_ticks(direction: Direction, count: number): { number }
+    local landed: { number } = {}
+    local x, y = t.pos(p)
+    for tick = 1, 40 do
+        t.move(p, direction)
+        t.tick()
+        local nx, ny = t.pos(p)
+        if nx ~= x or ny ~= y then
+            table.insert(landed, tick)
+            x, y = nx, ny
+            if #landed == count then
+                return landed
+            end
+        end
+    end
+    error("fewer than " .. count .. " landings holding " .. direction)
+end
+local _ = landing_ticks("south", 1)
+local staggered = landing_ticks("east", 2)
+t.run_seconds(2)
+local steady = landing_ticks("east", 2)
+assert_at(7, 3, "walked east along the south row")
+local staggered_gap = staggered[2] - staggered[1]
+local steady_gap = steady[2] - steady[1]
+assert(staggered_gap > steady_gap, "a staggered step is slower: " .. staggered_gap .. " ticks against " .. steady_gap)
+walk(p, { "west", "west", "west", "west", "north" })
+assert_at(FLIGHT.x, FLIGHT.y, "back on the flight")
 t.set_health(p, { oxy = 0, brute = 0 })
 t.run_seconds(6)
 assert_level(false, "awake at the foot")
