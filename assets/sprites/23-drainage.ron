@@ -1,0 +1,49 @@
+// The liquid mouths: floor drain, scupper, sump pump and intake, first-party
+// art (docs/art-reference/drainage-asset-guide.md). One family of
+// `tfs/assets/sprites.ron`'s roster; baked in file-name order.
+//
+// The intake is one fixture drawn twice, frame-locked: its floor face on the
+// level it sits in and its ceiling face on the level below. Both name their
+// states by the head's position. Its pipe mouth caps are in
+// 22-atmos-mouth-caps.ron.
+(
+    sheets: [
+        ("scupper", "art/machines/drainage/scupper.aseprite"),
+        ("sump_pump", "art/machines/drainage/sump_pump.aseprite"),
+    ],
+    sprites: [
+        // The flat `scupper` is what a scupper off its wall draws; the rest of
+        // its family is in the groups below.
+        ("floor_drain", Ase("art/machines/drainage/floor_drain.aseprite", "idle")),
+        ("floor_drain_draining", AseAnim("art/machines/drainage/floor_drain.aseprite", "draining")),
+        ("scupper", Ase("art/machines/drainage/scupper.aseprite", "idle-n")),
+        ("intake_floor_lowered", Ase("art/machines/drainage/intake_floor.aseprite", "lowered")),
+        ("intake_floor_raising", AseAnimOnce("art/machines/drainage/intake_floor.aseprite", "raising")),
+        ("intake_floor_raised", Ase("art/machines/drainage/intake_floor.aseprite", "raised")),
+        ("intake_floor_lowering", AseAnimOnce("art/machines/drainage/intake_floor.aseprite", "lowering")),
+        ("intake_ceiling_lowered", Ase("art/machines/drainage/intake_ceiling.aseprite", "lowered")),
+        ("intake_ceiling_raising", AseAnimOnce("art/machines/drainage/intake_ceiling.aseprite", "raising")),
+        ("intake_ceiling_raised", Ase("art/machines/drainage/intake_ceiling.aseprite", "raised")),
+        ("intake_ceiling_lowering", AseAnimOnce("art/machines/drainage/intake_ceiling.aseprite", "lowering")),
+    ],
+    groups: [
+        // Each face is drawn on the wall tile, displaced a whole tile by the
+        // head roster's `offsets`.
+        (sheet: "scupper", sprites: [
+            Directions("scupper", "idle"),
+            Anim("scupper_draining_n", "draining", n),
+            Anim("scupper_draining_s", "draining", s),
+            Anim("scupper_draining_e", "draining", e),
+            Anim("scupper_draining_w", "draining", w),
+        ]),
+        // n and s draw the N-S manifold, e and w the E-W one.
+        (sheet: "sump_pump", sprites: [
+            Directions("sump_pump_off", "off"),
+            Anim("sump_pump_pumping_n", "pumping", n),
+            Anim("sump_pump_pumping_s", "pumping", s),
+            Anim("sump_pump_pumping_e", "pumping", e),
+            Anim("sump_pump_pumping_w", "pumping", w),
+            Directions("sump_pump_fault", "fault"),
+        ]),
+    ],
+)

@@ -8,7 +8,7 @@
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute">
-    <filter id="rec709-grey" color-interpolation-filters="sRGB">
+    <filter id="rec709-gray" color-interpolation-filters="sRGB">
       <feColorMatrix type="matrix" values="
         0.2126 0.7152 0.0722 0 0
         0.2126 0.7152 0.0722 0 0
@@ -78,7 +78,7 @@
       </div>
       <div class="ctrl-group">
         <button id="btn-pipes" class="active" title="Show subfloor pipe stub + mouth_cap when deck cover is open/plating">Pipes: ON</button>
-        <button id="btn-grey" title="Toggle exact Rec.709 Greyscale value readability check">Rec.709 Grey: OFF</button>
+        <button id="btn-gray" title="Toggle exact Rec.709 Grayscale value readability check">Rec.709 Gray: OFF</button>
         <button id="btn-grid" title="Overlay 1px tile pixel grid">Grid: OFF</button>
       </div>
     </div>
@@ -122,8 +122,8 @@
 
       <section class="cat-block">
         <div class="cat-header">
-          <h2>Intake Head (Multi-Z Suite)</h2>
-          <p>A stationary <code>32×32</code> floor vault (<code>mouth_cap = "vault"</code>) on upper deck <code>z</code> paired with an undertile ceiling rig at <code>z-1</code>, isolated crown, and 20-port vault mouth caps.</p>
+          <h2>Intake (Multi-Z Suite)</h2>
+          <p>One fixture drawn twice, frame-locked: its <code>32×32</code> floor face (<code>mouth_cap = "intake"</code>) on level <code>z</code> and its ceiling face on level <code>z-1</code>, plus its 20-port mouth caps.</p>
         </div>
         <div class="fixture-grid" id="grid-intake-heads"></div>
       </section>
@@ -157,7 +157,7 @@
           </select>
         </div>
         <div class="field">
-          <label for="pw-join">Neighbour Pipe Join</label>
+          <label for="pw-join">Neighbor Pipe Join</label>
           <select id="pw-join">
             <option value="joined" selected>Joined Run (`pipe_intact` + Tinted Trunk)</option>
             <option value="exposed">Unjoined Capped Stubs (`pipe_exposed`)</option>
@@ -167,9 +167,9 @@
           <label for="pw-color">Pipe Paint</label>
           <select id="pw-color">
             <option value="#f04137" selected>Waste / Drain Red (#f04137)</option>
-            <option value="#5491e8">Supply / Greywater Blue (#5491e8)</option>
+            <option value="#5491e8">Supply / Graywater Blue (#5491e8)</option>
             <option value="#d4803d">Bilge / Fuel Amber (#d4803d)</option>
-            <option value="#ffffff">Unpainted Dispenser Grey</option>
+            <option value="#ffffff">Unpainted Dispenser Gray</option>
           </select>
         </div>
         <div class="field">

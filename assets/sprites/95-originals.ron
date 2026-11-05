@@ -49,65 +49,12 @@
         ("steam_generator_loaded", Png("art/bench/steam_generator_off_loaded.png")),
         ("steam_generator_on", Png("art/bench/steam_generator_on.png")),
         ("steam_generator_on_loaded", Png("art/bench/steam_generator_on_loaded.png")),
-
-        // The pyrolyser (methane cracker): a domed retort drum and
-        // control column with an H2 top riser and a lower carbon drawer,
-        // four states (`off`, `standby`, `working`, `open`).
-        ("pyrolyser_off", Ase("art/machines/pyrolyser.aseprite", "off")),
-        ("pyrolyser", Ase("art/machines/pyrolyser.aseprite", "standby")),
-        ("pyrolyser_on", AseAnim("art/machines/pyrolyser.aseprite", "working")),
-        ("pyrolyser_open", Ase("art/machines/pyrolyser.aseprite", "open")),
-
-        // The electrolyser (water to H2 and O2): a 2:1 Hofmann pair of
-        // glass columns on a steel housing, four states (`off`,
-        // `standby`, `working`, `open`). `fluid_body` and
-        // `fluid_bubbles` are their own layers so the liquid can be
-        // recoloured and clipped to its level.
-        ("electrolyser_off", Ase("art/machines/electrolyser.aseprite", "off")),
-        ("electrolyser", Ase("art/machines/electrolyser.aseprite", "standby")),
-        ("electrolyser_on", AseAnim("art/machines/electrolyser.aseprite", "working")),
-        ("electrolyser_open", Ase("art/machines/electrolyser.aseprite", "open")),
-
-        // The liquid dewar: tg's canister footprint and gauge ladder
-        // (`can-3`..`can-0`), told apart as a liquid fixture by its
-        // brass. One row per state, gauge baked in: `g3` full down to
-        // `g0`, whose two frames blink, then `connected` (fastened to a
-        // port, at full) and `broken`. `shell_paint`, `stripe_band` and
-        // `liquid_fill` stay greyscale layers in the source so the
-        // dewar can be painted by its contents once the renderer can
-        // tint one layer of an Aseprite sprite.
-        ("dewar", Ase("art/machines/dewar.aseprite", "g3")),
-        ("dewar_g2", Ase("art/machines/dewar.aseprite", "g2")),
-        ("dewar_g1", Ase("art/machines/dewar.aseprite", "g1")),
-        ("dewar_g0", AseAnim("art/machines/dewar.aseprite", "g0")),
-        ("dewar_connected", Ase("art/machines/dewar.aseprite", "connected")),
-        ("dewar_broken", Ase("art/machines/dewar.aseprite", "broken")),
-
-        // The cargo terrestrial exosuit: a body-conforming russet and
-        // khaki rig for surface work, with twin temple headlamps (`off`
-        // and `on`), both the sealed slit-visor helmet (`worn_exosuit`)
-        // and the translucent glass-faceplate variant
-        // (`worn_exosuit_glass`), and tg-style hanging-suit inhands.
-        ("exosuit", Ase("art/items/gear/exosuit.aseprite", "off")),
-        ("exosuit_on", Ase("art/items/gear/exosuit.aseprite", "on")),
     ],
     sheets: [
-        ("exosuit", "art/items/gear/exosuit.aseprite"),
         ("hazard_placard", "art/signs/nfpa-704.ase"),
         ("utility_outlet_port", "art/subfloor/electrical/utility_outlet_port.aseprite"),
     ],
     groups: [
-        (
-            sheet: "exosuit",
-            sprites: [
-                Directions("worn_exosuit", "worn_off"),
-                Directions("worn_exosuit_on", "worn_on"),
-                Directions("worn_exosuit_glass", "worn_glass_off"),
-                Directions("worn_exosuit_glass_on", "worn_glass_on"),
-                Directions("held_exosuit_l", "held_l"),
-                Directions("held_exosuit_r", "held_r"),
-            ],
-        ),
         // Floor outlet: the cover, the open housing and one lamp per
         // cable layer, stacked at runtime; no offsets. Each `led_l*`
         // layer's frames 1..3 are disconnected, connected, active.

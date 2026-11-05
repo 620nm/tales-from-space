@@ -1,10 +1,11 @@
 -- What a crewman looks like, and who is told (docs/LOOKS.md).
 --
--- Three claims, none of which the engine can make on its own: the roll
+-- Four claims, none of which the engine can make on its own: the roll
 -- is a function of the shift seed and the rosters this pack wrote, the
 -- stack that reaches a viewer is the layers `content/bodies/human.luau`
--- names in the colours the roll landed on, and posture crosses the wire
--- as a fact about a body rather than as a second picture.
+-- names in the colors the roll landed on, posture crosses the wire
+-- as a fact about a body rather than as a second picture, and each
+-- hand's held picture carries the facings that hand draws behind in.
 
 local WARD = [==[(
     name: "looks ward",
@@ -164,3 +165,67 @@ assert(t.seen(watcher, subject).posture == "standing", "and back up again")
 -- is proved in the engine, against a fixture plan whose parts can be
 -- detached (`crates/lunatic-server/src/sim/tests/looks.rs`).
 assert(assert(t.parts(subject)).head ~= nil, "the plan carries the part the face rides on")
+
+-- ---------------------------------------------------------------
+-- What a hand holds draws behind the body in the facings that hand
+-- is on the far side: `held_behind` on the human's two hand parts.
+-- ---------------------------------------------------------------
+local HOLD = [==[(
+    name: "looks hold",
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+    },
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#####",
+            ],
+            structures: [(1, 1, "player_spawn"), (3, 1, "player_spawn")],
+            items: [(2, 1, "wrench"), (2, 1, "crowbar")],
+        ),
+    ],
+)]==]
+
+t.world(HOLD, 0)
+local holder = t.join()
+local onlooker = t.join()
+t.run_ticks(2)
+
+local function pick(proto: string)
+    t.click(holder, 2, 1, assert(t.target_at(holder, 2, 1, proto)))
+    t.run_ticks(2)
+end
+pick("wrench")
+t.swap_hands(holder)
+t.run_ticks(1)
+pick("crowbar")
+t.run_ticks(2)
+
+local held = t.hands(holder)
+local left_sprite = "held_" .. assert(held[1], "an item in hand 1") .. "_l"
+local right_sprite = "held_" .. assert(held[2], "an item in hand 2") .. "_r"
+
+-- The facing words a layer reports, sorted, so the claim is the set.
+local function facings(layer: SpecSeenLayer): string
+    local words = table.clone(layer.behind_in)
+    table.sort(words)
+    return table.concat(words, ",")
+end
+
+local hold_seen = t.seen(onlooker, holder)
+local hand_layers = 0
+for _, layer in ipairs(hold_seen.layers) do
+    if layer.sprite == left_sprite then
+        assert(facings(layer) == "east,north", "the left hand's item hides facing north and east")
+        hand_layers += 1
+    elseif layer.sprite == right_sprite then
+        assert(facings(layer) == "north,west", "the right hand's item hides facing north and west")
+        hand_layers += 1
+    else
+        assert(#layer.behind_in == 0, "a body or worn layer never draws behind: " .. layer.sprite)
+    end
+end
+assert(hand_layers == 2, "both held pictures reached the onlooker, each from its own hand")

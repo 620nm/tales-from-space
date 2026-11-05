@@ -1,6 +1,8 @@
-"""Isolated 3/4th-perspective hexagonal concrete & brass intake head (`intake_head.aseprite`).
+"""Pixel library: the 3/4-perspective hexagonal concrete & brass intake head.
 
-32x32 RGBA (24x24 occupied at x=4..27, y=3..26), 1 static frame at 100 ms. Tag: idle (1).
+Not a shipped source: `spec_intake_floor` and `spec_intake_ceiling` draw these pixels into
+their `head` layers; the kit validates this spec but exports nothing for it.
+32x32 RGBA (24x24 occupied at x=4..27, y=3..26), 1 static frame.
 Layers, bottom to top: intake_chamber, copper_ring, trash_rack_grille, concrete_hexagon_cap.
 """
 
@@ -19,17 +21,17 @@ def _r(span24: str) -> str:
 SPEC: dict[str, Any] = {
     "name": "intake_head",
     "kind": "intake_head",
-    "title": "Intake Head (Isolated 3/4th Crown)",
+    "title": "Intake Head (3/4 Crown, pixel library)",
     "width": 32,
     "height": 32,
     "blurb": (
-        "Isolated 3/4th-perspective hexagonal intake head (24×24 at x=4..27, y=3..26 on a 32×32 transparent canvas) "
+        "3/4-perspective hexagonal intake head (24×24 at x=4..27, y=3..26 on a 32×32 transparent canvas) "
         "in warm ceramic-concrete and brushed khaki-brass. Dry interior: zero internal water animation."
     ),
     "design_notes": (
         "Hexagonal concrete cap with four raised brass corner lifting lugs, 12 vertical brass bars per "
         "front-left/front-right grille face (1px gaps, 2px horizontal cross-tie), inner copper-orange ring header + "
-        "vertical drop riser, and dark S1/M2 outer contour (0 shared boundary hexes against intake_vault f4 at dy=0)."
+        "vertical drop riser, and dark S1/M2 outer contour (0 shared boundary hexes against the open hatch at dy=0)."
     ),
     "frame_count": 1,
     "frame_durations_ms": [100],

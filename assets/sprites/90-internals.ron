@@ -1,5 +1,5 @@
 // Internals: the two bottles, the apparatus that reaches the lungs, and
-// the garment that keeps the vacuum off the skin.
+// the garments that keep a hostile environment off the skin.
 //
 // One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
 // this directory is baked, in FILE-NAME order and then expansion order,
@@ -19,6 +19,11 @@
 // the mask off `mob/clothing/mask.dmi` because its chain never sets one.
 // Both are followed here rather than guessed.
 (
+    sprites: [
+        // The HEA suit folded on the floor, headlamps off and on.
+        ("hea_suit", Ase("art/items/gear/hea_suit.aseprite", "off")),
+        ("hea_suit_on", Ase("art/items/gear/hea_suit.aseprite", "on")),
+    ],
     sheets: [
         ("canisters", "obj/canisters.dmi"),
         ("masks", "obj/clothing/masks.dmi"),
@@ -33,6 +38,7 @@
         ("masks_r", "mob/inhands/clothing/masks_righthand.dmi"),
         ("suits_l", "mob/inhands/clothing/suits_lefthand.dmi"),
         ("suits_r", "mob/inhands/clothing/suits_righthand.dmi"),
+        ("hea_suit", "art/items/gear/hea_suit.aseprite"),
     ],
     groups: [
         // The blue bottle: tg's /obj/item/tank/internals/oxygen
@@ -72,5 +78,24 @@
         (sheet: "worn_spacesuit", sprites: [Directions("worn_eva_suit", "space")]),
         (sheet: "suits_l", sprites: [Directions("held_eva_suit_l", "s_suit")]),
         (sheet: "suits_r", sprites: [Directions("held_eva_suit_r", "s_suit")]),
+
+        // The HEA suit (Hazardous Environment Activity): a first-party
+        // original, one suit item whose worn art carries its helmet,
+        // visor and twin temple headlamps. A russet and khaki rig for
+        // surface work; the worn pictures come sealed (slit visor) and
+        // glass (translucent faceplate), each with its lamps `off` and
+        // `on`, and the inhands are a hanging suit. Its two floor stills
+        // sit in `sprites` above.
+        (
+            sheet: "hea_suit",
+            sprites: [
+                Directions("worn_hea_suit", "worn_off"),
+                Directions("worn_hea_suit_on", "worn_on"),
+                Directions("worn_hea_suit_glass", "worn_glass_off"),
+                Directions("worn_hea_suit_glass_on", "worn_glass_on"),
+                Directions("held_hea_suit_l", "held_l"),
+                Directions("held_hea_suit_r", "held_r"),
+            ],
+        ),
     ],
 )

@@ -54,12 +54,12 @@ btnPipes.onclick = () => {
   btnPipes.textContent = `Pipes: ${state.showPipes ? "ON" : "OFF"}`;
   renderAll();
 };
-const btnGrey = document.getElementById("btn-grey");
-btnGrey.onclick = () => {
-  state.greyscale = !state.greyscale;
-  document.body.classList.toggle("greyscale-mode", state.greyscale);
-  btnGrey.classList.toggle("active", state.greyscale);
-  btnGrey.textContent = `Rec.709 Grey: ${state.greyscale ? "ON" : "OFF"}`;
+const btnGray = document.getElementById("btn-gray");
+btnGray.onclick = () => {
+  state.grayscale = !state.grayscale;
+  document.body.classList.toggle("grayscale-mode", state.grayscale);
+  btnGray.classList.toggle("active", state.grayscale);
+  btnGray.textContent = `Rec.709 Gray: ${state.grayscale ? "ON" : "OFF"}`;
 };
 const btnGrid = document.getElementById("btn-grid");
 btnGrid.onclick = () => {

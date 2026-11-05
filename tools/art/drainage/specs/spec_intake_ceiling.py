@@ -1,7 +1,9 @@
-"""Lower-level (`z - 1`) undertile ceiling-suspended intake head (`intake_ceiling_below.aseprite`).
+"""The intake seen from the level below, hanging from its ceiling (`intake_ceiling.aseprite`).
 
-32x32 RGBA, 12 frames at 100 ms each. Tags: submerged (1), ascending (2..6), retracted (7), descending (8..12).
-Layers, bottom to top: throat_and_floor_shadow, suspended_intake_head, ceiling_collar_and_ram.
+32x32 RGBA, 12 frames at 100 ms each, frame-locked with `intake_floor`. Tags name the
+head's position: lowered (1), raising (2..6), raised (7), lowering (8..12).
+Layers, bottom to top: throat_and_shadow, head, collar_and_ram (all animated).
+Head pixels come from the `spec_intake_head` library.
 """
 
 from __future__ import annotations
@@ -85,8 +87,8 @@ def _build_spec() -> dict[str, Any]:
                 g[y][x] = c_m2 if is_rim else c_m1
         return g
 
-    def build_suspended_head_grid(dy: int) -> list[list[str | None]]:
-        """Exact isolated `intake_head` (`x = 4..27, src_y = 3..26`) shifted by `dy` (`dst_y = 0..31`)."""
+    def build_head_grid(dy: int) -> list[list[str | None]]:
+        """The `spec_intake_head` pixels (`x = 4..27, src_y = 3..26`) shifted by `dy` (`dst_y = 0..31`)."""
         out: list[list[str | None]] = [[None for _ in range(32)] for _ in range(32)]
         for src_y in range(32):
             dst_y = src_y + dy
@@ -135,13 +137,13 @@ def _build_spec() -> dict[str, Any]:
 
     # Smooth 12-frame loop (`+2, +1, 0, -5, -11, -17, -22, -16, -9, -3, 0, +1`):
     choreography: list[int] = [
-        +2,   # f1:  submerged — z cover closed; 3/4th head hovers at y=5..28 over y=30..31 shadow
+        +2,   # f1:  lowered — z cover closed; 3/4 head hovers at y=5..28 over y=30..31 shadow
         +1,   # f2:  z cover cam twists & cracks open; hydraulic ram pre-lifts (+1px to y=4..27)
         0,    # f3:  z cover half-retracted; head rises to y=3..26 just below ceiling throat
         -5,   # f4:  z cover open; head enters 24px (x=4..27) ceiling penetration throat
         -11,  # f5:  head halfway inside 24px ceiling throat; floor shadow shrinks
         -17,  # f6:  grille tucked in; tapered concrete cone entering ceiling collar
-        -22,  # f7:  retracted — lower concrete skirt (`src_y=22..26`) seated flush at `y=0..4`
+        -22,  # f7:  raised — lower concrete skirt (`src_y=22..26`) seated flush at `y=0..4`
         -16,  # f8:  z head receding; lower skirt & grille emerge from 24px ceiling throat
         -9,   # f9:  z head sinking; cage halfway out on central hydraulic piston
         -3,   # f10: head clears ceiling throat onto z-1 as z shaft opens
@@ -150,11 +152,11 @@ def _build_spec() -> dict[str, Any]:
     ]
 
     bg_grids = [build_shadow_and_throat_grid(dy) for dy in choreography]
-    sus_grids = [build_suspended_head_grid(dy) for dy in choreography]
+    head_grids = [build_head_grid(dy) for dy in choreography]
     collar_grids = [build_collar_and_ram_grid(dy) for dy in choreography]
 
     all_cols: list[str] = []
-    for g in (*bg_grids, *sus_grids, *collar_grids):
+    for g in (*bg_grids, *head_grids, *collar_grids):
         for row in g:
             for col in row:
                 if col is not None and col not in all_cols:
@@ -168,7 +170,7 @@ def _build_spec() -> dict[str, Any]:
         return ["".join("." if col is None else tok_by_col[col] for col in row) for row in grid]
 
     bg_frames = [encode_grid(g) for g in bg_grids]
-    sus_frames = [encode_grid(g) for g in sus_grids]
+    head_frames = [encode_grid(g) for g in head_grids]
     collar_frames = [encode_grid(g) for g in collar_grids]
 
     def layer_legend(frames: list[list[str]]) -> dict[str, str]:
@@ -176,43 +178,43 @@ def _build_spec() -> dict[str, Any]:
         return {k: v for k, v in legend.items() if k in used}
 
     return {
-        "name": "intake_ceiling_below",
-        "kind": "intake_ceiling_below",
-        "title": "Intake Head — Undertile Rig (z-1)",
+        "name": "intake_ceiling",
+        "kind": "intake_ceiling",
+        "title": "Intake — Ceiling Face (z-1)",
         "width": 32,
         "height": 32,
         "blurb": (
-            "Independent 3/4th-perspective undertile view on level z-1 showing the intake head suspended "
+            "Independent 3/4-perspective view on level z-1 showing the intake head suspended "
             "from a recessed 24px ceiling shaft throat and central 6px hydraulic piston."
         ),
         "design_notes": (
             "Zero dangling chains. Heavy bolted ceiling shaft collar (x=2..29, y=0..4) with 24px recessed throat "
             "(x=4..27), central 6px polished steel/brass hydraulic cylinder (x=13..18), suspended intake head "
-            "(dy=+2 submerged down to dy=-22 retracted), and shrinking floor drop-shadow (y=30..31)."
+            "(dy=+2 lowered up to dy=-22 raised), and shrinking floor drop-shadow (y=30..31)."
         ),
         "frame_count": 12,
         "frame_durations_ms": [100] * 12,
         "tags": [
-            {"name": "submerged", "from": 1, "to": 1},
-            {"name": "ascending", "from": 2, "to": 6},
-            {"name": "retracted", "from": 7, "to": 7},
-            {"name": "descending", "from": 8, "to": 12},
+            {"name": "lowered", "from": 1, "to": 1},
+            {"name": "raising", "from": 2, "to": 6},
+            {"name": "raised", "from": 7, "to": 7},
+            {"name": "lowering", "from": 8, "to": 12},
         ],
         "layers": [
             {
-                "name": "throat_and_floor_shadow",
+                "name": "throat_and_shadow",
                 "animated": True,
                 "legend": layer_legend(bg_frames),
                 "frames": bg_frames,
             },
             {
-                "name": "suspended_intake_head",
+                "name": "head",
                 "animated": True,
-                "legend": layer_legend(sus_frames),
-                "frames": sus_frames,
+                "legend": layer_legend(head_frames),
+                "frames": head_frames,
             },
             {
-                "name": "ceiling_collar_and_ram",
+                "name": "collar_and_ram",
                 "animated": True,
                 "legend": layer_legend(collar_frames),
                 "frames": collar_frames,

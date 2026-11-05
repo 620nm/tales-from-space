@@ -8,7 +8,7 @@ function computeMouths(dirCode, isWallScupper = false) {
   return isWallScupper ? oppMap[dirCode] : bitMap[dirCode];
 }
 
-function drawNeighbourRun(octx, gx, gy, dbit, chIdx, hexColor) {
+function drawNeighborRun(octx, gx, gy, dbit, chIdx, hexColor) {
   const mask = (dbit === 1 || dbit === 2) ? 3 : 12;
   const src = DATA.pipes.pipe_runs[`l${chIdx}_${mask}`];
   const im = getTintedCanvas(src, hexColor);
@@ -37,10 +37,10 @@ function buildPipeWorkbenchDOM() {
       desc: "The manifold spine turns with the facing + `mouth_cap = 'vent'`, so every stub meets solid steel.",
     },
     {
-      id: "intake_upper_deck",
-      title: "Intake Head (32×32 Vault)",
-      capFam: "vault",
-      desc: "Stationary 32×32 vault curb + 5×3 `mouth_cap = 'vault'` collars on l1..l5 (zero overlap across all 20 ports).",
+      id: "intake_floor",
+      title: "Intake (32×32 Floor Hatch)",
+      capFam: "intake",
+      desc: "Stationary 32×32 hatch curb + 5×3 `mouth_cap = 'intake'` collars on l1..l5 (zero overlap across all 20 ports).",
     },
   ];
 
@@ -90,11 +90,11 @@ function buildPipeWorkbenchDOM() {
       const ch = state.pwLayer;
       const shift = (ch - 3) * 5;
       const isScupper = (item.id === "scupper");
-      const isVault = (item.id === "intake_upper_deck");
+      const isIntake = (item.id === "intake_floor");
       const mouths = computeMouths(state.pwDir, isScupper);
 
-      let dx = isVault ? 0 : ((mouths & 3) ? shift : 0);
-      let dy = isVault ? 0 : ((mouths & 12) ? -shift : 0);
+      let dx = isIntake ? 0 : ((mouths & 3) ? shift : 0);
+      let dy = isIntake ? 0 : ((mouths & 12) ? -shift : 0);
       if (isScupper) {
         dx = (state.pwDir === "N" || state.pwDir === "S") ? shift : 0;
         dy = (state.pwDir === "E" || state.pwDir === "W") ? -shift : 0;
@@ -143,7 +143,7 @@ function buildPipeWorkbenchDOM() {
               const isBranchCapped = (state.pwJoin === "exposed");
               if (!isBranchCapped) {
                 const [ngx, ngy] = nbCoords[db];
-                drawNeighbourRun(octx, ngx, ngy, db, ch, state.pwColor);
+                drawNeighborRun(octx, ngx, ngy, db, ch, state.pwColor);
                 const stIm = getTintedCanvas(DATA.pipes.stubs_intact[`l${ch}_${db}`], state.pwColor);
                 if (stIm) octx.drawImage(stIm, 32, 32, 32, 32);
               } else {
@@ -198,8 +198,8 @@ function buildPipeWorkbenchDOM() {
             W: [0, 32 + (isCovered ? 0 : dy)],
           }[state.pwDir];
           if (im && im.complete) octx.drawImage(im, wallPos[0], wallPos[1], 32, 32);
-        } else if (item.id === "intake_upper_deck") {
-          const intake = DATA.fixtures.find(x => x.name === "intake_upper_deck" || x.kind === "intake_upper_deck");
+        } else if (item.id === "intake_floor") {
+          const intake = DATA.fixtures.find(x => x.kind === "intake_floor");
           if (intake) {
             const bodyIm = loadImg(intake.frames[pickFixtureFrame(intake, 0)]);
             if (bodyIm && bodyIm.complete) octx.drawImage(bodyIm, 32, 32, 32, 32);
@@ -207,7 +207,7 @@ function buildPipeWorkbenchDOM() {
           if (!isCovered) {
             [1, 2, 4, 8].forEach(db => {
               if (mouths & db) {
-                const cap = loadImg(DATA.pipes.caps[`vault_l${ch}_${db}`]);
+                const cap = loadImg(DATA.pipes.caps[`intake_l${ch}_${db}`]);
                 if (cap && cap.complete) octx.drawImage(cap, 32, 32, 32, 32);
               }
             });

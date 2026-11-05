@@ -121,7 +121,7 @@ def collect_reference_assets() -> dict[str, Any]:
         "scrub_cap_n": img_to_data_uri(scrub_cap_n),
         "vent_cap_n": img_to_data_uri(vent_cap_n),
         "vent_cap_e": img_to_data_uri(vent_cap_e),
-        "vault_cap_n": img_to_data_uri(extract_aseprite_tag_frame("assets/originals/art/machines/drainage/vault_mouth_caps.aseprite", "l3_1")),
+        "intake_cap_n": img_to_data_uri(extract_aseprite_tag_frame("assets/originals/art/machines/drainage/intake_mouth_caps.aseprite", "l3_1")),
         "apc_lit": img_to_data_uri(apc_lit),
         "alarm_ok": img_to_data_uri(alarm_ok),
     }
@@ -424,14 +424,14 @@ def render_overview_board(fixtures: list[dict[str, Any]], out_path: Path) -> Non
         )
         draw_wrapped_blurb(cx + 10, cy + 194, c["blurb"])
 
-    # Row 4: Intake Head Multi-Z Suite
-    intake_names = ("intake_upper_deck", "intake_ceiling_below", "intake_vault", "intake_head")
+    # Row 4: the intake's two faces
+    intake_names = ("intake_floor", "intake_ceiling")
     intake_cards = [next((c for c in fixtures if c["name"] == nm), None) for nm in intake_names]
     intake_cards = [c for c in intake_cards if c is not None]
     if intake_cards:
         draw.text(
             (24, 1092),
-            "INTAKE HEAD (Upper Deck z, Undertile Ceiling Rig z-1, Vault & Isolated Crown)",
+            "INTAKE (Floor Face z, Ceiling Face z-1)",
             font=font_h2,
             fill=(124, 196, 182, 255),
         )
@@ -440,23 +440,12 @@ def render_overview_board(fixtures: list[dict[str, Any]], out_path: Path) -> Non
             cy = 1118
             draw.rounded_rectangle([cx, cy, cx + 316, cy + 252], radius=6, fill=(24, 28, 42, 255), outline=(124, 196, 182, 255), width=2)
             draw.text((cx + 10, cy + 8), c["title"], font=font_b, fill=(245, 224, 74, 255))
-            if c["name"] == "intake_upper_deck":
+            if c["name"] in ("intake_floor", "intake_ceiling"):
+                bg = ctx["floor"] if c["name"] == "intake_floor" else ctx["plating"]
                 samples = [
-                    (ctx["floor"], f_img(c, 0), "Depressed"),
-                    (ctx["floor"], f_img(c, 3), "Opening"),
-                    (ctx["floor"], f_img(c, 6), "Elevated"),
-                ]
-            elif c["name"] == "intake_ceiling_below":
-                samples = [
-                    (ctx["plating"], f_img(c, 0), "Submerged"),
-                    (ctx["plating"], f_img(c, 3), "Ascending"),
-                    (ctx["plating"], f_img(c, 6), "Retracted"),
-                ]
-            elif c["name"] == "intake_vault":
-                samples = [
-                    (ctx["floor"], f_img(c, 0), "Closed"),
-                    (ctx["floor"], f_img(c, 2), "Opening"),
-                    (ctx["floor"], f_img(c, 3), "Open"),
+                    (bg, f_img(c, 0), "Lowered"),
+                    (bg, f_img(c, 3), "Raising"),
+                    (bg, f_img(c, 6), "Raised"),
                 ]
             else:
                 f0 = f_img(c, 0)

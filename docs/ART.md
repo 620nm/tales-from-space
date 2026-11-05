@@ -197,7 +197,7 @@ The reservation covers character designs (mobs, uniforms, suits, armour):
 | Roboticist in black with dark red (`rnd.dmi` `robotics`) | no crew design pairs black with red |
 | Clown in pure `#ff0000` | coral |
 
-Baked tg sprites keep tg's pixels until redrawn or recoloured (`Tinted`
-recipe or new source under `assets/originals/art/` registered in
-`assets/sprites/95-originals.ron`). Bake from the engine checkout
+Baked tg sprites keep tg's pixels until redrawn or recolored (`Tinted`
+recipe or new source under `assets/originals/art/` registered in an
+`assets/sprites/*.ron` roster). Bake from the engine checkout
 (`README.md` §Running).
