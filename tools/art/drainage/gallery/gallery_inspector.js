@@ -75,9 +75,9 @@ function renderInspectorAndLayers() {
 
   const pKind = c.kind === "sump_pump"
     ? (fi < 6 ? "supply_ew" : "supply")
-    : ((c.name === "intake_upper_deck" || c.name === "intake_vault" || c.kind === "intake_upper_deck" || c.kind === "intake_vault")
-      ? "vault"
-      : ((c.name === "intake_ceiling_below" || c.name === "intake_head" || c.name === "vault_mouth_caps" || c.kind === "intake_ceiling_below" || c.kind === "intake_head" || c.kind === "vault_mouth_caps")
+    : ((c.kind === "intake_floor")
+      ? "intake"
+      : ((c.kind === "intake_ceiling" || c.kind === "intake_mouth_caps")
         ? "none"
         : "waste"));
   const im = loadImg(c.frames[fi] || c.frames[0]);

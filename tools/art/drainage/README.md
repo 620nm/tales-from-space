@@ -1,8 +1,7 @@
 # Drainage sprite tools
 
 Authors, validates and previews the liquid drainage and intake fixtures (`floor_drain`,
-`scupper`, `sump_pump`, `intake_head`, `intake_vault`, `intake_upper_deck`,
-`intake_ceiling_below`, `vault_mouth_caps`), sourced at
+`scupper`, `sump_pump`, `intake_floor`, `intake_ceiling`, `intake_mouth_caps`), sourced at
 `assets/originals/art/machines/drainage/`. The art rules are
 [docs/art-reference/drainage-asset-guide.md](../../../docs/art-reference/drainage-asset-guide.md).
 Everything generated lands in the pack's gitignored `target/art/drainage/` (`png_1x/`,
@@ -11,10 +10,11 @@ Everything generated lands in the pack's gitignored `target/art/drainage/` (`png
 | Path | Purpose |
 |---|---|
 | `drainage_kit.py` | Validates the specs, draws a missing source through Aseprite MCP, exports each source's frames and writes `manifests/<fixture>.json`. |
-| `intake_validation.py` | Validates the multi-Z intake head suite (`intake_head`, `intake_vault`, `intake_upper_deck`, `intake_ceiling_below`, `vault_mouth_caps`). |
-| `specs/spec_{floor_drain,scupper,sump_pump,intake_head,intake_vault,intake_upper_deck,intake_ceiling_below,vault_mouth_caps}.py` | `SPEC`: pixel rows, layers, durations and tags of one source. |
+| `intake_validation.py` | Validates the intake: its two faces, its mouth caps and its two pixel libraries. |
+| `specs/spec_{floor_drain,scupper,sump_pump,intake_floor,intake_ceiling,intake_mouth_caps}.py` | `SPEC`: pixel rows, layers, durations and tags of one source. |
+| `specs/spec_intake_{head,vault}.py` | Pixel libraries: the head and the hatch that `intake_floor` and `intake_ceiling` draw. Validated, never exported. |
 | `build_gallery.py` | Bundles the manifests with `gallery/` into `target/art/drainage/gallery/`, and draws `overview_board.png`. |
-| `pipe_workbench.py` | Pipe stubs, mouth caps (`scrub`, `vent`, `inje`, `vault`) and riser sleeves for the gallery, and `pipe_connections_board.png`. |
+| `pipe_workbench.py` | Pipe stubs, mouth caps (`scrub`, `vent`, `inje`, `intake`) and riser sleeves for the gallery, and `pipe_connections_board.png`. |
 | `gallery/` | The authored page: `index.html`, its stylesheet and scripts. `gallery_data.js` is generated beside the copy in `target/`. |
 
 ## Setup
@@ -42,7 +42,7 @@ D=tools/art/drainage
 python3 $D/drainage_kit.py --check-specs                      # no Aseprite or MCP needed
 python3 $D/drainage_kit.py                                    # export what is on disk
 python3 $D/drainage_kit.py --fixture scupper --rebuild-sources
-python3 $D/build_gallery.py                                   # needs all eight manifests
+python3 $D/build_gallery.py                                   # needs all six manifests
 ```
 
 An existing `.aseprite` is exported as it stands, so hand edits survive. A missing source
@@ -52,6 +52,9 @@ discarding hand edits; review the diff before committing the result.
 ## Bake link
 
 The baker reads each `.aseprite` directly: tags are the states. A `<state>-<dir>` tag is what
-a `Directions` or `Anim` row names by `<state>`. The sump pump's `e`/`w` and `n`/`s` tags
+a `Directions` or `Anim` row names by `<state>`. The rows are `assets/sprites/23-drainage.ron`;
+the intake caps are `assets/sprites/22-atmos-mouth-caps.ron`. The intake's two faces share
+the tags `lowered`, `raising`, `raised` and `lowering`, named by the head's position and
+frame-locked: frame N of `intake_floor` and of `intake_ceiling` show the same moment. The sump pump's `e`/`w` and `n`/`s` tags
 overlap on purpose, one pair per manifold axis. The scupper's faces take their one-tile
 displacement from the `offsets` table in `assets/sprites.ron`.

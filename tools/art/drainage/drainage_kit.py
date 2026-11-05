@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Validator and Aseprite MCP exporter for the drainage fixture sprites.
 
-Each spec in `specs/` is one source under `assets/originals/art/machines/drainage/`. An
-existing source is exported and validated as it stands; a missing one is drawn from its
-spec, and `--rebuild-sources` redraws them all. Generated files land in the pack's
+Each `FIXTURES` spec in `specs/` is one source under `assets/originals/art/machines/drainage/`.
+An existing source is exported and validated as it stands; a missing one is drawn from its
+spec, and `--rebuild-sources` redraws them all. `PIXEL_LIBRARIES` specs are validated only. Generated files land in the pack's
 gitignored `target/art/drainage/`; the rules are
 docs/art-reference/drainage-asset-guide.md.
 """
@@ -38,11 +38,14 @@ FIXTURES: tuple[str, ...] = (
     "floor_drain",
     "scupper",
     "sump_pump",
+    "intake_floor",
+    "intake_ceiling",
+    "intake_mouth_caps",
+)
+# Specs other specs draw from; validated, never exported or shipped.
+PIXEL_LIBRARIES: tuple[str, ...] = (
     "intake_head",
     "intake_vault",
-    "intake_upper_deck",
-    "intake_ceiling_below",
-    "vault_mouth_caps",
 )
 
 
@@ -205,8 +208,8 @@ def rec709_luma(hx: str) -> float:
     return 0.2126 * r + 0.7152 * g + 0.0722 * b
 
 
-def to_rec709_greyscale_rgba(im: Image.Image) -> Image.Image:
-    """Convert RGBA image to Rec.709 greyscale (docs/ART.md:45), preserving alpha."""
+def to_rec709_grayscale_rgba(im: Image.Image) -> Image.Image:
+    """Convert RGBA image to Rec.709 grayscale (docs/ART.md:45), preserving alpha."""
     src = im.convert("RGBA")
     out = Image.new("RGBA", src.size, (0, 0, 0, 0))
     for y in range(src.height):
@@ -889,9 +892,9 @@ def main() -> None:
 
     names = FIXTURES if args.fixture == "all" else (args.fixture,)
     specs = [load_spec(name) for name in names]
-    for spec in specs:
+    for spec in [*specs, *(load_spec(name) for name in PIXEL_LIBRARIES)]:
         validate_spec(spec)
-    print(f"specs ok: {', '.join(names)}")
+    print(f"specs ok: {', '.join(names)}; libraries ok: {', '.join(PIXEL_LIBRARIES)}")
     if not args.check_specs:
         asyncio.run(run_all(specs, args.rebuild_sources))
 

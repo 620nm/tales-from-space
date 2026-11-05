@@ -1,4 +1,5 @@
-"""Validation rules for the multi-Z intake head, top-down vault, and 5-layer vault mouth caps."""
+"""Validation rules for the intake: its two faces, its 5-layer mouth caps, and the head and
+hatch pixel libraries the faces are built from."""
 
 from __future__ import annotations
 
@@ -7,9 +8,9 @@ from typing import Any, Callable
 INTAKE_KINDS: tuple[str, ...] = (
     "intake_head",
     "intake_vault",
-    "intake_upper_deck",
-    "intake_ceiling_below",
-    "vault_mouth_caps",
+    "intake_floor",
+    "intake_ceiling",
+    "intake_mouth_caps",
 )
 
 SHAFT_X_SPAN: dict[int, tuple[int, int]] = {
@@ -46,7 +47,7 @@ def _assert_stationary_3px_border(name: str, frames: list[list[list[str | None]]
 def _assert_zero_shared_boundary_hexes(
     name: str,
     head_grid: list[list[str | None]],
-    vault_grid: list[list[str | None]],
+    hatch_grid: list[list[str | None]],
 ) -> None:
     collisions: list[tuple[int, int, int, int, str]] = []
     for y in range(32):
@@ -60,11 +61,11 @@ def _assert_zero_shared_boundary_hexes(
                         continue
                     nx, ny = x + dx, y + dy
                     if 0 <= nx < 32 and 0 <= ny < 32 and head_grid[ny][nx] is None:
-                        if vault_grid[ny][nx] == hx:
+                        if hatch_grid[ny][nx] == hx:
                             collisions.append((x, y, nx, ny, hx))
     if collisions:
         raise AssertionError(
-            f"{name}: shared boundary hexes between intake_head (dy=0) and open vault: {collisions[:6]}"
+            f"{name}: shared boundary hexes between the raised head (dy=0) and the open hatch: {collisions[:6]}"
         )
 
 
@@ -109,7 +110,7 @@ def validate_intake_spec(
         if st["lone_pixels"] != 0:
             raise AssertionError(f"{name} f{f+1}: lone_pixels={st['lone_pixels']} != 0")
 
-        if kind == "intake_ceiling_below":
+        if kind == "intake_ceiling":
             rig_grid = [row[:] if y < 30 else [None] * 32 for y, row in enumerate(full)]
             rig_st = analyze_grid(rig_grid)
             if rig_st["pieces"] != 1 or rig_st["lone_pixels"] != 0:
@@ -136,7 +137,7 @@ def validate_intake_spec(
             if st["bbox"] != [4, 3, 24, 24]:
                 raise AssertionError(f"{name}: expected bbox [4, 3, 24, 24], got {st['bbox']}")
             if st["luma_top"] <= st["luma_bottom"] + 6.0:
-                raise AssertionError(f"{name}: expected top-lit 3/4th gradient, got {st['luma_top']} vs {st['luma_bottom']}")
+                raise AssertionError(f"{name}: expected top-lit 3/4 gradient, got {st['luma_top']} vs {st['luma_bottom']}")
             if abs(st["luma_left"] - st["luma_right"]) > 3.5:
                 raise AssertionError(f"{name}: lateral luma bias {st['luma_left']} vs {st['luma_right']}")
             for y in range(22, 27):
@@ -158,19 +159,19 @@ def validate_intake_spec(
             if f == 3 and dark_px < 280:
                 raise AssertionError(f"{name} f4: open vault must expose >=280 dark throat px (got {dark_px})")
 
-        elif kind == "intake_upper_deck":
+        elif kind == "intake_floor":
             if n_frames != 12:
                 raise AssertionError(f"{name}: expected 12 frames, got {n_frames}")
             if st["opaque_pixels"] != 1024 or st["bbox"] != [0, 0, 32, 32]:
                 raise AssertionError(f"{name} f{f+1}: expected 1024 opaque px [0,0,32,32], got {st['opaque_pixels']}")
 
-        elif kind == "intake_ceiling_below":
+        elif kind == "intake_ceiling":
             if n_frames != 12:
                 raise AssertionError(f"{name}: expected 12 frames, got {n_frames}")
             if st["bbox"][0] != 2 or st["bbox"][1] != 0 or st["bbox"][2] != 28:
                 raise AssertionError(f"{name} f{f+1}: expected x=2..29 ceiling collar bbox, got {st['bbox']}")
 
-        elif kind == "vault_mouth_caps":
+        elif kind == "intake_mouth_caps":
             if n_frames != 20:
                 raise AssertionError(f"{name}: expected 20 frames, got {n_frames}")
             if st["opaque_pixels"] != 15:
@@ -184,19 +185,22 @@ def validate_intake_spec(
 
         per_frame_stats.append({k: v for k, v in st.items() if k != "boundary_swatches"})
 
-    if kind in ("intake_vault", "intake_upper_deck"):
+    if kind in ("intake_vault", "intake_floor"):
         _assert_stationary_3px_border(name, all_frames)
 
-    if kind == "intake_upper_deck":
-        vault_layer_spec = {"name": f"{name}/vault", "width": 32, "height": 32, "layers": [spec["layers"][0]]}
-        head_layer_spec = {"name": f"{name}/head", "width": 32, "height": 32, "layers": [spec["layers"][1]]}
+    if kind == "intake_floor":
+        raised = next(tg["from"] - 1 for tg in spec["tags"] if tg["name"] == "raised")
+        hatch_layers = [layer for layer in spec["layers"] if layer["name"] != "head"]
+        head_layers = [layer for layer in spec["layers"] if layer["name"] == "head"]
+        hatch_layer_spec = {"name": f"{name}/hatch", "width": 32, "height": 32, "layers": hatch_layers}
+        head_layer_spec = {"name": f"{name}/head", "width": 32, "height": 32, "layers": head_layers}
         _assert_zero_shared_boundary_hexes(
             name,
-            composite_frame(head_layer_spec, 6),
-            composite_frame(vault_layer_spec, 6),
+            composite_frame(head_layer_spec, raised),
+            composite_frame(hatch_layer_spec, raised),
         )
 
-    if kind == "intake_ceiling_below":
+    if kind == "intake_ceiling":
         shadow_counts = [
             sum(1 for y in (30, 31) for x in range(32) if all_frames[fi][y][x] is not None)
             for fi in range(7)
@@ -207,7 +211,7 @@ def validate_intake_spec(
             if shadow_counts[i] < shadow_counts[i + 1]:
                 raise AssertionError(f"{name}: non-monotonic shadow shrinkage f1..f7: {shadow_counts}")
 
-    if kind == "vault_mouth_caps":
+    if kind == "intake_mouth_caps":
         seen_coords: dict[tuple[int, int], int] = {}
         for fi, grid in enumerate(all_frames):
             for y in range(32):
