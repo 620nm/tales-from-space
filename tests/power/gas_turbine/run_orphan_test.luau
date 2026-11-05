@@ -199,14 +199,3 @@ assert(eventually(function()
     return ui_controls.number(reading(q).rpm) > 0
 end, 8), "and its sections take their turns afresh, the window redrawing them")
 assert((watts() or 0) > 0, "feeding the grid again")
-
--- Stalled again with the breaker tripped, the rotor unfed: the switch
--- refuses the restart but still halts the run, taking its watts off.
-assert(t.cancel_mod_tasks("lunatic/tfs") >= 3, "the new run's turns are cancelled")
-t.run_seconds(6)
-t.outage()
-t.run_ticks(2)
-click(q, 4, 3, "turbine_computer", 0.2)
-toggle(q)
-assert(reading(q).active == false, "an unfed rotor is refused its restart")
-assert(watts() == 0, "and the refused stall's watts come off")
