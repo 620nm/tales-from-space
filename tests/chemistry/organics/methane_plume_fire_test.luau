@@ -2,9 +2,11 @@ local ignition_room = require("@helpers/ignition_room")
 
 -- A LEAK OF OXYGEN INTO A METHANE SKY BURNS, AND THE SMOKE SNOWS.
 --
--- Open ground under the cryo-hydrocarbon sky (`cryo_hydrocarbon`: 94 K,
--- nitrogen with methane in it). A habitat's oxygen leaks onto one tile
--- and a struck burner clicks it alight.
+-- An open deck under the cryo-hydrocarbon sky (`cryo_hydrocarbon`: 94 K,
+-- nitrogen with methane in it), the pad outside a habitat. Its oxygen
+-- leaks onto one plated tile and a struck burner clicks it alight. A
+-- deck, not bare ice: a ground tile's cell holds its bed of ice at one
+-- temperature with the air over it, and that bed swallows the flame.
 --
 -- * Before the leak a spark finds nothing: methane without oxygen is
 --   not a fire.
@@ -12,15 +14,19 @@ local ignition_room = require("@helpers/ignition_room")
 --   `methane_fire` (content/reactions/organics/methane_fire.luau).
 -- * The flame heats the tile far past the sky.
 -- * Once the sky has cooled it back, carbon dioxide the fire made lies
---   on the ground as dry ice: matter the world holds that no cell's gas
+--   on the deck as dry ice: matter the world holds that no cell's gas
 --   accounts for.
-local SPARK_X, SPARK_Y = 2, 1
+local SPARK_X, SPARK_Y = 3, 2
 -- One tile's worth of habitat oxygen (tests/helpers/ignition_room.luau).
 local LEAK_O2_MOL = ignition_room.AIR_O2
+-- Then the leak keeps coming while the fire burns: 8 mol/s for 20 s.
+local LEAK_STEP_S = 0.25
+local LEAK_MOL_PER_STEP = 2.0
+local LEAK_SECONDS = 20
 -- Carbon dioxide at 94 K is solid well under 1 Pa (substances/co2.luau's
 -- triple point and latent heats), so any not in a cell's gas is frost.
 local SNOW_FLOOR_MOL = 0.01
-local ROWS = { ".....", ".....", "....." }
+local ROWS = { ".......", ".......", ".......", ".......", "......." }
 
 local quoted: { string } = {}
 for _, row in ipairs(ROWS) do
@@ -32,13 +38,16 @@ t.world(
     name: "methane plume",
     environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(94.0)),
     legend: {
-        '.': (composition: (), outdoors: true),
+        '.': (
+            outdoors: true,
+            composition: (components: [(component: "station_base"), (component: "floor_tiles")]),
+        ),
     },
     levels: [
         (
             rows: [%s],
-            structures: [(1, 1, "player_spawn")],
-            items: [(2, 1, "burner")],
+            structures: [(2, 2, "player_spawn")],
+            items: [(3, 2, "burner")],
         ),
     ],
 )]==],
@@ -97,16 +106,19 @@ assert(#ignition_room.latch_rows() == 0, "methane air alone does not take the la
 assert(t.foul_room(SPARK_X, SPARK_Y, "o2", LEAK_O2_MOL), "habitat oxygen leaks onto the tile")
 t.tick()
 ignition_room.touch(p, SPARK_X, SPARK_Y)
-t.use_self(p) -- snuffed: the leak is the only thing left to burn
-t.tick()
 local peak_k = sky_k
-local lit = ignition_room.run_until(30, 0.25, function()
+local function leak_and_watch(): ()
+    t.foul_room(SPARK_X, SPARK_Y, "o2", LEAK_MOL_PER_STEP)
     peak_k = math.max(peak_k, t.room_temperature(SPARK_X, SPARK_Y) or 0.0)
+end
+local lit = ignition_room.run_until(30, LEAK_STEP_S, function()
+    leak_and_watch()
     return methane_fire_rows() > 0
 end)
 assert(lit ~= nil, "the plume lit as a methane fire")
-ignition_room.run_until(20, 0.25, function()
-    peak_k = math.max(peak_k, t.room_temperature(SPARK_X, SPARK_Y) or 0.0)
+t.use_self(p) -- snuffed: the leak is the only thing left to burn
+ignition_room.run_until(LEAK_SECONDS, LEAK_STEP_S, function()
+    leak_and_watch()
     return false
 end)
 assert(peak_k > 300.0, ("the flame heats the tile far past the sky: peak %.1f K"):format(peak_k))
