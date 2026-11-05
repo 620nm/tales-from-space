@@ -1,4 +1,4 @@
-local gas_turbine = require("@lib/gas_turbine")
+local gas_turbine = require("@lib/power/gas_turbine")
 
 -- The gas turbine's middle section and its brain: it checks that the line
 -- is whole and is what the console links to. tg's `/obj/machinery/power/turbine/core_rotor`

@@ -1,4 +1,4 @@
-local gas_turbine = require("@lib/gas_turbine")
+local gas_turbine = require("@lib/power/gas_turbine")
 
 -- The gas turbine's output section: it expels the spent gas onto the tile
 -- ahead of it. tg's `/obj/machinery/power/turbine/turbine_outlet`

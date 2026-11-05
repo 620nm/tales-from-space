@@ -182,7 +182,7 @@ classes in class order (`items.multitool.carrying_*` in
 tg's gas turbine (`code/modules/power/turbine/`) stands in three sections
 along one line: the inlet compressor behind the core rotor, the turbine
 outlet ahead of it, each built on a machine frame from its own board and
-its one installable part (`lib/gas_turbine.luau`, `lib/turbine_parts.luau`).
+its one installable part (`lib/power/gas_turbine.luau`, `lib/power/turbine_parts.luau`).
 A screwdriver opens or shuts a section's panel; open, it turns (tg's wrench
 is the Rotate gesture here) and a crowbar takes it apart. A multitool on the
 shut core rotor checks the line in tg's order (`turbine.dm:497-559`), says
@@ -194,4 +194,4 @@ The sections move no gas and make no power, and the console opens no window:
 tg's compression, expansion, rpm, damage and grid output run every tick
 (`turbine.dm:625-685`) and wait on a native device. A part's tier carries
 tg's efficiency, rated rpm and rated temperature for it
-(`turbine_parts.dm:31-54`, `:107-117`), all in `lib/turbine_parts.luau`.
+(`turbine_parts.dm:31-54`, `:107-117`), all in `lib/power/turbine_parts.luau`.

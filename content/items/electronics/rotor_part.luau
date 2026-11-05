@@ -1,5 +1,5 @@
 local physical_profiles = require("@lib/physical_profiles")
-local turbine_parts = require("@lib/turbine_parts")
+local turbine_parts = require("@lib/power/turbine_parts")
 
 -- tg's `/obj/item/turbine_parts/rotor` (turbine_parts.dm:97-100): the shaft a
 -- core rotor is built around.

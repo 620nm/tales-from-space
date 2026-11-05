@@ -14,7 +14,7 @@ local load_classes = require("@lib/load_classes")
 -- multitool step simply is not interested.
 --
 -- It also carries a BUFFER: the one machine it last logged, which a
--- second machine reads to link to it (lib/multitool_buffer.luau; the gas
+-- second machine reads to link to it (lib/tools/multitool_buffer.luau; the gas
 -- turbine's core rotor logs, its console reads).
 --
 -- tg: /obj/item/multitool (multitool.dm:14).

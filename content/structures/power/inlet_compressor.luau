@@ -1,4 +1,4 @@
-local gas_turbine = require("@lib/gas_turbine")
+local gas_turbine = require("@lib/power/gas_turbine")
 
 -- The gas turbine's input section: it draws the gas in from the tile behind
 -- it and compresses it for the rotor. tg's `/obj/machinery/power/turbine/

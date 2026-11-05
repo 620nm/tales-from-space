@@ -1,4 +1,4 @@
-local gas_turbine = require("@lib/gas_turbine")
+local gas_turbine = require("@lib/power/gas_turbine")
 
 -- The gas turbine's control console. tg's `/obj/machinery/computer/
 -- turbine_computer` (code/modules/power/turbine/turbine_computer.dm): a

@@ -1,6 +1,6 @@
-local gas_turbine = require("@lib/gas_turbine")
+local gas_turbine = require("@lib/power/gas_turbine")
 
--- The gas turbine's handlers (lib/gas_turbine.luau): every section hears
+-- The gas turbine's handlers (lib/power/gas_turbine.luau): every section hears
 -- its own panel, the core rotor answers the multitool that links the line,
 -- and the console answers the multitool carrying a rotor.
 local content = { id = "gas_turbine" }

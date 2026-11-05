@@ -1,5 +1,5 @@
 local physical_profiles = require("@lib/physical_profiles")
-local turbine_parts = require("@lib/turbine_parts")
+local turbine_parts = require("@lib/power/turbine_parts")
 
 -- tg's `/obj/item/turbine_parts/stator` (turbine_parts.dm:102-105): the stator
 -- a turbine outlet is built around.

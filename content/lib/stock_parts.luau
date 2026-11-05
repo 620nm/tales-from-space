@@ -22,7 +22,7 @@
 --
 -- Every stock part's `component` reads its efficiency from here, so the
 -- ladder cannot be spelled two ways. The gas turbine's parts are not stock
--- parts and climb tg's own ladder (lib/turbine_parts.luau).
+-- parts and climb tg's own ladder (lib/power/turbine_parts.luau).
 local EFFICIENCY = { 1.0, 1.5, 2.0, 3.0 }
 
 return {

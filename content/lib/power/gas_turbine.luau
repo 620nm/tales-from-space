@@ -1,5 +1,5 @@
 local assembly = require("@lib/assembly")
-local multitool_buffer = require("@lib/multitool_buffer")
+local multitool_buffer = require("@lib/tools/multitool_buffer")
 
 -- The gas turbine's three sections and its console: what each section
 -- declares, and the discrete verbs tg's turbine.dm and turbine_computer.dm

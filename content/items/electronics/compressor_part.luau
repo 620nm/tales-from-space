@@ -1,5 +1,5 @@
 local physical_profiles = require("@lib/physical_profiles")
-local turbine_parts = require("@lib/turbine_parts")
+local turbine_parts = require("@lib/power/turbine_parts")
 
 -- tg's `/obj/item/turbine_parts/compressor` (turbine_parts.dm:92-95): the blade
 -- an inlet compressor is built around.
