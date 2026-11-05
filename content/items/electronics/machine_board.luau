@@ -195,6 +195,46 @@ return {
             name = "machine board (YouTool)",
             board = { machine = "tool_vendor" },
         },
+        -- The gas turbine's three sections. tg's boards ask for five
+        -- lengths of cable and five iron sheets each
+        -- (machine_circuitboards.dm:323-344); the section's part is the
+        -- product's one socket and is derived, so the frame asks for it
+        -- too, where tg fits it after assembly (turbine.dm:249-274).
+        inlet_compressor = {
+            name_label = "lunatic/tfs:entity.machine_board.inlet_compressor.name",
+            name = "machine board (turbine inlet compressor)",
+            board = {
+                structure = "inlet_compressor",
+                parts = { cable_coil = 5, metal = 5 },
+            },
+        },
+        core_rotor = {
+            name_label = "lunatic/tfs:entity.machine_board.core_rotor.name",
+            name = "machine board (turbine core rotor)",
+            board = {
+                structure = "core_rotor",
+                parts = { cable_coil = 5, metal = 5 },
+            },
+        },
+        turbine_outlet = {
+            name_label = "lunatic/tfs:entity.machine_board.turbine_outlet.name",
+            name = "machine board (turbine outlet)",
+            board = {
+                structure = "turbine_outlet",
+                parts = { cable_coil = 5, metal = 5 },
+            },
+        },
+        -- tg's computer board (computer_circuitboards.dm:241-244) on tg's
+        -- computer frame and its two glass panels, the programming
+        -- terminal's argument above.
+        turbine_computer = {
+            name_label = "lunatic/tfs:entity.machine_board.turbine_computer.name",
+            name = "machine board (gas turbine control computer)",
+            board = {
+                machine = "turbine_computer",
+                parts = { glass = 2 },
+            },
+        },
         tv = {
             name_label = "lunatic/tfs:entity.machine_board.tv.name",
             name = "machine board (television)",

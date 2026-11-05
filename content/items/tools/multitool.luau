@@ -13,6 +13,10 @@ local load_classes = require("@lib/load_classes")
 -- chain dispatches on the class yet -- a target that declares no
 -- multitool step simply is not interested.
 --
+-- It also carries a BUFFER: the one machine it last logged, which a
+-- second machine reads to link to it (lib/multitool_buffer.luau; the gas
+-- turbine's core rotor logs, its console reads).
+--
 -- tg: /obj/item/multitool (multitool.dm:14).
 local content = {
     id = "multitool",
@@ -46,6 +50,7 @@ local content = {
 content.actions = { action_rules.primary("analyze", action_rules.network("power")) }
 
 if sim ~= nil then
+    sim.define("script_var", "lunatic/tfs:multitool_buffer", { replicate = "server" })
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
