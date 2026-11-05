@@ -49,6 +49,14 @@
         ("steam_generator_loaded", Png("art/bench/steam_generator_off_loaded.png")),
         ("steam_generator_on", Png("art/bench/steam_generator_on.png")),
         ("steam_generator_on_loaded", Png("art/bench/steam_generator_on_loaded.png")),
+
+        // The pyrolyser (methane cracker): a domed retort drum and
+        // control column with an H2 top riser and a lower carbon drawer,
+        // four states (`off`, `standby`, `working`, `open`).
+        ("pyrolyser_off", Ase("art/machines/pyrolyser.aseprite", "off")),
+        ("pyrolyser", Ase("art/machines/pyrolyser.aseprite", "standby")),
+        ("pyrolyser_on", AseAnim("art/machines/pyrolyser.aseprite", "working")),
+        ("pyrolyser_open", Ase("art/machines/pyrolyser.aseprite", "open")),
     ],
     sheets: [
         ("hazard_placard", "art/signs/nfpa-704.ase"),
