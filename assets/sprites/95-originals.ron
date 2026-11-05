@@ -57,6 +57,16 @@
         ("pyrolyser", Ase("art/machines/pyrolyser.aseprite", "standby")),
         ("pyrolyser_on", AseAnim("art/machines/pyrolyser.aseprite", "working")),
         ("pyrolyser_open", Ase("art/machines/pyrolyser.aseprite", "open")),
+
+        // The electrolyser (water to H2 and O2): a 2:1 Hofmann pair of
+        // glass columns on a steel housing, four states (`off`,
+        // `standby`, `working`, `open`). `fluid_body` and
+        // `fluid_bubbles` are their own layers so the liquid can be
+        // recoloured and clipped to its level.
+        ("electrolyser_off", Ase("art/machines/electrolyser.aseprite", "off")),
+        ("electrolyser", Ase("art/machines/electrolyser.aseprite", "standby")),
+        ("electrolyser_on", AseAnim("art/machines/electrolyser.aseprite", "working")),
+        ("electrolyser_open", Ase("art/machines/electrolyser.aseprite", "open")),
     ],
     sheets: [
         ("hazard_placard", "art/signs/nfpa-704.ase"),
