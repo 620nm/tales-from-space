@@ -15,19 +15,22 @@ t.world([==[(
     levels: [
         (
             rows: [
-                "#####",
-                "#...#",
-                "#...#",
-                "#####",
+                "#######",
+                "#.....#",
+                "#.....#",
+                "#.....#",
+                "#######",
             ],
-            structures: [(2, 2, "player_spawn")],
+            structures: [(3, 2, "player_spawn")],
             items: [
-                (2, 2, "metal"),
-                (2, 2, "cable_coil"),
+                (2, 1, "crowbar"),
+                (2, 1, "metal", { "units": 5 }),
+                (4, 1, "cable_coil", { "units": 5 }),
                 (2, 2, "machine_board.inlet_compressor"),
-                (2, 2, "compressor_part"),
-                (2, 2, "screwdriver"),
-                (2, 2, "crowbar"),
+                (4, 2, "screwdriver"),
+                (2, 3, "compressor_part"),
+                (3, 3, "cable_coil", { "units": 5 }),
+                (4, 3, "metal", { "units": 5 }),
             ],
         ),
     ],
@@ -43,15 +46,20 @@ local function heard(): { string }
     return t.messages(p)
 end
 
--- Everything lies underfoot; the hand holds one thing at a time.
-local function take(id: string)
-    if t.hands(p).held ~= nil then
-        t.drop(p)
-        t.run_ticks(2)
-    end
-    t.click(p, 2, 2, t.target_at(p, 2, 2, id))
+-- Every supply lies on its own tile around the player, so none hides
+-- another. One hand carries the screwdriver; the other takes each stack,
+-- which the build uses up whole.
+local function take(x: number, y: number, id: string)
+    assert(t.hands(p).held == nil, "a free hand for " .. id)
+    t.click(p, x, y, t.target_at(p, x, y, id))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
+end
+
+-- Bring the other hand up.
+local function swap()
+    t.swap_hands(p)
+    t.run_ticks(1)
 end
 
 local function use_on_site(id: string, seconds: number)
@@ -64,19 +72,20 @@ local function site(): SpecStructureAt
 end
 
 -- The frame, wired, boarded.
-take("metal")
+take(2, 1, "metal")
 ui_controls.build(p, "metal", "machine_frame", SITE_X, SITE_Y)
 t.run_seconds(8.5)
 assert(site().id == "machine_frame", "five sheets box up into a frame")
-take("cable_coil")
+take(4, 1, "cable_coil")
 use_on_site("machine_frame", 2.5)
 assert(site().state == "wired", "five lengths of cable wire it")
-take("machine_board.inlet_compressor")
+take(2, 2, "machine_board.inlet_compressor")
 use_on_site("machine_frame", 0.2)
 assert(site().state == "boarded", "the section's board clicks in")
 
 -- The board asks for the section's part before anything else.
-take("screwdriver")
+swap()
+take(4, 2, "screwdriver")
 local _ = t.messages(p)
 use_on_site("machine_frame", 4.5)
 local refusal = heard()
@@ -84,18 +93,25 @@ assert(
     table.find(refusal, "It still needs 1 x compressor part.") ~= nil,
     "the frame names the part: " .. table.concat(refusal, " | ")
 )
-take("compressor_part")
+swap()
+take(2, 3, "compressor_part")
 use_on_site("machine_frame", 0.2)
 assert(t.hands(p).held == nil, "the part goes in whole")
 
 -- Then five of each stack, one unit a click.
-for _, stack in ipairs({ "cable_coil", "metal" }) do
-    take(stack)
+local supplies: { { x: number, y: number, id: string } } = {
+    { x = 3, y = 3, id = "cable_coil" },
+    { x = 4, y = 3, id = "metal" },
+}
+for _, supply in ipairs(supplies) do
+    take(supply.x, supply.y, supply.id)
     for _ = 1, 5 do
         use_on_site("machine_frame", 0.2)
     end
+    assert(t.hands(p).held == nil, "the board takes all five " .. supply.id)
 end
-take("screwdriver")
+swap()
+assert(t.hands(p).held == "screwdriver", "the screwdriver in the other hand")
 use_on_site("machine_frame", 4.5)
 assert(site().id == "inlet_compressor", "the frame becomes the section its board names")
 assert(site().state == "closed", "with its panel shut")
@@ -119,7 +135,8 @@ assert(site().sprite == "inlet_compressor_open_w", "an open section turns: " .. 
 -- that went into it.
 local metal_before = t.count_items("metal")
 local coil_before = t.count_items("cable_coil")
-take("crowbar")
+swap()
+take(2, 1, "crowbar")
 use_on_site("inlet_compressor", 0.2)
 assert(site().id == "machine_frame", "a frame is left standing")
 assert(t.count_items("compressor_part") == 1, "the part comes back out of its socket")

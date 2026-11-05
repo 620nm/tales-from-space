@@ -29,7 +29,7 @@ t.world([==[(
                 (4, 3, "turbine_outlet", "open", { "dir": "east" }),
             ],
             machines: [(4, 1, "turbine_computer")],
-            items: [(3, 2, "multitool"), (3, 2, "screwdriver")],
+            items: [(2, 1, "multitool"), (3, 1, "screwdriver")],
         ),
     ],
 )]==])
@@ -44,13 +44,23 @@ local function said(line: string): boolean
     return table.find(heard, line) ~= nil
 end
 
-local function take(id: string)
-    if t.hands(p).held ~= nil then
-        t.drop(p)
-        t.run_ticks(2)
-    end
-    t.click(p, 3, 2, t.target_at(p, 3, 2, id))
+-- Each tool lies on its own tile beside the player, so neither hides the
+-- other; one goes in each hand and a swap brings the other up.
+local function pick(x: number, y: number, id: string)
+    t.click(p, x, y, t.target_at(p, x, y, id))
     t.run_ticks(2)
+    assert(t.hands(p).held == id, "expected " .. id .. " in hand")
+end
+
+pick(2, 1, "multitool")
+t.swap_hands(p)
+pick(3, 1, "screwdriver")
+
+local function take(id: string)
+    if t.hands(p).held ~= id then
+        t.swap_hands(p)
+        t.run_ticks(1)
+    end
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
 end
 
