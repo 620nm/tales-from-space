@@ -195,6 +195,6 @@ section is a sealed vessel of tg's 1000/3000/6000 L and, running, runs a task
 on its own tile, a tick apart in flow order, for tg's 2 s pass
 (`turbine.dm:625-685`, `lib/power/gas_turbine_turns.luau`): the compressor
 draws the tile behind, the outlet exhausts ahead and sets the rotor, a
-`Generator`, to `rpm × 4.5` W. Overheating wears the rotor (`:634-662`) to an
+source (`output_w`), to `rpm × 4.5` W. Overheating wears the rotor (`:634-662`) to an
 alarm, then the blast. A run whose rotor misses two passes reads stopped; the
 switch restarts it. `generator`/`solar`: 100/8 kW, the engine's old stand-ins.

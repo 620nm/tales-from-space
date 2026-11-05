@@ -14,8 +14,7 @@ return {
     id = "core_rotor",
     visual_layer = "fixture",
     -- A source on the cable under it, its watts set by the running loop
-    -- (lib/power/gas_turbine_run.luau; tg `add_avail`, turbine.dm:685).
-    fixture = "Generator",
+    -- (lib/power/gas_turbine_turns.luau; tg `add_avail`, turbine.dm:685).
     energy_network = "power",
     output_w = 0,
     name_label = "lunatic/tfs:entity.core_rotor.name",
