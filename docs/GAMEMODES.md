@@ -139,7 +139,7 @@ preferences and `needs` decide which entries are eligible.
 | Mode | Ground fallback | Otherwise |
 |---|---|---|
 | `space_station` | `cold_outdoors` 1, `warm_outdoors` 1 | `dead_space` 4, `orbit` 3, `sunward` 1, `microgravity` 1 |
-| `free_build` | `cold_outdoors` 1, `warm_outdoors` 1 | `dead_space` 1, `microgravity` 1 |
+| `free_build` | `cold_outdoors` 1, `warm_outdoors` 1, `cryo_hydrocarbon` 1 | `dead_space` 1, `microgravity` 1 |
 
 The space profiles use the `space_backdrop` atlas background. `orbit` and
 `sunward` retain standard gravity (`9.80665` m/s²); `dead_space` and
@@ -149,12 +149,13 @@ weight comes only from a running gravity battery
 both modes, so it is available whenever the map leaves gravity unconstrained.
 
 A roll entry is eligible when its profile `meets` every need the map lists
-(`content/rosters/needs.luau` declares them; the four ground profiles meet
+(`content/rosters/needs.luau` declares them; the five ground profiles meet
 `gravity`) and satisfies the map's saved physical preferences. The ground
 profiles are `fallback = true` entries, considered only when no space entry is
 eligible: a map with `kind: Exact(terrestrial)` or `needs: ["gravity"]` stands
-on ground, and one pinning `surface_temperature_k: Exact(293.15)` or
-`Exact(259.15)` picks warm or cold. If no candidate survives, the map is
+on ground, and one pinning `surface_temperature_k: Exact(293.15)`,
+`Exact(259.15)` or `Exact(94.0)` picks warm, cold or, in `free_build`, the
+cryo-hydrocarbon world. If no candidate survives, the map is
 rejected before the round starts.
 
 This pack ships no maps under `maps/`; focused fixtures under `tests/maps/`

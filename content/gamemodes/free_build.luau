@@ -51,9 +51,11 @@ local content = {
                 { id = "microgravity", weight = 1 },
                 -- The grounds stand in only when no space sky fits the map
                 -- (a terrestrial kind, or a need such as `gravity`); a map
-                -- picks the warm one by its surface temperature.
+                -- picks one by its surface temperature (94 K is the frozen
+                -- methane world).
                 { id = "cold_outdoors", weight = 1, fallback = true },
                 { id = "warm_outdoors", weight = 1, fallback = true },
+                { id = "cryo_hydrocarbon", weight = 1, fallback = true },
             },
         },
     },
