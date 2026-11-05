@@ -129,8 +129,9 @@ strips, each `edges_only` with its own tint (the engine's `docs/looks/matter-run
 
 1. **The ground face under the sea.** A sea tile's bed draws its own ground face (a plain
    seabed tint from the bed profile, `content/terrain.luau` `face_tint`), joined like any
-   ground. Nothing else lies under the water: no shore underlay per quadrant, no ocean
-   dilated under ice, no rock joined across sea or ice.
+   ground. The seabed is unlisted in `blending` (`docs/turfs/ground.md`), so the shore's
+   land tile draws its own edge over a seabed underlay. Nothing else lies under the water:
+   no ocean dilated under ice, no rock joined across sea or ice.
 2. **`ocean_body_smooth`**, on sea tiles only, joined to sea neighbours. Its nearshore
    alpha steps (`112 -> 168 -> 216 -> 255`) let the bed read through the shallows at the
    edge. A whole-sea tile draws the flat block.
