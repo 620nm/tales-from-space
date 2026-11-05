@@ -16,6 +16,7 @@
 -- would stay awake for good, and ignores a level difference under a
 -- millimetre. A seabed shows sand under the liquid (`face_tint`).
 local SEABED = "#CBB68C"
+local HYDROCARBON_SEABED = "#8A7458"
 
 return {
     defaults = { solid = "bare_ground", liquid = "deep_liquid" },
@@ -73,6 +74,31 @@ return {
             fill = true,
             depth_m = 1,
             evaporation = 0,
+        },
+        -- Ice as rock (blends/ice_bedrock.luau): the sheet's floor and face,
+        -- no bed in the cell, so a tile on it holds only its air.
+        {
+            key = "ice_ground",
+            phase = "solid",
+            floor = "ice_floor",
+            face = "ice_shell",
+            under_shade = 0.7,
+        },
+        -- A methane-ethane sea on ice (blends/hydrocarbon_sea.luau): the
+        -- `deep_liquid` bed over the ice sheet's floor and face, stained
+        -- with tholin sediment (`face_tint`, a chosen colour). It walks back
+        -- to its fill, so a spill on it washes out.
+        {
+            key = "hydrocarbon_sea",
+            phase = "liquid",
+            floor = "ice_floor",
+            face = "ice_shell",
+            face_tint = HYDROCARBON_SEABED,
+            fill = true,
+            depth_m = 1.5,
+            evaporation = 0,
+            rest_head_m = 0.001,
+            ideal = { half_life_s = 120 },
         },
         -- A bed dug and left dry: whatever it reaches runs in.
         {
