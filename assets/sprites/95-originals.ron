@@ -82,12 +82,32 @@
         ("dewar_g0", AseAnim("art/machines/dewar.aseprite", "g0")),
         ("dewar_connected", Ase("art/machines/dewar.aseprite", "connected")),
         ("dewar_broken", Ase("art/machines/dewar.aseprite", "broken")),
+
+        // The cargo terrestrial exosuit: a body-conforming russet and
+        // khaki rig for surface work, with twin temple headlamps (`off`
+        // and `on`), both the sealed slit-visor helmet (`worn_exosuit`)
+        // and the translucent glass-faceplate variant
+        // (`worn_exosuit_glass`), and tg-style hanging-suit inhands.
+        ("exosuit", Ase("art/items/gear/exosuit.aseprite", "off")),
+        ("exosuit_on", Ase("art/items/gear/exosuit.aseprite", "on")),
     ],
     sheets: [
+        ("exosuit", "art/items/gear/exosuit.aseprite"),
         ("hazard_placard", "art/signs/nfpa-704.ase"),
         ("utility_outlet_port", "art/subfloor/electrical/utility_outlet_port.aseprite"),
     ],
     groups: [
+        (
+            sheet: "exosuit",
+            sprites: [
+                Directions("worn_exosuit", "worn_off"),
+                Directions("worn_exosuit_on", "worn_on"),
+                Directions("worn_exosuit_glass", "worn_glass_off"),
+                Directions("worn_exosuit_glass_on", "worn_glass_on"),
+                Directions("held_exosuit_l", "held_l"),
+                Directions("held_exosuit_r", "held_r"),
+            ],
+        ),
         // Floor outlet: the cover, the open housing and one lamp per
         // cable layer, stacked at runtime; no offsets. Each `led_l*`
         // layer's frames 1..3 are disconnected, connected, active.
