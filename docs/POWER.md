@@ -188,13 +188,14 @@ turns and a crowbar takes it apart. A whole line links silently; a
 multitool on the shut rotor checks it in tg's order (`turbine.dm:497-559`)
 and logs the rotor for the console. An open panel unlinks the line.
 
-The console's switch (`lib/power/gas_turbine_run.luau`) starts a linked,
-unwrecked rotor and refuses a stop above 1000 rpm (`turbine_computer.dm:94`).
-Each section is a sealed vessel of tg's 1000/3000/6000 L and, running, wears
-`running` and runs a task on its own tile, a tick apart in flow order, for
-tg's 2 s pass (`turbine.dm:625-685`, `lib/power/gas_turbine_turns.luau`):
-the compressor draws the tile behind, the outlet exhausts ahead and sets the
-rotor, a `Generator`, to `rpm × 4.5` W. Overheating wears the rotor
-(`:634-662`) to an alarm, then the blast. A run whose rotor misses two passes
-(its tasks left with the body that threw the switch) reads stopped; the
-switch restarts it. `generator`/`solar`: 100/8 kW, the engine's old stand-ins.
+An empty hand opens the console's window (`lib/power/gas_turbine_console.luau`);
+its switch (`lib/power/gas_turbine_run.luau`) starts a linked, unwrecked
+rotor and refuses a stop above 1000 rpm (`turbine_computer.dm:94`). Each
+section is a sealed vessel of tg's 1000/3000/6000 L and, running, runs a task
+on its own tile, a tick apart in flow order, for tg's 2 s pass
+(`turbine.dm:625-685`, `lib/power/gas_turbine_turns.luau`): the compressor
+draws the tile behind, the outlet exhausts ahead and sets the rotor, a
+`Generator`, to `rpm × 4.5` W. Overheating wears the rotor (`:634-662`) to an
+alarm, then the blast. A run whose rotor misses two passes (its tasks left
+with the body that threw the switch) reads stopped; the switch restarts it.
+`generator`/`solar`: 100/8 kW, the engine's old stand-ins.

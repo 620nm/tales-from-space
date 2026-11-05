@@ -71,6 +71,20 @@ export interface CopierState {
   failed?: boolean;
   reason?: string;
 }
+/** The gas turbine console's view (content/lib/power/gas_turbine_console.luau). */
+export interface TurbineState {
+  kind: "turbine";
+  linked?: boolean;
+  connected?: boolean;
+  active?: boolean;
+  rpm?: number;
+  power_w?: number;
+  integrity?: number;
+  max_rpm?: number;
+  max_temperature_k?: number;
+  intake_k?: number;
+  intake?: number;
+}
 
 /** The LAYOUT a module list asks for; never a renderer, never an act. */
 export type Presentation =
