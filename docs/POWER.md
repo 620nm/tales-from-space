@@ -196,6 +196,5 @@ on its own tile, a tick apart in flow order, for tg's 2 s pass
 (`turbine.dm:625-685`, `lib/power/gas_turbine_turns.luau`): the compressor
 draws the tile behind, the outlet exhausts ahead and sets the rotor, a
 `Generator`, to `rpm × 4.5` W. Overheating wears the rotor (`:634-662`) to an
-alarm, then the blast. A run whose rotor misses two passes (its tasks left
-with the body that threw the switch) reads stopped; the switch restarts it.
-`generator`/`solar`: 100/8 kW, the engine's old stand-ins.
+alarm, then the blast. A run whose rotor misses two passes reads stopped; the
+switch restarts it. `generator`/`solar`: 100/8 kW, the engine's old stand-ins.
