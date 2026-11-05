@@ -26,6 +26,9 @@ return {
     -- tg's sections stop air (`can_atmos_pass = ATMOS_PASS_DENSITY`,
     -- turbine.dm:10), so the intake and the exhaust stay apart.
     airtight = true,
+    -- The stage's sealed body of gas, tg's 1000 L
+    -- (`gas_theoretical_volume`, turbine.dm:297).
+    volume_ml = 1000000,
     states = gas_turbine.STATES,
     state_sprites = {
         closed = "inlet_compressor_closed_s",

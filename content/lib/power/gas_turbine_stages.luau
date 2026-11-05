@@ -48,7 +48,11 @@ end
 -- `gas_pressure_calculate`'s plain form (gas_mixture.dm:584-604): the moles
 -- that bring `output` to `target_kpa`. The engine's pumps skip tg's
 -- quadratic branch too (its docs/atmos/in-line-machines.md).
-function gas_turbine_stages.pump_moles(input: MatterRead, output: MatterRead, target_kpa: number): number
+function gas_turbine_stages.pump_moles(
+    input: MatterRead,
+    output: MatterRead,
+    target_kpa: number
+): number
     if input.moles <= 0 or input.temp_k <= 0 then
         return 0
     end
@@ -81,7 +85,10 @@ function gas_turbine_stages.transfer(
     local work = round_to(moles, MOLAR_ACCURACY)
         * R
         * input.temp_k
-        * math.log((input.volume_l * parcel_kpa) / (output.volume_l * gas_turbine_stages.floored_kpa(output)))
+        * math.log(
+            (input.volume_l * parcel_kpa)
+                / (output.volume_l * gas_turbine_stages.floored_kpa(output))
+        )
         * WORK_CONVERSION
     work -= remove
     sim.matter.transfer({ from = from, to = to, amount = moles, phases = { "gas" } })
@@ -101,13 +108,22 @@ function gas_turbine_stages.ejected_work(
     turbine_work: number
 ): number
     local ejected_kpa = math.max(moles * R * outlet.temp_k / outlet.volume_l, MINIMUM_KPA)
-    local work = round_to(moles, MOLAR_ACCURACY) * R * outlet.temp_k * math.log(compressor_kpa / ejected_kpa)
+    local work = round_to(moles, MOLAR_ACCURACY)
+        * R
+        * outlet.temp_k
+        * math.log(compressor_kpa / ejected_kpa)
     return math.max(work - compressor_work * COMPRESSOR_STATOR_INTERACTION - turbine_work, 0)
 end
 
 -- `rpm` off the work and the three parts' efficiencies, rounded up and
 -- held under the parts' rating (turbine.dm:681-682).
-function gas_turbine_stages.rpm(work: number, compressor: number, rotor: number, stator: number, max_rpm: number): number
+function gas_turbine_stages.rpm(
+    work: number,
+    compressor: number,
+    rotor: number,
+    stator: number,
+    max_rpm: number
+): number
     local rpm = math.pow(work * compressor, stator) * rotor / RPM_CONVERSION
     return math.min(math.ceil(rpm), max_rpm)
 end

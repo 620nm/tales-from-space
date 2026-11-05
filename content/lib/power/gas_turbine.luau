@@ -223,6 +223,23 @@ function gas_turbine.ends(core: Handle): (Handle?, Handle?)
         section_at(gas_turbine.along(core, 1), gas_turbine.OUTLET)
 end
 
+-- The rotor a section turns with: itself, the one ahead of a compressor, or
+-- the one behind an outlet; nil where none stands.
+function gas_turbine.core_of(section: Handle): Handle?
+    local kind = prototype_of(section)
+    if kind == gas_turbine.CORE then
+        return section
+    end
+    local sign = if kind == gas_turbine.COMPRESSOR
+        then 1
+        elseif kind == gas_turbine.OUTLET then -1
+        else 0
+    if sign == 0 then
+        return nil
+    end
+    return section_at(gas_turbine.along(section, sign), gas_turbine.CORE)
+end
+
 -- tg's `core_rotor/activate_parts` (turbine.dm:497-572), its checks in its
 -- order: nil when the line is whole, else the refusal it names. The part
 -- checks fall away: a section's socket cannot stand empty here.

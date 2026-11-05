@@ -4,8 +4,8 @@ local gas_turbine_run = require("@lib/power/gas_turbine_run")
 -- The gas turbine's handlers (lib/power/gas_turbine.luau): every section
 -- links the line it completes when it stands up and hears its own panel,
 -- the core rotor answers the multitool that links the line, and the console
--- answers the multitool carrying a rotor. The running loop
--- (lib/power/gas_turbine_run.luau) keeps its record on the rotor.
+-- answers the multitool carrying a rotor. A section set running takes its
+-- turns of the run (lib/power/gas_turbine_run.luau), whose record the rotor keeps.
 local content = { id = "gas_turbine" }
 if sim ~= nil then
     for _, key in ipairs(gas_turbine.message_keys()) do
@@ -24,7 +24,14 @@ if sim ~= nil then
             { kind = "react" },
             gas_turbine.on_section_initialized
         )
-        behavior:handle("structure.changed", { kind = "react" }, gas_turbine.on_section_changed)
+        behavior:handle(
+            "structure.changed",
+            { kind = "react" },
+            function(ev: StructureChangedPayload)
+                gas_turbine.on_section_changed(ev)
+                gas_turbine_run.on_section_changed(ev)
+            end
+        )
         if id == gas_turbine.CORE then
             behavior:handle(
                 "interaction.use",
