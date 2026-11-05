@@ -106,6 +106,10 @@ type Tending = {
     lit: boolean,
     -- The tick the row began.
     latched: number,
+    -- Whether the task began in this cell's own ignition edge. A task
+    -- carries its spawner's reach, and only that anchor reaches every
+    -- neighbour a spread may latch.
+    anchored: boolean,
 }
 
 -- Cells whose tending task is running, by "x:y:z" of the plane-absolute
@@ -201,13 +205,19 @@ local function clear_latch(at: TileAddress, reading: MatterRead): ()
 end
 
 -- The cell's tending row, its task started unless a live one holds it.
--- A later task on the same row key ends an older, delayed one.
-local function ensure_tending(at: TileAddress): Tending
+-- A later task on the same row key ends an older, delayed one, and an
+-- `anchored` call replaces a row a tool or a neighbour began.
+local function ensure_tending(at: TileAddress, anchored: boolean): Tending
     local spread_ticks = sim.ticks(SPREAD_SECONDS)
     local held = tending_row(at)
+    local latched = sim.tick()
     if held ~= nil then
-        if sim.tick() - held.visited <= spread_ticks * STALE_SPREADS then
+        local live = sim.tick() - held.visited <= spread_ticks * STALE_SPREADS
+        if live and (held.anchored or not anchored) then
             return held
+        end
+        if live then
+            latched = held.latched
         end
         stop_tending(held)
     end
@@ -217,7 +227,8 @@ local function ensure_tending(at: TileAddress): Tending
         key = key,
         visited = sim.tick(),
         lit = false,
-        latched = sim.tick(),
+        latched = latched,
+        anchored = anchored,
     }
     tending[key] = tending[key] or {}
     table.insert(tending[key], row)
@@ -263,7 +274,7 @@ function ignition.expose(at: TileAddress, heat_k: number): boolean
     if (reading.columns[LATCH_COLUMN] or 0) < LATCH_ON then
         sim.matter.set_column({ owner = at.matter, column = LATCH_COLUMN, value = 1 })
     end
-    ensure_tending(at)
+    ensure_tending(at, false)
     return true
 end
 
@@ -301,7 +312,7 @@ function ignition.on_ignited(ev: MatterIgnitionDonePayload): ()
     if not FIRES[ev.rule] then
         return
     end
-    local row = ensure_tending(ev.at)
+    local row = ensure_tending(ev.at, true)
     if not row.lit then
         row.lit = true
         spread(ev.at)
