@@ -20,6 +20,9 @@
 --     substance, so fluorine and methane are inert together
 --   sodium or potassium in liquid CH4: inert in reality too, recorded
 --     so nobody adds it
+--   methane failing to burn outside its 5-15 % flammability limits: a
+--     reaction has no mixture-fraction gate, so the fire's ignition
+--     latch and rate ramp stand in for the limits
 --
 -- Numbers are the NIST WebBook's for methane (C74828): triple point
 -- 90.67 K at 11.69 kPa, normal boiling point 111.7 K, critical
