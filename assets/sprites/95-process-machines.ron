@@ -1,13 +1,16 @@
-// Process machines: the first-party fixtures that crack, split and
-// hold matter. Paths are relative to `tfs/assets/originals/`; each
-// `.aseprite` is a tagged document whose TAGS are its states
-// (`tfs/assets/originals/README.md`, docs/ASSETS.md §4.1).
+// Process machines: the first-party fixtures that crack, split,
+// moderate and hold matter. Paths are relative to `assets/originals/`;
+// each `.aseprite` is a tagged document whose tags are its states (the
+// engine's docs/assets/importers.md and docs/assets/rosters.md).
 //
-// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
-// this directory is baked, in FILE-NAME order and then entry order,
-// so the atlas layout is a function of the manifest and not of the
+// One family of `assets/sprites.ron`'s roster. Every .ron in this
+// directory is baked, in FILE-NAME order and then entry order, so the
+// atlas layout is a function of the manifest and not of the
 // filesystem. Two files claiming one sprite name is a bake error.
 (
+    sheets: [
+        ("reflection_chamber", "art/machines/reflection_chamber.aseprite"),
+    ],
     sprites: [
         // The pyrolyzer (methane cracker): a domed retort drum and
         // control column with an H2 top riser and a lower carbon drawer,
@@ -41,5 +44,48 @@
         ("dewar_g0", AseAnim("art/machines/dewar.aseprite", "g0")),
         ("dewar_connected", Ase("art/machines/dewar.aseprite", "connected")),
         ("dewar_broken", Ase("art/machines/dewar.aseprite", "broken")),
+
+        // The UF6 radiation reflection chamber: a 32x48 cold-steel prism
+        // anchored at its base (`Base`) whose lower 32x32 tile joins
+        // Layer 3 East/West piping. `reflection_chamber` is the unlit
+        // cold-steel housing and neutral gray manifold; the five
+        // pre-composited state tags (`subcritical`, `critical`,
+        // `overheated`, `supercritical`, `open`) sit alongside 22
+        // separated 32x48 recombination overlays across six
+        // pixel-disjoint instrument/pipe slots (`core_*`, `pipe_*`,
+        // `rad_*`, `dial_*`, `slag_*`, `press_*`) plus `panel_open` and
+        // `panel_open_live` (which cover and replace the lower `slag_*`
+        // bay) so `state_sprites` or fixture overlays can compose states
+        // onto the base.
+        ("reflection_chamber", Anchored(Ase("@reflection_chamber", "base"), Base)),
+        ("reflection_chamber_subcritical", Anchored(AseAnim("@reflection_chamber", "subcritical"), Base)),
+        ("reflection_chamber_critical", Anchored(AseAnim("@reflection_chamber", "critical"), Base)),
+        ("reflection_chamber_overheated", Anchored(AseAnim("@reflection_chamber", "overheated"), Base)),
+        ("reflection_chamber_supercritical", Anchored(AseAnim("@reflection_chamber", "supercritical"), Base)),
+        ("reflection_chamber_open", Anchored(Ase("@reflection_chamber", "open"), Base)),
+
+        // Separated recombination overlays for `reflection_chamber`.
+        ("reflection_chamber_core_subcritical", Anchored(AseAnim("@reflection_chamber", "core_subcritical"), Base)),
+        ("reflection_chamber_core_critical", Anchored(AseAnim("@reflection_chamber", "core_critical"), Base)),
+        ("reflection_chamber_core_supercritical", Anchored(AseAnim("@reflection_chamber", "core_supercritical"), Base)),
+        ("reflection_chamber_pipe_overheated", Anchored(AseAnim("@reflection_chamber", "pipe_overheated"), Base)),
+        ("reflection_chamber_pipe_supercritical", Anchored(AseAnim("@reflection_chamber", "pipe_supercritical"), Base)),
+        ("reflection_chamber_rad_green", Anchored(AseAnim("@reflection_chamber", "rad_green"), Base)),
+        ("reflection_chamber_rad_yellow", Anchored(AseAnim("@reflection_chamber", "rad_yellow"), Base)),
+        ("reflection_chamber_rad_red", Anchored(AseAnim("@reflection_chamber", "rad_red"), Base)),
+        ("reflection_chamber_dial_low", Anchored(Ase("@reflection_chamber", "dial_low"), Base)),
+        ("reflection_chamber_dial_nominal", Anchored(Ase("@reflection_chamber", "dial_nominal"), Base)),
+        ("reflection_chamber_dial_high", Anchored(Ase("@reflection_chamber", "dial_high"), Base)),
+        ("reflection_chamber_dial_max", Anchored(AseAnim("@reflection_chamber", "dial_max"), Base)),
+        ("reflection_chamber_slag_clean", Anchored(Ase("@reflection_chamber", "slag_clean"), Base)),
+        ("reflection_chamber_slag_light", Anchored(Ase("@reflection_chamber", "slag_light"), Base)),
+        ("reflection_chamber_slag_heavy", Anchored(Ase("@reflection_chamber", "slag_heavy"), Base)),
+        ("reflection_chamber_slag_choked", Anchored(AseAnim("@reflection_chamber", "slag_choked"), Base)),
+        ("reflection_chamber_press_low", Anchored(Ase("@reflection_chamber", "press_low"), Base)),
+        ("reflection_chamber_press_nominal", Anchored(AseAnim("@reflection_chamber", "press_nominal"), Base)),
+        ("reflection_chamber_press_high", Anchored(AseAnim("@reflection_chamber", "press_high"), Base)),
+        ("reflection_chamber_press_danger", Anchored(AseAnim("@reflection_chamber", "press_danger"), Base)),
+        ("reflection_chamber_panel_open", Anchored(Ase("@reflection_chamber", "panel_open"), Base)),
+        ("reflection_chamber_panel_open_live", Anchored(AseAnim("@reflection_chamber", "panel_open_live"), Base)),
     ],
 )
