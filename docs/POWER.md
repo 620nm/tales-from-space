@@ -189,12 +189,12 @@ wrench is the Rotate gesture here) and a crowbar takes it apart. A line
 mapped or built whole links silently. A multitool on the shut core rotor
 checks the line in tg's order (`turbine.dm:497-559`), says the first break,
 and on a whole line logs the rotor in its buffer; the same multitool on the
-gas turbine control computer links the console to that rotor, on the same
-map and not since rebuilt. Opening any panel on the line unlinks it.
+control computer links it to that rotor, on the same map and not since
+rebuilt. Opening any panel on the line unlinks it. An empty hand opens the
+console's window on its rotor (`lib/power/gas_turbine_console.luau`).
 
-The sections move no gas and make no power, and the console opens no window:
-tg's compression, expansion, rpm, damage and grid output run every tick
-(`turbine.dm:625-685`) and wait on a native device. Each part's tier carries
-tg's efficiency (`turbine_parts.dm:31-54`, `:107-117`) in its `component`,
-and its rated rpm and temperature on its examine line (`:18`), from
-`lib/power/turbine_parts.luau`.
+The sections move no gas and make no power: tg's compression, expansion,
+rpm, damage and grid output (`turbine.dm:625-685`) wait on a native device.
+Each part's tier carries tg's efficiency (`turbine_parts.dm:31-54`,
+`:107-117`) in its `component`, and its rated rpm and temperature on its
+examine line (`:18`), from `lib/power/turbine_parts.luau`.

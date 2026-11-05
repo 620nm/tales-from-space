@@ -12,7 +12,7 @@ import type {
   ModuleState,
   ScriptState,
 } from "./document-model";
-import type { CopierState, FaxState, PaperState } from "./document-model";
+import type { CopierState, FaxState, PaperState, TurbineState } from "./document-model";
 import { documentAction, scriptAction } from "./document-action";
 import { moduleBody } from "./documents-modules";
 import { controlWorkspace } from "./documents-controls";
@@ -27,6 +27,7 @@ import { actionSurface } from "./actions";
 import { paperBody } from "./documents-paper";
 import { faxBody } from "./documents-fax";
 import { copierBody } from "./documents-copier";
+import { turbineBody } from "./documents-turbine";
 
 const WIDTH: Record<string, number> = {
   modules: 420,
@@ -37,6 +38,7 @@ const WIDTH: Record<string, number> = {
   paper: 620,
   fax: 760,
   copier: 620,
+  turbine: 420,
 };
 
 type WritingScriptState = PaperState | FaxState | CopierState;
@@ -45,6 +47,10 @@ function writingScript(data: Json | undefined): WritingScriptState | undefined {
   const kind = (data as { kind?: unknown }).kind;
   if (kind !== "paper" && kind !== "fax" && kind !== "copier") return undefined;
   return { ...(data as Record<string, Json>), document: kind } as unknown as WritingScriptState;
+}
+function turbineScript(data: Json | undefined): TurbineState | undefined {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return undefined;
+  return (data as { kind?: unknown }).kind === "turbine" ? data as unknown as TurbineState : undefined;
 }
 
 export function documents(view: GameplayView): UiNode[] {
@@ -73,7 +79,11 @@ export function documents(view: GameplayView): UiNode[] {
       body = buildRows(id, doc, state, view.state?.armed, active);
     } else if (state.document === "script") {
       const writing = writingScript(state.data);
-      if (writing?.document === "paper") {
+      const turbine = turbineScript(state.data);
+      if (turbine) {
+        width = WIDTH.turbine;
+        body = turbineBody(id, doc, turbine, active);
+      } else if (writing?.document === "paper") {
         width = WIDTH.paper;
         body = paperBody(id, doc, writing, active);
       } else if (writing?.document === "fax") {
