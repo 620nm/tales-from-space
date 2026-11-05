@@ -1,0 +1,45 @@
+// Process machines: the first-party fixtures that crack, split and
+// hold matter. Paths are relative to `tfs/assets/originals/`; each
+// `.aseprite` is a tagged document whose TAGS are its states
+// (`tfs/assets/originals/README.md`, docs/ASSETS.md §4.1).
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+(
+    sprites: [
+        // The pyrolyzer (methane cracker): a domed retort drum and
+        // control column with an H2 top riser and a lower carbon drawer,
+        // four states (`off`, `standby`, `working`, `open`).
+        ("pyrolyzer_off", Ase("art/machines/pyrolyzer.aseprite", "off")),
+        ("pyrolyzer", Ase("art/machines/pyrolyzer.aseprite", "standby")),
+        ("pyrolyzer_on", AseAnim("art/machines/pyrolyzer.aseprite", "working")),
+        ("pyrolyzer_open", Ase("art/machines/pyrolyzer.aseprite", "open")),
+
+        // The electrolyzer (water to H2 and O2): a 2:1 Hofmann pair of
+        // glass columns on a steel housing, four states (`off`,
+        // `standby`, `working`, `open`). `fluid_body` and
+        // `fluid_bubbles` are their own layers so the liquid can be
+        // recolored and clipped to its level.
+        ("electrolyzer_off", Ase("art/machines/electrolyzer.aseprite", "off")),
+        ("electrolyzer", Ase("art/machines/electrolyzer.aseprite", "standby")),
+        ("electrolyzer_on", AseAnim("art/machines/electrolyzer.aseprite", "working")),
+        ("electrolyzer_open", Ase("art/machines/electrolyzer.aseprite", "open")),
+
+        // The liquid dewar: tg's canister footprint and gauge ladder
+        // (`can-3`..`can-0`), told apart as a liquid fixture by its
+        // brass. One row per state, gauge baked in: `g3` full down to
+        // `g0`, whose two frames blink, then `connected` (fastened to a
+        // port, at full) and `broken`. `shell_paint`, `stripe_band` and
+        // `liquid_fill` are grayscale layers in the source so the dewar
+        // can be painted by its contents once the renderer can tint one
+        // layer of an Aseprite sprite.
+        ("dewar", Ase("art/machines/dewar.aseprite", "g3")),
+        ("dewar_g2", Ase("art/machines/dewar.aseprite", "g2")),
+        ("dewar_g1", Ase("art/machines/dewar.aseprite", "g1")),
+        ("dewar_g0", AseAnim("art/machines/dewar.aseprite", "g0")),
+        ("dewar_connected", Ase("art/machines/dewar.aseprite", "connected")),
+        ("dewar_broken", Ase("art/machines/dewar.aseprite", "broken")),
+    ],
+)
