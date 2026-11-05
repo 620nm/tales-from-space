@@ -68,5 +68,5 @@ assert(has(sea, "The ground is open sea."), "the sea names its ground: " .. tabl
 assert(starts(sea, "Filling the ground here: "), "the sea fills its bed: " .. table.concat(sea, " | "))
 assert(not starts(sea, "A puddle"), "and is not a puddle: " .. table.concat(sea, " | "))
 
-local plated = assert(t.examine_turf(p, 0, 2), "the plating answers a look").lines
+local plated = assert(t.examine(p, 0, 2), "the plating answers a look").lines
 assert(not starts(plated, "The ground is"), "plating over ground names no ground: " .. table.concat(plated, " | "))
