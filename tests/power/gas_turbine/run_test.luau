@@ -153,6 +153,23 @@ t.run_ticks(1)
 click(4, 3, "turbine_computer", 0.2)
 local scope = assert(t.ui_document(p, CHANNEL), "the window has an address")
 assert(ui_controls.find(p, "/toggle_power", scope), "the switch is drawn")
+-- The free hand takes the screwdriver now. Loose things on a floor drift with
+-- its air, so look for it rather than trust where the map laid it.
+local function find_item(id: string): (number, number)
+    for x = 1, 7 do
+        for y = 1, 4 do
+            for _, item in ipairs(t.items_at(x, y)) do
+                if item == id then
+                    return x, y
+                end
+            end
+        end
+    end
+    error("no " .. id .. " on the floor")
+end
+local sx, sy = find_item("screwdriver")
+click(sx, sy, "screwdriver", 0.2)
+assert(t.hands(p).held == "screwdriver", "the screwdriver is in hand")
 press_power()
 assert(reading().active == true, "the switch starts a linked turbine")
 assert(all_in("running"), "every section turns")
@@ -198,8 +215,6 @@ assert(
 assert(reading().active == true, "and the turbine runs on")
 
 -- A running section's panel stays shut.
-click(2, 2, "screwdriver", 0.2)
-assert(t.hands(p).held == "screwdriver", "the screwdriver is in hand")
 local refusal = "Stop the turbine before you open its panel."
 assert(table.find(click(4, 1, "turbine_outlet", 0.2), refusal) ~= nil, "the panel is refused")
 assert(assert(t.structure_at(4, 1)).state == "running", "and the outlet keeps turning")
