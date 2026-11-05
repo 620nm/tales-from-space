@@ -69,7 +69,7 @@ const state = {
   water: "puddle",
   mode: "active",
   showPipes: true,
-  greyscale: false,
+  grayscale: false,
   showGrid: false,
   tick: 0,
   pwDir: "N",
@@ -104,7 +104,7 @@ function drawTileStack(ctx, x, y, size, turfKey, waterMode, pipeKind, fixtureIm)
     if (im && im.complete) ctx.drawImage(im, x, y, size, size);
   }
 
-  if (state.showPipes && exposed && (pipeKind === "waste" || pipeKind === "supply" || pipeKind === "supply_ew" || pipeKind === "vault")) {
+  if (state.showPipes && exposed && (pipeKind === "waste" || pipeKind === "supply" || pipeKind === "supply_ew" || pipeKind === "intake")) {
     const stubSrc = pipeKind === "supply_ew"
       ? DATA.refs_bundle.overlays.pipe_stub_supply_e
       : (pipeKind === "supply"
@@ -129,9 +129,9 @@ function drawTileStack(ctx, x, y, size, turfKey, waterMode, pipeKind, fixtureIm)
     ctx.drawImage(fixtureIm, x, y, size, size);
   }
 
-  if (state.showPipes && exposed && (pipeKind === "waste" || pipeKind === "supply" || pipeKind === "supply_ew" || pipeKind === "vault")) {
-    const capSrc = pipeKind === "vault"
-      ? DATA.refs_bundle.overlays.vault_cap_n
+  if (state.showPipes && exposed && (pipeKind === "waste" || pipeKind === "supply" || pipeKind === "supply_ew" || pipeKind === "intake")) {
+    const capSrc = pipeKind === "intake"
+      ? DATA.refs_bundle.overlays.intake_cap_n
       : (pipeKind === "supply_ew"
         ? DATA.refs_bundle.overlays.vent_cap_e
         : (pipeKind === "supply"
@@ -171,17 +171,12 @@ function pickFixtureFrame(c, dirIdx = 0) {
     }
     return dirIdx;
   }
-  if (c.name === "intake_upper_deck" || c.name === "intake_ceiling_below" || c.kind === "intake_upper_deck" || c.kind === "intake_ceiling_below") {
+  if (c.kind === "intake_floor" || c.kind === "intake_ceiling") {
     return state.mode === "active"
       ? (state.tick % c.frames.length)
       : (state.mode === "fault" ? Math.min(6, c.frames.length - 1) : 0);
   }
-  if (c.name === "intake_vault" || c.kind === "intake_vault") {
-    return state.mode === "active"
-      ? (state.tick % c.frames.length)
-      : (state.mode === "fault" ? Math.min(3, c.frames.length - 1) : 0);
-  }
-  if (c.name === "vault_mouth_caps" || c.kind === "vault_mouth_caps") {
+  if (c.kind === "intake_mouth_caps") {
     return state.mode === "active"
       ? (state.tick % c.frames.length)
       : (state.mode === "fault" ? Math.min(8, c.frames.length - 1) : 0);
@@ -290,11 +285,9 @@ function buildGalleryDOM() {
     floor_drain: document.getElementById("grid-floor-drains"),
     scupper: document.getElementById("grid-wall-scuppers"),
     sump_pump: document.getElementById("grid-sump-pumps"),
-    intake_upper_deck: intakeGrid,
-    intake_ceiling_below: intakeGrid,
-    intake_vault: intakeGrid,
-    intake_head: intakeGrid,
-    vault_mouth_caps: intakeGrid,
+    intake_floor: intakeGrid,
+    intake_ceiling: intakeGrid,
+    intake_mouth_caps: intakeGrid,
   };
 
   DATA.fixtures.forEach(c => {
@@ -417,9 +410,9 @@ function buildGalleryDOM() {
 
       const pKind = c.kind === "sump_pump"
         ? "supply_ew"
-        : ((c.name === "intake_upper_deck" || c.name === "intake_vault" || c.kind === "intake_upper_deck" || c.kind === "intake_vault")
-          ? "vault"
-          : ((c.name === "intake_ceiling_below" || c.name === "intake_head" || c.name === "vault_mouth_caps" || c.kind === "intake_ceiling_below" || c.kind === "intake_head" || c.kind === "vault_mouth_caps")
+        : ((c.kind === "intake_floor")
+          ? "intake"
+          : ((c.kind === "intake_ceiling" || c.kind === "intake_mouth_caps")
             ? "none"
             : "waste"));
       const cardDir = c.kind === "sump_pump" ? 2 : 0;

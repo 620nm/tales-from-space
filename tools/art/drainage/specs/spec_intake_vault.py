@@ -1,6 +1,8 @@
-"""Top-down orthographic cast-concrete & brushed-brass manifold vault (`intake_vault.aseprite`).
+"""Pixel library: the intake's top-down cast-concrete & brushed-brass hatch and cover.
 
-32x32 RGBA, 4 frames at [100, 100, 100, 100] ms. Tags: closed (1), opening (2..3), open (4).
+Not a shipped source: `spec_intake_floor` draws these pixels into its `hatch_frame` and
+`hatch_cover` layers; the kit validates this spec but exports nothing for it.
+32x32 RGBA, 4 cover frames: closed (1), opening (2..3), open (4).
 Layers, bottom to top: vault_frame_and_shaft (static), bisected_cover (animated).
 """
 
@@ -387,7 +389,7 @@ _COVER_FRAMES = [
 SPEC: dict[str, Any] = {
     "name": "intake_vault",
     "kind": "intake_vault",
-    "title": "Intake Vault & Cover (Top-Down)",
+    "title": "Intake Hatch & Cover (Top-Down, pixel library)",
     "width": WIDTH,
     "height": HEIGHT,
     "blurb": (
@@ -395,7 +397,7 @@ SPEC: dict[str, Any] = {
         "and a bisected hexagonal hatch cover that unlocks with a 90° rotary cam-latch twist before retracting."
     ),
     "design_notes": (
-        "Stationary 3px outer vault curb (x=0..2, 29..31, y=0..2, 29..31) seats the 5×3 vault_mouth_caps "
+        "Stationary 3px outer vault curb (x=0..2, 29..31, y=0..2, 29..31) seats the 5×3 intake_mouth_caps "
         "across all 5 pipe layers (l1..l5). f1: closed flush hatch; f2: 90° rotary brass cam-latch unlock; "
         "f3: half-retracted cover leaves; f4: wide-open 24×24 hexagonal throat with 1px parked cover strips at x=3, 28."
     ),

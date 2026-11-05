@@ -106,8 +106,8 @@
     }
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
-    body.greyscale-mode canvas.preview-cv {
-      filter: url(#rec709-grey);
+    body.grayscale-mode canvas.preview-cv {
+      filter: url(#rec709-gray);
     }
     section.cat-block { margin-bottom: 32px; }
     .cat-header {

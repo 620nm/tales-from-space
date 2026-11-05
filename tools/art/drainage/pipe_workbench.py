@@ -248,10 +248,10 @@ def collect_pipe_workbench_bundle() -> dict[str, Any]:
             for ch_idx in range(1, 6):
                 caps[f"{fam}_l{ch_idx}_{dbit}"] = uri
 
-    vault_caps = extract_all_aseprite_tags("assets/originals/art/machines/drainage/vault_mouth_caps.aseprite")
+    intake_caps = extract_all_aseprite_tags("assets/originals/art/machines/drainage/intake_mouth_caps.aseprite")
     for ch_idx in range(1, 6):
         for dbit in (1, 2, 4, 8):
-            caps[f"vault_l{ch_idx}_{dbit}"] = img_to_data_uri(vault_caps[f"l{ch_idx}_{dbit}"])
+            caps[f"intake_l{ch_idx}_{dbit}"] = img_to_data_uri(intake_caps[f"l{ch_idx}_{dbit}"])
 
     risers_im = make_scupper_riser_sprites()
     risers = {k: img_to_data_uri(v) for k, v in risers_im.items()}
@@ -325,9 +325,9 @@ def render_pipe_connections_board(out_path: Path) -> None:
     scupper_e = frame("scupper", 13)
     sump_ew = frame("sump_pump", 2)
     sump_ns = frame("sump_pump", 8)
-    intake_depressed = frame("intake_upper_deck", 1)
-    intake_elevated = frame("intake_upper_deck", 7)
-    vault_caps_im = extract_all_aseprite_tags("assets/originals/art/machines/drainage/vault_mouth_caps.aseprite")
+    intake_lowered = frame("intake_floor", 1)
+    intake_raised = frame("intake_floor", 7)
+    intake_caps_im = extract_all_aseprite_tags("assets/originals/art/machines/drainage/intake_mouth_caps.aseprite")
 
     puddle = make_water_overlay(full_flood=False)
     waste_rgb = (240, 65, 55)
@@ -353,7 +353,7 @@ def render_pipe_connections_board(out_path: Path) -> None:
         dy = -shift if (mouths & 12) else 0
 
         if not covered:
-            # Draw neighbour trunk pipes on surrounding tiles when joined
+            # Draw neighbor trunk pipes on surrounding tiles when joined
             if not exposed_unjoined:
                 if mouths & 1:
                     rm.alpha_composite(tint_rgba(pipes_bm[f"3_{ch_idx}-s"], paint_rgb), (32, 0))
@@ -426,7 +426,7 @@ def render_pipe_connections_board(out_path: Path) -> None:
         rm.alpha_composite(scupper_e, (64, 32 + (0 if covered else dy_wall)))
         return rm.crop((24, 16, 88, 80))
 
-    def compose_vault_case(
+    def compose_intake_case(
         body_im: Image.Image,
         channels_mouths: list[tuple[int, int, tuple[int, int, int]]],
         covered: bool = False,
@@ -457,7 +457,7 @@ def render_pipe_connections_board(out_path: Path) -> None:
             for ch_idx, mouths, _paint_rgb in channels_mouths:
                 for db in (1, 2, 4, 8):
                     if mouths & db:
-                        rm.alpha_composite(vault_caps_im[f"l{ch_idx}_{db}"], (32, 32))
+                        rm.alpha_composite(intake_caps_im[f"l{ch_idx}_{db}"], (32, 32))
         return rm.crop((16, 16, 80, 80))
 
     font_h1 = load_ui_font(15)
@@ -481,7 +481,7 @@ def render_pipe_connections_board(out_path: Path) -> None:
     )
     draw.text(
         (20, 36),
-        "Bare bodies + pipe_intact/pipe_exposed stubs + mouth_cap ('scrub'/'vent'/'vault') + l1..l5 tracks; hidden under covered floor.",
+        "Bare bodies + pipe_intact/pipe_exposed stubs + mouth_cap ('scrub'/'vent'/'intake') + l1..l5 tracks; hidden under covered floor.",
         font=font_s,
         fill=(148, 151, 171, 255),
     )
@@ -517,13 +517,13 @@ def render_pipe_connections_board(out_path: Path) -> None:
             ],
         ),
         (
-            'Intake head (mouth_cap = "vault"): full 32×32 curb seats 5×3 collars on l1..l5',
+            'Intake (mouth_cap = "intake"): full 32×32 curb seats 5×3 collars on l1..l5',
             [
-                ("North l3 (depressed)", compose_vault_case(intake_depressed, [(3, 1, waste_rgb)])),
-                ("Layer l1 (-10px track)", compose_vault_case(intake_depressed, [(1, 1, waste_rgb)])),
-                ("East l5 (elevated)", compose_vault_case(intake_elevated, [(5, 4, blue_rgb)])),
-                ("All 5 layers (N+E)", compose_vault_case(intake_elevated, [(ch, 5, blue_rgb if ch % 2 == 0 else waste_rgb) for ch in range(1, 6)])),
-                ("Covered floor (hides stubs)", compose_vault_case(intake_depressed, [(3, 1, waste_rgb)], covered=True)),
+                ("North l3 (lowered)", compose_intake_case(intake_lowered, [(3, 1, waste_rgb)])),
+                ("Layer l1 (-10px track)", compose_intake_case(intake_lowered, [(1, 1, waste_rgb)])),
+                ("East l5 (raised)", compose_intake_case(intake_raised, [(5, 4, blue_rgb)])),
+                ("All 5 layers (N+E)", compose_intake_case(intake_raised, [(ch, 5, blue_rgb if ch % 2 == 0 else waste_rgb) for ch in range(1, 6)])),
+                ("Covered floor (hides stubs)", compose_intake_case(intake_lowered, [(3, 1, waste_rgb)], covered=True)),
             ],
         ),
     ]
