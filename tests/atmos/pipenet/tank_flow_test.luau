@@ -153,21 +153,28 @@ near(total(assert(t.tank_gas(2, 1))), tank_1, 1e-9, "the vessel's book unmoved 2
 local vessel_n = total(assert(t.tank_gas(2, 1)))
 local run_n = total(assert(network_matter.gas(3, 1)))
 local rest_k = assert(network_matter.temperature(3, 1))
--- One molar heat capacity, taken off the world rather than written down.
+-- One molar energy line, e(T) = cv*T + b, taken off the world rather
+-- than written down: cv off the run's measured capacity, and b, the
+-- offset a phase diagram puts on the gas row, as what is left of E / n.
 -- The vessel answers to it too: the two are one body of gas.
-local cv = assert(network_matter.energy(3, 1)) / (run_n * rest_k)
+local cv = network_matter.capacity(3, 1) / run_n
+local offset = assert(network_matter.energy(3, 1)) / run_n - cv * rest_k
+local function molar_energy(kelvin: number): number
+    return cv * kelvin + offset
+end
 
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 near(window_k(p), rest_k, 1e-6, "the vessel's window agrees with an analyser held against the run")
 
 local INJECTED = 10000000.0
-local energy_0 = assert(network_matter.energy(3, 1)) + vessel_n * cv * rest_k
+local energy_0 = assert(network_matter.energy(3, 1)) + vessel_n * molar_energy(rest_k)
 network_matter.heat(3, 1, INJECTED)
 t.run_seconds(5)
 
 local hot_k = assert(network_matter.temperature(3, 1))
-local energy_1 = assert(network_matter.energy(3, 1)) + total(assert(t.tank_gas(2, 1))) * cv * hot_k
+local energy_1 = assert(network_matter.energy(3, 1))
+    + total(assert(t.tank_gas(2, 1))) * molar_energy(hot_k)
 near(
     energy_1,
     energy_0 + INJECTED,
@@ -176,7 +183,7 @@ near(
 )
 near(
     hot_k,
-    (energy_0 + INJECTED) / ((vessel_n + run_n) * cv),
+    ((energy_0 + INJECTED) / (vessel_n + run_n) - offset) / cv,
     1e-6,
     "and the temperature is that book divided through both holders"
 )

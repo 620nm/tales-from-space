@@ -161,12 +161,13 @@ local function bench(gas)
     return p
 end
 
--- The port's heat capacity, off the world's own readings the way
--- pipe_blend_test.luau takes it: E = C * T. Nothing below is written
--- down from the gas roster, so a station that recharges its lines with
--- something else does not silently invalidate the arithmetic.
+-- The port's heat capacity, off the world's own readings: dE/dT, which
+-- `network_matter.capacity` measures (E / T is not one once the gas has
+-- a phase diagram). Nothing below is written down from the gas roster,
+-- so a station that recharges its lines with something else does not
+-- silently invalidate the arithmetic.
 local function capacity()
-    return assert(network_matter.energy(MOUTH_X, MOUTH_Y)) / assert(network_matter.temperature(MOUTH_X, MOUTH_Y))
+    return network_matter.capacity(MOUTH_X, MOUTH_Y)
 end
 
 -- ---------------------------------------------------------------

@@ -97,22 +97,27 @@ assert(assert(network_matter.pressure(7, 1)) > 90.0)
 near(assert(network_matter.temperature(1, 1)), T20C, 0.01, "both at room temperature")
 near(assert(network_matter.temperature(7, 1)), T20C, 0.01, "the short one too")
 
--- ---- one molar heat capacity, and both runs answer to it ----
+-- ---- one molar energy line, and both runs answer to it ----
 --
--- E / nT out of each run's own three readings. They agree because the
--- two are the same standard admixture, which is what lets a
--- mole-weighted mean of TEMPERATURES be the same statement as an
--- energy book. Taken off the world rather than written down, so a
--- station that changes what its mains are charged with does not
--- silently invalidate the arithmetic below.
+-- A mole of gas holds e(T) = cv*T + b joules: cv is the heat capacity
+-- and b the offset its phase diagram puts on the gas row (the engine's
+-- docs/matter/registry.md), so E / nT is NOT a capacity. Both runs
+-- read the same E / n at the same temperature, because they are the
+-- same standard admixture, which is what lets a mole-weighted mean of
+-- TEMPERATURES be the same statement as an energy book. cv and b are
+-- taken off the world, so a station that changes what its mains are
+-- charged with does not silently invalidate the arithmetic.
 local west_n_0 = moles_in(1, 1)
 local east_n_0 = moles_in(7, 1)
-local cv = assert(network_matter.energy(1, 1)) / (west_n_0 * assert(network_matter.temperature(1, 1)))
+local room_k = assert(network_matter.temperature(1, 1))
+local room_e = assert(network_matter.energy(1, 1)) / west_n_0
+local cv = network_matter.capacity(1, 1) / west_n_0
+local offset = room_e - cv * room_k
 near(
-    assert(network_matter.energy(7, 1)) / (east_n_0 * assert(network_matter.temperature(7, 1))),
-    cv,
-    1e-9,
-    "both runs carry the same admixture, so one capacity serves both books"
+    assert(network_matter.energy(7, 1)) / east_n_0,
+    room_e,
+    math.abs(room_e) * 1e-9,
+    "both runs carry the same admixture, so one energy line serves both books"
 )
 assert(
     west_n_0 > east_n_0 * 1.9,
@@ -194,7 +199,12 @@ near(assert(network_matter.temperature(7, 1)), fused_k, 1e-9, "one net, one temp
 -- spread through those moles, come to -- which is the same number as
 -- the MOLE-weighted mean of the two runs, and is emphatically not the
 -- average of the two temperatures.
-near(fused_k, fused_energy / (fused_moles * cv), 1e-6, "the blend is the energy book divided out")
+near(
+    fused_k,
+    (fused_energy / fused_moles - offset) / cv,
+    1e-6,
+    "the blend is the energy book divided out"
+)
 near(
     fused_k,
     (west_n_0 * cold_k + east_n_0 * hot_k) / moles_0,
@@ -246,12 +256,16 @@ near(
     1e-6,
     "as the moles say too"
 )
+-- Heat is the cv*T part of the book: the gas row's offset b stays with
+-- the moles, which went straight back where they were.
+local east_heat_0 = east_energy_0 - east_n_0 * offset
+local east_heat_1 = assert(network_matter.energy(7, 1)) - moles_in(7, 1) * offset
 assert(
-    assert(network_matter.energy(7, 1)) < east_energy_0 * 0.6,
+    east_heat_1 < east_heat_0 * 0.6,
     "the short run gave up most of its heat for good: "
-        .. east_energy_0
+        .. east_heat_0
         .. " J -> "
-        .. assert(network_matter.energy(7, 1))
+        .. east_heat_1
         .. " J"
 )
 assert(

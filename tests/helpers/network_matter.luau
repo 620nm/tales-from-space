@@ -30,4 +30,19 @@ function network_matter.heat(x: number, y: number, joules: number, channel: stri
     return if id then t.heat_network(x, y, id, joules) else false
 end
 
+-- A run's heat capacity, J/K, as dE/dT: a probe of joules in, the rise
+-- read before any tick, and the same joules straight back out. E / T is
+-- not a capacity, because a mole of a substance with a phase diagram
+-- holds cv*T plus its gas row's offset (the engine's
+-- docs/matter/registry.md).
+local CAPACITY_PROBE_J = 1000.0
+
+function network_matter.capacity(x: number, y: number, channel: string?): number
+    local before_k = assert(network_matter.temperature(x, y, channel))
+    assert(network_matter.heat(x, y, CAPACITY_PROBE_J, channel), "the probe reaches the run")
+    local after_k = assert(network_matter.temperature(x, y, channel))
+    assert(network_matter.heat(x, y, -CAPACITY_PROBE_J, channel), "and leaves it")
+    return CAPACITY_PROBE_J / (after_k - before_k)
+end
+
 return network_matter

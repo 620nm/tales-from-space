@@ -327,14 +327,22 @@ assert(assert(t.structure_at(2, 1)).state == "off", "off out of the crate")
 assert(composition.matches(4, 1, { "station_base", "wall" }), "its run is buried under the hull")
 assert(t.room_pressure(4, 1) == nil, "where there is no room for it to be part of")
 
--- ---- the one heat capacity, taken off the run's own three numbers ----
+-- ---- the one molar energy line, taken off the run ----
 --
--- E / nT is joules per mole per kelvin, and it is only allowed to speak
--- for the ROOM as well if the two bodies of gas are the same admixture.
--- They are, and it is checked rather than assumed: both are tg's
--- standard 21/79, so one molar capacity serves the whole book.
+-- A mole of this air holds e(T) = cv*T + b: cv is the run's measured
+-- capacity per mole, and b the offset the gases' phase diagrams put on
+-- their gas rows, which is what is left of E / n (the engine's
+-- docs/matter/registry.md). The line is only allowed to speak for the
+-- ROOM as well if the two bodies of gas are the same admixture. They
+-- are, and it is checked rather than assumed: both are tg's standard
+-- 21/79, so one molar line serves the whole book.
 local n_pipe_0 = pipe_total(5, 1)
-local cv = assert(network_matter.energy(5, 1)) / (n_pipe_0 * assert(network_matter.temperature(5, 1)))
+local cv = network_matter.capacity(5, 1) / n_pipe_0
+local offset = assert(network_matter.energy(5, 1)) / n_pipe_0
+    - cv * assert(network_matter.temperature(5, 1))
+local function molar_energy(kelvin: number): number
+    return cv * kelvin + offset
+end
 assert(cv > 1.0, "the run's molar heat capacity is readable: " .. cv)
 near(assert(network_matter.temperature(5, 1)), T20C, 0.01, "and it opens at room temperature")
 
@@ -370,7 +378,7 @@ network_matter.heat(5, 1, 300000.0)
 t.tick()
 local hot_k = assert(network_matter.temperature(5, 1))
 local pipe_e0 = assert(network_matter.energy(5, 1))
-local energy_0 = pipe_e0 + n_room_0 * cv * T20C + deck_e0
+local energy_0 = pipe_e0 + n_room_0 * molar_energy(T20C) + deck_e0
 -- The book's fourth column: what leaves through the hull. The sky here
 -- is at the station's OPENING temperature, so it is inert until the
 -- injector warms the room past it -- and from that moment a warmed deck
@@ -432,7 +440,7 @@ t.swap_hands(q)
 local px, py = 1, 1
 local blended = analyzed(q, px, py)
 local n_room_1 = room_moles(ROOM)
-local air_1 = n_room_1 * cv * blended
+local air_1 = n_room_1 * molar_energy(blended)
 local deck_1 = deck_energy(ROOM)
 
 assert(
@@ -451,7 +459,7 @@ near(
 )
 near(
     blended,
-    energy_0 / (n_room_1 * cv + c_deck),
+    (energy_0 - n_room_1 * offset) / (n_room_1 * cv + c_deck),
     0.6,
     "and the thermometer reads the whole book, not the air's half of it"
 )
@@ -468,7 +476,8 @@ assert(
 -- What the air ALONE would have said, which is the answer this file
 -- used to assert and the reason the deck is worth having: a room is not
 -- a bottle of gas, it is a bottle of gas bolted to a tonne of hull.
-local air_only = (pipe_e0 + n_room_0 * cv * T20C) / (n_room_1 * cv)
+local air_only = (pipe_e0 + n_room_0 * molar_energy(T20C) - n_room_1 * offset)
+    / (n_room_1 * cv)
 -- The same injected energy is spread over three times the air per tile,
 -- so the gas-alone rise is the 50 K floor divided by CELL_VOLUME_M3.
 assert(
