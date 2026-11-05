@@ -85,6 +85,19 @@ function gas_turbine_run.on_section_changed(ev: StructureChangedPayload): ()
     end
 end
 
+-- A refused start; a stalled run it refuses is halted, so its rotor shut
+-- takes the stale watts off in its own change (`on_section_changed`).
+local function refuse_start(
+    rotor: Handle,
+    record: record_lib.RunRecord,
+    reason: string
+): (boolean, string?)
+    if record.active then
+        record_lib.halt(rotor, record)
+    end
+    return refuse(reason)
+end
+
 -- The power switch on: the line linked and whole, the rotor fed and sound.
 -- A stalled run counts as stopped, so the switch restarts it. Answers
 -- whether it started, else the refusal's key; `actor` hears nothing here.
@@ -95,13 +108,13 @@ function gas_turbine_run.start(rotor: Handle, _actor: Handle?): (boolean, string
     end
     if not record_lib.linked(rotor) then
         gas_turbine.connected(rotor)
-        return refuse("not_linked")
+        return refuse_start(rotor, record, "not_linked")
     end
     if record_lib.integrity(record.damage) <= 0 then
-        return refuse("wrecked")
+        return refuse_start(rotor, record, "wrecked")
     end
     if not sim.is_powered(rotor) then
-        return refuse("unpowered")
+        return refuse_start(rotor, record, "unpowered")
     end
     local compressor, outlet = gas_turbine.ends(rotor)
     record.active = true
