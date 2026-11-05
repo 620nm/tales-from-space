@@ -4,7 +4,7 @@
 import type { ListRow, UiNode } from "@lunatic/ui";
 import { Gauge, LabeledList, Section, Stack } from "@lunatic/ui";
 import type { DocumentIdentity, TurbineState } from "./document-model";
-import { scriptAction } from "./document-action";
+import { documentAction, scriptAction } from "./document-action";
 import { entry, press, row, text } from "./view";
 import * as S from "./strings";
 
@@ -63,7 +63,9 @@ export function turbineBody(id: string, doc: DocumentIdentity, state: TurbineSta
     Section(`${id}/turbine`, S.tfs("ui.turbine.status"), [
       row(`${id}/power`, [
         text(`${id}/power/state`, S.tfs(running ? "ui.turbine.running" : "ui.turbine.stopped"), ["grow", "list-label"]),
-        press(`${id}/toggle_power`, S.tfs(running ? "ui.turbine.stop" : "ui.turbine.start"), scriptAction(doc, "toggle_power"), {
+        // No input: `toggle_power` is declared with no value (limit 0), and the
+        // engine drops an act carrying one, so the press sends `{}`.
+        press(`${id}/toggle_power`, S.tfs(running ? "ui.turbine.stop" : "ui.turbine.start"), documentAction(doc, "toggle_power", {}), {
           variant: running ? "selected" : "primary", disabled: !active,
         }),
       ], { cls: ["list-row"] }),
