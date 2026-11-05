@@ -12,8 +12,9 @@ local gas_turbine_console = {}
 
 local CHANNEL = "turbine"
 local PRESENTATION = "power/turbine"
--- The power switch takes no input; the valve takes a fraction as text.
-local ACTIONS: { [string]: number } = { power = 0, regulate = 16 }
+-- tg's ui_act names (:86, :102): the switch takes no input, the valve a
+-- fraction as text.
+local ACTIONS: { [string]: number } = { toggle_power = 0, regulate = 16 }
 -- tg's machines tick every 2 s (SSmachines), which is also the rotor's pass.
 local REFRESH_SECONDS = 2
 
@@ -143,7 +144,7 @@ function gas_turbine_console.act(ev: InteractionActPayload): boolean | { replace
     local rotor = rotor_of(console)
     if rotor == nil then
         sim.message.send({ recipient = actor, message = sim.msg(MESSAGE .. "unlinked", {}) })
-    elseif ev.action == "power" then
+    elseif ev.action == "toggle_power" then
         if gas_turbine_run.readout(rotor).active then
             refused(actor, gas_turbine_run.stop(rotor, actor))
         else

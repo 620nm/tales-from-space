@@ -8,11 +8,12 @@ import { scriptAction } from "./document-action";
 import { entry, press, row, text } from "./view";
 import * as S from "./strings";
 
-// The valve in whole percent, tg's NumberInput (1..100, step 1); the
-// server clamps the fraction it is sent.
-const VALVE_MIN = 1;
-const VALVE_MAX = 100;
-const VALVE_STEP = 1;
+// The valve as tg's `regulate` fraction (turbine_computer.dm:118), stepped
+// by tg's NumberInput step of one percent; the server clamps what it is sent.
+const VALVE_MIN = 0.01;
+const VALVE_MAX = 1;
+const VALVE_STEP = 0.01;
+const spell = (fraction: number): string => fraction.toFixed(2);
 
 const finite = (value: number | undefined): number =>
   typeof value === "number" && Number.isFinite(value) ? value : 0;
@@ -30,23 +31,22 @@ function readings(state: TurbineState): ListRow[] {
 }
 
 function valve(id: string, doc: DocumentIdentity, state: TurbineState, active: boolean): UiNode {
-  const percent = Math.max(VALVE_MIN, Math.min(VALVE_MAX, Math.round(finite(state.intake) * 100)));
-  const send = (to: number) => {
-    const clamped = Math.max(VALVE_MIN, Math.min(VALVE_MAX, Math.round(to)));
-    return scriptAction(doc, "regulate", (clamped / 100).toFixed(2));
-  };
-  return Stack(id, [
+  const clamp = (to: number): number =>
+    Math.max(VALVE_MIN, Math.min(VALVE_MAX, Math.round(to * 100) / 100));
+  const value = clamp(finite(state.intake));
+  const send = (to: number) => scriptAction(doc, "regulate", spell(clamp(to)));
+  return Stack(`${id}/valve`, [
     row(`${id}/head`, [
       text(`${id}/label`, S.tfs("ui.turbine.intake"), ["grow", "list-label"]),
-      text(`${id}/range`, S.range(`${VALVE_MIN}`, `${VALVE_MAX}`, "%"), ["hint"]),
+      text(`${id}/range`, S.range(spell(VALVE_MIN), spell(VALVE_MAX), ""), ["hint"]),
     ], { cls: ["list-row"] }),
     Stack(`${id}/controls`, [
-      press(`${id}/down`, S.LOWER, send(percent - VALVE_STEP), { disabled: !active || percent <= VALVE_MIN }),
-      entry(`${id}/value`, `${percent}`, (value) => {
-        const wanted = Number(value);
+      press(`${id}/down`, S.LOWER, send(value - VALVE_STEP), { disabled: !active || value <= VALVE_MIN }),
+      entry(id, spell(value), (typed) => {
+        const wanted = Number(typed);
         return Number.isFinite(wanted) ? send(wanted) : undefined;
       }, { cls: ["num"], disabled: !active, label: S.tfs("ui.turbine.intake") }),
-      press(`${id}/up`, S.RAISE, send(percent + VALVE_STEP), { disabled: !active || percent >= VALVE_MAX }),
+      press(`${id}/up`, S.RAISE, send(value + VALVE_STEP), { disabled: !active || value >= VALVE_MAX }),
     ], { align: "center", gap: 4 }),
   ], { dir: "column", gap: 4, cls: ["card"] });
 }
@@ -62,11 +62,11 @@ export function turbineBody(id: string, doc: DocumentIdentity, state: TurbineSta
     Section(`${id}/status`, S.tfs("ui.turbine.status"), [
       row(`${id}/power`, [
         text(`${id}/power/state`, S.tfs(running ? "ui.turbine.running" : "ui.turbine.stopped"), ["grow", "list-label"]),
-        press(`${id}/power/switch`, S.tfs(running ? "ui.turbine.stop" : "ui.turbine.start"), scriptAction(doc, "power"), {
+        press(`${id}/toggle_power`, S.tfs(running ? "ui.turbine.stop" : "ui.turbine.start"), scriptAction(doc, "toggle_power"), {
           variant: running ? "selected" : "primary", disabled: !active,
         }),
       ], { cls: ["list-row"] }),
-      valve(`${id}/intake`, doc, state, active),
+      valve(`${id}/regulate`, doc, state, active),
       row(`${id}/integrity`, [
         text(`${id}/integrity/label`, S.tfs("ui.turbine.integrity"), ["grow", "list-label"]),
         text(`${id}/integrity/value`, S.tfs("ui.turbine.percent", { value: integrity.toFixed(0) }), ["list-value"]),

@@ -81,7 +81,7 @@ end
 open_console()
 assert(script_data().linked == false, "an unlinked console discloses no rotor")
 assert(ui_controls.find(p, "/unlinked", scope()), "and says so")
-assert(not ui_controls.find(p, "/power/switch", scope()), "with no switch to press")
+assert(not ui_controls.find(p, "/toggle_power", scope()), "with no switch to press")
 t.ui_close(p, CHANNEL)
 
 -- Log the rotor in the multitool, then link the console to it.
@@ -105,24 +105,24 @@ for _, field in ipairs({ "rpm", "power_w", "integrity", "max_rpm", "max_temperat
     ui_controls.number(reading[field])
 end
 assert(ui_controls.number(reading.max_rpm) > 0, "the readout carries the rotor's speed limit")
-assert(ui_controls.find(p, "/power/switch", scope()), "the power switch is drawn")
+assert(ui_controls.find(p, "/toggle_power", scope()), "the power switch is drawn")
 
 -- The switch starts the rotor.
-t.ui_press(p, control("/power/switch"))
+t.ui_press(p, control("/toggle_power"))
 t.run_ticks(2)
 assert(script_data().active == true, "the switch starts the rotor")
 
 -- The valve sets the rotor's intake: typed, then stepped up one percent.
-local valve = control("/intake/value")
-t.ui_edit(p, valve, "50")
+local valve = control("/regulate")
+t.ui_edit(p, valve, "0.5")
 t.ui_press(p, valve, "change")
 t.run_ticks(2)
 assert(math.abs(ui_controls.number(script_data().intake) - 0.5) < 1e-6, "the valve sets the intake")
-t.ui_press(p, control("/intake/up"))
+t.ui_press(p, control("/regulate/up"))
 t.run_ticks(2)
 assert(math.abs(ui_controls.number(script_data().intake) - 0.51) < 1e-6, "a step raises it one percent")
 
 -- An idle shaft is under tg's 1000 rpm, so the switch stops it again.
-t.ui_press(p, control("/power/switch"))
+t.ui_press(p, control("/toggle_power"))
 t.run_ticks(2)
 assert(script_data().active == false, "the switch stops the rotor")
