@@ -2,9 +2,9 @@
 -- battery.
 --
 -- A wrench sets it between two bolted emitters, where it unfolds into
--- `grav_supermagnet_ring` (lib/grav_smes.luau). No recipe makes one: a map
+-- `grav_supermagnet_ring` (lib/power/grav_smes.luau). No recipe makes one: a map
 -- places it.
-local grav_smes = require("@lib/grav_smes")
+local grav_smes = require("@lib/power/grav_smes")
 
 return {
     id = "grav_supermagnet",

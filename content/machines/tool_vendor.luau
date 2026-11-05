@@ -103,6 +103,52 @@ return {
             category = "Parts",
             amount = 2,
         },
+        -- The gas turbine, on the same no-lathe argument: tg prints its four
+        -- boards at a techfab (research/designs/machine_designs.dm:50-101)
+        -- and the tier-one parts at a protolathe (power_designs.dm:172-206).
+        -- Tiers two to four are not sold; a map places them.
+        {
+            item = "machine_board.inlet_compressor",
+            name = "Machine Board (Turbine Inlet Compressor)",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "machine_board.core_rotor",
+            name = "Machine Board (Turbine Core Rotor)",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "machine_board.turbine_outlet",
+            name = "Machine Board (Turbine Outlet)",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "machine_board.turbine_computer",
+            name = "Machine Board (Gas Turbine Control Computer)",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "compressor_part",
+            name = "Compressor Part",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "rotor_part",
+            name = "Rotor Part",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "stator_part",
+            name = "Stator Part",
+            category = "Parts",
+            amount = 2,
+        },
         {
             item = "airlock_button_fitting",
             name = "Airlock Button Fitting",

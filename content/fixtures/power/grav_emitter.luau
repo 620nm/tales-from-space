@@ -1,4 +1,4 @@
-local grav_smes = require("@lib/grav_smes")
+local grav_smes = require("@lib/power/grav_smes")
 
 -- A lit welder on an anchored emitter fuses the whole assembly.
 local content = { id = "grav_emitter" }

@@ -3,9 +3,9 @@ local gas_turbine = require("@lib/power/gas_turbine")
 -- The gas turbine's control console. tg's `/obj/machinery/computer/
 -- turbine_computer` (code/modules/power/turbine/turbine_computer.dm): a
 -- multitool carrying a core rotor in its buffer links the console to that
--- rotor. tg's window (rpm, power, integrity, intake, the power switch) reads
--- and drives the native expansion device this pack waits on, so the console
--- opens none yet.
+-- rotor (:24-37). tg's window (rpm, power, integrity, intake, the power
+-- switch, :50-119) reads and drives the native expansion device this pack
+-- waits on, so the console opens none yet.
 --
 -- tg builds consoles on a computer frame finished with two glass panels
 -- (code/game/machinery/computer/buildandrepair.dm:18,92); this pack has one

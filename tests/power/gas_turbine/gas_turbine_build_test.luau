@@ -129,7 +129,10 @@ assert(site().state == "open", "the screwdriver opens the panel")
 assert(table.find(heard(), "You open the maintenance panel.") ~= nil, "and says so")
 t.rotate(p, SITE_X, SITE_Y, assert(t.target_at(p, SITE_X, SITE_Y, "inlet_compressor")), true)
 t.run_ticks(2)
-assert(site().sprite == "inlet_compressor_open_w", "an open section turns: " .. tostring(site().sprite))
+assert(
+    site().sprite == "inlet_compressor_open_w",
+    "an open section turns: " .. tostring(site().sprite)
+)
 
 -- The crowbar takes an open section apart into its frame and everything
 -- that went into it.

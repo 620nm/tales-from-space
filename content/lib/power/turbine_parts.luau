@@ -3,8 +3,9 @@
 -- One socket kind per section; four tiers (TURBINE_PART_TIER_ONE..FOUR,
 -- code/__DEFINES/turbine_defines.dm:26-29). `component.efficiency` carries
 -- tg's TURBINE_MAX_EFFICIENCY verbatim rather than this pack's stock-part
--- ladder (lib/stock_parts.luau); the rated rpm and temperature are the knobs
--- the native expansion device reads per tier.
+-- ladder (lib/stock_parts.luau). The rated rpm and temperature each tier
+-- carries are said on the part's examine line (`examine`) and are the
+-- ratings the native expander reads (docs/POWER.md, The gas turbine).
 export type PartKind = "compressor" | "rotor" | "stator"
 
 local turbine_parts = {}
@@ -35,6 +36,27 @@ function turbine_parts.max_temperature_k(tier: number): number
         value = math.pow(value, 1.2)
     end
     return value
+end
+
+-- What each part's examine says it is for (tg `desc`, turbine_parts.dm:94,
+-- :99, :104).
+local PURPOSE: { [PartKind]: string } = {
+    compressor = "Install in a turbine engine compressor to increase its performance.",
+    rotor = "Install in a turbine engine rotor to increase its performance.",
+    stator = "Install in a turbine engine turbine to increase its performance.",
+}
+
+-- One tier's examine block: tg's purpose, then its rating line
+-- (`examine`, turbine_parts.dm:18). tg prints BYOND's six-digit form; whole
+-- numbers here.
+function turbine_parts.examine(kind: PartKind, tier: number): { flavor: string }
+    local rated = string.format(
+        "This is a tier %d turbine part, rated for %.0f rpm and %.0f K.",
+        tier,
+        turbine_parts.max_rpm(tier),
+        turbine_parts.max_temperature_k(tier)
+    )
+    return { flavor = PURPOSE[kind] .. " " .. rated }
 end
 
 -- The base item's whole `component` block.

@@ -1,4 +1,4 @@
-local grav_smes = require("@lib/grav_smes")
+local grav_smes = require("@lib/power/grav_smes")
 
 -- A wrench on the packed cart sets its ring between two emitters.
 local content = { id = "grav_supermagnet" }

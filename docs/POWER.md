@@ -181,17 +181,20 @@ classes in class order (`items.multitool.carrying_*` in
 
 tg's gas turbine (`code/modules/power/turbine/`) stands in three sections
 along one line: the inlet compressor behind the core rotor, the turbine
-outlet ahead of it, each built on a machine frame from its own board and
-its one installable part (`lib/power/gas_turbine.luau`, `lib/power/turbine_parts.luau`).
-A screwdriver opens or shuts a section's panel; open, it turns (tg's wrench
-is the Rotate gesture here) and a crowbar takes it apart. A multitool on the
-shut core rotor checks the line in tg's order (`turbine.dm:497-559`), says
-the first break, and on a whole line logs the rotor in its buffer; the same
-multitool on the gas turbine control computer links the console to it.
-Opening any panel on the line unlinks it.
+outlet ahead of it, each built on a machine frame from its own board and its
+one installable part (`lib/power/gas_turbine.luau`). The tool vendor sells
+the four boards and the tier-one parts; tiers two to four are map-placed
+only. A screwdriver opens or shuts a section's panel; open, it turns (tg's
+wrench is the Rotate gesture here) and a crowbar takes it apart. A line
+mapped or built whole links silently. A multitool on the shut core rotor
+checks the line in tg's order (`turbine.dm:497-559`), says the first break,
+and on a whole line logs the rotor in its buffer; the same multitool on the
+gas turbine control computer links the console to that rotor, on the same
+map and not since rebuilt. Opening any panel on the line unlinks it.
 
 The sections move no gas and make no power, and the console opens no window:
 tg's compression, expansion, rpm, damage and grid output run every tick
-(`turbine.dm:625-685`) and wait on a native device. A part's tier carries
-tg's efficiency, rated rpm and rated temperature for it
-(`turbine_parts.dm:31-54`, `:107-117`), all in `lib/power/turbine_parts.luau`.
+(`turbine.dm:625-685`) and wait on a native device. Each part's tier carries
+tg's efficiency (`turbine_parts.dm:31-54`, `:107-117`) in its `component`,
+and its rated rpm and temperature on its examine line (`:18`), from
+`lib/power/turbine_parts.luau`.

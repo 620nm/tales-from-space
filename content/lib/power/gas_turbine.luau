@@ -1,4 +1,5 @@
 local assembly = require("@lib/assembly")
+local ignition = require("@lib/ignition")
 local multitool_buffer = require("@lib/tools/multitool_buffer")
 
 -- The gas turbine's three sections and its console: what each section
@@ -25,8 +26,9 @@ gas_turbine.STATES = { CLOSED, OPEN }
 gas_turbine.FACINGS = { "south", "west", "north", "east" }
 
 -- Whether the rotor last found its line whole (tg `all_parts_connected`).
+-- A reader asks `connected`, which checks the line again.
 gas_turbine.LINKED = "lunatic/tfs:turbine_linked"
--- The rotor a console is linked to (tg `turbine_core`).
+-- The rotor a console is linked to, as a buffer ref (tg `turbine_core`).
 gas_turbine.CONSOLE_LINK = "lunatic/tfs:turbine_core"
 
 local MESSAGE = "lunatic/tfs:lib.gas_turbine."
@@ -47,6 +49,7 @@ function gas_turbine.message_keys(): { string }
         MESSAGE .. "linked",
         MESSAGE .. "buffer_stored",
         MESSAGE .. "wrong_buffer",
+        MESSAGE .. "relinking",
         MESSAGE .. "console_linked",
     }
     for _, refusal in ipairs(REFUSALS) do
@@ -119,8 +122,8 @@ function gas_turbine.section_transitions(prototype: string): { { [string]: any }
     }
 end
 
--- The multitool row on the core rotor: tg's "Link parts" screentip
--- (turbine.dm:83-88), offered with the panel shut.
+-- The multitool row on the core rotor: tg's "Link/Log parts" screentip
+-- (turbine.dm:427-432), offered with the panel shut.
 function gas_turbine.link_parts_row(): { [string]: any }
     return {
         id = "link_parts",
@@ -134,7 +137,7 @@ function gas_turbine.link_parts_row(): { [string]: any }
     }
 end
 
--- The multitool row on the console (turbine_computer.dm:153-166).
+-- The multitool row on the console (`multitool_act`, turbine_computer.dm:24-37).
 function gas_turbine.link_console_row(): { [string]: any }
     return {
         id = "link_console",
@@ -151,11 +154,13 @@ local function send(actor: Handle, key: string): ()
     sim.message.send({ recipient = actor, message = sim.msg(MESSAGE .. key, {}) })
 end
 
+local function prototype_of(thing: Handle): string?
+    return thing.base or thing.prototype
+end
+
 local function beside(tile: TileAddress, facing: string, sign: number): TileAddress?
     local step = STEP[facing]
-    local x, y = tile.x + step[1] * sign, tile.y + step[2] * sign
-    local ok, at = pcall(sim.map_tile, tile, x, y, tile.z)
-    return if ok then at else nil
+    return ignition.tile_beside(tile, step[1] * sign, step[2] * sign)
 end
 
 local function section_at(tile: TileAddress?, prototype: string): Handle?
@@ -163,15 +168,25 @@ local function section_at(tile: TileAddress?, prototype: string): Handle?
         return nil
     end
     for _, candidate in ipairs(sim.query.range(tile, 0, {})) do
-        if candidate.alive and (candidate.base or candidate.prototype) == prototype then
+        if candidate.alive and prototype_of(candidate) == prototype then
             return candidate
         end
     end
     return nil
 end
 
+-- Every section declares `facings`, so its handle always reads one.
+local function facing_of(section: Handle): string
+    local facing = section.facing
+    if facing == nil then
+        error("gas_turbine: " .. tostring(prototype_of(section)) .. " reads no facing")
+    end
+    return facing
+end
+
 local function aligned(section: Handle, facing: string): boolean
-    return section.facing == facing or section.facing == REVERSE[facing]
+    local own = facing_of(section)
+    return own == facing or own == REVERSE[facing]
 end
 
 -- tg's `core_rotor/activate_parts` (turbine.dm:497-572), its checks in its
@@ -179,7 +194,7 @@ end
 -- checks fall away: a section's socket cannot stand empty here.
 function gas_turbine.inspect(core: Handle): string?
     local tile = core.tile
-    local facing = core.facing or gas_turbine.FACINGS[1]
+    local facing = facing_of(core)
     local behind, ahead = beside(tile, facing, -1), beside(tile, facing, 1)
     local compressor = section_at(behind, gas_turbine.COMPRESSOR)
     local turbine = section_at(ahead, gas_turbine.OUTLET)
@@ -209,7 +224,7 @@ function gas_turbine.inspect(core: Handle): string?
         return "turbine_panel_open"
     end
     -- tg: the two face the same way, which reads as facing apart (:556-559).
-    if compressor.facing ~= turbine.facing then
+    if facing_of(compressor) ~= facing_of(turbine) then
         return "not_facing_away"
     end
     return nil
@@ -225,25 +240,57 @@ local function link(core: Handle, actor: Handle?): boolean
     return refusal == nil
 end
 
+-- Whether the rotor's line is linked and still whole: tg's `check_only`
+-- pass (turbine.dm:626). A section gone without its panel opening first (a
+-- blast, a staff delete) leaves the flag stale, which this read clears.
+function gas_turbine.connected(core: Handle): boolean
+    return core.vars[gas_turbine.LINKED] == true and link(core, nil)
+end
+
+-- The rotors a section can belong to: itself, or one a step away.
+local function cores_around(section: Handle): { Handle }
+    if prototype_of(section) == gas_turbine.CORE then
+        return { section }
+    end
+    local cores: { Handle } = {}
+    for _, facing in ipairs(gas_turbine.FACINGS) do
+        local core = section_at(beside(section.tile, facing, 1), gas_turbine.CORE)
+        if core ~= nil then
+            table.insert(cores, core)
+        end
+    end
+    return cores
+end
+
 -- An opened panel breaks the line (tg `deactivate_parts`, turbine.dm:229-234,
 -- :302-307, :355-360, :575-586): every linked rotor beside a section asks again.
 local function recheck_around(section: Handle): ()
-    if (section.base or section.prototype) == gas_turbine.CORE then
+    if prototype_of(section) == gas_turbine.CORE then
         section.vars[gas_turbine.LINKED] = nil
         return
     end
-    local tile = section.tile
-    for _, facing in ipairs(gas_turbine.FACINGS) do
-        local core = section_at(beside(tile, facing, 1), gas_turbine.CORE)
-        if core ~= nil and core.vars[gas_turbine.LINKED] == true then
-            link(core, nil)
-        end
+    for _, core in ipairs(cores_around(section)) do
+        gas_turbine.connected(core)
+    end
+end
+
+-- `entity.initialize.done` on every section, mapped or built: the line links
+-- silently, as tg's `post_machine_initialize` -> `activate_parts` does
+-- (turbine.dm:39-42). tg runs it from the rotor; here whichever section
+-- stands up last completes the line, so each asks the rotors beside it.
+function gas_turbine.on_section_initialized(ev: EntityInitializeDonePayload): ()
+    local section = ev.entity
+    if not section.alive then
+        return
+    end
+    for _, core in ipairs(cores_around(section)) do
+        link(core, nil)
     end
 end
 
 -- `structure.changed` on every section. Shutting the rotor's own panel
 -- links the line or says why not (`screwdriver_act` -> `activate_parts`,
--- turbine.dm:178-181); the frame's finish is silent, as tg's mapload is.
+-- turbine.dm:178-181).
 function gas_turbine.on_section_changed(ev: StructureChangedPayload): ()
     local section = ev.structure
     if ev.previous == ev.state or not section.alive then
@@ -254,7 +301,7 @@ function gas_turbine.on_section_changed(ev: StructureChangedPayload): ()
     elseif
         ev.state == CLOSED
         and ev.previous == OPEN
-        and (section.base or section.prototype) == gas_turbine.CORE
+        and prototype_of(section) == gas_turbine.CORE
     then
         link(section, ev.actor)
     end
@@ -262,7 +309,7 @@ end
 
 local function multitool_in(ev: InteractionUsePayload): Handle?
     local tool = ev.implement
-    if tool == nil or not tool.alive or (tool.base or tool.prototype) ~= MULTITOOL then
+    if tool == nil or not tool.alive or prototype_of(tool) ~= MULTITOOL then
         return nil
     end
     return tool
@@ -285,11 +332,12 @@ function gas_turbine.link_parts(ev: InteractionUsePayload): boolean | { replaced
     return true
 end
 
--- How long tg's console takes to read the buffer (turbine_computer.dm:160).
+-- How long tg's console takes to read the buffer (turbine_computer.dm:31).
 local CONSOLE_LINK_SECONDS = 0.2
 
 -- A multitool on the console: link the rotor in its buffer
--- (`multitool_act`, turbine_computer.dm:153-166).
+-- (`multitool_act`, turbine_computer.dm:24-37). A buffer naming a rotor on
+-- another map, or one rebuilt since it was logged, names no rotor here.
 function gas_turbine.link_console(ev: InteractionUsePayload): boolean | { replaced: boolean }
     local console, actor = ev.subject, ev.actor
     local tool = multitool_in(ev)
@@ -297,9 +345,13 @@ function gas_turbine.link_console(ev: InteractionUsePayload): boolean | { replac
         return { replaced = false }
     end
     local core = multitool_buffer.read(tool, console.tile)
-    if core == nil or (core.base or core.prototype) ~= gas_turbine.CORE then
+    if core == nil or prototype_of(core) ~= gas_turbine.CORE then
         send(actor, "wrong_buffer")
         return true
+    end
+    -- tg says so whenever the console already holds a link (:29-30).
+    if console.vars[gas_turbine.CONSOLE_LINK] ~= nil then
+        send(actor, "relinking")
     end
     sim.spawn_task(actor, function()
         if sim.do_after(actor, sim.ticks(CONSOLE_LINK_SECONDS), {}) ~= "ok" then
@@ -308,8 +360,10 @@ function gas_turbine.link_console(ev: InteractionUsePayload): boolean | { replac
         if not actor.alive or not console.alive or not core.alive then
             return
         end
+        -- tg clicks at the user's turf, volume 10 (:34); a roster sound
+        -- carries no volume, so this one plays at the click's own.
+        sim.sound.play({ sound = "click", at = actor.tile })
         console.vars[gas_turbine.CONSOLE_LINK] = multitool_buffer.ref(core)
-        sim.sound.play({ sound = "click", at = console.tile })
         send(actor, "console_linked")
     end)
     return true

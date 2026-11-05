@@ -1,8 +1,9 @@
 local gas_turbine = require("@lib/power/gas_turbine")
 
--- The gas turbine's handlers (lib/power/gas_turbine.luau): every section hears
--- its own panel, the core rotor answers the multitool that links the line,
--- and the console answers the multitool carrying a rotor.
+-- The gas turbine's handlers (lib/power/gas_turbine.luau): every section
+-- links the line it completes when it stands up and hears its own panel,
+-- the core rotor answers the multitool that links the line, and the console
+-- answers the multitool carrying a rotor.
 local content = { id = "gas_turbine" }
 if sim ~= nil then
     for _, key in ipairs(gas_turbine.message_keys()) do
@@ -12,6 +13,11 @@ if sim ~= nil then
     sim.define("script_var", gas_turbine.CONSOLE_LINK, { replicate = "server" })
     for _, id in ipairs(gas_turbine.SECTIONS) do
         local behavior = sim.define("behavior", "lunatic/tfs:" .. id, { prototype = id })
+        behavior:handle(
+            "entity.initialize.done",
+            { kind = "react" },
+            gas_turbine.on_section_initialized
+        )
         behavior:handle("structure.changed", { kind = "react" }, gas_turbine.on_section_changed)
         if id == gas_turbine.CORE then
             behavior:handle(
@@ -26,6 +32,10 @@ if sim ~= nil then
         "lunatic/tfs:" .. gas_turbine.CONSOLE,
         { prototype = gas_turbine.CONSOLE }
     )
-    console:handle("interaction.use", { kind = "replace", route = "interact" }, gas_turbine.link_console)
+    console:handle(
+        "interaction.use",
+        { kind = "replace", route = "interact" },
+        gas_turbine.link_console
+    )
 end
 return content

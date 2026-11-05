@@ -2,7 +2,7 @@
 -- independently useful when the field supplies no gravity. Standard gravity
 -- over open space rolls the station mode's lit skies, since the sunless one
 -- (`dead_space`) is weightless without a running gravity battery
--- (power/grav_smes_power_test.luau).
+-- (power/grav_smes/grav_smes_power_test.luau).
 local function world(center: string, brace: string, terrestrial: boolean, microgravity: boolean): number
     local needs = if terrestrial then '["gravity"]' else "[]"
     local kind = if terrestrial then "terrestrial" else "space"
