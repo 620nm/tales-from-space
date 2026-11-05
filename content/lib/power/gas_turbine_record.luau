@@ -161,7 +161,8 @@ function gas_turbine_record.dress(sections: { Handle? }, state: string): ()
 end
 
 -- `deactivate_parts` (turbine.dm:575-586): off, still, and dressed shut.
--- Only the rotor's own turn zeroes the grid's watts, anchored where it stands.
+-- The rotor's own change into `closed` takes its watts off, anchored where
+-- it stands (lib/power/gas_turbine_run.luau `on_section_changed`).
 function gas_turbine_record.halt(rotor: Handle, record: RunRecord): ()
     record.active = false
     record.rpm = 0

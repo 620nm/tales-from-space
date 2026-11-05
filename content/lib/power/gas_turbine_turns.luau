@@ -40,9 +40,11 @@ local ALARM_MIN_SECONDS = 5
 -- machine voice on a channel yet.
 local ALARM_RADIUS = 7
 
+-- Takes the rotor's watts off the grid; a source keeps its last setpoint.
 local function zero(rotor: Handle): ()
     sim.flow.set_output({ subject = rotor, watts = 0 })
 end
+gas_turbine_turns.zero = zero
 
 type Placeholders = { [string]: UnsafeMarkup | boolean | number | string }
 

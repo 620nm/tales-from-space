@@ -4,8 +4,9 @@ local ui_controls = require("@helpers/ui_controls")
 -- section's turns are a task that body's chain started (the engine's
 -- docs/luau-api/runtime.md), and a gibbed body is no transfer, so the rotor
 -- keeps checking in and the heat behind its compressor keeps wearing it
--- (turbine.dm:634-640); a second player's window shows it. A transfer off
--- the map has no spec verb; it reads as a stalled run (docs/POWER.md).
+-- (turbine.dm:634-640); a second player's window shows it. Turns cancelled
+-- outright (a transfer off the map, a quarantine) leave a stalled run that
+-- reads stopped; the switch shuts its rotor's stale watts off and restarts it.
 
 local CHANNEL = "turbine"
 
@@ -17,8 +18,8 @@ local CHANNEL = "turbine"
 -- by the first pass), so it sits on reinforced floor inside reinforced
 -- walls, the pack's least-radiant (`content/compositions.luau`), and the
 -- sections stop air (turbine.dm:10). The tile ahead of the outlet, (5, 1),
--- stays wall, so the shaft never turns and only the wear runs. The player
--- stands in the air beside the rotor and the console.
+-- starts as wall, sealing off an empty exhaust chamber at (6..7, 1). The
+-- player stands in the air beside the rotor and the console.
 t.world(
     [==[(
     name: "turbine hall",
@@ -149,3 +150,47 @@ assert(reading(q).active == true, "the run outlives its starter")
 assert(eventually(function()
     return integrity(q) < before - 0.3
 end, 8), "and its rotor still takes its turns")
+
+-- The rotor's last `watts` setpoint: rows are written only on a change.
+local function watts(): number?
+    local last: number? = nil
+    for _, row in ipairs(t.ledger_rows("MachineSetpoint")) do
+        local pos = row.pos
+        if row.field == "watts" and pos ~= nil and pos[1] == 3 and pos[2] == 1 then
+            last = ui_controls.number(row.value)
+        end
+    end
+    return last
+end
+
+-- Open the exhaust: the shaft spins and the rotor feeds the grid.
+assert(t.set_composition(5, 1, "plating"), "the exhaust opens")
+assert(eventually(function()
+    return ui_controls.number(reading(q).rpm) > 0
+end, 6), "hot gas through the stages spins the shaft")
+local spun = assert(watts(), "the spinning rotor set its watts")
+assert(spun > 0, "the spinning rotor feeds the grid")
+
+-- Every task the pack holds cancelled outright, as a quarantine or a
+-- transfer off the map does (the engine's docs/luau-api/runtime.md): no
+-- turn runs to take the watts off, so the rotor keeps feeding them.
+assert(t.cancel_mod_tasks("lunatic/tfs") >= 3, "the three sections' turns are cancelled")
+t.run_seconds(6)
+assert(watts() == spun, "a cancelled run keeps its last setpoint")
+-- The window's own refresh went with the tasks; reopening it reads afresh.
+click(q, 4, 3, "turbine_computer", 0.2)
+assert(reading(q).active == false, "a rotor two passes silent reads stopped")
+
+-- The switch restarts it: each section shut, the rotor's watts taken off,
+-- then turning again in a new run.
+local stalled = assert(t.ui_document(q, CHANNEL), "the window has an address")
+t.ui_press(q, "doc/" .. stalled.document .. "/" .. stalled.generation .. "/toggle_power")
+t.run_ticks(2)
+assert(watts() == 0, "the switch takes the stalled rotor's watts off")
+assert(reading(q).active == true, "and restarts the run")
+assert(assert(t.structure_at(3, 1)).state == "running", "the rotor turns again")
+assert(eventually(function()
+    click(q, 4, 3, "turbine_computer", 0)
+    return ui_controls.number(reading(q).rpm) > 0
+end, 8), "and its sections take their turns afresh")
+assert((watts() or 0) > 0, "feeding the grid again")

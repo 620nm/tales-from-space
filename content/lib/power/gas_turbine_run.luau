@@ -60,11 +60,12 @@ local function turning(record: record_lib.RunRecord): boolean
     return record.active and not record_lib.stalled(record)
 end
 
--- `structure.changed` on every section: a section the switch set turning
--- takes its turns in the run, anchored on its own tile.
+-- `structure.changed` on every section, anchored on its own tile: a section
+-- set turning takes its turns in the run; a rotor shut takes its watts off;
+-- a turning section the switch shut to restart a stall turns again.
 function gas_turbine_run.on_section_changed(ev: StructureChangedPayload): ()
     local section = ev.structure
-    if ev.state ~= gas_turbine.RUNNING or ev.previous == ev.state or not section.alive then
+    if ev.previous == ev.state or not section.alive then
         return
     end
     local rotor = gas_turbine.core_of(section)
@@ -72,7 +73,14 @@ function gas_turbine_run.on_section_changed(ev: StructureChangedPayload): ()
         return
     end
     local record = record_lib.read(rotor)
-    if record.active then
+    if ev.state == gas_turbine.CLOSED then
+        if (section.base or section.prototype) == gas_turbine.CORE then
+            turns.zero(rotor)
+        end
+        if ev.previous == gas_turbine.RUNNING and turning(record) then
+            sim.appearance.set_state({ entity = section, state = gas_turbine.RUNNING })
+        end
+    elseif ev.state == gas_turbine.RUNNING and record.active then
         turns.spawn(section, rotor, record.run, record.epoch)
     end
 end
@@ -96,10 +104,6 @@ function gas_turbine_run.start(rotor: Handle, _actor: Handle?): (boolean, string
         return refuse("unpowered")
     end
     local compressor, outlet = gas_turbine.ends(rotor)
-    local line = { compressor, rotor, outlet }
-    -- A stalled line still wears `running`: shut it first, so each section
-    -- changes into `running` again and takes its turns afresh.
-    record_lib.dress(line, gas_turbine.CLOSED)
     record.active = true
     record.run += 1
     record.epoch = sim.tick()
@@ -107,17 +111,22 @@ function gas_turbine_run.start(rotor: Handle, _actor: Handle?): (boolean, string
     record.rpm = 0
     record.power_w = 0
     record_lib.save(rotor, record)
-    for _, section in ipairs(line) do
+    -- One state write per section, the last of an occurrence being the one
+    -- kept: a shut section turns; a stalled one still wearing `running` is
+    -- shut, and its own change sets it turning afresh (`on_section_changed`).
+    for _, section in ipairs({ compressor, rotor, outlet }) do
         local now = if section ~= nil and section.alive then section.state else nil
-        if now == gas_turbine.CLOSED or now == gas_turbine.RUNNING then
+        if now == gas_turbine.CLOSED then
             sim.appearance.set_state({ entity = section :: Handle, state = gas_turbine.RUNNING })
+        elseif now == gas_turbine.RUNNING then
+            sim.appearance.set_state({ entity = section :: Handle, state = gas_turbine.CLOSED })
         end
     end
     return true, nil
 end
 
 -- The power switch off, refused above 1000 rpm (turbine_computer.dm:94);
--- a stalled run stops at any speed. The rotor's turn takes the watts off.
+-- a stalled run stops at any speed. The rotor shut takes its watts off.
 function gas_turbine_run.stop(rotor: Handle, _actor: Handle?): (boolean, string?)
     local record = record_lib.read(rotor)
     if not record.active then
