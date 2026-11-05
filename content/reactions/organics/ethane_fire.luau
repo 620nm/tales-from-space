@@ -1,4 +1,7 @@
--- interactions we use: 2 C2H6 + 7 O2 -> 4 CO2 + 6 H2O (ethane_fire)
+-- Ethane fire: ethane burning in oxygen.
+--
+-- interactions we use:
+--   2 C2H6 + 7 O2 -> 4 CO2 + 6 H2O (ethane_fire)
 --
 -- Ethane burning in oxygen, written per mole of ethane:
 -- C2H6 + 3.5 O2 -> 2 CO2 + 3 H2O. At 94 K ethane is a liquid with almost

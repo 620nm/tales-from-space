@@ -1,4 +1,7 @@
--- interactions which require catalysts: 4 C2H6 -> C8H16 + 4 H2, catalyst synthesis_catalyst (ethane_to_naphtha)
+-- Ethane to naphtha: sea ethane upgraded to the shelf's fuel.
+--
+-- interactions which require catalysts:
+--   4 C2H6 -> C8H16 + 4 H2, catalyst synthesis_catalyst (ethane_to_naphtha)
 --
 -- Sea ethane upgraded to naphtha, the shelf's C8H16 bookkeeping unit
 -- (docs/PETROCHEMISTRY.md owns the model). It folds dehydrogenation and

@@ -1,10 +1,12 @@
--- interactions we use: CH4 + 2 O2 -> CO2 + 2 H2O (methane_fire)
--- interactions we know exist but don't need: methane outside its flammability limits (5-15 % in air): the latch and the burn rate stand in for a mixture gate
+-- Methane fire: methane burning in oxygen.
 --
--- Methane burning in oxygen. In a cold methane sky the fire is inverted:
--- the air is fuel and the oxygen is what leaks out of a habitat, so the
--- flame lives in the plume. The products are hot gas that freezes back
--- out as dry ice and water ice once the cell cools to the sky.
+-- interactions we use:
+--   CH4 + 2 O2 -> CO2 + 2 H2O (methane_fire)
+--
+-- In a cold methane sky the fire is inverted: the air is fuel and the
+-- oxygen is what leaks out of a habitat, so the flame lives in the
+-- plume. The products are hot gas that freezes back out as dry ice and
+-- water ice once the cell cools to the sky.
 --
 -- Energy: the lower heating value from NIST WebBook formation enthalpies
 -- (gas): CH4 -74.87, CO2 -393.51, H2O -241.826 kJ/mol, so -802.3 kJ per

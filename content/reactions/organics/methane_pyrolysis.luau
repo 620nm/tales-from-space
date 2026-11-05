@@ -1,4 +1,7 @@
--- interactions which require catalysts: CH4 -> C + 2 H2, catalyst iron (methane_pyrolysis)
+-- Methane pyrolysis: methane cracked to carbon and hydrogen over iron.
+--
+-- interactions which require catalysts:
+--   CH4 -> C + 2 H2, catalyst iron (methane_pyrolysis)
 --
 -- Methane cracked over hot iron: the world's hydrogen source. The
 -- hydrogen feeds ammonia and naphtha (reactions/ammonia.luau,

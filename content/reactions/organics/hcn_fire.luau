@@ -1,5 +1,7 @@
--- interactions we use: 4 HCN + 5 O2 -> 4 CO2 + 2 H2O + 2 N2 (hcn_fire)
--- interactions we know exist but don't need: HCN + O2 -> NOx and CO in a rich or hot flame: one clean product set is enough for a fire
+-- HCN fire: hydrogen cyanide burning in oxygen.
+--
+-- interactions we use:
+--   4 HCN + 5 O2 -> 4 CO2 + 2 H2O + 2 N2 (hcn_fire)
 --
 -- Hydrogen cyanide burning in oxygen, written per mole of HCN:
 -- HCN + 1.25 O2 -> CO2 + 0.5 H2O + 0.5 N2. Frost tracked indoors warms,
