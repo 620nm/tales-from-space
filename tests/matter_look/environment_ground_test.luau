@@ -36,10 +36,17 @@ t.run_ticks(4)
 
 assert(t.environment().id == "warm_outdoors", "293.15 K picks the warm ground, got " .. t.environment().id)
 
+-- A tile's one ground face; sand over soil (content/terrain.luau `blending`)
+-- also draws a soil underlay part, which this skips.
 local function face(x: number, y: number): SpecSeenMatterPart
-    local parts = t.seen_ground(p, x, y)
-    assert(#parts == 1, "tile (" .. x .. ", " .. y .. ") draws one ground part, got " .. #parts)
-    return parts[1]
+    local found: SpecSeenMatterPart? = nil
+    for _, part in t.seen_ground(p, x, y) do
+        if not part.underlay then
+            assert(found == nil, "tile (" .. x .. ", " .. y .. ") draws one ground face")
+            found = part
+        end
+    end
+    return assert(found, "tile (" .. x .. ", " .. y .. ") draws a ground face")
 end
 
 local blank = face(2, 1)

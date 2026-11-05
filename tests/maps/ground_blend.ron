@@ -1,0 +1,41 @@
+// Ground blending bench under the warm sky, which tops each column with soil:
+// hinted sand (x 0-1, y 0-2) beside the soil, a wall (x 5, y 0-2) beside the
+// soil, and grass (x 0-2) beside moss (x 3-5) on the soil of rows 3-5.
+// Read by tests/matter_look/ground_face_test.luau.
+(
+    name: "ground blend",
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), surface_temperature_k: Exact(293.15)),
+    legend: {
+        '.': (composition: (), outdoors: true),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+    },
+    ground: (
+        legend: {
+            'a': (material: Some(Blend("sand_ground"))),
+            'g': (cover: Some("grass")),
+            'm': (cover: Some("moss")),
+        },
+        rows: [
+            "aa....",
+            "aa....",
+            "aa....",
+            "gggmmm",
+            "gggmmm",
+            "gggmmm",
+        ],
+    ),
+    levels: [
+        (
+            rows: [
+                ".....#",
+                ".....#",
+                ".....#",
+                "......",
+                "......",
+                "......",
+            ],
+            structures: [(0, 0, "player_spawn")],
+        ),
+    ],
+)

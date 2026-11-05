@@ -138,4 +138,24 @@ return {
     steps = {
         { id = "half", height = 0.5, face = "cliff_shell", elevation_px = 12 },
     },
+    -- Where two grounds meet, the higher in `precedence` keeps its edge
+    -- and draws over the lower, which runs flat to the seam: loose sand
+    -- and soil over the hard grounds, ice bedrock lowest. The seas are
+    -- unlisted, so a seabed lies under every listed ground and a shore
+    -- draws its land's edge over it. Grass draws over moss (`looks`,
+    -- matter_appearances.luau). Nothing is kept apart (`never`, `refused`).
+    blending = {
+        precedence = {
+            "sand_ground",
+            "dug_sand",
+            "soil_ground",
+            "sheet_ice",
+            "silica_ground",
+            "basalt_ground",
+            "ice_bedrock",
+        },
+        never = {},
+        refused = {},
+        looks = { "grass", "moss" },
+    },
 }

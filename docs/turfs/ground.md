@@ -35,6 +35,17 @@ yet. Specs: `tests/matter_look/ground_face_test.luau`,
 `tests/matter_look/environment_ground_test.luau`,
 `tests/terrain/ice_sheet_test.luau`.
 
+Blending: `content/terrain.luau` `blending` orders the grounds (the engine's
+docs/content-schema/terrain.md §Blending). Where two meet, the higher keeps
+its edge and draws it over the lower's face, which runs flat to the seam:
+`sand_ground`, `dug_sand`, `soil_ground`, `sheet_ice`, `silica_ground`,
+`basalt_ground`, `ice_bedrock`, highest first. The seas are unlisted, so a
+seabed lies under every land ground and a shore draws the land's edge over
+it. Covers blend by `looks`: grass draws over moss. A wall or deck hides the
+ground under it, and the ground beside it runs flat to it. A step or a
+raised block keeps a hard edge. Spec: `tests/matter_look/ground_face_test.luau`
+(`tests/maps/ground_blend.ron`).
+
 Height: a column's ground `height` hint moves its surface between levels.
 Height 1 raises a full block onto level 0, a ridge no body walks into; -1
 opens level -1 down to the generated level, a room cut into rock. Spec:

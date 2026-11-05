@@ -1,9 +1,11 @@
 -- A look at bare natural ground names what the ground is, by the blend's
 -- localized name (`name_label`, locale/en.json), and a look at a sea says the
 -- water fills the ground rather than lying on it as a puddle (the engine's
--- docs/wiki/examine.md).
+-- docs/wiki/examine.md). A deck laid over the ground hides it: its look
+-- names no ground.
 --
--- Columns 0-3 are sand, 4-7 sea, under the `warm_outdoors` sky.
+-- Columns 0-3 are sand, 4-7 sea, under the `warm_outdoors` sky; (0, 2) and
+-- (1, 2) are plating over the sky's generated soil.
 t.world(
     [==[(
     name: "ground examine",
@@ -12,13 +14,14 @@ t.world(
     legend: {
         'a': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sand_ground"), components: [])),
         'w': (outdoors: true, composition: (substrate: Named("ground"), material: Named("sea_water"), components: [])),
+        'p': (outdoors: true, composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     levels: [
         (
             rows: [
                 "aaaawwww",
                 "aaaawwww",
-                "aaaawwww",
+                "ppaawwww",
             ],
             structures: [(1, 1, "player_spawn")],
         ),
@@ -64,3 +67,6 @@ local sea = lines_at(5, 1)
 assert(has(sea, "The ground is open sea."), "the sea names its ground: " .. table.concat(sea, " | "))
 assert(starts(sea, "Filling the ground here: "), "the sea fills its bed: " .. table.concat(sea, " | "))
 assert(not starts(sea, "A puddle"), "and is not a puddle: " .. table.concat(sea, " | "))
+
+local plated = assert(t.examine(p, 0, 2), "the plating answers a look").lines
+assert(not starts(plated, "The ground is"), "plating over ground names no ground: " .. table.concat(plated, " | "))
