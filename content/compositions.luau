@@ -62,7 +62,7 @@ end
 
 -- The mouth caps tg draws over a device's ports, joined or not
 -- (filter.dm:51, vent_pump.dm:190). A device names one as `atmos.mouth_cap`.
-local mouth_cap_families = { "inline", "vent", "scrub", "inje" }
+local mouth_cap_families = { "inline", "vent", "scrub", "inje", "vault" }
 
 local function port_shapes(channels: {string})
     local result: {[string]: any} = {}

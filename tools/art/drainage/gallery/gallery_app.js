@@ -104,7 +104,7 @@ function drawTileStack(ctx, x, y, size, turfKey, waterMode, pipeKind, fixtureIm)
     if (im && im.complete) ctx.drawImage(im, x, y, size, size);
   }
 
-  if (state.showPipes && exposed && (pipeKind === "waste" || pipeKind === "supply" || pipeKind === "supply_ew")) {
+  if (state.showPipes && exposed && (pipeKind === "waste" || pipeKind === "supply" || pipeKind === "supply_ew" || pipeKind === "vault")) {
     const stubSrc = pipeKind === "supply_ew"
       ? DATA.refs_bundle.overlays.pipe_stub_supply_e
       : (pipeKind === "supply"
@@ -129,12 +129,14 @@ function drawTileStack(ctx, x, y, size, turfKey, waterMode, pipeKind, fixtureIm)
     ctx.drawImage(fixtureIm, x, y, size, size);
   }
 
-  if (state.showPipes && exposed && (pipeKind === "waste" || pipeKind === "supply" || pipeKind === "supply_ew")) {
-    const capSrc = pipeKind === "supply_ew"
-      ? DATA.refs_bundle.overlays.vent_cap_e
-      : (pipeKind === "supply"
-        ? DATA.refs_bundle.overlays.vent_cap_n
-        : DATA.refs_bundle.overlays.scrub_cap_n);
+  if (state.showPipes && exposed && (pipeKind === "waste" || pipeKind === "supply" || pipeKind === "supply_ew" || pipeKind === "vault")) {
+    const capSrc = pipeKind === "vault"
+      ? DATA.refs_bundle.overlays.vault_cap_n
+      : (pipeKind === "supply_ew"
+        ? DATA.refs_bundle.overlays.vent_cap_e
+        : (pipeKind === "supply"
+          ? DATA.refs_bundle.overlays.vent_cap_n
+          : DATA.refs_bundle.overlays.scrub_cap_n));
     const cm = loadImg(capSrc);
     if (cm && cm.complete) ctx.drawImage(cm, x, y, size, size);
   }
@@ -168,6 +170,21 @@ function pickFixtureFrame(c, dirIdx = 0) {
       return 4 + dirIdx * 4 + (state.tick % 4);
     }
     return dirIdx;
+  }
+  if (c.name === "intake_upper_deck" || c.name === "intake_ceiling_below" || c.kind === "intake_upper_deck" || c.kind === "intake_ceiling_below") {
+    return state.mode === "active"
+      ? (state.tick % c.frames.length)
+      : (state.mode === "fault" ? Math.min(6, c.frames.length - 1) : 0);
+  }
+  if (c.name === "intake_vault" || c.kind === "intake_vault") {
+    return state.mode === "active"
+      ? (state.tick % c.frames.length)
+      : (state.mode === "fault" ? Math.min(3, c.frames.length - 1) : 0);
+  }
+  if (c.name === "vault_mouth_caps" || c.kind === "vault_mouth_caps") {
+    return state.mode === "active"
+      ? (state.tick % c.frames.length)
+      : (state.mode === "fault" ? Math.min(8, c.frames.length - 1) : 0);
   }
   return 0;
 }
@@ -268,10 +285,16 @@ function buildGalleryDOM() {
     });
   });
 
+  const intakeGrid = document.getElementById("grid-intake-heads");
   const containers = {
     floor_drain: document.getElementById("grid-floor-drains"),
     scupper: document.getElementById("grid-wall-scuppers"),
     sump_pump: document.getElementById("grid-sump-pumps"),
+    intake_upper_deck: intakeGrid,
+    intake_ceiling_below: intakeGrid,
+    intake_vault: intakeGrid,
+    intake_head: intakeGrid,
+    vault_mouth_caps: intakeGrid,
   };
 
   DATA.fixtures.forEach(c => {
@@ -392,7 +415,13 @@ function buildGalleryDOM() {
       chipWrap.appendChild(cRow); chipWrap.appendChild(chipLbl);
       stage.appendChild(chipWrap);
 
-      const pKind = c.kind === "sump_pump" ? "supply_ew" : "waste";
+      const pKind = c.kind === "sump_pump"
+        ? "supply_ew"
+        : ((c.name === "intake_upper_deck" || c.name === "intake_vault" || c.kind === "intake_upper_deck" || c.kind === "intake_vault")
+          ? "vault"
+          : ((c.name === "intake_ceiling_below" || c.name === "intake_head" || c.name === "vault_mouth_caps" || c.kind === "intake_ceiling_below" || c.kind === "intake_head" || c.kind === "vault_mouth_caps")
+            ? "none"
+            : "waste"));
       const cardDir = c.kind === "sump_pump" ? 2 : 0;
       const refObj = DATA.refs_bundle.refs.find(r => r.id === (c.kind === "sump_pump" ? "ref_scrubber" : "ref_passive_vent"));
       dynamicCanvases.push(() => {
@@ -467,7 +496,7 @@ function buildGalleryDOM() {
     act.innerHTML = `<span class="ase-path" title="${c.aseprite}">${c.name}.aseprite (${c.frame_count}f, ${c.layers.length} layers)</span>`;
     card.appendChild(act);
 
-    containers[c.kind].appendChild(card);
+    (containers[c.name] || containers[c.kind] || intakeGrid).appendChild(card);
   });
 }
 

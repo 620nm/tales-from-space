@@ -25,6 +25,8 @@ from typing import Any
 
 from PIL import Image, ImageFont
 
+import intake_validation
+
 # tools/art/drainage/drainage_kit.py -> the pack root is three levels up.
 PACK_ROOT = Path(__file__).resolve().parents[3]
 DRAINAGE_DIR = Path(__file__).resolve().parent
@@ -32,7 +34,16 @@ OUT_ROOT = PACK_ROOT / "target/art/drainage"
 SOURCE_DIR = PACK_ROOT / "assets/originals/art/machines/drainage"
 GPL_PATH = PACK_ROOT / "docs/art-reference/palettes/tales-from-space.gpl"
 TTF_FONT_PATH = os.environ.get("DRAINAGE_FONT", "/usr/share/fonts/noto/NotoSansMono-Regular.ttf")
-FIXTURES: tuple[str, ...] = ("floor_drain", "scupper", "sump_pump")
+FIXTURES: tuple[str, ...] = (
+    "floor_drain",
+    "scupper",
+    "sump_pump",
+    "intake_head",
+    "intake_vault",
+    "intake_upper_deck",
+    "intake_ceiling_below",
+    "vault_mouth_caps",
+)
 
 
 def aseprite_binary() -> str:
@@ -365,6 +376,9 @@ def validate_spec(spec: dict[str, Any]) -> dict[str, Any]:
         unused = set(layer["legend"].keys()) - used_tokens
         if unused:
             raise AssertionError(f"{name}/{layer['name']}: unused legend keys {sorted(unused)}")
+
+    if kind in intake_validation.INTAKE_KINDS:
+        return intake_validation.validate_intake_spec(spec, composite_frame, analyze_grid, rec709_luma)
 
     per_frame_stats: list[dict[str, Any]] = []
     for f in range(n_frames):
