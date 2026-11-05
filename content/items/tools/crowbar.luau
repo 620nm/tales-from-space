@@ -28,7 +28,7 @@ local content = {
 
 content.actions = {
     action_rules.primary("pry_floor", action_rules.deck("floor_tiles", "grid_cover", "glass_floor",
-        "reinforced_glass_floor", "plasma_glass_floor", "reinforced_plasma_glass_floor")),
+        "reinforced_glass_floor", "lead_glass_floor", "reinforced_lead_glass_floor")),
     action_rules.primary("pry_door", {
         all = {
             action_rules.kind("door"),

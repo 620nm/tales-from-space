@@ -1,21 +1,11 @@
--- A grille, and the windows that hang in one.
+-- A grille, and the clear windows that hang in one.
 --
--- tg keeps the grille and the pane as two objects sharing a tile; here
--- they are one structure wearing two pictures. Josh's point holds
--- either way: the glass covers the grille, so a click lands on the
--- pane and the mesh underneath is unreachable until the glass is out.
--- One structure gets there by construction instead of by leaning on
--- the hit-test, and the reachable steps come out the same. The stack
--- is drawn bottom-first, so the mesh shows THROUGH the glass -- tg's
--- window art has no fully opaque pixel in it, and that is the look.
---
--- Dense but not opaque: it stops you walking through and does not stop
--- you seeing through. That distinction is why those are two flags.
---
--- The times below are tg's, and the asymmetry is the point: two
--- seconds to fit a reinforced pane, THIRTY across five tools to get it
--- back out. A window is cheap to put up and expensive to remove, which
--- is most of what makes it worth putting up.
+-- One structure wears the mesh and pane bottom-first so the mesh shows
+-- through translucent window art and remains unreachable until the pane is
+-- removed. Dense but not opaque: blocks movement without blocking sight.
+-- Timings follow tg (2 s to fit, 14 s plain or 30 s across five tools for
+-- reinforced disassembly). Lead-glass panes swap into `lead_glass_grille`
+-- and `reinforced_lead_glass_grille` (`gone = true, leaves = ...`).
 return {
     id = "grille",
     -- Large and loose, so it draws over items (large_object in content/compositions.luau).
@@ -32,57 +22,17 @@ return {
         public_contacts = true,
     },
     opaque = false,
-    -- States are adjectives because the engine composes refusals out of
-    -- them: "The grille must be bolted first." reads as English only if
-    -- the state is named like one.
-    states = {
-        "bolted",
-        "unbolted",
-        -- plain glass
-        "glazed",
-        "unsealed",
-        -- reinforced glass: tg's security ladder
-        "reinforced",
-        "heated",
-        "unscrewed",
-        "popped",
-        "cut",
-    },
-    -- The three a station is actually built out of: bare mesh, a
-    -- window, and a reinforced window. Every other state above is a
-    -- rung of a disassembly ladder -- half-unscrewed, popped, cut --
-    -- and nobody commissions a corridor with one in it, so the palette
-    -- offers these and stays readable (docs/MAPPING.md).
+    -- Adjective state names compose grammatical refusals ("The grille must be bolted first.").
+    states = { "bolted", "unbolted", "glazed", "unsealed", "reinforced", "heated", "unscrewed", "popped", "cut" },
+    -- Commissioned states only; disassembly rungs stay off the editor palette (docs/MAPPING.md).
     palette_states = { "bolted", "glazed", "reinforced" },
-    -- An unfastened grille is not held to the deck, so it shoves like
-    -- any other loose thing -- the same marker the girder work added.
     loose = { "unbolted" },
-    -- Glass stops air. tg says this in window.dm:405 (`can_atmos_pass`
-    -- returns false for a window that is anchored, dense and fulltile),
-    -- and it is why a station can have a viewport at all: without it a
-    -- window in a hull is a hole you happen to be able to see through.
-    --
-    -- Every glass-bearing state is listed, including the ones partway
-    -- through disassembly. That is deliberate and it is tg's answer
-    -- too: the pane is still standing in the frame until the step that
-    -- hands it back as sheets. Half a minute of unscrewing a hull
-    -- window is half a minute in which the room keeps its air -- and
-    -- then does not.
-    airtight = {
-        "glazed",
-        "unsealed",
-        "reinforced",
-        "heated",
-        "unscrewed",
-        "popped",
-        "cut",
-    },
+    -- Glass stops air across all glazed and partial-disassembly states (tg window.dm:405).
+    airtight = { "glazed", "unsealed", "reinforced", "heated", "unscrewed", "popped", "cut" },
     state_sprites = {
         glazed = { "grille", "window" },
         unsealed = { "grille", "window" },
-        -- Every reinforced state looks identical from across the room.
-        -- Deliberate: you cannot see that someone is half a minute into
-        -- taking your window apart.
+        -- Every reinforced rung draws identically so partial disassembly is not visible from afar.
         reinforced = { "grille", "rwindow" },
         heated = { "grille", "rwindow" },
         unscrewed = { "grille", "rwindow" },
@@ -98,9 +48,7 @@ return {
         done = "The grille stands.",
     },
     transitions = {
-        -- tg gates glazing on the grille being fastened down
-        -- (grille.dm: "needs to be fastened to the floor first!"), and
-        -- a screwdriver toggles that at no delay.
+        -- tg gates glazing on a fastened grille (grille.dm); screwdriver toggles with no delay.
         {
             sound = "smash",
             at = "bolted",
@@ -125,8 +73,6 @@ return {
             start = "You start snipping the grille apart.",
             done = "The grille comes apart.",
         },
-        -- Only an empty grille comes apart: the glass goes first, or
-        -- the rods would come out from under a standing pane.
         {
             sound = "smash",
             at = "bolted",
@@ -136,6 +82,33 @@ return {
             gone = true,
             start = "You start snipping the grille apart.",
             done = "The grille comes apart.",
+        },
+
+        -- ---- lead glass: swaps to dedicated shielded window structures ----
+        {
+            sound = "smash",
+            at = "bolted",
+            with = { lead_glass = 2 },
+            secs = 2.0,
+            gone = true,
+            leaves = "lead_glass_grille",
+            start = "You start fitting the lead glass to the grille.",
+            done = "The lead glass settles into the grille.",
+        },
+        {
+            sound = "smash",
+            at = "bolted",
+            with = { reinforced_lead_glass = 2 },
+            secs = 2.0,
+            hint = {
+                id = "fit_reinforced_lead_glass",
+                label = "lunatic/tfs:ui.affordance.fit_reinforced_lead_glass",
+                suggest = true,
+            },
+            gone = true,
+            leaves = "reinforced_lead_glass_grille",
+            start = "You start bolting the reinforced lead glass to the grille.",
+            done = "The reinforced lead glass bolts into the grille.",
         },
 
         -- ---- plain glass: two seconds in, fourteen out ----
@@ -177,9 +150,7 @@ return {
             done = "The pane comes free.",
         },
 
-        -- ---- reinforced: tg's five-tool ladder ----
-        -- welder 15 s, screwdriver 5 s, crowbar 4 s, cutters 2 s,
-        -- wrench 4 s (window.dm's *_act_secondary chain).
+        -- ---- reinforced: tg's five-tool ladder (window.dm *_act_secondary) ----
         {
             sound = "smash",
             at = "bolted",
@@ -262,10 +233,7 @@ return {
             done = "The bolts back out and the pane comes loose.",
         },
 
-        -- The half-finished states are reversible. A player who changes
-        -- their mind can follow the same ladder back up before committing
-        -- the final wrench step; the finished grille still takes rglass to
-        -- become a reinforced window again, so salvage remains conserved.
+        -- Reversible intermediate rungs; salvage remains conserved.
         {
             sound = "smash",
             at = "heated",

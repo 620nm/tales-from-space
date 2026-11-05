@@ -8,6 +8,7 @@
 (
     // Sheet aliases are local to this family; @names below resolve here.
     sheets: [
+        ("held_lead_glass", "art/items/materials/held_lead_glass.aseprite"),
         ("sheets_l", "mob/inhands/items/sheets_lefthand.dmi"),
         ("sheets_r", "mob/inhands/items/sheets_righthand.dmi"),
         ("items_l", "mob/inhands/items_lefthand.dmi"),
@@ -30,6 +31,8 @@
         // correctly when nothing adjoins it. We do not smooth yet.
         ("glass", Dmi("@stack_objects", "sheet-glass", 0)),
         ("rglass", Dmi("@stack_objects", "sheet-rglass", 0)),
+        ("lead_glass", Ase("art/items/materials/lead_glass_sheet.aseprite", "idle")),
+        ("reinforced_lead_glass", Ase("art/items/materials/reinforced_lead_glass_sheet.aseprite", "idle")),
         ("rods", Dmi("@stack_objects", "rods", 0)),
         // Plasteel wears tg's own single-sheet state (sheet_types.dm:313)
         // rather than metal's three-high pile, which is simply the
@@ -38,6 +41,8 @@
         ("grille", Dmi("@structures", "grille", 0)),
         ("window", Dmi("@window", "window-0", 0)),
         ("rwindow", Dmi("@reinforced_window", "reinforced_window-0", 0)),
+        ("lead_window", Ase("art/turf/lead_window.aseprite", "0")),
+        ("rlead_window", Ase("art/turf/reinforced_lead_window.aseprite", "0")),
         ("held_glass_l_s", Dmi("@sheets_l", "sheet-glass", 0)),
         ("held_glass_l_n", Dmi("@sheets_l", "sheet-glass", 1)),
         ("held_glass_l_e", Dmi("@sheets_l", "sheet-glass", 2)),
@@ -46,6 +51,14 @@
         ("held_rglass_l_n", Dmi("@sheets_l", "sheet-rglass", 1)),
         ("held_rglass_l_e", Dmi("@sheets_l", "sheet-rglass", 2)),
         ("held_rglass_l_w", Dmi("@sheets_l", "sheet-rglass", 3)),
+        ("held_lead_glass_l_s", Ase("@held_lead_glass", "l_s")),
+        ("held_lead_glass_l_n", Ase("@held_lead_glass", "l_n")),
+        ("held_lead_glass_l_e", Ase("@held_lead_glass", "l_e")),
+        ("held_lead_glass_l_w", Ase("@held_lead_glass", "l_w")),
+        ("held_reinforced_lead_glass_l_s", Ase("@held_lead_glass", "rl_s")),
+        ("held_reinforced_lead_glass_l_n", Ase("@held_lead_glass", "rl_n")),
+        ("held_reinforced_lead_glass_l_e", Ase("@held_lead_glass", "rl_e")),
+        ("held_reinforced_lead_glass_l_w", Ase("@held_lead_glass", "rl_w")),
         ("held_rods_l_s", Dmi("@items_l", "rods", 0)),
         ("held_rods_l_n", Dmi("@items_l", "rods", 1)),
         ("held_rods_l_e", Dmi("@items_l", "rods", 2)),
@@ -58,6 +71,14 @@
         ("held_rglass_r_n", Dmi("@sheets_r", "sheet-rglass", 1)),
         ("held_rglass_r_e", Dmi("@sheets_r", "sheet-rglass", 2)),
         ("held_rglass_r_w", Dmi("@sheets_r", "sheet-rglass", 3)),
+        ("held_lead_glass_r_s", Ase("@held_lead_glass", "r_s")),
+        ("held_lead_glass_r_n", Ase("@held_lead_glass", "r_n")),
+        ("held_lead_glass_r_e", Ase("@held_lead_glass", "r_e")),
+        ("held_lead_glass_r_w", Ase("@held_lead_glass", "r_w")),
+        ("held_reinforced_lead_glass_r_s", Ase("@held_lead_glass", "rr_s")),
+        ("held_reinforced_lead_glass_r_n", Ase("@held_lead_glass", "rr_n")),
+        ("held_reinforced_lead_glass_r_e", Ase("@held_lead_glass", "rr_e")),
+        ("held_reinforced_lead_glass_r_w", Ase("@held_lead_glass", "rr_w")),
         ("held_rods_r_s", Dmi("@items_r", "rods", 0)),
         ("held_rods_r_n", Dmi("@items_r", "rods", 1)),
         ("held_rods_r_e", Dmi("@items_r", "rods", 2)),

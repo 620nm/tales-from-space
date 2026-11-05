@@ -1,8 +1,8 @@
 -- Light crosses levels as sight does (`capabilities.levels.light`): through a
 -- hole or a floor window and not through a solid floor. Plain glass passes it
--- whole; plasma glass tints it to its material colour #ff80f4 (alloys.dm:98),
--- an owner ruling since tg tints no light. The lamp is the pack's ceiling
--- tube set white, on the same corridor power as tests/power/lights_test.luau.
+-- whole; lead glass tints it warm amber (`{ r = 1.0, g = 0.82, b = 0.38 }` in
+-- `content/compositions.luau`). The lamp is the pack's ceiling tube set white,
+-- on the same corridor power as tests/power/lights_test.luau.
 local BASEMENT = -1
 local GROUND = 0
 
@@ -27,7 +27,7 @@ local LEGEND = [==[
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
         'G': (composition: (substrate: Open, components: [(component: "glass_floor")])),
-        'P': (composition: (substrate: Open, components: [(component: "plasma_glass_floor")])),
+        'L': (composition: (substrate: Open, components: [(component: "lead_glass_floor")])),
         'H': (composition: (substrate: Open)),
 ]==]
 
@@ -43,11 +43,11 @@ end
 local POWERED = `(rows: ["#####", "#alo#", "#..g#", "#####"], structures: [(1, 1, "apc")], networks: [{cables(false)}])`
 
 -- (a), (c), (d): the lamp is in the basement, the viewer on the ground above
--- plain glass (2, 1), plasma glass (3, 1) and solid floor (1, 2).
+-- plain glass (2, 1), lead glass (3, 1) and solid floor (1, 2).
 world(
     "lamp below",
     POWERED,
-    `(rows: ["#####", "#.GP#", "#...#", "#####"], structures: [(1, 1, "player_spawn")])`
+    `(rows: ["#####", "#.GL#", "#...#", "#####"], structures: [(1, 1, "player_spawn")])`
 )
 local viewer = t.join()
 t.run_seconds(3)
@@ -56,16 +56,19 @@ t.run_seconds(3)
 local seen = t.received_light(viewer, 2, 1, BASEMENT)
 assert(seen ~= nil and seen[1] > 0 and seen[2] > 0 and seen[3] > 0, "the lamp lights the tile seen through the glass")
 
--- Plain glass passes white light white; plasma glass passes it tinted.
+-- Plain glass passes white light white; warm amber lead glass tints it ({ r = 1.0, g = 0.82, b = 0.38 }).
 local plain = assert(t.received_light(viewer, 2, 1, GROUND), "light reaches the plain glass floor")
 assert(plain[1] > 0 and math.abs(plain[2] / plain[1] - 1) < 0.05, "plain glass keeps white light white")
-local plasma = assert(t.received_light(viewer, 3, 1, GROUND), "light reaches the plasma glass floor")
-assert(plasma[1] > 0, "red passes plasma glass")
+local lead = assert(t.received_light(viewer, 3, 1, GROUND), "light reaches the lead glass floor")
+assert(lead[1] > 0, "red passes lead glass")
 assert(
-    math.abs(plasma[2] / plasma[1] - 0.502) < 0.06,
-    "green is held to half of red, got " .. plasma[2] / plasma[1]
+    math.abs(lead[2] / lead[1] - 0.82) < 0.06,
+    "green stays near 0.82 of red, got " .. lead[2] / lead[1]
 )
-assert(plasma[3] / plasma[1] > 0.9, "blue is nearly as strong as red, got " .. plasma[3] / plasma[1])
+assert(
+    math.abs(lead[3] / lead[1] - 0.38) < 0.06,
+    "blue is attenuated near 0.38 of red, got " .. lead[3] / lead[1]
+)
 
 -- (d) A solid floor passes nothing up; the viewer cannot see the tile under it.
 assert(t.received_light(viewer, 1, 2, GROUND) == nil, "a closed floor passes no light")

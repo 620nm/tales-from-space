@@ -37,10 +37,13 @@ local ROOM = [==[(
 -- Empty the active hand, then take what is on that tile. A click while
 -- holding a material BUILDS and one while holding a tool USES, so the
 -- hand has to be empty first.
-local function take(p: number, x: number, y: number)
-    t.drop(p)
-    t.run_ticks(2)
-    t.click(p, x, y, t.target_at(p, x, y))
+local function take(p: number, x: number, y: number, id: string?)
+    if t.hands(p).held ~= nil then
+        t.drop(p)
+        t.run_ticks(2)
+    end
+    local target = assert(t.target_at(p, x, y, id), "missing item at " .. x .. "," .. y)
+    t.click(p, x, y, target)
     t.run_ticks(2)
 end
 
@@ -187,3 +190,112 @@ t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_seconds(4.5)
 assert(t.count_items("rglass") > 0, "the reinforced sheets came back")
 assert(t.ledger_has("StructureStep", "grille", "bolted"), "an empty grille remains")
+
+-- ---------------------------------------------------------------
+-- Lead glass and reinforced lead glass: swaps into dedicated grilles
+-- and recovers sheets back to a bolted `grille`.
+-- ---------------------------------------------------------------
+t.world(
+    [==[(
+    name: "lead glazing",
+    legend: {
+        ' ': (composition: (substrate: Named("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+    },
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [
+                (2, 2, "player_spawn"),
+                (2, 1, "grille", "bolted"),
+                (2, 3, "grille", "bolted"),
+            ],
+            items: [
+                (1, 1, "lead_glass"),
+                (3, 1, "reinforced_lead_glass"),
+                (1, 2, "welder"),
+                (3, 2, "screwdriver"),
+                (1, 3, "crowbar"),
+                (2, 2, "wirecutters"),
+                (3, 3, "wrench"),
+            ],
+        ),
+    ],
+)]==],
+    7
+)
+
+p = t.join()
+t.tick()
+
+local function assert_layers(x: number, y: number, id: string, second: string)
+    local drawn = t.layers(p, assert(t.target_at(p, x, y, id)))
+    assert(#drawn == 2 and drawn[1] == "grille" and drawn[2] == second, id .. " draws " .. second)
+end
+
+take(p, 1, 1, "lead_glass")
+t.click(p, 2, 1, t.target_at(p, 2, 1, "grille"))
+t.run_seconds(2.5)
+assert(assert(t.structure_at(2, 1)).id == "lead_glass_grille", "lead glass swaps in lead_glass_grille")
+assert_layers(2, 1, "lead_glass_grille", "lead_window")
+
+take(p, 1, 3, "crowbar")
+t.messages(p)
+t.click(p, 2, 1, t.target_at(p, 2, 1, "lead_glass_grille"))
+t.run_ticks(4)
+local refused_unsealed = false
+for _, m in ipairs(t.messages(p)) do
+    if m == "The lead glass grille must be unsealed first." then
+        refused_unsealed = true
+    end
+end
+assert(refused_unsealed, "crowbar refusal names only lead_glass_grille's unsealed state")
+
+take(p, 3, 2, "screwdriver")
+t.click(p, 2, 1, t.target_at(p, 2, 1, "lead_glass_grille"))
+t.run_seconds(4.5)
+assert(assert(t.structure_at(2, 1)).state == "unsealed", "lead glass unfastened")
+
+take(p, 2, 2, "crowbar")
+t.click(p, 2, 1, t.target_at(p, 2, 1, "lead_glass_grille"))
+t.run_seconds(10.5)
+local restored = assert(t.structure_at(2, 1))
+assert(restored.id == "grille" and restored.state == "bolted", "prying leaves a bolted grille")
+assert(t.item_at(2, 1, "lead_glass") ~= nil, "lead_glass sheets recovered")
+
+take(p, 3, 1, "reinforced_lead_glass")
+t.click(p, 2, 3, t.target_at(p, 2, 3, "grille"))
+t.run_seconds(2.5)
+assert(
+    assert(t.structure_at(2, 3)).id == "reinforced_lead_glass_grille",
+    "reinforced lead glass swaps in"
+)
+assert_layers(2, 3, "reinforced_lead_glass_grille", "rlead_window")
+
+take(p, 1, 2, "welder")
+t.use_self(p)
+t.tick()
+t.click(p, 2, 3, t.target_at(p, 2, 3, "reinforced_lead_glass_grille"))
+t.run_seconds(15.5)
+take(p, 2, 2, "screwdriver")
+t.click(p, 2, 3, t.target_at(p, 2, 3, "reinforced_lead_glass_grille"))
+t.run_seconds(5.5)
+take(p, 2, 2, "crowbar")
+t.click(p, 2, 3, t.target_at(p, 2, 3, "reinforced_lead_glass_grille"))
+t.run_seconds(4.5)
+take(p, 2, 2, "wirecutters")
+t.click(p, 2, 3, t.target_at(p, 2, 3, "reinforced_lead_glass_grille"))
+t.run_seconds(2.5)
+take(p, 3, 3, "wrench")
+t.click(p, 2, 3, t.target_at(p, 2, 3, "reinforced_lead_glass_grille"))
+t.run_seconds(4.5)
+restored = assert(t.structure_at(2, 3))
+assert(restored.id == "grille" and restored.state == "bolted", "five-tool ladder leaves a bolted grille")
+assert(t.item_at(2, 3, "reinforced_lead_glass") ~= nil, "reinforced_lead_glass sheets recovered")

@@ -200,18 +200,16 @@ local supported = { substrate_support = true, any_component = { "station_base", 
 
 local construction_components = { "station_base", "floor_tiles", "grid_cover", "reinforcement",
     "lattice", "catwalk", "wall", "reinforced_wall", "rock",
-    "glass_floor", "reinforced_glass_floor", "plasma_glass_floor", "reinforced_plasma_glass_floor" }
+    "glass_floor", "reinforced_glass_floor", "lead_glass_floor", "reinforced_lead_glass_floor" }
 
--- tg /turf/open/floor/glass: in what is ported, the four variants differ in name
--- and art only (glass.dm:2-114; the glow is not ported). Floor
--- windows over an open substrate: they hold a body and the air (support, seal),
--- show the level below, and show runs without tool access (UNDERFLOOR_VISIBLE,
--- glass.dm:8). Thermal is floor.dm:17-18 with the
--- pack's floor emissivity; ambient is the plating's, which a glass floor replaces.
--- Light passes a floor window as sight does (undeclared `light_transmission`); only
--- plasma glass tints it, to its material colour #ff80f4 (alloys.dm:98). tg does not tint
--- light there: the tint is an owner ruling.
-local PLASMA_GLASS_LIGHT = { r = 1.0, g = 0.502, b = 0.957 }
+-- Floor windows over an open substrate (tg /turf/open/floor/glass, glass.dm:2-85, plus
+-- first-party radiologically shielded lead-glass variants): they hold a body and the air
+-- (support, seal), show the level below, and show runs without tool access
+-- (UNDERFLOOR_VISIBLE, glass.dm:8). Thermal is floor.dm:17-18 with the pack's floor
+-- emissivity; ambient is the plating's, which a glass floor replaces.
+-- Light passes a floor window as sight does (undeclared `light_transmission`); lead
+-- glass tints transmitted light warm steeped-tea/amber through high-lead-oxide shielding glass.
+local LEAD_GLASS_LIGHT = { r = 1.0, g = 0.82, b = 0.38 }
 
 local function glass_floor(id: string, label: string, light_transmission: { r: number, g: number, b: number }?)
     return { id = id, label = label, layer = "cover", sprite = id .. "-0", cover = controls(true),
@@ -312,8 +310,8 @@ local composition_declaration: { [string]: any } = {
                 gas_blocking = true, opaque = true } },
         glass_floor("glass_floor", "glass floor"),
         glass_floor("reinforced_glass_floor", "reinforced glass floor"),
-        glass_floor("plasma_glass_floor", "plasma glass floor", PLASMA_GLASS_LIGHT),
-        glass_floor("reinforced_plasma_glass_floor", "reinforced plasma glass floor", PLASMA_GLASS_LIGHT),
+        glass_floor("lead_glass_floor", "lead glass floor", LEAD_GLASS_LIGHT),
+        glass_floor("reinforced_lead_glass_floor", "reinforced lead glass floor", LEAD_GLASS_LIGHT),
     },
     networks = {
         { id = "power", label = "power cable", layer = "power", channels = power_channels, channel_preferences = { "l2", "l1", "l3" },
@@ -372,10 +370,10 @@ local composition_declaration: { [string]: any } = {
             components = { { component = "glass_floor" } } },
         { id = "reinforced_glass_floor", label = "Reinforced Glass Floor", substrate = "open", replace_components = construction_components,
             components = { { component = "reinforced_glass_floor" } } },
-        { id = "plasma_glass_floor", label = "Plasma Glass Floor", substrate = "open", replace_components = construction_components,
-            components = { { component = "plasma_glass_floor" } } },
-        { id = "reinforced_plasma_glass_floor", label = "Reinforced Plasma Glass Floor", substrate = "open", replace_components = construction_components,
-            components = { { component = "reinforced_plasma_glass_floor" } } },
+        { id = "lead_glass_floor", label = "Lead Glass Floor", substrate = "open", replace_components = construction_components,
+            components = { { component = "lead_glass_floor" } } },
+        { id = "reinforced_lead_glass_floor", label = "Reinforced Lead Glass Floor", substrate = "open", replace_components = construction_components,
+            components = { { component = "reinforced_lead_glass_floor" } } },
     },
     transitions = {
         { id = "remove_catwalk", remove_components = { "catwalk" }, remove_unsupported_networks = { "power" } },

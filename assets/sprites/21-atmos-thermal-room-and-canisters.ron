@@ -294,8 +294,9 @@
         ("floor_tile", Dmi("@tiles", "tile", 0)),
         ("glass_tile", Dmi("@tiles", "tile_glass", 0)),
         ("reinforced_glass_tile", Dmi("@tiles", "tile_rglass", 0)),
-        ("plasma_glass_tile", Dmi("@tiles", "tile_pglass", 0)),
-        ("reinforced_plasma_glass_tile", Dmi("@tiles", "tile_rpglass", 0)),
+        // First-party lead glass floor tiles.
+        ("lead_glass_tile", Ase("art/items/materials/lead_glass_tile.aseprite", "idle")),
+        ("reinforced_lead_glass_tile", Ase("art/items/materials/reinforced_lead_glass_tile.aseprite", "idle")),
         ("tv", Dmi("@computer", "detective_tv", 0)),
         ("white", White),
     ],

@@ -23,8 +23,8 @@ type GlassFloor = { x: number, component: string, tile: string }
 local floors: { GlassFloor } = {
     { x = 2, component = "glass_floor", tile = "glass_tile" },
     { x = 3, component = "reinforced_glass_floor", tile = "reinforced_glass_tile" },
-    { x = 4, component = "plasma_glass_floor", tile = "plasma_glass_tile" },
-    { x = 5, component = "reinforced_plasma_glass_floor", tile = "reinforced_plasma_glass_tile" },
+    { x = 4, component = "lead_glass_floor", tile = "lead_glass_tile" },
+    { x = 5, component = "reinforced_lead_glass_floor", tile = "reinforced_lead_glass_tile" },
 }
 
 t.world(
@@ -38,8 +38,8 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (substrate: Open, components: [(component: "glass_floor")])),
         'r': (composition: (substrate: Open, components: [(component: "reinforced_glass_floor")])),
-        'p': (composition: (substrate: Open, components: [(component: "plasma_glass_floor")])),
-        'q': (composition: (substrate: Open, components: [(component: "reinforced_plasma_glass_floor")])),
+        'l': (composition: (substrate: Open, components: [(component: "lead_glass_floor")])),
+        'm': (composition: (substrate: Open, components: [(component: "reinforced_lead_glass_floor")])),
         'R': (composition: (components: [(component: "rock")])),
     },
     levels: [
@@ -54,7 +54,7 @@ t.world(
         (
             rows: [
                 "########",
-                "#.grpq.#",
+                "#.grlm.#",
                 "########",
             ],
             items: [(1, 1, "crowbar")],
