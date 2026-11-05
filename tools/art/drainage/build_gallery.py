@@ -121,6 +121,7 @@ def collect_reference_assets() -> dict[str, Any]:
         "scrub_cap_n": img_to_data_uri(scrub_cap_n),
         "vent_cap_n": img_to_data_uri(vent_cap_n),
         "vent_cap_e": img_to_data_uri(vent_cap_e),
+        "vault_cap_n": img_to_data_uri(extract_aseprite_tag_frame("assets/originals/art/machines/drainage/vault_mouth_caps.aseprite", "l3_1")),
         "apc_lit": img_to_data_uri(apc_lit),
         "alarm_ok": img_to_data_uri(alarm_ok),
     }
@@ -245,7 +246,7 @@ def render_overview_board(fixtures: list[dict[str, Any]], out_path: Path) -> Non
     font_s = load_ui_font(10)
 
     W = 1360
-    H = 1120
+    H = 1420
     board = Image.new("RGBA", (W, H), (15, 18, 26, 255))
     draw = ImageDraw.Draw(board)
 
@@ -422,6 +423,70 @@ def render_overview_board(fixtures: list[dict[str, Any]], out_path: Path) -> Non
             fill=(197, 199, 212, 255),
         )
         draw_wrapped_blurb(cx + 10, cy + 194, c["blurb"])
+
+    # Row 4: Intake Head Multi-Z Suite
+    intake_names = ("intake_upper_deck", "intake_ceiling_below", "intake_vault", "intake_head")
+    intake_cards = [next((c for c in fixtures if c["name"] == nm), None) for nm in intake_names]
+    intake_cards = [c for c in intake_cards if c is not None]
+    if intake_cards:
+        draw.text(
+            (24, 1092),
+            "INTAKE HEAD (Upper Deck z, Undertile Ceiling Rig z-1, Vault & Isolated Crown)",
+            font=font_h2,
+            fill=(124, 196, 182, 255),
+        )
+        for i, c in enumerate(intake_cards):
+            cx = 24 + i * 330
+            cy = 1118
+            draw.rounded_rectangle([cx, cy, cx + 316, cy + 252], radius=6, fill=(24, 28, 42, 255), outline=(124, 196, 182, 255), width=2)
+            draw.text((cx + 10, cy + 8), c["title"], font=font_b, fill=(245, 224, 74, 255))
+            if c["name"] == "intake_upper_deck":
+                samples = [
+                    (ctx["floor"], f_img(c, 0), "Depressed"),
+                    (ctx["floor"], f_img(c, 3), "Opening"),
+                    (ctx["floor"], f_img(c, 6), "Elevated"),
+                ]
+            elif c["name"] == "intake_ceiling_below":
+                samples = [
+                    (ctx["plating"], f_img(c, 0), "Submerged"),
+                    (ctx["plating"], f_img(c, 3), "Ascending"),
+                    (ctx["plating"], f_img(c, 6), "Retracted"),
+                ]
+            elif c["name"] == "intake_vault":
+                samples = [
+                    (ctx["floor"], f_img(c, 0), "Closed"),
+                    (ctx["floor"], f_img(c, 2), "Opening"),
+                    (ctx["floor"], f_img(c, 3), "Open"),
+                ]
+            else:
+                f0 = f_img(c, 0)
+                samples = [
+                    (ctx["floor"], f0, "Floor"),
+                    (ctx["plating"], f0, "Plating"),
+                    (ctx["reinforced_floor"], f0, "Engine"),
+                ]
+
+            composed_chips = []
+            for bi, (bg_tile, fg_im, bl) in enumerate(samples):
+                bt = bg_tile.copy()
+                bt.alpha_composite(fg_im)
+                composed_chips.append(bt)
+                bx = cx + 10 + bi * 98
+                by = cy + 30
+                board.paste(bt.resize((88, 88), Image.NEAREST), (bx, by))
+                draw.rectangle([bx - 1, by - 1, bx + 88, by + 88], outline=(71, 74, 91, 255))
+                draw.text((bx, by + 92), bl, font=font_s, fill=(148, 151, 171, 255))
+
+            for bi, bt in enumerate(composed_chips):
+                board.paste(bt, (cx + 10 + bi * 38, cy + 144))
+            st = c["frame_stats"][0]
+            draw.text(
+                (cx + 128, cy + 148),
+                f"span {st['bbox'][2]}×{st['bbox'][3]} · {st['unique_colors']} cols\nluma {st['luma_top']}>{st['luma_bottom']} · anim {c['animated_px']}px",
+                font=font_s,
+                fill=(197, 199, 212, 255),
+            )
+            draw_wrapped_blurb(cx + 10, cy + 194, c["blurb"])
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     board.save(out_path)

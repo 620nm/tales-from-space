@@ -73,7 +73,13 @@ function renderInspectorAndLayers() {
   const ctx = cv.getContext("2d");
   ctx.imageSmoothingEnabled = false;
 
-  const pKind = c.kind !== "sump_pump" ? "waste" : (fi < 6 ? "supply_ew" : "supply");
+  const pKind = c.kind === "sump_pump"
+    ? (fi < 6 ? "supply_ew" : "supply")
+    : ((c.name === "intake_upper_deck" || c.name === "intake_vault" || c.kind === "intake_upper_deck" || c.kind === "intake_vault")
+      ? "vault"
+      : ((c.name === "intake_ceiling_below" || c.name === "intake_head" || c.name === "vault_mouth_caps" || c.kind === "intake_ceiling_below" || c.kind === "intake_head" || c.kind === "vault_mouth_caps")
+        ? "none"
+        : "waste"));
   const im = loadImg(c.frames[fi] || c.frames[0]);
   if (c.kind === "scupper") {
     const wallIm = loadImg(DATA.refs_bundle.walls[state.wall].src);

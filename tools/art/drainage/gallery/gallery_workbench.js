@@ -36,6 +36,12 @@ function buildPipeWorkbenchDOM() {
       capFam: "vent",
       desc: "The manifold spine turns with the facing + `mouth_cap = 'vent'`, so every stub meets solid steel.",
     },
+    {
+      id: "intake_upper_deck",
+      title: "Intake Head (32×32 Vault)",
+      capFam: "vault",
+      desc: "Stationary 32×32 vault curb + 5×3 `mouth_cap = 'vault'` collars on l1..l5 (zero overlap across all 20 ports).",
+    },
   ];
 
   items.forEach(item => {
@@ -84,10 +90,11 @@ function buildPipeWorkbenchDOM() {
       const ch = state.pwLayer;
       const shift = (ch - 3) * 5;
       const isScupper = (item.id === "scupper");
+      const isVault = (item.id === "intake_upper_deck");
       const mouths = computeMouths(state.pwDir, isScupper);
 
-      let dx = (mouths & 3) ? shift : 0;
-      let dy = (mouths & 12) ? -shift : 0;
+      let dx = isVault ? 0 : ((mouths & 3) ? shift : 0);
+      let dy = isVault ? 0 : ((mouths & 12) ? -shift : 0);
       if (isScupper) {
         dx = (state.pwDir === "N" || state.pwDir === "S") ? shift : 0;
         dy = (state.pwDir === "E" || state.pwDir === "W") ? -shift : 0;
@@ -191,6 +198,20 @@ function buildPipeWorkbenchDOM() {
             W: [0, 32 + (isCovered ? 0 : dy)],
           }[state.pwDir];
           if (im && im.complete) octx.drawImage(im, wallPos[0], wallPos[1], 32, 32);
+        } else if (item.id === "intake_upper_deck") {
+          const intake = DATA.fixtures.find(x => x.name === "intake_upper_deck" || x.kind === "intake_upper_deck");
+          if (intake) {
+            const bodyIm = loadImg(intake.frames[pickFixtureFrame(intake, 0)]);
+            if (bodyIm && bodyIm.complete) octx.drawImage(bodyIm, 32, 32, 32, 32);
+          }
+          if (!isCovered) {
+            [1, 2, 4, 8].forEach(db => {
+              if (mouths & db) {
+                const cap = loadImg(DATA.pipes.caps[`vault_l${ch}_${db}`]);
+                if (cap && cap.complete) octx.drawImage(cap, 32, 32, 32, 32);
+              }
+            });
+          }
         } else {
           const pump = DATA.fixtures.find(x => x.kind === "sump_pump");
           const pumpDir = { N: 0, S: 1, E: 2, W: 3 }[state.pwDir];

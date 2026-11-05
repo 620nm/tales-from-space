@@ -31,8 +31,8 @@ palette rules, animation timing and LED restraint policy. Nothing here ships.
   audit them are in
   [tools/art/terrestrial/](../../tools/art/terrestrial/README.md).
 - [drainage-asset-guide.md](drainage-asset-guide.md) holds the seating, value and
-  animation rules of the floor drain, scupper and sump pump; the tools that author
-  them are in [tools/art/drainage/](../../tools/art/drainage/README.md).
+  animation rules of the floor drain, scupper, sump pump and multi-Z intake head suite;
+  the tools that author them are in [tools/art/drainage/](../../tools/art/drainage/README.md).
 - `palettes/file-icons/` holds the file-icon importer's fixed palette strips.
 - `plates/01-medical.png` .. `09-information.png` are composite visual
   reference plates rendered from the pinned `tgstation` checkout

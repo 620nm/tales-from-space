@@ -1,7 +1,9 @@
 # Drainage sprite tools
 
-Authors, validates and previews the three liquid fixtures: `floor_drain`, `scupper` and
-`sump_pump`, sourced at `assets/originals/art/machines/drainage/`. The art rules are
+Authors, validates and previews the liquid drainage and intake fixtures (`floor_drain`,
+`scupper`, `sump_pump`, `intake_head`, `intake_vault`, `intake_upper_deck`,
+`intake_ceiling_below`, `vault_mouth_caps`), sourced at
+`assets/originals/art/machines/drainage/`. The art rules are
 [docs/art-reference/drainage-asset-guide.md](../../../docs/art-reference/drainage-asset-guide.md).
 Everything generated lands in the pack's gitignored `target/art/drainage/` (`png_1x/`,
 `png_8x/`, `layers/`, `manifests/`, `gallery/` and two boards); nothing generated is tracked.
@@ -9,9 +11,10 @@ Everything generated lands in the pack's gitignored `target/art/drainage/` (`png
 | Path | Purpose |
 |---|---|
 | `drainage_kit.py` | Validates the specs, draws a missing source through Aseprite MCP, exports each source's frames and writes `manifests/<fixture>.json`. |
-| `specs/spec_{floor_drain,scupper,sump_pump}.py` | `SPEC`: pixel rows, layers, durations and tags of one source. |
+| `intake_validation.py` | Validates the multi-Z intake head suite (`intake_head`, `intake_vault`, `intake_upper_deck`, `intake_ceiling_below`, `vault_mouth_caps`). |
+| `specs/spec_{floor_drain,scupper,sump_pump,intake_head,intake_vault,intake_upper_deck,intake_ceiling_below,vault_mouth_caps}.py` | `SPEC`: pixel rows, layers, durations and tags of one source. |
 | `build_gallery.py` | Bundles the manifests with `gallery/` into `target/art/drainage/gallery/`, and draws `overview_board.png`. |
-| `pipe_workbench.py` | Pipe stubs, mouth caps and riser sleeves for the gallery, and `pipe_connections_board.png`. |
+| `pipe_workbench.py` | Pipe stubs, mouth caps (`scrub`, `vent`, `inje`, `vault`) and riser sleeves for the gallery, and `pipe_connections_board.png`. |
 | `gallery/` | The authored page: `index.html`, its stylesheet and scripts. `gallery_data.js` is generated beside the copy in `target/`. |
 
 ## Setup
@@ -39,7 +42,7 @@ D=tools/art/drainage
 python3 $D/drainage_kit.py --check-specs                      # no Aseprite or MCP needed
 python3 $D/drainage_kit.py                                    # export what is on disk
 python3 $D/drainage_kit.py --fixture scupper --rebuild-sources
-python3 $D/build_gallery.py                                   # needs all three manifests
+python3 $D/build_gallery.py                                   # needs all eight manifests
 ```
 
 An existing `.aseprite` is exported as it stands, so hand edits survive. A missing source

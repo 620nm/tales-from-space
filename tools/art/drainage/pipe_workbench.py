@@ -248,6 +248,11 @@ def collect_pipe_workbench_bundle() -> dict[str, Any]:
             for ch_idx in range(1, 6):
                 caps[f"{fam}_l{ch_idx}_{dbit}"] = uri
 
+    vault_caps = extract_all_aseprite_tags("assets/originals/art/machines/drainage/vault_mouth_caps.aseprite")
+    for ch_idx in range(1, 6):
+        for dbit in (1, 2, 4, 8):
+            caps[f"vault_l{ch_idx}_{dbit}"] = img_to_data_uri(vault_caps[f"l{ch_idx}_{dbit}"])
+
     risers_im = make_scupper_riser_sprites()
     risers = {k: img_to_data_uri(v) for k, v in risers_im.items()}
 
@@ -320,6 +325,9 @@ def render_pipe_connections_board(out_path: Path) -> None:
     scupper_e = frame("scupper", 13)
     sump_ew = frame("sump_pump", 2)
     sump_ns = frame("sump_pump", 8)
+    intake_depressed = frame("intake_upper_deck", 1)
+    intake_elevated = frame("intake_upper_deck", 7)
+    vault_caps_im = extract_all_aseprite_tags("assets/originals/art/machines/drainage/vault_mouth_caps.aseprite")
 
     puddle = make_water_overlay(full_flood=False)
     waste_rgb = (240, 65, 55)
@@ -418,6 +426,40 @@ def render_pipe_connections_board(out_path: Path) -> None:
         rm.alpha_composite(scupper_e, (64, 32 + (0 if covered else dy_wall)))
         return rm.crop((24, 16, 88, 80))
 
+    def compose_vault_case(
+        body_im: Image.Image,
+        channels_mouths: list[tuple[int, int, tuple[int, int, int]]],
+        covered: bool = False,
+    ) -> Image.Image:
+        rm = Image.new("RGBA", (96, 96), (0, 0, 0, 255))
+        base_tile = ctx["floor"] if covered else ctx["plating"]
+        for gy in range(3):
+            for gx in range(3):
+                rm.paste(base_tile, (gx * 32, gy * 32))
+
+        if not covered:
+            for ch_idx, mouths, paint_rgb in channels_mouths:
+                if mouths & 1:
+                    rm.alpha_composite(tint_rgba(pipes_bm[f"3_{ch_idx}-s"], paint_rgb), (32, 0))
+                if mouths & 2:
+                    rm.alpha_composite(tint_rgba(pipes_bm[f"3_{ch_idx}-s"], paint_rgb), (32, 64))
+                if mouths & 4:
+                    rm.alpha_composite(tint_rgba(pipes_bm[f"12_{ch_idx}-s"], paint_rgb), (64, 32))
+                if mouths & 8:
+                    rm.alpha_composite(tint_rgba(pipes_bm[f"12_{ch_idx}-s"], paint_rgb), (0, 32))
+                for db in (1, 2, 4, 8):
+                    if mouths & db:
+                        rm.alpha_composite(tint_rgba(underlays[f"intact_{db}_{ch_idx}-s"], paint_rgb), (32, 32))
+
+        rm.alpha_composite(puddle, (32, 32))
+        rm.alpha_composite(body_im, (32, 32))
+        if not covered:
+            for ch_idx, mouths, _paint_rgb in channels_mouths:
+                for db in (1, 2, 4, 8):
+                    if mouths & db:
+                        rm.alpha_composite(vault_caps_im[f"l{ch_idx}_{db}"], (32, 32))
+        return rm.crop((16, 16, 80, 80))
+
     font_h1 = load_ui_font(15)
     font_h2 = load_ui_font(12)
     font_s = load_ui_font(10)
@@ -427,7 +469,7 @@ def render_pipe_connections_board(out_path: Path) -> None:
     col_w = cell_px + 18
     row_h = cell_px + 54
     W = cols * col_w + 30
-    H = 3 * row_h + 74
+    H = 4 * row_h + 74
     board = Image.new("RGBA", (W, H), (15, 18, 26, 255))
     draw = ImageDraw.Draw(board)
 
@@ -439,7 +481,7 @@ def render_pipe_connections_board(out_path: Path) -> None:
     )
     draw.text(
         (20, 36),
-        "Bare bodies + pipe_intact/pipe_exposed stubs + mouth_cap ('scrub'/'vent') + l1..l5 body_offset (±5/±10px); hidden under covered floor.",
+        "Bare bodies + pipe_intact/pipe_exposed stubs + mouth_cap ('scrub'/'vent'/'vault') + l1..l5 tracks; hidden under covered floor.",
         font=font_s,
         fill=(148, 151, 171, 255),
     )
@@ -472,6 +514,16 @@ def render_pipe_connections_board(out_path: Path) -> None:
                 ("East (E-W spine)", compose_3x3_floor_case(sump_ew, 4, vent_caps, 3, waste_rgb)),
                 ("West (E-W spine)", compose_3x3_floor_case(sump_ew, 8, vent_caps, 3, blue_rgb)),
                 ("Layer l5 (+10px)", compose_3x3_floor_case(sump_ns, 1, vent_caps, 5, waste_rgb)),
+            ],
+        ),
+        (
+            'Intake head (mouth_cap = "vault"): full 32×32 curb seats 5×3 collars on l1..l5',
+            [
+                ("North l3 (depressed)", compose_vault_case(intake_depressed, [(3, 1, waste_rgb)])),
+                ("Layer l1 (-10px track)", compose_vault_case(intake_depressed, [(1, 1, waste_rgb)])),
+                ("East l5 (elevated)", compose_vault_case(intake_elevated, [(5, 4, blue_rgb)])),
+                ("All 5 layers (N+E)", compose_vault_case(intake_elevated, [(ch, 5, blue_rgb if ch % 2 == 0 else waste_rgb) for ch in range(1, 6)])),
+                ("Covered floor (hides stubs)", compose_vault_case(intake_depressed, [(3, 1, waste_rgb)], covered=True)),
             ],
         ),
     ]
