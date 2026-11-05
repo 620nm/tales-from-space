@@ -11,9 +11,12 @@ local CHANNEL = "turbine"
 
 -- The generator feeds the APC, whose socket at (6, 4) cords the console;
 -- the main runs on under the rotor at (3, 1), the bus its watts feed.
--- The intake pocket at (1, 1) is walled off and hotter than tier-one parts
--- are rated for (50000 K, turbine_parts.dm:43-47); the sections stop air
--- (turbine.dm:10), so it stays hot. The tile ahead of the outlet, (5, 1),
+-- The intake pocket at (1, 1) is far hotter than tier-one parts are rated
+-- for (50000 K, turbine_parts.dm:43-47) and dense enough to stay so: the
+-- tile's own floor and walls soak heat (a light 60000 K pocket read 30000 K
+-- by the first pass), so it sits on reinforced floor inside reinforced
+-- walls, the pack's least-radiant (`content/compositions.luau`), and the
+-- sections stop air (turbine.dm:10). The tile ahead of the outlet, (5, 1),
 -- stays wall, so the shaft never turns and only the wear runs. The player
 -- stands in the air beside the rotor and the console.
 t.world(
@@ -23,6 +26,8 @@ t.world(
     legend: {
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'R': (composition: (components: [(component: "station_base"), (component: "reinforced_wall")])),
+        'r': (composition: (components: [(component: "station_base"), (component: "reinforcement")])),
         'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
         'a': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
@@ -30,9 +35,9 @@ t.world(
     levels: [
         (
             rows: [
-                "#########",
-                "#....#..#",
-                "##...####",
+                "#R#######",
+                "Rr...#..#",
+                "#R...####",
                 "#G......#",
                 "#a....o.#",
                 "#########",
@@ -71,7 +76,7 @@ t.world(
         ),
     ],
     blends: {
-        "hot_nitrogen": (rows: [("n2", 40.0)], temperature_k: 60000.0, amount: per_m3),
+        "hot_nitrogen": (rows: [("n2", 1000.0)], temperature_k: 300000.0, amount: per_m3),
         "room_air": (rows: [("n2", 32.9), ("o2", 8.7)], temperature_k: 293.15, amount: per_m3),
     },
 )]==],
@@ -125,6 +130,10 @@ t.run_ticks(2)
 assert(reading(p).active == true, "the switch starts a linked turbine")
 
 -- One pass of wear, then the body goes.
+local intake_k = ui_controls.number(reading(p).intake_k)
+local rating_k = ui_controls.number(reading(p).max_temperature_k)
+local under = string.format("the intake reads %.0f K, under %.0f K", intake_k, rating_k)
+assert(intake_k > rating_k, under)
 assert(eventually(function()
     return integrity(p) < 100
 end, 5), "heat past the rating wears the rotor")

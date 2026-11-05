@@ -11,9 +11,12 @@ local CHANNEL = "turbine"
 
 -- The generator feeds the APC, whose socket at (6, 4) cords the console;
 -- the main runs on under the rotor at (3, 1), the bus its watts feed.
--- The intake pocket at (1, 1) is walled off and hotter than tier-one parts
--- are rated for (50000 K, turbine_parts.dm:43-47); the sections stop air
--- (turbine.dm:10), so it stays hot. The tile ahead of the outlet, (5, 1),
+-- The intake pocket at (1, 1) is far hotter than tier-one parts are rated
+-- for (50000 K, turbine_parts.dm:43-47) and dense enough to stay so: the
+-- tile's own floor and walls soak heat (a light 60000 K pocket read 30000 K
+-- by the first pass), so it sits on reinforced floor inside reinforced
+-- walls, the pack's least-radiant (`content/compositions.luau`), and the
+-- sections stop air (turbine.dm:10). The tile ahead of the outlet, (5, 1),
 -- starts as wall, sealing off an empty exhaust chamber at (6..7, 1). The
 -- player stands in the air beside the rotor and the console.
 t.world(
@@ -23,6 +26,8 @@ t.world(
     legend: {
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'R': (composition: (components: [(component: "station_base"), (component: "reinforced_wall")])),
+        'r': (composition: (components: [(component: "station_base"), (component: "reinforcement")])),
         'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
         'a': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
@@ -30,9 +35,9 @@ t.world(
     levels: [
         (
             rows: [
-                "#########",
-                "#....#..#",
-                "##...####",
+                "#R#######",
+                "Rr...#..#",
+                "#R...####",
                 "#G......#",
                 "#a....o.#",
                 "#########",
@@ -71,7 +76,7 @@ t.world(
         ),
     ],
     blends: {
-        "hot_nitrogen": (rows: [("n2", 40.0)], temperature_k: 60000.0, amount: per_m3),
+        "hot_nitrogen": (rows: [("n2", 1000.0)], temperature_k: 300000.0, amount: per_m3),
         "room_air": (rows: [("n2", 32.9), ("o2", 8.7)], temperature_k: 293.15, amount: per_m3),
     },
 )]==],
@@ -152,16 +157,30 @@ press_power()
 assert(reading().active == true, "the switch starts a linked turbine")
 assert(all_in("running"), "every section turns")
 
+-- The window reads the intake against the parts' rating; the setup holds
+-- only while the one is past the other.
+local function past_rating(): string
+    return string.format(
+        "the intake reads %.0f K against a %.0f K rating",
+        number("intake_k"),
+        number("max_temperature_k")
+    )
+end
+assert(number("intake_k") > number("max_temperature_k"), past_rating())
+
 -- A pass with the exhaust walled: the gas fills the stages but nothing
--- leaves, so nothing turns the shaft (turbine.dm:673-676). 60000 K takes
--- round(log90(10000), 0.5) * 0.5 = 1 point of 500 a pass (:636-637).
-assert(eventually(function()
+-- leaves, so nothing turns the shaft (turbine.dm:673-676). Any intake a few
+-- kelvin past the rating takes damage (round(log90(dT), 0.5) * 0.5,
+-- turbine.dm:636-637), so integrity falls under 100.
+local worn = eventually(function()
     return number("integrity") < 100
-end, 5), "heat past the rating wears the rotor")
+end, 5)
+assert(worn, "heat past the rating wears the rotor: " .. past_rating())
 assert(number("rpm") == 0 and number("power_w") == 0, "no exhaust is no rpm and no power")
 
 -- Open the tile ahead of the outlet onto the empty chamber: the next pass
--- ejects and spins.
+-- ejects and spins. This pocket drives the shaft to the parts' cap, their
+-- mean rated 50000 rpm (turbine.dm:682), far past the switch's 1000.
 assert(t.set_composition(5, 1, "plating"), "the exhaust opens")
 assert(eventually(function()
     return number("rpm") > 1000
@@ -185,15 +204,19 @@ local refusal = "Stop the turbine before you open its panel."
 assert(table.find(click(4, 1, "turbine_outlet", 0.2), refusal) ~= nil, "the panel is refused")
 assert(assert(t.structure_at(4, 1)).state == "running", "and the outlet keeps turning")
 
--- Throttle the intake to its floor: the stages drain and the shaft slows.
+-- The valve throttles the intake to its floor.
 local valve = control("/regulate")
 t.ui_edit(p, valve, "0.01")
 t.ui_press(p, valve, "change")
 t.run_ticks(2)
 assert(math.abs(number("intake") - 0.01) < 1e-9, "the valve throttles the intake")
+
+-- Wall the exhaust again: nothing leaves, so the next pass turns nothing
+-- (turbine.dm:673-676) and the shaft reads under 1000 rpm.
+assert(t.set_composition(5, 1, "wall"), "the exhaust shuts")
 assert(eventually(function()
     return number("rpm") <= 1000
-end, 40), "a throttled shaft slows under 1000 rpm")
+end, 6), "a shaft with no exhaust stops turning")
 
 -- Now the switch stops it, and the panel opens.
 press_power()
