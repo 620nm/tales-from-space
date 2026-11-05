@@ -67,6 +67,21 @@
         ("electrolyser", Ase("art/machines/electrolyser.aseprite", "standby")),
         ("electrolyser_on", AseAnim("art/machines/electrolyser.aseprite", "working")),
         ("electrolyser_open", Ase("art/machines/electrolyser.aseprite", "open")),
+
+        // The liquid dewar: tg's canister footprint and gauge ladder
+        // (`can-3`..`can-0`), told apart as a liquid fixture by its
+        // brass. One row per state, gauge baked in: `g3` full down to
+        // `g0`, whose two frames blink, then `connected` (fastened to a
+        // port, at full) and `broken`. `shell_paint`, `stripe_band` and
+        // `liquid_fill` stay greyscale layers in the source so the
+        // dewar can be painted by its contents once the renderer can
+        // tint one layer of an Aseprite sprite.
+        ("dewar", Ase("art/machines/dewar.aseprite", "g3")),
+        ("dewar_g2", Ase("art/machines/dewar.aseprite", "g2")),
+        ("dewar_g1", Ase("art/machines/dewar.aseprite", "g1")),
+        ("dewar_g0", AseAnim("art/machines/dewar.aseprite", "g0")),
+        ("dewar_connected", Ase("art/machines/dewar.aseprite", "connected")),
+        ("dewar_broken", Ase("art/machines/dewar.aseprite", "broken")),
     ],
     sheets: [
         ("hazard_placard", "art/signs/nfpa-704.ase"),
