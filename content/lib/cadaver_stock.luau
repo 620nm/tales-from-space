@@ -25,8 +25,8 @@
 
 local chamber_watch = require("@lib/closets/chamber_watch")
 local closet_data = require("@lib/closets/data")
-local crew_names = require("@lib/crew_names")
-local crew_outfits = require("@lib/crew_outfits")
+local crew_names = require("@lib/crew/names")
+local crew_outfits = require("@lib/crew/outfits")
 
 local cadaver_stock = {}
 

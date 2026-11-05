@@ -1,9 +1,9 @@
-local crew_outfits = require("@lib/crew_outfits")
+local crew_outfits = require("@lib/crew/outfits")
 
 return {
     id = "medic",
     name = "Medical Doctor",
     slots = 1,
-    -- The kit is lib/crew_outfits.luau's, shared with the cadaver stock.
+    -- The kit is lib/crew/outfits.luau's, shared with the cadaver stock.
     outfit = crew_outfits.medic,
 }
