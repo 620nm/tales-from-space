@@ -63,7 +63,8 @@ local two_up = t.join("security")
 local three_up = t.join("assistant")
 t.run_ticks(4)
 
-t.click(armer, 1, 1, assert(t.target_at(armer, 1, 1, "frag_grenade"), "the grenade is disclosed"))
+local grenade = assert(t.target_at(armer, 1, 1, "frag_grenade"), "the grenade is disclosed")
+t.click(armer, 1, 1, grenade)
 t.tick()
 assert(t.hands(armer).held == "frag_grenade", "the grenade is in hand")
 for _, player in ipairs({ one_up, two_up, three_up }) do
