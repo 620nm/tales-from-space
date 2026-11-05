@@ -19,7 +19,10 @@ return {
     name = "gas turbine control computer",
     sprite = "turbine_computer",
     script = "turbine_computer",
-    examine = { flavor = "A computer to remotely control a gas turbine." },
+    -- tg's desc is turbine_computer.dm:3; this is the pack's own line.
+    examine = {
+        flavor = "A console for running a gas turbine from somewhere it cannot reach you.",
+    },
     actions = { gas_turbine.link_console_row() },
     sounds = { teardown = "smash" },
     dense = true,

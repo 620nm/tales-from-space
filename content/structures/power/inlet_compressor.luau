@@ -17,7 +17,11 @@ return {
     sprite = "inlet_compressor_closed_s",
     category = "power",
     script = "inlet_compressor",
-    examine = { flavor = "The input side of a turbine generator, contains the compressor." },
+    -- tg's desc is turbine.dm:278; this is the pack's own line.
+    examine = {
+        flavor = "The intake end of a gas turbine. Its blades squeeze the gas "
+            .. "before the rotor ever sees it.",
+    },
     dense = true,
     states = gas_turbine.STATES,
     state_sprites = {

@@ -92,13 +92,16 @@ assert(not linked(), "a line mapped with a panel open is not")
 -- An empty buffer links the console to nothing.
 take("multitool")
 click(4, 1, "turbine_computer", 0.5)
-assert(said("Wrong machine type in the multitool buffer..."), "an empty buffer is refused")
+assert(
+    said("The multitool has no rotor logged that this console can reach."),
+    "an empty buffer is refused"
+)
 
 -- The outlet's panel is open: the rotor names it and links nothing.
 click(3, 3, "core_rotor", 0.2)
-assert(said("Close the turbine panel!"), "the first break is named")
+assert(said("The outlet's panel is open. Shut it first."), "the first break is named")
 assert(not linked(), "and the line stays unlinked")
-assert(not said("All parts linked."), "nothing is logged")
+assert(not said("The compressor, rotor and outlet lock into one line."), "nothing is logged")
 
 -- Shut it, and the line is whole.
 take("screwdriver")
@@ -106,15 +109,14 @@ click(4, 3, "turbine_outlet", 0.2)
 assert(assert(t.structure_at(4, 3)).state == "closed", "the outlet's panel shuts")
 take("multitool")
 click(3, 3, "core_rotor", 0.2)
-assert(said("All parts linked."), "a whole line links")
-assert(said("You store linkage information in the multitool's buffer."), "and is logged")
+assert(said("The compressor, rotor and outlet lock into one line."), "a whole line links")
+assert(said("The multitool logs the rotor."), "and is logged")
 assert(linked(), "the rotor remembers it")
 
 -- The console reads the buffer after tg's fifth of a second; linking it a
 -- second time says it already held a link (turbine_computer.dm:29-30).
-local CONSOLE_LINKED =
-    "You link the gas turbine control computer to the console in the multitool's buffer."
-local RELINKING = "Changing the gas turbine control computer bluespace network..."
+local CONSOLE_LINKED = "The console links to the rotor the multitool logged."
+local RELINKING = "The console lets go of the rotor it was linked to."
 click(4, 1, "turbine_computer", 0.5)
 assert(said(CONSOLE_LINKED), "the console links")
 assert(not said(RELINKING), "a console with no link has none to change")

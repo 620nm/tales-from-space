@@ -31,6 +31,10 @@ gas_turbine.LINKED = "lunatic/tfs:turbine_linked"
 -- The rotor a console is linked to, as a buffer ref (tg `turbine_core`).
 gas_turbine.CONSOLE_LINK = "lunatic/tfs:turbine_core"
 
+-- Every line is the pack's own sentence for one of tg's: the refusals for
+-- the balloons of turbine.dm:519-558, `linked` and `buffer_stored` for
+-- :466 and :469, `wrong_buffer`, `relinking` and `console_linked` for
+-- turbine_computer.dm:27, :30 and :36.
 local MESSAGE = "lunatic/tfs:lib.gas_turbine."
 local REFUSALS = {
     "wrong_way",

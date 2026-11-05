@@ -66,11 +66,11 @@ local function walk_to(x: number)
 end
 
 local cases = {
-    { x = 2, says = "The rotor is facing the wrong way!" },
-    { x = 6, says = "The compressor is missing!" },
-    { x = 10, says = "The turbine and the compressor are not facing away from each other!" },
-    { x = 14, says = "The compressor is not aligned with the rotor!" },
-    { x = 18, says = "The turbine is missing!" },
+    { x = 2, says = "This rotor is turned the wrong way round for its line." },
+    { x = 6, says = "There is no compressor behind the rotor." },
+    { x = 10, says = "The compressor and the outlet have to face the same way." },
+    { x = 14, says = "The compressor stands across the line, not along it." },
+    { x = 18, says = "There is no outlet ahead of the rotor." },
 }
 for _, case in ipairs(cases) do
     walk_to(case.x)
@@ -82,6 +82,9 @@ for _, case in ipairs(cases) do
         table.find(heard, case.says) ~= nil,
         "the rotor at x=" .. case.x .. " names its break: " .. table.concat(heard, " | ")
     )
-    assert(table.find(heard, "All parts linked.") == nil, "and links nothing")
+    assert(
+        table.find(heard, "The compressor, rotor and outlet lock into one line.") == nil,
+        "and links nothing"
+    )
     assert(assert(t.structure_at(case.x, 1)).vars[LINKED] == nil, "nor remembers a link")
 end

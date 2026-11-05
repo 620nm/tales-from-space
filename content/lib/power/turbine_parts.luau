@@ -38,25 +38,24 @@ function turbine_parts.max_temperature_k(tier: number): number
     return value
 end
 
--- What each part's examine says it is for (tg `desc`, turbine_parts.dm:94,
--- :99, :104).
+-- What each part is, in the pack's words (tg's descs are
+-- turbine_parts.dm:94, :99, :104).
 local PURPOSE: { [PartKind]: string } = {
-    compressor = "Install in a turbine engine compressor to increase its performance.",
-    rotor = "Install in a turbine engine rotor to increase its performance.",
-    stator = "Install in a turbine engine turbine to increase its performance.",
+    compressor = "A ring of compressor blades, cut to fit a turbine's intake.",
+    rotor = "A balanced turbine shaft, the part a core rotor turns on.",
+    stator = "A stator ring that a turbine's exhaust is driven through.",
 }
 
--- One tier's examine block: tg's purpose, then its rating line
--- (`examine`, turbine_parts.dm:18). tg prints BYOND's six-digit form; whole
--- numbers here.
+-- One tier's examine block: what the part is, then the limits stamped on
+-- it. tg states the tier's rated rpm and temperature on examine
+-- (turbine_parts.dm:18); the numbers are tg's, the words the pack's.
 function turbine_parts.examine(kind: PartKind, tier: number): { flavor: string }
-    local rated = string.format(
-        "This is a tier %d turbine part, rated for %.0f rpm and %.0f K.",
-        tier,
+    local plate = string.format(
+        "Its plate is stamped %.0f rpm and %.0f K.",
         turbine_parts.max_rpm(tier),
         turbine_parts.max_temperature_k(tier)
     )
-    return { flavor = PURPOSE[kind] .. " " .. rated }
+    return { flavor = PURPOSE[kind] .. " " .. plate }
 end
 
 -- The base item's whole `component` block.

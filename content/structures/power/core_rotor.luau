@@ -17,9 +17,10 @@ return {
     sprite = "core_rotor_closed_s",
     category = "power",
     script = "core_rotor",
+    -- tg's desc is turbine.dm:384; this is the pack's own line.
     examine = {
-        flavor = "The middle part of a turbine generator, contains the rotor and the "
-            .. "main computer.",
+        flavor = "The heart of a gas turbine: the shaft the hot gas spins, and the "
+            .. "electronics that keep the three sections in step.",
     },
     actions = { gas_turbine.link_parts_row() },
     dense = true,

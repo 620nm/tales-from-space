@@ -17,9 +17,10 @@ return {
     sprite = "turbine_outlet_closed_s",
     category = "power",
     script = "turbine_outlet",
+    -- tg's desc is turbine.dm:337; this is the pack's own line.
     examine = {
-        flavor = "The output side of a turbine generator, contains the turbine and the "
-            .. "stator.",
+        flavor = "The exhaust end of a gas turbine. Spent gas leaves through it, "
+            .. "colder than it came in.",
     },
     dense = true,
     states = gas_turbine.STATES,
