@@ -15,6 +15,10 @@ and clamps. Files: `content/substances/`, `content/reactions/`,
 The pack's sampled liquid-disinfection rule, thresholds and overrides are in
 [chemistry/disinfection.md](chemistry/disinfection.md).
 
+Which chemistry a substance takes part in, which of it needs a catalyst,
+and which real chemistry the pack deliberately leaves out is each file's
+own interaction ledger, in the format of `content/substances/AGENTS.md`.
+
 ---
 
 ## The conventions this pack applies (D2)
@@ -25,10 +29,11 @@ This pack's figures:
 
 | what | figure | where it applies |
 |---|---|---|
-| `cv` | `100.0` J/(mol·K), written explicitly | fictional and mixture-shaped leftovers: `phenol`, `diethylamine`, `ash`, `naphtha`, `lube`, `thermite`, `space_cleaner`, `salglu`, `blood`, `toxin` |
+| `cv` | `100.0` J/(mol·K), written explicitly | fictional and mixture-shaped leftovers: `phenol`, `diethylamine`, `ash`, `naphtha`, `lube`, `thermite`, `space_cleaner`, `salglu`, `blood`, `toxin`, `tholin` |
 | `cv` | Dulong–Petit, `3R ≈ 24.9` | elements without a measured figure: `radium`, `lithium` |
-| `cv` | measured, cited in the file | everything with real physics: `water` 75.3 liquid, `chlorine` 33.9, `iodine`/`ammonia`/`co2`/`uf6` per phase |
-| `molar_mass` | a plausible round number | same set as the flat `cv` |
+| `cv` | measured, cited in the file | everything with real physics: `water` 75.3 liquid, `chlorine` 33.9, `iodine`/`ammonia`/`co2`/`uf6`/`methane`/`ethane`/`hcn` per phase; `o2`/`n2` keep tg's gas 20 beside cited condensed figures |
+| `molar_mass` | a plausible round number | same set as the flat `cv`, but `tholin` |
+| `molar_mass` | the (HCN)4 unit, 108.10 g/mol, so polymerisation balances | `tholin`, a polymer family rather than a molecule |
 | `density` | `1.0` g/mL | anything whose real density nobody reads |
 
 The loader's own silence default is `75.0`, not `100.0`: the shelf
@@ -67,9 +72,12 @@ to what this pack has substances for and to what a source can honestly hand
 over. The whole argument lives in the file's own comment; the summary:
 
 - **Off, because permanent (D19).** Oxygen, nitrogen, hydrogen, fluorine.
-  They rest as gas at every temperature the nozzle reaches, so a press over
-  an open vessel is refused; they reach chemistry off a canister through a
-  connector port instead. tg lists all four — this is the departure.
+  They rest as gas at the nozzle's 300 K, so a press over an open vessel is
+  refused; they reach chemistry off a canister through a connector port
+  instead. tg lists all four — this is the departure. Oxygen and nitrogen
+  condense below 90.2 K and 77.4 K at 1 atm, and never above 154.6 K and
+  126.2 K, so LOX and liquid air belong to a cold world or a cold loop,
+  never to the bench; hydrogen and fluorine stay `gas_only`.
 - **On, because condensable.** Chlorine and ammonia are refused over an
   open beaker and land in a sealed bottle as liquid under their own vapour
   pressure (about 8 atm and 8.6 atm), which is a reactant a bench can use.

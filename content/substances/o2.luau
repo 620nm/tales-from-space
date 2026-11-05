@@ -1,5 +1,12 @@
 -- Oxygen: the station's own gas, and the whole of what it is.
 --
+-- interactions we use:
+--   CH4(l) + 2 O2(l) -> CO2 + 2 H2O (lox_detonation)
+-- interactions we know exist but don't need:
+--   liquid O2 with lube, naphtha, wax, blood or any other organic:
+--     each is as violent as methane in reality, but only the fuel a cold
+--     world pours is wired to detonate; the rest sit beside LOX inert
+--
 -- This file used to carry oxygen's LOOK only, because its physics lived
 -- in a Rust table the engine shipped with. That table is gone: there is
 -- no built-in roster any more, and a pack that names no oxygen has none
@@ -7,13 +14,29 @@
 -- ideal gas law, the reaction step, the breath thresholds — and every
 -- number those arithmetics are ABOUT is here.
 --
--- Physics, verbatim from tg:
+-- Physics:
 --   * molar mass 32 g/mol.
---   * cv 20 J/(mol·K) — tg `specific_heat`, gas_types.dm
---     (/datum/gas/oxygen).
---   * `gas_only`: tg models no liquid oxygen, so neither do we. Giving
---     it a boiling point would be a divergence dressed as a refinement,
---     and every atmos number ported alongside assumes the gas column.
+--   * gas cv 20 J/(mol·K), tg's `specific_heat` verbatim, gas_types.dm
+--     (/datum/gas/oxygen): the atmos column was tuned against it.
+--   * THE DIAGRAM, a departure from tg, which models no liquid oxygen:
+--     a cold world needs LOX. NIST WebBook (C7782447): triple point
+--     54.33 K, normal boiling point 90.2 K, critical temperature
+--     154.58 K; CRC: heat of vaporization 6.82 kJ/mol at the boiling
+--     point, heat of fusion 0.444 kJ/mol. Liquid density 1.141 g/mL at the
+--     boiling point; the solid's 1.33 is approximate (CRC). Condensed cv
+--     figures are approximate cp values near the boiling point.
+--
+-- THE BOIL SPELLING, because the line has to be right at 94 K:
+--   Psat(94) = 101.325 * exp((6820 / 8.3145) * (1/90.2 - 1/94))
+--            = 101.325 * exp(0.3676) = 146.3 kPa
+-- NIST's Antoine fit (Brower & Thodos 1968) gives 148.4 kPa. A triple
+-- anchor at 54.33 K runs 40 K to get there and lands at 86 kPa, 42 %
+-- low, which would leave pure oxygen liquid at 1 atm and 94 K. With
+-- this line pure oxygen outside a cold world stays gas up to 146 kPa
+-- and condenses to LOX above it. Above 154.58 K nothing condenses it,
+-- so every canister at room temperature is gas at any pressure.
+-- At a thermomachine's 73.15 K floor the line is at 12.2 kPa, so the
+-- 21 kPa oxygen share of station air liquefies there.
 --
 -- tg: /datum/reagent/oxygen, `color = COLOR_GRAY` (other_reagents.dm:
 -- 983). tg carries oxygen as a reagent as well as a gas, which is why
@@ -22,9 +45,17 @@ return {
     id = "o2",
     name = "oxygen",
     molar_mass = 32.0,
-    cv = 20.0,
-    phase = "gas_only",
+    cv = { solid = 46.0, liquid = 53.0, gas = 20.0 },
+    phase = { melt = 54.33, boil = 90.2, l_fus = 444, l_vap = 6820, critical = 154.58 },
+    density = { solid = 1.33, liquid = 1.141 },
+    -- Liquid oxygen near 90 K, approximate (CRC).
+    flow = { viscosity = 0.196, surface_tension = 13.2, contact_angle = 10 },
     color = "#808080",
+    -- Liquid oxygen is pale blue, and so is its frost.
+    appearance = {
+        liquid = { profile = "puddle", tint = "#9EC3F0" },
+        solid = { profile = "crystalline", tint = "#C4DAF6" },
+    },
     -- What lungs are looking for. The threshold a breath is held to is
     -- the engine's (tg's `safe_oxygen_min`, 16 kPa of partial
     -- pressure); which gas clears it is this line, and this line is the
