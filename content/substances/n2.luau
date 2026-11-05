@@ -11,20 +11,21 @@
 -- the atmos column was tuned against it.
 --
 -- THE DIAGRAM, a departure from tg, which models no liquid nitrogen:
--- NIST WebBook (C7727379): triple point 63.15 K (taken as the melting
--- point), normal boiling point 77.36 K, critical temperature 126.2 K,
--- heat of vaporization 5.57 kJ/mol at the boiling point, heat of
+-- NIST WebBook (C7727379): triple point 63.14 K at 12.52 kPa (taken as
+-- the melting point), normal boiling point 77.34 K, critical temperature
+-- 126.19 K, heat of vaporization 5.6 kJ/mol at 77 K; CRC: heat of
 -- fusion 0.72 kJ/mol. Liquid density 0.807 g/mL at the boiling point;
 -- the solid's 1.03 is approximate (CRC). Condensed cv figures are
 -- approximate cp values near the boiling point.
 --
 -- THE BOIL SPELLING, like oxygen's, so the line is right near 94 K:
---   Psat(94) = 101.325 * exp((5570 / 8.3145) * (1/77.36 - 1/94))
---            = 101.325 * exp(1.5330) = 469 kPa  (real about 500)
+--   Psat(94) = 101.325 * exp((5600 / 8.3145) * (1/77.34 - 1/94))
+--            = 101.325 * exp(1.5435) = 474 kPa
+-- NIST's Antoine fit (Edejer & Thodos 1967) gives 503 kPa.
 -- So a cold world's 1.5 bar of nitrogen is far from condensing: it would
--- liquefy only below 81.0 K. A triple anchor would give 407 kPa. At a
--- thermomachine's 73.15 K floor the line is at 61.6 kPa, so the 79 kPa
--- nitrogen share of station air liquefies there. Above 126.2 K nothing
+-- liquefy only below 81.0 K. A triple anchor would give 415 kPa. At a
+-- thermomachine's 73.15 K floor the line is at 61.5 kPa, so the 79 kPa
+-- nitrogen share of station air liquefies there. Above 126.19 K nothing
 -- condenses it.
 --
 -- Nothing declares it breathable, which is the point of the column
@@ -38,7 +39,7 @@ return {
     name = "nitrogen",
     molar_mass = 28.0,
     cv = { solid = 46.0, liquid = 56.0, gas = 20.0 },
-    phase = { melt = 63.15, boil = 77.36, l_fus = 720, l_vap = 5570, critical = 126.2 },
+    phase = { melt = 63.14, boil = 77.34, l_fus = 720, l_vap = 5600, critical = 126.19 },
     density = { solid = 1.03, liquid = 0.807 },
     -- Liquid nitrogen near 77 K, approximate (CRC).
     flow = { viscosity = 0.158, surface_tension = 8.9, contact_angle = 5 },

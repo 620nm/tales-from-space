@@ -13,9 +13,10 @@
 --     substances, and its fallout is authored HCN snow instead
 --
 -- Numbers are the NIST WebBook's for ethane (C74840): triple point
--- 90.37 K at 1.14 Pa, normal boiling point 184.6 K, critical
--- temperature 305.3 K, heat of vaporization 14.69 kJ/mol at the boiling
--- point, heat of fusion 2.859 kJ/mol. Liquid density 0.65 g/mL near the
+-- 90.37 K at 1.14 Pa (NIST lists 91 +/- 6 K at 1.1 Pa), normal boiling
+-- point 184.6 K, critical temperature 305.3 K, heat of vaporization
+-- 14.69 kJ/mol at the boiling point (NIST 14.70), heat of fusion
+-- 2.859 kJ/mol (NIST 2.79-2.86). Liquid density 0.65 g/mL near the
 -- triple point (a sea's temperature, not the boiling point's 0.54); the
 -- solid's 0.72 is approximate (CRC). Gas cv 44.2 is the 298 K cp of 52.5
 -- less R; the condensed cv figures are approximate cp values near the

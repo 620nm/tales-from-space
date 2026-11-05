@@ -19,21 +19,22 @@
 --   * gas cv 20 J/(mol·K), tg's `specific_heat` verbatim, gas_types.dm
 --     (/datum/gas/oxygen): the atmos column was tuned against it.
 --   * THE DIAGRAM, a departure from tg, which models no liquid oxygen:
---     a cold world needs LOX. NIST WebBook (C7782447): melting point
---     54.36 K, normal boiling point 90.19 K, critical temperature
---     154.6 K, heat of vaporization 6.82 kJ/mol at the boiling point,
---     heat of fusion 0.444 kJ/mol. Liquid density 1.141 g/mL at the
+--     a cold world needs LOX. NIST WebBook (C7782447): triple point
+--     54.33 K, normal boiling point 90.2 K, critical temperature
+--     154.58 K; CRC: heat of vaporization 6.82 kJ/mol at the boiling
+--     point, heat of fusion 0.444 kJ/mol. Liquid density 1.141 g/mL at the
 --     boiling point; the solid's 1.33 is approximate (CRC). Condensed cv
 --     figures are approximate cp values near the boiling point.
 --
 -- THE BOIL SPELLING, because the line has to be right at 94 K:
---   Psat(94) = 101.325 * exp((6820 / 8.3145) * (1/90.19 - 1/94))
---            = 101.325 * exp(0.3686) = 146.5 kPa  (real about 146)
--- A triple anchor at 54.36 K runs 40 K to get there and lands at
--- 85 kPa, 40 % low, which would leave pure oxygen liquid at 1 atm and
--- 94 K. With this line pure oxygen outside a cold world stays gas up to
--- 146 kPa and condenses to LOX above it. Above 154.6 K nothing condenses
--- it, so every canister at room temperature is gas at any pressure.
+--   Psat(94) = 101.325 * exp((6820 / 8.3145) * (1/90.2 - 1/94))
+--            = 101.325 * exp(0.3676) = 146.3 kPa
+-- NIST's Antoine fit (Brower & Thodos 1968) gives 148.4 kPa. A triple
+-- anchor at 54.33 K runs 40 K to get there and lands at 86 kPa, 42 %
+-- low, which would leave pure oxygen liquid at 1 atm and 94 K. With
+-- this line pure oxygen outside a cold world stays gas up to 146 kPa
+-- and condenses to LOX above it. Above 154.58 K nothing condenses it,
+-- so every canister at room temperature is gas at any pressure.
 -- At a thermomachine's 73.15 K floor the line is at 12.2 kPa, so the
 -- 21 kPa oxygen share of station air liquefies there.
 --
@@ -45,7 +46,7 @@ return {
     name = "oxygen",
     molar_mass = 32.0,
     cv = { solid = 46.0, liquid = 53.0, gas = 20.0 },
-    phase = { melt = 54.36, boil = 90.19, l_fus = 444, l_vap = 6820, critical = 154.6 },
+    phase = { melt = 54.33, boil = 90.2, l_fus = 444, l_vap = 6820, critical = 154.58 },
     density = { solid = 1.33, liquid = 1.141 },
     -- Liquid oxygen near 90 K, approximate (CRC).
     flow = { viscosity = 0.196, surface_tension = 13.2, contact_angle = 10 },

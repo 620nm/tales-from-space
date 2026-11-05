@@ -22,20 +22,21 @@
 --     so nobody adds it
 --
 -- Numbers are the NIST WebBook's for methane (C74828): triple point
--- 90.69 K at 11.70 kPa, normal boiling point 111.67 K, critical
--- temperature 190.6 K, heat of vaporization 8.19 kJ/mol at the boiling
--- point, heat of fusion 0.94 kJ/mol. Liquid density 0.42 g/mL at the
+-- 90.67 K at 11.69 kPa, normal boiling point 111.7 K, critical
+-- temperature 190.6 K, heat of vaporization 8.17 kJ/mol at 111.7 K,
+-- heat of fusion 0.939 kJ/mol. Liquid density 0.42 g/mL at the
 -- boiling point; the solid's 0.49 is approximate (CRC). Gas cv 27.4 is
 -- the 298 K cp of 35.7 less R; the condensed cv figures are
 -- approximate cp values near the triple point.
 --
 -- THE TRIPLE SPELLING, because the cold world sits at 94 K, three
 -- kelvin above the anchor, where a constant-L line is at its best:
---   Psat(94) = 11.70 * exp((8190 / 8.3145) * (1/90.69 - 1/94))
---            = 11.70 * exp(0.3825) = 17.15 kPa  (real about 17.6)
+--   Psat(94) = 11.69 * exp((8170 / 8.3145) * (1/90.67 - 1/94))
+--            = 11.69 * exp(0.3839) = 17.16 kPa
+-- NIST's Antoine fit (Prydz & Goodwin 1972) gives 17.85 kPa.
 -- So the world's 7.5 kPa of methane is about 44 % "humidity" and stays
--- gas. The price is the far end: the line reaches 1 atm at 113.2 K,
--- 1.5 K above the real boiling point.
+-- gas. A boil anchor would give 19.4 kPa. The price is the far end:
+-- the line reaches 1 atm at 113.2 K, 1.5 K above the real boiling point.
 --
 -- Flow is liquid methane near 94 K, approximate (CRC): thin and
 -- wetting, it runs further than water.
@@ -44,7 +45,7 @@ return {
     name = "methane",
     molar_mass = 16.043,
     cv = { solid = 43.0, liquid = 54.0, gas = 27.4 },
-    phase = { triple = { t = 90.69, kpa = 11.70 }, l_fus = 939, l_vap = 8190, critical = 190.6 },
+    phase = { triple = { t = 90.67, kpa = 11.69 }, l_fus = 939, l_vap = 8170, critical = 190.6 },
     density = { solid = 0.49, liquid = 0.42 },
     flow = { viscosity = 0.18, surface_tension = 17.0, contact_angle = 10 },
     color = "#C8D0D8",

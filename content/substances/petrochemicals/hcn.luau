@@ -12,18 +12,18 @@
 --   HCN + H2O -> HCONH2: hydrolysis to formamide is slow without an
 --     acid or base, and formamide has no substance
 --
--- Numbers are the NIST WebBook's for HCN (C74908): melting point
--- 259.9 K, normal boiling point 298.8 K, critical temperature 456.7 K,
--- heat of vaporization 25.2 kJ/mol at the boiling point, heat of fusion
--- 8.41 kJ/mol. Liquid density 0.687 g/mL at 293 K (CRC); the solid's
+-- Numbers are the NIST WebBook's for HCN (C74908): triple point
+-- 259.86 K, normal boiling point 299.0 K, heat of vaporization
+-- 25.22 kJ/mol at 298.85 K, heat of fusion 8.406 kJ/mol; the critical
+-- temperature, 456.7 K, is CRC's. Liquid density 0.687 g/mL at 293 K (CRC); the solid's
 -- 0.9 is approximate. Gas cv 27.6 is the 298 K cp of 35.9 less R; the
 -- liquid's is its cp of 70.6, the solid's approximate.
 --
 -- THE BOIL SPELLING: at the melting point the vapour line stands at
---   101.325 * exp((25200 / 8.3145) * (1/298.8 - 1/259.9)) = 22.2 kPa
+--   101.325 * exp((25220 / 8.3145) * (1/299.0 - 1/259.86)) = 22.0 kPa
 -- (the real triple point is 18.6 kPa), under 1 atm, so the spelling is
--- legal. At 94 K the sublimation line (L = 25.2 + 8.41 kJ/mol) is at
--- 2.7e-8 Pa: outside, HCN snow neither sublimes nor melts. At 293 K the
+-- legal. At 94 K the sublimation line (L = 25.22 + 8.406 kJ/mol) is at
+-- 2.6e-8 Pa: outside, HCN snow neither sublimes nor melts. At 293 K the
 -- liquid's vapour stands at 83 kPa, so snow carried indoors melts at
 -- 260 K and fills the room with gas.
 --
@@ -45,7 +45,7 @@ local content = {
     name = "hydrogen cyanide",
     molar_mass = 27.025,
     cv = { solid = 46.0, liquid = 70.6, gas = 27.6 },
-    phase = { melt = 259.9, boil = 298.8, l_fus = 8410, l_vap = 25200, critical = 456.7 },
+    phase = { melt = 259.86, boil = 299.0, l_fus = 8406, l_vap = 25220, critical = 456.7 },
     density = { solid = 0.9, liquid = 0.687 },
     flow = { viscosity = 0.2, surface_tension = 18.0, contact_angle = 15 },
     inhale = 0.9,
