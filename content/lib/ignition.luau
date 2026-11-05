@@ -29,13 +29,25 @@ local RESIN_FLOOR = 0.1
 -- more than nothing and at least `min_mol`.
 type Fuel = { id: string, phase: "gas" | "liquid" | "solid", min_mol: number }
 
--- Ethanol burns as vapour over its pool; plants burn where they stand.
+-- Liquids burn as vapour over their pool; plants burn where they stand.
 -- Acetone and naphtha are unmodelled.
 local FUELS: { Fuel } = {
     { id = "ethanol", phase = "gas", min_mol = MIN_FUEL_MOL },
     { id = "ethanol", phase = "liquid", min_mol = 0 },
+    { id = "methane", phase = "gas", min_mol = MIN_FUEL_MOL },
+    { id = "methane", phase = "liquid", min_mol = 0 },
+    { id = "ethane", phase = "gas", min_mol = MIN_FUEL_MOL },
+    { id = "ethane", phase = "liquid", min_mol = 0 },
+    { id = "hcn", phase = "gas", min_mol = MIN_FUEL_MOL },
+    { id = "hcn", phase = "liquid", min_mol = 0 },
     { id = "grass", phase = "solid", min_mol = MIN_PLANT_MOL },
     { id = "moss", phase = "solid", min_mol = MIN_PLANT_MOL },
+}
+-- What the latch lights against liquid oxygen with no air at all: the
+-- `requires` of reactions/organics/lox_detonation.luau.
+local MIN_LOX_MOL = MIN_FUEL_MOL
+local LOX_FUELS: { Fuel } = {
+    { id = "methane", phase = "liquid", min_mol = MIN_FUEL_MOL },
 }
 -- Rules whose firing lights the neighbours; other reactions also raise
 -- `matter.ignition.done` (the engine's docs/reactions/fire.md).
@@ -45,6 +57,14 @@ local FIRES = {
     ["lunatic/reaction:moss_fire"] = true,
     ["lunatic/reaction:plasma_fire"] = true,
     ["lunatic/reaction:plasma_fire_supersaturated"] = true,
+    ["lunatic/reaction:methane_fire"] = true,
+    ["lunatic/reaction:ethane_fire"] = true,
+    ["lunatic/reaction:hcn_fire"] = true,
+    ["lunatic/reaction:lox_detonation"] = true,
+}
+-- Rules whose onset is a blast as well as a fire (content/main.luau).
+local DETONATIONS = {
+    ["lunatic/reaction:lox_detonation"] = true,
 }
 -- Pack feel; tg spreads and tends once per process.
 local SPREAD_SECONDS = 2
@@ -99,15 +119,8 @@ local CARDINALS = {
     { dx = 0, dy = -1 },
 }
 
-local function burnable(reading: MatterRead): boolean
-    local oxygen = reading.contents.o2
-    if oxygen == nil or (oxygen.gas or 0) < MIN_O2_MOL then
-        return false
-    end
-    if (reading.columns.atmos_resin or 0) >= RESIN_FLOOR then
-        return false
-    end
-    for _, fuel in FUELS do
+local function holds_any(reading: MatterRead, fuels: { Fuel }): boolean
+    for _, fuel in fuels do
         local held = reading.contents[fuel.id]
         local moles: number? = nil
         if held == nil then
@@ -124,6 +137,21 @@ local function burnable(reading: MatterRead): boolean
         end
     end
     return false
+end
+
+-- Air with a fuel in it, or liquid oxygen with a liquid fuel.
+local function burnable(reading: MatterRead): boolean
+    if (reading.columns.atmos_resin or 0) >= RESIN_FLOOR then
+        return false
+    end
+    local oxygen = reading.contents.o2
+    if oxygen == nil then
+        return false
+    end
+    if (oxygen.gas or 0) >= MIN_O2_MOL and holds_any(reading, FUELS) then
+        return true
+    end
+    return (oxygen.liquid or 0) >= MIN_LOX_MOL and holds_any(reading, LOX_FUELS)
 end
 
 -- Nil past the map's edge or for a stale address.
@@ -278,6 +306,13 @@ function ignition.on_ignited(ev: MatterIgnitionDonePayload): ()
         row.lit = true
         spread(ev.at)
     end
+end
+
+-- Whether a `matter.ignition.done` rule is a blast as well as a fire.
+-- The cell's first firing names its biggest-energy rule, so a cell that
+-- was already burning raises no edge (the engine's docs/reactions/fire.md).
+function ignition.detonates(rule: string): boolean
+    return DETONATIONS[rule] == true
 end
 
 -- A lit item tends the tile it is at once a second while it burns. Call

@@ -1,3 +1,4 @@
+local blast = require("@lib/blast")
 local bloodshed = require("@lib/bloodshed")
 local disinfection = require("@lib/medical/disinfection")
 local fall = require("@lib/fall")
@@ -81,6 +82,14 @@ sim.handle("matter.extinguished.done", { kind = "react" }, tally("fires_out"))
 -- cut it. Unscoped for the same reason as the tallies above.
 sim.define("script_var", "lunatic/tfs:flame_tended", { replicate = "server" })
 sim.handle("matter.ignition.done", { kind = "react" }, ignition.on_ignited)
+-- A detonating rule's onset is also a blast on its tile (`lib/blast.luau`):
+-- the hurt, then what the room sees and the hotspots round it.
+sim.handle("matter.ignition.done", { kind = "react" }, function(ev: MatterIgnitionDonePayload)
+    if ignition.detonates(ev.rule) then
+        blast.apply(ev.at)
+        blast.cast(ev.at)
+    end
+end)
 sim.handle("flow.segment_split.done", { kind = "react" }, function(ev: FlowSegmentSplitDonePayload)
     if ev.network == "power" then
         ignition.spark(ev.at)
