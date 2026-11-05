@@ -1,6 +1,6 @@
 -- A sea stands in its bed one film under the land beside it: it does not
--- flood the shore, and water spilled on the shore runs in. A body in it reads
--- about double the air pressure, under tg's warning band, and takes no harm
+-- flood the shore, and water spilled on the shore runs in. The air over it
+-- stands at the sky's own pressure, so a body in it takes no harm
 -- (the engine's docs/matter-world/beds.md). What runs in washes out, and a
 -- slick poured on the sea with it (docs/matter-world/ideal.md).
 --
@@ -66,7 +66,10 @@ assert(litres(3, 6) < 1, "the sea stays in its bed: the shore far from the spill
 assert(litres(3, 1) < 5, "the spill ran in and left a film, got " .. litres(3, 1) .. " L")
 
 local kpa = assert(t.room_pressure(6, 3))
-assert(kpa > 1.5 * ONE_ATMOSPHERE_KPA, "a deep tile reads the air squeezed into half its shell, got " .. kpa)
+assert(
+    math.abs(kpa - ONE_ATMOSPHERE_KPA) < 0.1 * ONE_ATMOSPHERE_KPA,
+    "the air over a deep tile stands at the sky's pressure, not squeezed, got " .. kpa
+)
 assert(kpa < WARNING_HIGH_PRESSURE_KPA, "the body's own tile reads under the warning band, got " .. kpa)
 assert(t.health(p).health == health, "and takes no pressure effect")
 
