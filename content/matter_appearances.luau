@@ -147,8 +147,8 @@ return {
                 { at_ml = 25, shell = { still = "solid_debris_jagged_smooth" } },
             },
         },
-        -- Plants: a thin coat over natural ground (blends/meadow.luau holds
-        -- a litre a tile). It thins as it burns and is gone under 100 mL,
+        -- Plants: a thin coat over natural ground (terrain.luau's `grass`
+        -- cover lays a litre a tile). It thins as it burns and is gone under 100 mL,
         -- leaving the ground face and whatever ash the fire made.
         {
             key = "grass",
@@ -189,8 +189,25 @@ return {
                 } },
             },
         },
-        -- A cliff's face (terrain.luau `cliff`): the stepped escarpment,
-        -- drawn as `ground_shell` is, so a cliff joins only cliff of one tint.
+        -- An ice sheet's face (terrain.luau `sheet_ice`): the smooth sheet
+        -- the `crystalline` bed draws, as a ground face. Its translucent
+        -- skirt lets the floor's shaded picture show at the edge.
+        {
+            key = "ice_shell",
+            visual_layer = "ground_face",
+            phase = "solid",
+            alpha = { min = 1, max = 1 },
+            rungs = {
+                { at_ml = 1, shell = {
+                    still = "terrain_ice_sheet_smooth",
+                    flats = { "terrain_ice_sheet_smooth_0_4", "terrain_ice_sheet_flat_1",
+                              "terrain_ice_sheet_flat_2", "terrain_ice_sheet_flat_3" },
+                } },
+            },
+        },
+        -- A cliff's face, the `half` step's (terrain.luau `steps`): the
+        -- stepped escarpment, drawn as `ground_shell` is, so a cliff joins
+        -- only cliff of one tint.
         {
             key = "cliff_shell",
             visual_layer = "ground_face",

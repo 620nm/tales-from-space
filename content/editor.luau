@@ -98,18 +98,34 @@ local prototypes = {
             },
         },
     },
-    -- Boulders lie on natural ground; cliffs are terrain-brush blends
-    -- (`basalt_cliff`, `silica_cliff`), listed in the Terrain section; the
-    -- boulders file into it under a Natural category.
+    -- Boulders lie on natural ground and file into the Terrain section
+    -- under a Natural category; a cliff is ground, a band of `half` steps
+    -- (content/terrain.luau) the solid brush lays.
     { kind = "structure", id = "outcrop", section = "terrain", category = "Natural" },
     { kind = "structure", id = "outcrop.cluster", section = "terrain", category = "Natural" },
+}
+
+-- One click lays a tiled floor here and the plating that roofs it on the
+-- level above (`dz = 1`); refused whole on the top level.
+local composed_tools = {
+    {
+        id = "roofed_floor",
+        label = "Floor, Roofed",
+        ops = {
+            { op = "composition_preset", dx = 0, dy = 0, preset = "floor" },
+            { op = "composition_preset", dx = 0, dy = 0, dz = 1, preset = "plating" },
+        },
+    },
 }
 
 return {
     version = 1,
     pack = "lunatic/tfs",
-    revision = "10",
+    revision = "11",
     tools = { "select", "paint", "fill", "erase", "clone", "link" },
     lenses = { "surface", "subfloor", "blend", "networking" },
     prototypes = prototypes,
+    composed_tools = composed_tools,
+    -- A column hinted with a ground role draws as bare rock in the editor.
+    ground_roles = { rock = { sprite = "terrain_silicate_rough_flat_1" } },
 }

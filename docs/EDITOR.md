@@ -34,7 +34,7 @@ their art, and no `prototypes` entry admits them to placement checks.
 ## Levels
 
 A new level is blank: its tiles stand on the environment's generated ground
-(`docs/TURFS.md` Ground) or open onto the level below. `content/editor.luau`
+(`docs/turfs/ground.md`) or open onto the level below. `content/editor.luau`
 declares no level fills; `tools/test-editor-previews.mjs` pins that.
 
 ## Air in the editor

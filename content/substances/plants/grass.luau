@@ -1,5 +1,5 @@
 -- Grass: the living sward over a meadow, a thin coat of real matter in the
--- cell (blends/meadow.luau), drawn by the `grass` look and burnt by
+-- cell (the `grass` cover, terrain.luau), drawn by the `grass` look and burnt by
 -- reactions/grass_fire.luau.
 --
 -- tg has no grass reagent, so the numbers are real plant matter. One mole

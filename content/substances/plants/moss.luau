@@ -1,5 +1,5 @@
 -- Moss: a low carpet over damp ground, a thin coat of real matter in the
--- cell (blends/moss_carpet.luau), drawn by the `moss` look and burnt by
+-- cell (the `moss` cover, terrain.luau), drawn by the `moss` look and burnt by
 -- reactions/moss_fire.luau.
 --
 -- The same plant chemistry as grass.luau (one cellulose unit a mole,

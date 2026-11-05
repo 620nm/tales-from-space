@@ -18,8 +18,9 @@ return {
     insolation = 0,
     surface_temperature_k = 293.15,
     atmosphere = { blend = "breathable_air", air_half_life_s = 60, heat_half_life_s = 120 },
-    -- The ground generated under a map: `surface` tops each column, rock
-    -- (`deep`) lies under it.
-    ground = { surface = "soil_ground", deep = "basalt_ground" },
+    -- The ground generated under a map: `surface` tops each column, `deep`
+    -- lies under it, and a map's `rock` hint (rosters/ground_roles.luau) is
+    -- the bedrock named here.
+    ground = { surface = "soil_ground", deep = "basalt_ground", rock = "silica_ground" },
     sides_open_from = 0,
 }

@@ -283,13 +283,6 @@ local composition_declaration: { [string]: any } = {
         -- docs/PORTING.md rules 3-4); tg's ice temperature (ice.dm:9) is not a floor's to carry.
         { id = "ice_floor", label = "ice sheet", layer = "substrate", sprite = "ice_floor-0", substrate = { vacuum_boundary = false },
             physical = { ambient = 0, support = true, thermal = thermal(20000, 0.02, 0.5) } },
-        -- tg /turf/open/cliff: dense (cliff.dm:5) but an open turf, so air and sight pass
-        -- (turf.dm:39 `blocks_air = FALSE`; no `opacity`), and so do shots (`protected_types`,
-        -- cliff.dm:15,76). The bed of the `cliff` terrain profile: the terrain brush lays it
-        -- with its face. No fall from the top edge: a cliff is a barrier; height is levels.
-        { id = "cliff", label = "cliff", layer = "substrate", sprite = "ground", substrate = { vacuum_boundary = false },
-            physical = { ambient = 0, support = true, movement_blocking = true, projectile_blocking = false,
-                thermal = thermal(20000, 0.02, 0.5) } },
         { id = "station_base", occludes_substrate = true, label = "plating", layer = "support", sprite = "plating",
             physical = { ambient = 0.10, support = true, receives_gravity = true, substrate_seal = true, thermal = thermal(62500, 0.025, 0.5) } },
         { id = "floor_tiles", label = "floor", layer = "cover", sprite = "floor", cover = controls(false, "open_floor", "exposed_cover"),

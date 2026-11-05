@@ -1,5 +1,5 @@
-// Writes maps/terrain_sampler.ron: a 64x64 shore, lake, cliff and meadow
-// sampler with a rock basement. Edit this file and run
+// Writes maps/terrain_sampler.ron: a 64x64 shore, lake, cliff, ridge and
+// meadow sampler over generated ground. Edit this file and run
 // `node tools/maps/terrain-sampler.mjs`; a run overwrites any editor save of the map.
 // Layout is in the header comment.
 import { writeFileSync } from "node:fs";
@@ -7,24 +7,21 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const SIZE = 64;
-const TILE_HEIGHT_M = 3; // content/lib/tile_geometry.luau
-const R = 8.314;
-const ONE_ATMOSPHERE_PA = 101325.0;
-const T = 293.15;
-const AIR_N = ONE_ATMOSPHERE_PA / (R * T);
-const CELLULOSE_MOLAR_MASS = 162.14;
 
+// Level 0 tiles.
 const SOIL = ".";
 const SAND = "a";
 const SEA = "w";
 const SHALLOWS = "s";
 const LAKE = "l";
 const CLIFF = "c";
+const RIDGE = "r";
 const PIER_SEA = "p";
 const PIER_SHALLOWS = "q";
 const PIER_SAND = "b";
-const ROCK = "#";
-const CARVED = "_";
+// A blank tile: what lies there is the generated ground.
+const BLANK = "_";
+const BLANK_OUTDOORS = ",";
 
 const ground = (material) =>
   `(composition: (substrate: Named("ground"), material: Named("${material}"), components: []), outdoors: true)`;
@@ -36,28 +33,27 @@ const legend = {
   [SEA]: ground("sea_water"),
   [SHALLOWS]: ground("sea_shallows"),
   [LAKE]: ground("lake_water"),
-  [CLIFF]: `(composition: (substrate: Named("cliff"), material: Named("silica_cliff"), components: []), outdoors: true)`,
   [PIER_SEA]: catwalk("sea_water"),
   [PIER_SHALLOWS]: catwalk("sea_shallows"),
   [PIER_SAND]: catwalk("sand_ground"),
-  [ROCK]: `(composition: (components: [(component: "rock")]))`,
-  [CARVED]: `(composition: (components: []))`,
+  [BLANK]: `(composition: ())`,
+  [BLANK_OUTDOORS]: `(composition: (), outdoors: true)`,
 };
 
-function num(n) {
-  return Number.isInteger(n) ? n.toFixed(1) : String(n);
-}
-
-function cover(id, plant, gramsPerM2) {
-  const plantMoles = gramsPerM2 / CELLULOSE_MOLAR_MASS / TILE_HEIGHT_M;
-  const rows = [
-    ["o2", AIR_N * 0.21],
-    ["n2", AIR_N * 0.79],
-    [`${plant}:solid`, plantMoles],
-  ];
-  const text = rows.map(([key, moles]) => `("${key}", ${num(moles)})`).join(", ");
-  return `"${id}": (rows: [${text}], temperature_k: ${num(T)}, amount: per_m3)`;
-}
+// Ground hints, one per column (docs/mapping/format.md §Ground in the engine).
+const PLAIN = ".";
+const GRASS = "g";
+const MOSS = "m";
+const RAISED = "^";
+const PIT = "v";
+const groundLegend = {
+  [GRASS]: `(cover: Some("grass"))`,
+  [MOSS]: `(cover: Some("moss"))`,
+  [RAISED]: `(height: 1, material: Some(Role("rock")))`,
+  [PIT]: `(height: -1)`,
+};
+// A cliff tile is a half-height step of quartz (content/terrain.luau `steps`).
+const CLIFF_STEP = `StepOf("half", Blend("silica_ground"))`;
 
 // Ground level, sketched east to west: sea, shallows, sand shore, soil.
 const shoreX = (y) => 44 + Math.round(2 * Math.sin(y / 5));
@@ -74,36 +70,23 @@ function groundGlyph(x, y) {
 }
 
 const PIER = { x0: 36, x1: 58, y0: 31, y1: 32 };
-const CLIFF_BANDS = [
-  { x0: 24, x1: 41, y0: 38, y1: 40 }, // sea cliff south of the spawn
-  { x0: 6, x1: 22, y0: 46, y1: 48 }, // inland ridge
-];
+const CLIFF_BAND = { x0: 24, x1: 41, y0: 38, y1: 40 }; // sea cliff south of the spawn
+const RIDGE_BAND = { x0: 6, x1: 22, y0: 46, y1: 48 }; // inland ridge, one level high
 const inBox = (b, x, y) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1;
 
-const groundRows = [];
+const levelRows = [];
 for (let y = 0; y < SIZE; y++) {
   let row = "";
   for (let x = 0; x < SIZE; x++) {
     let glyph = groundGlyph(x, y);
-    if (CLIFF_BANDS.some((b) => inBox(b, x, y))) glyph = CLIFF;
+    if (inBox(CLIFF_BAND, x, y)) glyph = CLIFF;
+    else if (inBox(RIDGE_BAND, x, y)) glyph = RIDGE;
     else if (inBox(PIER, x, y)) {
       glyph = { [SEA]: PIER_SEA, [SHALLOWS]: PIER_SHALLOWS, [SAND]: PIER_SAND }[glyph] ?? glyph;
     }
     row += glyph;
   }
-  groundRows.push(row);
-}
-
-// Plants go on bare soil only.
-const painted = [];
-const MEADOW = { x0: 4, x1: 24, y0: 22, y1: 36 };
-const MOSS = { x0: 26, x1: 30, y0: 24, y1: 30 };
-for (let y = 0; y < SIZE; y++) {
-  for (let x = 0; x < SIZE; x++) {
-    if (groundRows[y][x] !== SOIL) continue;
-    if (inBox(MEADOW, x, y)) painted.push([x, y, "meadow"]);
-    else if (inBox(MOSS, x, y)) painted.push([x, y, "moss_carpet"]);
-  }
+  levelRows.push(row);
 }
 
 const structures = [
@@ -116,18 +99,36 @@ const structures = [
   [10, 43, "outcrop.cluster"],
 ];
 for (const [x, y, id] of structures) {
-  const glyph = groundRows[y][x];
+  const glyph = levelRows[y][x];
   if (![SOIL, SAND].includes(glyph)) throw new Error(`${id} at ${x},${y} stands on '${glyph}'`);
 }
 
-// Basement (level -1): solid rock with one carved room under the beach.
+// Basement (level -1): generated rock, with one room carved under the beach
+// by a pit hint that opens the column down to the generated level.
 const ROOM = { x0: 28, x1: 38, y0: 28, y1: 36 };
-const basementRows = [];
+// Plants go on bare soil only.
+const MEADOW = { x0: 4, x1: 24, y0: 22, y1: 36 };
+const MOSS_BED = { x0: 26, x1: 30, y0: 24, y1: 30 };
+const hintRows = [];
+const solid = [];
 for (let y = 0; y < SIZE; y++) {
   let row = "";
-  for (let x = 0; x < SIZE; x++) row += inBox(ROOM, x, y) ? CARVED : ROCK;
-  basementRows.push(row);
+  for (let x = 0; x < SIZE; x++) {
+    const glyph = levelRows[y][x];
+    let hint = PLAIN;
+    if (glyph === RIDGE) hint = RAISED;
+    else if (inBox(ROOM, x, y)) hint = PIT;
+    else if (glyph === SOIL && inBox(MEADOW, x, y)) hint = GRASS;
+    else if (glyph === SOIL && inBox(MOSS_BED, x, y)) hint = MOSS;
+    if (glyph === CLIFF) solid.push([x, y, CLIFF_STEP]);
+    row += hint;
+  }
+  hintRows.push(row);
 }
+const tileRows = levelRows.map((r) =>
+  r.replaceAll(CLIFF, BLANK_OUTDOORS).replaceAll(RIDGE, BLANK_OUTDOORS),
+);
+const basementRows = Array.from({ length: SIZE }, () => BLANK.repeat(SIZE));
 
 const byReading = (a, b) => a[1] - b[1] || a[0] - b[0];
 const q = (s) => JSON.stringify(s);
@@ -135,19 +136,25 @@ const block = (name, entries) =>
   entries.length
     ? [`            ${name}: [`, ...entries.map((e) => `                ${e},`), "            ],"]
     : [];
-const used = new Set([...basementRows, ...groundRows].join(""));
+const used = new Set([...basementRows, ...tileRows].join(""));
 const legendLines = Object.keys(legend)
   .filter((g) => used.has(g))
   .sort()
   .map((g) => `        '${g}': ${legend[g]},`);
+const usedHints = new Set(hintRows.join(""));
+const groundLegendLines = Object.keys(groundLegend)
+  .filter((g) => usedHints.has(g))
+  .sort()
+  .map((g) => `            '${g}': ${groundLegend[g]},`);
 
 const out = [
   "// Terrain sampler: soil inland, a sand shore, a sea with a shallows band, a lake,",
-  "// cliffs, a meadow and moss, boulders, a catwalk pier and a rock basement.",
+  "// a cliff of half-height steps, a raised ridge, grass and moss covers, boulders,",
+  "// a catwalk pier, and generated rock below with one carved room.",
   "// Generated by tools/maps/terrain-sampler.mjs; the map is 64 x 64, (x, y) from the top left.",
   "//   sea x >= 44 (wobbles with y); shallows 4 tiles west of it; sand 6 more; lake at (14, 12)",
   "//   pier y 31-32, x 36-58; spawn (36, 35); sea cliff (24-41, 38-40); ridge (6-22, 46-48)",
-  "//   meadow (4-24, 22-36); moss (26-30, 24-30); level -1 rock with a room (28-38, 28-36)",
+  "//   grass (4-24, 22-36); moss (26-30, 24-30); level -1 room (28-38, 28-36)",
   "(",
   '    name: "terrain sampler",',
   '    needs: ["gravity"],',
@@ -158,10 +165,14 @@ const out = [
   "    legend: {",
   ...legendLines,
   "    },",
-  "    blends: {",
-  `        ${cover("meadow", "grass", 300.0)},`,
-  `        ${cover("moss_carpet", "moss", 200.0)},`,
-  "    },",
+  "    ground: (",
+  "        legend: {",
+  ...groundLegendLines,
+  "        },",
+  "        rows: [",
+  ...hintRows.map((r) => `            ${q(r)},`),
+  "        ],",
+  "    ),",
   "    levels_below_ground: 1,",
   "    levels: [",
   "        (",
@@ -171,15 +182,15 @@ const out = [
   "        ),",
   "        (",
   "            rows: [",
-  ...groundRows.map((r) => `                ${q(r)},`),
+  ...tileRows.map((r) => `                ${q(r)},`),
   "            ],",
   ...block(
     "structures",
     [...structures].sort(byReading).map(([x, y, id]) => `(${x}, ${y}, ${q(id)})`),
   ),
   ...block(
-    "painted",
-    painted.sort(byReading).map(([x, y, id]) => `(${x}, ${y}, ${q(id)})`),
+    "solid",
+    solid.sort(byReading).map(([x, y, fill]) => `(${x}, ${y}, ${fill})`),
   ),
   "        ),",
   "    ],",

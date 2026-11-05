@@ -19,6 +19,7 @@ sim.define("message", "lunatic/tfs:lib.body_drag.hide_start", { placeholders = {
 sim.define("message", "lunatic/tfs:lib.body_drag.stuff_start", { placeholders = {} })
 sim.define("message", "lunatic/tfs:lib.climbing.start", { placeholders = {} })
 sim.define("message", "lunatic/tfs:lib.climbing.completed", { placeholders = {} })
+sim.define("message", "lunatic/tfs:lib.climbing.completed_step", { placeholders = {} })
 sim.define("message", "lunatic/tfs:lib.climbing.failed", { placeholders = {} })
 
 -- Reasons the engine reports on `climb.done`, then the pack's own veto reasons
@@ -38,6 +39,7 @@ local climb_refusals = {
     "blocked",
     "cross_vetoed",
     "offset_out_of_range",
+    "not_a_step",
     "not_applied",
     "body_not_controllable",
     "body_observer",

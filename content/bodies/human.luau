@@ -752,6 +752,8 @@ if sim ~= nil then
         local wade_add = if wade ~= nil then wade.add else 0
         return { move_cost = { add = wade_add + stagger_s * sim.tick_hz() } }
     end)
+    -- A ground step is climbed onto, never walked up (lib/climbing.luau).
+    script_definition:handle("move.cross", { kind = "veto" }, climbing.on_cross_veto)
     script_definition:handle(
         "move.cross.done",
         { kind = "react" },
@@ -759,6 +761,8 @@ if sim ~= nil then
             -- The seam transfer first: a wading fault must not strand a body.
             map_boot.on_cross_done(ev)
             wading.on_cross_done(ev)
+            -- A walk refused at a ledge becomes the climb onto it.
+            climbing.on_cross_done(ev)
         end
     )
     -- A fall runs no `move.cross`: its landing takes the seam and the swim.
