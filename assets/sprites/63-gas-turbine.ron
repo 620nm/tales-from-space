@@ -1,0 +1,75 @@
+// The gas turbine: its three sections, their three installable parts and
+// the console that runs it, off tg's turbine sheet and console sheet.
+//
+// One family of `assets/sprites.ron`'s roster, baked in file-name order.
+//
+// tg draws a section as its base state plus overlays chosen in
+// `update_overlays` (code/modules/power/turbine/turbine.dm:117-128):
+// `<prefix>_open` while the panel is open, then `<prefix>_on` while the
+// rotor runs and `<prefix>_off` otherwise. The core rotor's override adds
+// only `core_on`, and only while running (:442-445). Each picture here is
+// that stack baked in that order, one per facing (DMI dirs S, N, E, W).
+//
+// The `running` rows are baked for the native gas-expansion device the
+// sections wait on: no state wears them yet. `core_on`'s emissive twin
+// (:445) is not baked.
+(
+    sheets: [
+        ("turbine", "obj/machines/engine/turbine.dmi"),
+        ("computer", "obj/machines/computer.dmi"),
+    ],
+    sprites: [
+        // inlet_compressor: `inlet_compressor` with its overlays (turbine.dm:117-128).
+        ("inlet_compressor_closed_s", DmiLayers([("@turbine", "inlet_compressor"), ("@turbine", "inlet_off")], 0)),
+        ("inlet_compressor_closed_n", DmiLayers([("@turbine", "inlet_compressor"), ("@turbine", "inlet_off")], 1)),
+        ("inlet_compressor_closed_e", DmiLayers([("@turbine", "inlet_compressor"), ("@turbine", "inlet_off")], 2)),
+        ("inlet_compressor_closed_w", DmiLayers([("@turbine", "inlet_compressor"), ("@turbine", "inlet_off")], 3)),
+        ("inlet_compressor_open_s", DmiLayers([("@turbine", "inlet_compressor"), ("@turbine", "inlet_open"), ("@turbine", "inlet_off")], 0)),
+        ("inlet_compressor_open_n", DmiLayers([("@turbine", "inlet_compressor"), ("@turbine", "inlet_open"), ("@turbine", "inlet_off")], 1)),
+        ("inlet_compressor_open_e", DmiLayers([("@turbine", "inlet_compressor"), ("@turbine", "inlet_open"), ("@turbine", "inlet_off")], 2)),
+        ("inlet_compressor_open_w", DmiLayers([("@turbine", "inlet_compressor"), ("@turbine", "inlet_open"), ("@turbine", "inlet_off")], 3)),
+        ("inlet_compressor_running_s", DmiAnimLayers([("@turbine", "inlet_compressor"), ("@turbine", "inlet_on")], 0)),
+        ("inlet_compressor_running_n", DmiAnimLayers([("@turbine", "inlet_compressor"), ("@turbine", "inlet_on")], 1)),
+        ("inlet_compressor_running_e", DmiAnimLayers([("@turbine", "inlet_compressor"), ("@turbine", "inlet_on")], 2)),
+        ("inlet_compressor_running_w", DmiAnimLayers([("@turbine", "inlet_compressor"), ("@turbine", "inlet_on")], 3)),
+        // core_rotor: `core_rotor` with its overlays (turbine.dm:117-128).
+        ("core_rotor_closed_s", Dmi("@turbine", "core_rotor", 0)),
+        ("core_rotor_closed_n", Dmi("@turbine", "core_rotor", 1)),
+        ("core_rotor_closed_e", Dmi("@turbine", "core_rotor", 2)),
+        ("core_rotor_closed_w", Dmi("@turbine", "core_rotor", 3)),
+        ("core_rotor_open_s", DmiLayers([("@turbine", "core_rotor"), ("@turbine", "core_open")], 0)),
+        ("core_rotor_open_n", DmiLayers([("@turbine", "core_rotor"), ("@turbine", "core_open")], 1)),
+        ("core_rotor_open_e", DmiLayers([("@turbine", "core_rotor"), ("@turbine", "core_open")], 2)),
+        ("core_rotor_open_w", DmiLayers([("@turbine", "core_rotor"), ("@turbine", "core_open")], 3)),
+        ("core_rotor_running_s", DmiLayers([("@turbine", "core_rotor"), ("@turbine", "core_on")], 0)),
+        ("core_rotor_running_n", DmiLayers([("@turbine", "core_rotor"), ("@turbine", "core_on")], 1)),
+        ("core_rotor_running_e", DmiLayers([("@turbine", "core_rotor"), ("@turbine", "core_on")], 2)),
+        ("core_rotor_running_w", DmiLayers([("@turbine", "core_rotor"), ("@turbine", "core_on")], 3)),
+        // turbine_outlet: `turbine_outlet` with its overlays (turbine.dm:117-128).
+        ("turbine_outlet_closed_s", DmiLayers([("@turbine", "turbine_outlet"), ("@turbine", "outlet_off")], 0)),
+        ("turbine_outlet_closed_n", DmiLayers([("@turbine", "turbine_outlet"), ("@turbine", "outlet_off")], 1)),
+        ("turbine_outlet_closed_e", DmiLayers([("@turbine", "turbine_outlet"), ("@turbine", "outlet_off")], 2)),
+        ("turbine_outlet_closed_w", DmiLayers([("@turbine", "turbine_outlet"), ("@turbine", "outlet_off")], 3)),
+        ("turbine_outlet_open_s", DmiLayers([("@turbine", "turbine_outlet"), ("@turbine", "outlet_open"), ("@turbine", "outlet_off")], 0)),
+        ("turbine_outlet_open_n", DmiLayers([("@turbine", "turbine_outlet"), ("@turbine", "outlet_open"), ("@turbine", "outlet_off")], 1)),
+        ("turbine_outlet_open_e", DmiLayers([("@turbine", "turbine_outlet"), ("@turbine", "outlet_open"), ("@turbine", "outlet_off")], 2)),
+        ("turbine_outlet_open_w", DmiLayers([("@turbine", "turbine_outlet"), ("@turbine", "outlet_open"), ("@turbine", "outlet_off")], 3)),
+        ("turbine_outlet_running_s", DmiAnimLayers([("@turbine", "turbine_outlet"), ("@turbine", "outlet_on")], 0)),
+        ("turbine_outlet_running_n", DmiAnimLayers([("@turbine", "turbine_outlet"), ("@turbine", "outlet_on")], 1)),
+        ("turbine_outlet_running_e", DmiAnimLayers([("@turbine", "turbine_outlet"), ("@turbine", "outlet_on")], 2)),
+        ("turbine_outlet_running_w", DmiAnimLayers([("@turbine", "turbine_outlet"), ("@turbine", "outlet_on")], 3)),
+        // The three installable parts (turbine_parts.dm:92-105). tg draws
+        // every tier with the same state.
+        ("compressor_part", Dmi("@turbine", "compressor_part", 0)),
+        ("rotor_part", Dmi("@turbine", "rotor_part", 0)),
+        ("stator_part", Dmi("@turbine", "stator_part", 0)),
+        // The control console: the shared chassis, the `tech_key` keyboard
+        // over it and the `turbinecomp` screen over that
+        // (turbine_computer.dm:4-6, code/game/machinery/computer/_computer.dm:67-85).
+        ("turbine_computer", DmiLayers([
+            ("@computer", "computer"),
+            ("@computer", "tech_key"),
+            ("@computer", "turbinecomp"),
+        ], 0)),
+    ],
+)
