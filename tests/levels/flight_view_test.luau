@@ -54,7 +54,8 @@ assert(not seen_upper(LANDING.x, LANDING.y), "stepping off withdraws the landing
 t.world(
     [==[(
     name: "flight reach",
-    environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
+    needs: ["gravity"],
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -108,18 +109,6 @@ assert(t.hands(climber).held == "wrench", "the wrench a level up is picked up fr
 t.drop(climber)
 t.run_ticks(2)
 
--- The crate on the landing is pulled; stepping back off the flight trails
--- it onto the top, whose link carries it down onto the flight.
-local crate = assert(t.target_at(climber, LANDING.x, LANDING.y, "crate", 1), "the landing's crate")
-t.pull(climber, LANDING.x, LANDING.y, crate)
-t.tick()
-step(climber, "west")
-assert_at(climber, FOOT.x, FOOT.y, "the climber steps back to the foot")
-local below = t.target_at(climber, FLIGHT.x, FLIGHT.y, "crate")
-assert(below ~= nil and t.same_target(below, crate), "the crate came down onto the flight")
-assert(t.target_at(climber, LANDING.x, LANDING.y, "crate", 1) == nil, "and left the landing")
-t.stop_pull(climber)
-
 -- A hand through a hole is not via a link: the pack refuses it, and the
 -- refusal is rowed.
 local refused_before = #t.ledger_rows("claim_refused")
@@ -131,4 +120,16 @@ local refusals = t.ledger_rows("claim_refused")
 assert(#refusals > refused_before, "the refused reach is rowed")
 local why = refusals[#refusals].why
 assert(why == "off_level_reach", "as off-level reach: " .. tostring(why))
+
+-- The crate on the landing is pulled; stepping back off the flight trails
+-- it onto the top, whose link carries it down onto the flight.
+local crate = assert(t.target_at(climber, LANDING.x, LANDING.y, "crate", 1), "the landing's crate")
+t.pull(climber, LANDING.x, LANDING.y, crate)
+t.tick()
+step(climber, "west")
+assert_at(climber, FOOT.x, FOOT.y, "the climber steps back to the foot")
+local below = t.target_at(climber, FLIGHT.x, FLIGHT.y, "crate")
+assert(below ~= nil and t.same_target(below, crate), "the crate came down onto the flight")
+assert(t.target_at(climber, LANDING.x, LANDING.y, "crate", 1) == nil, "and left the landing")
+t.stop_pull(climber)
 assert(#t.script_errors() == 0, "the flight's handlers run cleanly")
