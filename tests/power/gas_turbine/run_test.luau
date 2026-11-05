@@ -7,10 +7,10 @@ local ui_controls = require("@helpers/ui_controls")
 -- switch will not stop it above 1000 rpm (turbine_computer.dm:94), and a
 -- running section's panel stays shut (turbine.dm:169-171).
 
-local RUN = "lunatic/tfs:turbine_run"
 local CHANNEL = "turbine"
 
--- The generator feeds the APC, whose socket at (6, 4) cords the console.
+-- The generator feeds the APC, whose socket at (6, 4) cords the console;
+-- the main runs on under the rotor at (3, 1), the bus its watts feed.
 -- The intake pocket at (1, 1) is walled off and hotter than tier-one parts
 -- are rated for (50000 K, turbine_parts.dm:43-47); the sections stop air
 -- (turbine.dm:10), so it stays hot. The tile ahead of the outlet, (5, 1),
@@ -39,6 +39,10 @@ t.world(
             ],
             networks: [
                 (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
                 (x: 1, y: 4, network: "power", channel: "l2", kind: "cable", facing: 15),
                 (x: 1, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
                 (x: 2, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
@@ -79,9 +83,29 @@ t.tick()
 
 local SECTIONS = { { 2, 1 }, { 3, 1 }, { 4, 1 } }
 
-local function record(): { [string]: any }
-    local stored = assert(t.structure_at(3, 1)).vars[RUN]
-    return if type(stored) == "table" then stored :: { [string]: any } else {}
+-- The console window's readout, as the player sees it.
+local function reading(): ui_controls.Record
+    local panel = ui_controls.record(assert(t.ui(p, CHANNEL), "the console's window is open"))
+    local script = panel.script
+    return ui_controls.record(if script then ui_controls.record(script).data else panel.data)
+end
+
+local function number(field: string): number
+    return ui_controls.number(reading()[field])
+end
+
+-- Runs until `holds` answers true, at most `seconds`: the window redraws
+-- every 2 s, so a pass shows up to a refresh late.
+local function eventually(holds: () -> boolean, seconds: number): boolean
+    local waited = 0
+    while not holds() do
+        if waited >= seconds then
+            return false
+        end
+        t.run_seconds(0.2)
+        waited += 0.2
+    end
+    return true
 end
 
 local function all_in(state: string): boolean
@@ -125,24 +149,25 @@ click(4, 3, "turbine_computer", 0.2)
 local scope = assert(t.ui_document(p, CHANNEL), "the window has an address")
 assert(ui_controls.find(p, "/toggle_power", scope), "the switch is drawn")
 press_power()
-assert(record().active == true, "the switch starts a linked turbine")
+assert(reading().active == true, "the switch starts a linked turbine")
 assert(all_in("running"), "every section turns")
 
 -- A pass with the exhaust walled: the gas fills the stages but nothing
 -- leaves, so nothing turns the shaft (turbine.dm:673-676). 60000 K takes
--- round(log90(10000), 0.5) * 0.5 = 1 point of damage a pass (:636-637).
-t.run_seconds(3)
-assert((record().damage or 0) > 0, "heat past the rating wears the rotor")
-assert(record().rpm == 0 and record().power_w == 0, "no exhaust is no rpm and no power")
+-- round(log90(10000), 0.5) * 0.5 = 1 point of 500 a pass (:636-637).
+assert(eventually(function()
+    return number("integrity") < 100
+end, 5), "heat past the rating wears the rotor")
+assert(number("rpm") == 0 and number("power_w") == 0, "no exhaust is no rpm and no power")
 
 -- Open the tile ahead of the outlet onto the empty chamber: the next pass
 -- ejects and spins.
 assert(t.set_composition(5, 1, "plating"), "the exhaust opens")
-t.run_seconds(2)
-local spinning = record()
-assert((spinning.rpm or 0) > 1000, "hot gas through the stages spins the shaft past 1000 rpm")
-assert(spinning.power_w == spinning.rpm * 4.5, "and feeds the grid rpm * 4.5 W (turbine.dm:684)")
-assert(t.ledger_has("MachineSetpoint", "watts"), "the rotor's output is set on the grid")
+assert(eventually(function()
+    return number("rpm") > 1000
+end, 6), "hot gas through the stages spins the shaft past 1000 rpm")
+assert(number("power_w") == number("rpm") * 4.5, "at rpm * 4.5 W (turbine.dm:684)")
+assert(t.ledger_has("MachineSetpoint", "watts"), "set on the rotor feeding the main under it")
 
 -- The switch will not stop a shaft this fast.
 local refused = press_power()
@@ -151,14 +176,13 @@ assert(
         ~= nil,
     "the stop is refused above 1000 rpm"
 )
-assert(record().active == true, "and the turbine runs on")
+assert(reading().active == true, "and the turbine runs on")
 
 -- A running section's panel stays shut.
 click(2, 2, "screwdriver", 0.2)
 assert(t.hands(p).held == "screwdriver", "the screwdriver is in hand")
-local heard = click(4, 1, "turbine_outlet", 0.2)
 local refusal = "Stop the turbine before you open its panel."
-assert(table.find(heard, refusal) ~= nil, "the panel is refused")
+assert(table.find(click(4, 1, "turbine_outlet", 0.2), refusal) ~= nil, "the panel is refused")
 assert(assert(t.structure_at(4, 1)).state == "running", "and the outlet keeps turning")
 
 -- Throttle the intake to its floor: the stages drain and the shaft slows.
@@ -166,17 +190,14 @@ local valve = control("/regulate")
 t.ui_edit(p, valve, "0.01")
 t.ui_press(p, valve, "change")
 t.run_ticks(2)
-assert(math.abs((record().intake or 0) - 0.01) < 1e-9, "the valve throttles the intake")
-local passes = 0
-while (record().rpm or 0) > 1000 and passes < 20 do
-    t.run_seconds(2)
-    passes += 1
-end
-assert((record().rpm or 0) <= 1000, "a throttled shaft slows under 1000 rpm")
+assert(math.abs(number("intake") - 0.01) < 1e-9, "the valve throttles the intake")
+assert(eventually(function()
+    return number("rpm") <= 1000
+end, 40), "a throttled shaft slows under 1000 rpm")
 
 -- Now the switch stops it, and the panel opens.
 press_power()
-assert(record().active == false, "the switch stops it")
+assert(reading().active == false, "the switch stops it")
 assert(all_in("closed"), "every section stands still")
 click(4, 1, "turbine_outlet", 0.2)
 assert(assert(t.structure_at(4, 1)).state == "open", "a stopped section's panel opens")
