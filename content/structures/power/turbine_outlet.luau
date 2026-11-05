@@ -23,11 +23,19 @@ return {
             .. "colder than it came in.",
     },
     dense = true,
+    -- tg's sections stop air (`can_atmos_pass = ATMOS_PASS_DENSITY`,
+    -- turbine.dm:10), so the intake and the exhaust stay apart.
+    airtight = true,
+    -- The stage's sealed body of gas, tg's 6000 L
+    -- (`gas_theoretical_volume`, turbine.dm:350).
+    volume_ml = 6000000,
     states = gas_turbine.STATES,
     state_sprites = {
         closed = "turbine_outlet_closed_s",
         open = "turbine_outlet_open_s",
+        running = "turbine_outlet_running_s",
     },
+    scripted_states = gas_turbine.SCRIPTED_STATES,
     facings = gas_turbine.FACINGS,
     facing_sprites = gas_turbine.facing_sprites("turbine_outlet"),
     rotates = { "open" },

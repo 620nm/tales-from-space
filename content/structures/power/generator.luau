@@ -11,6 +11,8 @@ return {
     name = "portable generator",
     sprite = "generator",
     fixture = "Generator",
+    -- The engine's old `GENERATOR_W` stand-in, not a tg number.
+    output_w = 100000,
     category = "power",
     dense = true,
     examine = {

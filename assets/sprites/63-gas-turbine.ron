@@ -10,8 +10,8 @@
 // only `core_on`, and only while running (:442-445). Each picture here is
 // that stack baked in that order, one per facing (DMI dirs S, N, E, W).
 //
-// The `running` rows are baked for the native gas-expansion device the
-// sections wait on: no state wears them yet. `core_on`'s emissive twin
+// The `running` rows are each section's `running` state, worn while the
+// rotor runs (lib/power/gas_turbine_turns.luau). `core_on`'s emissive twin
 // (:445) is not baked.
 (
     sheets: [
