@@ -5,13 +5,13 @@ local physical_profiles = require("@lib/physical_profiles")
 -- in `pipe_item.dmi` (construction.dm:17,216) -- `"junction"` here
 -- (heat_exchange/junction.dm:16).
 return {
-    id = "he_junction_fitting",
+    id = "radiator_junction_fitting",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
-    name_label = "lunatic/tfs:entity.he_junction_fitting.name",
+    name_label = "lunatic/tfs:entity.radiator_junction_fitting.name",
     name = "junction fitting",
     hint_tags = { "pipe_part" },
-    sprite = "he_junction_loose",
+    sprite = "radiator_junction_loose",
     category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
     -- The main this one will stand on, 1..=5: the engine's dial, set by

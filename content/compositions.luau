@@ -335,10 +335,10 @@ local composition_declaration: { [string]: any } = {
                 -- joins every side like pipe, where tg's mouths only its `dir` (multiz.dm:8-9).
                 { id = "adapter", paintable = false, allowed_channels = pipe_channels, connects_to_kinds = { "adapter", "standard" }, cross_level_adapter = true,
                     connectivity = 15, shapes = {}, shapes_by_channel = uniform_shapes(function(channel: string) return "pipe_adapter_" .. channel end, pipe_channels) },
-                { id = "he_pipe", paintable = false, allowed_channels = { "l2", "l3", "l4" }, connects_to_kinds = { "he_pipe" },
+                { id = "radiator_pipe", paintable = false, allowed_channels = { "l2", "l3", "l4" }, connects_to_kinds = { "radiator_pipe" },
                     color = "#404040", connectivity = 15, shapes = {},
-                    conducts = { coefficient = pipe_thermal.he_coefficient, min_delta_k = pipe_thermal.he_deadband_k },
-                    shapes_by_channel = shapes("he_pipe", { "l2", "l3", "l4" }, false) } } },
+                    conducts = { coefficient = pipe_thermal.radiator_coefficient, min_delta_k = pipe_thermal.radiator_deadband_k },
+                    shapes_by_channel = shapes("radiator_pipe", { "l2", "l3", "l4" }, false) } } },
     },
     decals = decals,
     decal_colors = {

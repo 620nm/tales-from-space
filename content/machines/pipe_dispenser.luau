@@ -158,9 +158,9 @@ local content = {
         -- "Manifold" and "4-Way Manifold" as three objects; a length's
         -- shape is derived from what it joins here, so all three are the
         -- one entry and a manifold is what a fourth length makes.
-        { item = "he_pipe", name = "Pipe", category = "Heat Exchange", amount = 999 },
+        { item = "radiator_pipe", name = "Pipe", category = "Heat Exchange", amount = 999 },
         {
-            item = "he_junction_fitting",
+            item = "radiator_junction_fitting",
             name = "Junction",
             category = "Heat Exchange",
             amount = 999,

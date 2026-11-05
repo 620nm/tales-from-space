@@ -9,7 +9,7 @@ local action_rules = require("@lib/action_rules")
 -- (pipes/multiz.dm:2-60), on the dispenser's Pipes shelf as
 -- "Multi-Deck Adapter" (_globalvars/lists/pipe_recipes.dm:7). Laterally it
 -- is pipe; vertically it joins an adapter on the SAME piping layer and no
--- other piece. Like heat-exchanging pipe it is laid from the hand on an
+-- other piece. Like radiator pipe it is laid from the hand on an
 -- open deck, one per layer, and it takes no paint (`paintable = FALSE`,
 -- multiz.dm:17). The wrench takes it back up like any length.
 local content = {

@@ -40,7 +40,7 @@ component though those tiles smooth nothing back.
 
 The power network declares three channels and the pipe network five. Their
 channel identities, preferences, kind connectivity, paints, and shape artwork
-are content data. Heat-exchanging pipe fits channels two through four and
+are content data. Radiator pipe fits channels two through four and
 joins its own kind. Pipe paints preserve the existing same-colour and omni
 connectivity rules. Maps and exports store authored network identities.
 

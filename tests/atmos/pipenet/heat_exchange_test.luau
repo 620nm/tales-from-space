@@ -4,7 +4,7 @@ local network_channels = require("@helpers/network_channels")
 
 local ui_controls = require("@helpers/ui_controls")
 
--- Heat-exchanging pipe: the run that is SUPPOSED to leak heat.
+-- Radiator pipe: the run that is SUPPOSED to leak heat.
 --
 -- Every other length on the station is a sealed tube. This one trades
 -- with the air of the tile above it every pass, at the coefficient and
@@ -82,7 +82,7 @@ end
 -- ---------------------------------------------------------------
 -- TWO KINDS TOUCHING ARE STILL TWO RUNS.
 --
--- Three lengths of heat-exchanging pipe and two of ordinary pipe, laid
+-- Three lengths of radiator pipe and two of ordinary pipe, laid
 -- end to end on one layer with nothing between them. Every other rule
 -- the station has says they are one net: same layer, both reaching, no
 -- paint on either. They are not, and the mole counts say so.
@@ -105,9 +105,9 @@ t.world(
             structures: [(6, 1, "player_spawn")],
             items: [(6, 1, "pipe_painter")],
             networks: [
-                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
-                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
-                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "radiator_pipe", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "radiator_pipe", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "radiator_pipe", facing: 15),
                 (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
                 (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
             ],
@@ -121,7 +121,7 @@ t.world(
 local p = t.join()
 t.tick()
 
-assert(network_channels.at(3, 1, "pipe") == "l3", "the last heat-exchange length is laid")
+assert(network_channels.at(3, 1, "pipe") == "l3", "the last radiator length is laid")
 assert(network_channels.at(4, 1, "pipe") == "l3", "and the first ordinary one is right beside it")
 
 local seam_kpa = assert(network_matter.pressure(1, 1))
@@ -169,8 +169,8 @@ assert(t.ledger_has("NetworkPainted"), "ordinary pipe still paints")
 -- A JUNCTION WELDS THEM INTO ONE.
 --
 -- tg's junction is the one fitting that takes ordinary pipe on one side
--- and heat-exchanging pipe on the other (heat_exchange/junction.dm).
--- Two lengths of exchange, three of ordinary, and the thing between
+-- and radiator pipe on the other (heat_exchange/junction.dm).
+-- Two lengths of radiator, three of ordinary, and the thing between
 -- them: one body of gas, and every tile says the same number.
 --
 -- Asked twice -- bolted down, then in the engineer's hands -- because a
@@ -194,14 +194,14 @@ t.world(
             ],
             items: [(6, 2, "wrench")],
             networks: [
-                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
-                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "radiator_pipe", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "radiator_pipe", facing: 15),
                 (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
                 (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
                 (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
             ],
 
-            structures: [(6, 2, "player_spawn"), (3, 1, "he_junction")],
+            structures: [(6, 2, "player_spawn"), (3, 1, "radiator_junction")],
         ),
     ],
 )]==],
@@ -211,18 +211,18 @@ t.world(
 local j = t.join()
 t.tick()
 
-assert(assert(t.structure_at(3, 1)).id == "he_junction", "the map stood a junction there")
+assert(assert(t.structure_at(3, 1)).id == "radiator_junction", "the map stood a junction there")
 
 -- AND IT TURNED ITSELF ROUND TO FACE THE RIGHT WAY. The map spells no
 -- direction, so the junction seats itself -- and geometry alone cannot
 -- answer here, because a two-ended fitting on an east-west main reaches
 -- the same two tiles pointing either way. What decides is which KIND
--- each end takes: the end at `dir` takes heat-exchange pipe
+-- each end takes: the end at `dir` takes radiator pipe
 -- (junction.dm:30-33), that run is west, so it points west and wears
 -- the picture of a junction pointing west.
 assert(
-    assert(t.structure_at(3, 1)).sprite == "he_junction_w",
-    "it faces its heat-exchange side: " .. tostring(assert(t.structure_at(3, 1)).sprite)
+    assert(t.structure_at(3, 1)).sprite == "radiator_junction_w",
+    "it faces its radiator side: " .. tostring(assert(t.structure_at(3, 1)).sprite)
 )
 
 local junction_kpa = assert(network_matter.pressure(1, 1))
@@ -238,16 +238,16 @@ assert(t.hands(j).held == "wrench", "wrench in hand")
 for _ = 1, 3 do
     walk(j, "west")
 end
-t.click(j, 3, 1, t.target_at(j, 3, 1, "he_junction"))
+t.click(j, 3, 1, t.target_at(j, 3, 1, "radiator_junction"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "the junction comes up off the deck")
-assert(t.count_items("he_junction_fitting") == 1, "and hands its fitting back")
+assert(t.count_items("radiator_junction_fitting") == 1, "and hands its fitting back")
 
-local he_side = net_moles(1, 1, DISTRO)
+local radiator_side = net_moles(1, 1, DISTRO)
 local plain_side = net_moles(6, 1, DISTRO)
-near(he_side, moles(junction_kpa, 2 * PIPE_M3), 0.05, "two lengths of exchange, alone")
+near(radiator_side, moles(junction_kpa, 2 * PIPE_M3), 0.05, "two lengths of radiator, alone")
 near(plain_side, moles(junction_kpa, 3 * PIPE_M3), 0.05, "three of ordinary, on theirs")
-assert(plain_side > he_side + 0.5, "and they are two bodies of gas again")
+assert(plain_side > radiator_side + 0.5, "and they are two bodies of gas again")
 
 -- ---------------------------------------------------------------
 -- THE HEAT-EXCHANGE END TAKES NOTHING ELSE.
@@ -280,7 +280,7 @@ t.world(
                 (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
                 (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
             ],
-            structures: [(6, 1, "player_spawn"), (3, 1, "he_junction")],
+            structures: [(6, 1, "player_spawn"), (3, 1, "radiator_junction")],
         ),
     ],
 )]==],
@@ -290,7 +290,7 @@ t.world(
 t.join()
 t.tick()
 
-assert(assert(t.structure_at(3, 1)).id == "he_junction", "a junction between two plain mains")
+assert(assert(t.structure_at(3, 1)).id == "radiator_junction", "a junction between two plain mains")
 local plain_kpa = assert(network_matter.pressure(1, 1))
 local west = net_moles(1, 1, DISTRO)
 local east = net_moles(6, 1, DISTRO)
@@ -313,7 +313,7 @@ assert(
 -- A HOT RUN WARMS THE ROOM OVER IT, AND ORDINARY PIPE DOES NOT.
 --
 -- One sealed room with two runs under it on different layers: three
--- lengths of heat-exchanging pipe on layer 3 and three of ordinary pipe
+-- lengths of radiator pipe on layer 3 and three of ordinary pipe
 -- on layer 2. Heat goes into BOTH -- `network_matter.heat` is a precondition
 -- setter, not the mechanism -- and only one of them gives any of it up.
 --
@@ -340,11 +340,11 @@ t.world(
             structures: [(2, 1, "player_spawn")],
             networks: [
                 (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "radiator_pipe", facing: 15),
                 (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "radiator_pipe", facing: 15),
                 (x: 3, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "radiator_pipe", facing: 15),
             ],
         ),
     ],
@@ -360,7 +360,7 @@ near(
     assert(network_matter.temperature(1, 1, DISTRO)),
     T20C,
     0.5,
-    "the exchange run opens at room temperature"
+    "the radiator run opens at room temperature"
 )
 near(assert(network_matter.temperature(1, 1, L2)), T20C, 0.5, "and so does the ordinary one over it")
 near(assert(t.room_temperature(2, 1)), T20C, 0.5, "as does the air")
@@ -370,19 +370,19 @@ near(assert(t.room_temperature(2, 1)), T20C, 0.5, "as does the air")
 network_matter.heat(1, 1, 12000.0, DISTRO)
 network_matter.heat(1, 1, 12000.0, L2)
 t.tick()
-local hot_he = assert(network_matter.temperature(1, 1, DISTRO))
+local hot_radiator = assert(network_matter.temperature(1, 1, DISTRO))
 local hot_plain = assert(network_matter.temperature(1, 1, L2))
-assert(hot_he > T20C + 50.0, "the exchange run is hot: " .. hot_he)
-near(hot_plain, hot_he, 1.0, "and the ordinary run is exactly as hot")
+assert(hot_radiator > T20C + 50.0, "the radiator run is hot: " .. hot_radiator)
+near(hot_plain, hot_radiator, 1.0, "and the ordinary run is exactly as hot")
 
 local room_0 = assert(t.room_temperature(2, 1))
 local pipe_0 = assert(network_matter.energy(1, 1, DISTRO))
 
 t.run_seconds(30)
 
-local settled_he = assert(network_matter.temperature(1, 1, DISTRO))
+local settled_radiator = assert(network_matter.temperature(1, 1, DISTRO))
 local settled_plain = assert(network_matter.temperature(1, 1, L2))
-assert(settled_he < hot_he - 20.0, "the exchange run gave heat up: " .. settled_he)
+assert(settled_radiator < hot_radiator - 20.0, "the radiator run gave heat up: " .. settled_radiator)
 near(settled_plain, hot_plain, 1.0, "the ordinary run gave up none of its own")
 -- The same joules go into a cell whose air holds CELL_VOLUME_M3 times the
 -- 1 m3 cell's heat, so the room's rise is a third of the 1 m3 rise: 0.5 K / 3.
@@ -413,10 +413,10 @@ assert(
 -- is the pack's own tuning and belongs to `content/lib/thermal.luau`,
 -- so this asks the engine what was declared rather than spelling a
 -- number that the tuning would then have to keep in step.
-local BAND = assert(t.network_law("pipe", "he_pipe")).min_delta_k
+local BAND = assert(t.network_law("pipe", "radiator_pipe")).min_delta_k
 assert(BAND ~= nil and BAND > 0.0, "the exchange pipe declares a band: " .. tostring(BAND))
 
-local shed_fast = hot_he - settled_he
+local shed_fast = hot_radiator - settled_radiator
 t.run_seconds(60)
 local parked_pipe = assert(network_matter.temperature(1, 1, DISTRO))
 local parked_room = assert(t.room_temperature(2, 1))
@@ -481,10 +481,10 @@ t.world(
             ],
             structures: [(1, 1, "player_spawn")],
             networks: [
-                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
-                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
-                (x: 1, y: 3, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
-                (x: 2, y: 3, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "radiator_pipe", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "radiator_pipe", facing: 15),
+                (x: 1, y: 3, network: "pipe", channel: "l3", kind: "radiator_pipe", facing: 15),
+                (x: 2, y: 3, network: "pipe", channel: "l3", kind: "radiator_pipe", facing: 15),
             ],
         ),
     ],
@@ -594,11 +594,11 @@ for _, rec in ipairs(ui_controls.rows(ui_controls.state(e).products)) do
     assert(type(product) == "string", "the shelf row names a product")
     shelf[product] = rec
 end
-assert(shelf.he_pipe, "the dispenser stocks a length of heat-exchanging pipe")
-assert(shelf.he_pipe.category == "Heat Exchange", "under tg's own heading")
-assert(shelf.he_pipe.label == "Pipe", "by tg's own word for it")
-assert(shelf.he_junction_fitting.label == "Junction", "and the junction beside it")
-assert(shelf.he_junction_fitting.category == "Heat Exchange")
+assert(shelf.radiator_pipe, "the dispenser stocks a length of radiator pipe")
+assert(shelf.radiator_pipe.category == "Heat Exchange", "under tg's own heading")
+assert(shelf.radiator_pipe.label == "Pipe", "by tg's own word for it")
+assert(shelf.radiator_junction_fitting.label == "Junction", "and the junction beside it")
+assert(shelf.radiator_junction_fitting.category == "Heat Exchange")
 assert(
     shelf.heat_exchanger_fitting.category == "Heat Exchange",
     "with the plate that was already there"
@@ -619,5 +619,5 @@ for _, tog in ipairs(ui_controls.rows(ui_controls.state(e).toggles)) do
         offered[word(tog.label)] = tog.icon
     end
 end
-assert(offered["Pipe"] == "he_pipe", "the shelf offers a length, with its own picture")
-assert(offered["Junction"] == "he_junction_loose", "and the junction that meets ordinary pipe")
+assert(offered["Pipe"] == "radiator_pipe", "the shelf offers a length, with its own picture")
+assert(offered["Junction"] == "radiator_junction_loose", "and the junction that meets ordinary pipe")

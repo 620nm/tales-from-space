@@ -85,10 +85,10 @@
         // one -- a plate, a scrubber or an injector now shows the tube
         // running away behind it, and shows it capped where nobody has
         // plumbed it yet.
-        ("he_plate_n", Dmi("@unary", "he1", 0)),
-        ("he_plate_s", Dmi("@unary", "he1", 1)),
-        ("he_plate_e", Dmi("@unary", "he1", 3)),
-        ("he_plate_w", Dmi("@unary", "he1", 2)),
+        ("heat_exchanger_n", Dmi("@unary", "he1", 0)),
+        ("heat_exchanger_s", Dmi("@unary", "he1", 1)),
+        ("heat_exchanger_e", Dmi("@unary", "he1", 3)),
+        ("heat_exchanger_w", Dmi("@unary", "he1", 2)),
         // THE ADAPTERS are pipe rather than machinery -- tg files both
         // under `/obj/machinery/atmospherics/pipe` -- and each is a CENTRE
         // PIECE with nothing else in it. Both of tg's own `Initialize`s

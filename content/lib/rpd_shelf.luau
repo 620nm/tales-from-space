@@ -155,12 +155,12 @@ local RECIPES: { Recipe } = {
     -- what you get by running a fourth length into a tee. The plate tg
     -- lists last is already on the shelf above, with the rest of the
     -- thermal kit.
-    { label = "Pipe", item = "he_pipe", network_kind = "he_pipe", icon = "he_pipe", group = "Heat Exchange", paints = false },
+    { label = "Pipe", item = "radiator_pipe", network_kind = "radiator_pipe", icon = "radiator_pipe", group = "Heat Exchange", paints = false },
     {
         label = "Junction",
-        item = "he_junction_fitting",
-        structure = "he_junction",
-        icon = "he_junction_loose",
+        item = "radiator_junction_fitting",
+        structure = "radiator_junction",
+        icon = "radiator_junction_loose",
         group = "Heat Exchange",
     },
     {

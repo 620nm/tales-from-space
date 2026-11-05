@@ -1,10 +1,10 @@
--- A junction: the seam between a heat-exchange run and ordinary pipe.
+-- A junction: the seam between a radiator run and ordinary pipe.
 --
 -- tg's `/obj/machinery/atmospherics/pipe/heat_exchanging/junction`
 -- (heat_exchange/junction.dm) -- "a one meter junction that connects
 -- regular and heat-exchanging pipe".
 --
--- Heat-exchanging pipe joins only heat-exchanging pipe (tg's
+-- Radiator pipe joins only radiator pipe (tg's
 -- `HE_type_check`, he_pipes.dm:18-21), which is what makes a cooling
 -- loop a closed circuit rather than a branch of the distribution main.
 -- This is the piece that opens it: two mouths, one net across itself,
@@ -21,19 +21,19 @@
 -- normal pipe instead" -- and the end at `dir` as this family. The
 -- engine numbers the same two mouths back then front, back being the
 -- one behind the facing, so the list below reads plain first and
--- heat-exchange second. `"standard"` is the composition's ordinary
+-- radiator second. `"standard"` is the composition's ordinary
 -- pipe kind; the second is this pack's own kind, named by the item that
 -- lays it.
 --
 -- SO IT HAS FOUR FACINGS where the colour adapter has two axes. Turn a
 -- colour adapter around and it does exactly what it did; turn this
 -- around and the two runs it was welding come apart, because the end
--- that takes heat-exchange pipe is now pointing at the main. tg aims it
+-- that takes radiator pipe is now pointing at the main. tg aims it
 -- and never normalises it, and neither does this.
 --
 -- IT CONDUCTS NOTHING. tg gives it `WALL_HEAT_TRANSFER_COEFFICIENT`,
 -- which is 0.0 (__DEFINES/atmospherics/atmos_core.dm:119), behind a
--- 300 K deadband -- a heat-exchange fitting that is deliberately inert,
+-- 300 K deadband -- a fitting that is deliberately inert,
 -- so the seam is a seam and not a radiator. Here it is a device rather
 -- than a length, and a device holds gas without trading heat with the
 -- deck at all, which lands in the same place.
@@ -42,20 +42,20 @@
 -- `UNARY_PIPE_VOLUME * device_type` and this has two ends
 -- (pipes.dm:27-28).
 return {
-    id = "he_junction",
+    id = "radiator_junction",
     visual_layer = "pipe",
-    name_label = "lunatic/tfs:entity.he_junction.name",
+    name_label = "lunatic/tfs:entity.radiator_junction.name",
     name = "junction",
     sounds = { toggle = "click" },
-    sprite = "he_junction_s",
+    sprite = "radiator_junction_s",
     dense = false,
     states = { "anchored" },
     facing_sprites = {
         anchored = {
-            north = "he_junction_n",
-            south = "he_junction_s",
-            east = "he_junction_e",
-            west = "he_junction_w",
+            north = "radiator_junction_n",
+            south = "radiator_junction_s",
+            east = "radiator_junction_e",
+            west = "radiator_junction_w",
         },
     },
     atmos = {
@@ -67,13 +67,13 @@ return {
         device = "kind_adapter",
         -- Back mouth, then front. Back is behind the facing, which is
         -- tg's `REVERSE_DIR(dir)`: ordinary pipe. Front is the facing:
-        -- heat-exchanging pipe.
-        joins = { "standard", "he_pipe" },
+        -- radiator pipe.
+        joins = { "standard", "radiator_pipe" },
     },
     build = {
         sound = "smash",
         on = { "component:station_base" },
-        from_item = "he_junction_fitting",
+        from_item = "radiator_junction_fitting",
         tool = "wrench",
         secs = 2.0,
         start = "You start fastening the junction down.",
@@ -86,7 +86,7 @@ return {
             tool = "wrench",
             secs = 2.0,
             gone = true,
-            yields = { he_junction_fitting = 1 },
+            yields = { radiator_junction_fitting = 1 },
             start = "You start unfastening the junction.",
             done = "The junction comes up, and the two runs part.",
         },

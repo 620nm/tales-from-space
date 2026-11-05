@@ -1,7 +1,7 @@
 local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
--- A length of heat-exchanging pipe: the run you lay when you WANT the
+-- A length of radiator pipe: the run you lay when you WANT the
 -- room to feel what is inside it.
 --
 -- tg's `/obj/machinery/atmospherics/pipe/heat_exchanging/simple`
@@ -15,9 +15,9 @@ local action_rules = require("@lib/action_rules")
 -- at all, and why a freezer loop laid through a hot room bleeds it dry.
 --
 -- IT JOINS ONLY ITSELF (tg's `HE_type_check`, he_pipes.dm:18-21). A
--- heat-exchange run and a distribution main can touch end to end on one
+-- radiator run and a distribution main can touch end to end on one
 -- layer and stay two networks, which is what the junction is for
--- (structures/he_junction.luau).
+-- (structures/radiator_junction.luau).
 --
 -- IT TAKES NO PAINT. tg fixes the colour at `#404040` outright
 -- (`add_atom_colour(..., FIXED_COLOUR_PRIORITY)`, he_pipes.dm:15), and a
@@ -29,13 +29,13 @@ local action_rules = require("@lib/action_rules")
 local LAYERS = { 2, 3, 4 }
 
 local content = {
-    id = "he_pipe",
+    id = "radiator_pipe",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
-    name_label = "lunatic/tfs:entity.he_pipe.name",
-    name = "heat-exchanging pipe",
+    name_label = "lunatic/tfs:entity.radiator_pipe.name",
+    name = "radiator pipe",
     hint_tags = { "pipe_part" },
-    sprite = "he_pipe",
+    sprite = "radiator_pipe",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
     stack = 25,
     -- The engine's dial is the piping layer, 1..5, and this fits three
@@ -75,12 +75,12 @@ if sim ~= nil then
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
         local _x, _y, _choice = x, y, choice
         local channel = "l" .. tostring(assert(sim.mode(self)).index + 1)
-        if not sim.network_installable(x, y, "pipe", channel, "he_pipe") then
+        if not sim.network_installable(x, y, "pipe", channel, "radiator_pipe") then
             return { replaced = false }
         end
         sim.message.send({
             recipient = user,
-            message = sim.msg("lunatic/tfs:items.he_pipe.you_start_fitting_a_length", {}),
+            message = sim.msg("lunatic/tfs:items.radiator_pipe.you_start_fitting_a_length", {}),
         })
         sim.spawn_task(user, function()
             if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
@@ -91,10 +91,10 @@ if sim ~= nil then
                 return true
             end
             channel = "l" .. tostring(assert(sim.mode(self)).index + 1)
-            if not sim.network_installable(x, y, "pipe", channel, "he_pipe") then
+            if not sim.network_installable(x, y, "pipe", channel, "radiator_pipe") then
                 return true
             end
-            sim.place_network(x, y, "pipe", channel, "he_pipe", 15, nil, self, 1)
+            sim.place_network(x, y, "pipe", channel, "radiator_pipe", 15, nil, self, 1)
             sim.sound.play({ sound = "ratchet", at = ev.at })
         end)
         return true

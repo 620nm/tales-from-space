@@ -126,7 +126,7 @@ There are **three distinct connectivity mechanisms** in the engine and the pack 
 
 ### 2.2 Mechanism B: 16-State Cardinal Topology Networks (`0..15` Masks + Port Stubs)
 - **How It Works** (the engine's `docs/content-schema/composition-networks.md`, [`content/compositions.luau`](../../content/compositions.luau)):
-  - Used for subfloor/surface networks (`power` cables across channels `l1..l3`, `pipe` standard & `he_pipe` across channels `l1..l5`).
+  - Used for subfloor/surface networks (`power` cables across channels `l1..l3`, `pipe` standard & `radiator_pipe` across channels `l1..l5`).
   - Uses a 4-bit cardinal mask `0..15` (`N=1, S=2, E=4, W=8`) resolved by the server from reciprocal neighbor connectivity (`shapes_by_channel[channel][mask]`), plus 4-direction `port_shapes` (`connected`, `exposed`, `half`) underlaid beneath inline/unary machines.
   - Imported in [`assets/sprites/50-pipes-and-cable.ron`](../../assets/sprites/50-pipes-and-cable.ron) and [`51-heat-exchange.ron`](../../assets/sprites/51-heat-exchange.ron).
 

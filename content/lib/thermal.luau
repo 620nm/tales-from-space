@@ -9,12 +9,12 @@ return {
     -- (__DEFINES/atmospherics/atmos_core.dm:122), copied verbatim.
     -- Raise it and a run drags the room faster; lower it and a freezer
     -- loop takes a shift to bite.
-    he_coefficient = 0.1,
+    radiator_coefficient = 0.1,
 
     -- The deadband: nothing moves until run and room differ by this
     -- many kelvin. tg's `minimum_temperature_difference` is 20
     -- (he_pipes.dm:2) and that is too wide here -- a run parked 20 K
     -- off could neither warm nor cool an interior room enough to feel.
     -- At 1 K a run tracks the room instead of giving up short of it.
-    he_deadband_k = 1,
+    radiator_deadband_k = 1,
 }

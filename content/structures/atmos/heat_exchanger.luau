@@ -32,7 +32,7 @@ return {
     name_label = "lunatic/tfs:entity.heat_exchanger.name",
     name = "heat exchanger",
     sounds = { toggle = "click" },
-    sprite = "he_plate_n",
+    sprite = "heat_exchanger_n",
     dense = false,
     -- One state. A plate is bolted down or it is a fitting in your
     -- hands; there is nothing in between and nothing to switch.
@@ -42,10 +42,10 @@ return {
         -- The pipe is behind it, which is why these cells are tg's dirs
         -- reversed (see tfs/assets/sprites.ron).
         anchored = {
-            north = "he_plate_n",
-            south = "he_plate_s",
-            east = "he_plate_e",
-            west = "he_plate_w",
+            north = "heat_exchanger_n",
+            south = "heat_exchanger_s",
+            east = "heat_exchanger_e",
+            west = "heat_exchanger_w",
         },
     },
     atmos = {
