@@ -177,7 +177,7 @@ assert(spun > 0, "the spinning rotor feeds the grid")
 assert(t.cancel_mod_tasks("lunatic/tfs") >= 3, "the three sections' turns are cancelled")
 t.run_seconds(6)
 assert(watts() == spun, "a cancelled run keeps its last setpoint")
--- The window's own refresh went with the tasks; reopening it reads afresh.
+-- The window's own refresh went with the tasks; reopening it starts a new one.
 click(q, 4, 3, "turbine_computer", 0.2)
 assert(reading(q).active == false, "a rotor two passes silent reads stopped")
 
@@ -194,10 +194,10 @@ toggle(q)
 assert(watts() == 0, "the switch takes the stalled rotor's watts off")
 assert(reading(q).active == true, "and restarts the run")
 assert(assert(t.structure_at(3, 1)).state == "running", "the rotor turns again")
+-- Read off the window's own refresh, never reopened: the dead one was replaced.
 assert(eventually(function()
-    click(q, 4, 3, "turbine_computer", 0)
     return ui_controls.number(reading(q).rpm) > 0
-end, 8), "and its sections take their turns afresh")
+end, 8), "and its sections take their turns afresh, the window redrawing them")
 assert((watts() or 0) > 0, "feeding the grid again")
 
 -- Stalled again with the breaker tripped, the rotor unfed: the switch

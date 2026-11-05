@@ -65,9 +65,13 @@ end
 
 -- Who each console's window may still be open for, keyed by the console;
 -- a reader past arm's reach has had theirs closed (the engine's
--- docs/tgui/documents.md, Lifecycle and status).
-type Watch = { console: Handle, readers: { [string]: Handle } }
+-- docs/tgui/documents.md, Lifecycle and status). `beat` is the tick its
+-- refresh task last woke.
+type Watch = { console: Handle, readers: { [string]: Handle }, beat: number }
 local watches: { [string]: Watch } = {}
+-- A watch whose task missed this many refreshes was cancelled outright
+-- (the engine's docs/luau-api/runtime.md) and is started afresh.
+local STALE_REFRESHES = 2
 
 local function prune(watch: Watch): boolean
     local any = false
@@ -82,25 +86,32 @@ local function prune(watch: Watch): boolean
 end
 
 -- One refresh task per console with a reader near it; it ends when the
--- console goes or the last reader walks away.
+-- console goes or the last reader walks away, and a dead one is replaced.
 local function watch(console: Handle, reader: Handle): ()
     local key = tostring(console)
     local current = watches[key]
+    local now = sim.tick()
     if current ~= nil then
         current.readers[tostring(reader)] = reader
-        return
+        if now - current.beat <= STALE_REFRESHES * sim.ticks(REFRESH_SECONDS) then
+            return
+        end
     end
-    local started: Watch = { console = console, readers = { [tostring(reader)] = reader } }
+    local readers = if current ~= nil then current.readers else { [tostring(reader)] = reader }
+    local started: Watch = { console = console, readers = readers, beat = now }
     watches[key] = started
     sim.spawn_task(console, function()
         while true do
             sim.sleep(sim.ticks(REFRESH_SECONDS))
+            started.beat = sim.tick()
             if not console.alive or not prune(started) then
                 break
             end
             refresh(console)
         end
-        watches[key] = nil
+        if watches[key] == started then
+            watches[key] = nil
+        end
     end)
 end
 
