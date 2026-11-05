@@ -59,7 +59,8 @@ export function turbineBody(id: string, doc: DocumentIdentity, state: TurbineSta
   const running = state.active === true;
   const integrity = Math.max(0, Math.min(100, finite(state.integrity)));
   return [
-    Section(`${id}/status`, S.tfs("ui.turbine.status"), [
+    // Not `/status`: ui/documents.ts draws the window's footer under that id.
+    Section(`${id}/turbine`, S.tfs("ui.turbine.status"), [
       row(`${id}/power`, [
         text(`${id}/power/state`, S.tfs(running ? "ui.turbine.running" : "ui.turbine.stopped"), ["grow", "list-label"]),
         press(`${id}/toggle_power`, S.tfs(running ? "ui.turbine.stop" : "ui.turbine.start"), scriptAction(doc, "toggle_power"), {
