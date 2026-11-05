@@ -11,6 +11,8 @@ return {
     name = "solar panel",
     sprite = "solar",
     fixture = "Solar",
+    -- The engine's old `SOLAR_W` stand-in, not a tg number.
+    output_w = 8000,
     category = "power",
     dense = true,
     examine = {

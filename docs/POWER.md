@@ -180,21 +180,21 @@ classes in class order (`items.multitool.carrying_*` in
 ## The gas turbine
 
 tg's gas turbine (`code/modules/power/turbine/`) stands in three sections
-along one line: the inlet compressor behind the core rotor, the turbine
-outlet ahead of it, each built on a machine frame from its own board and its
-one installable part (`lib/power/gas_turbine.luau`). The tool vendor sells
-the four boards and the tier-one parts; tiers two to four are map-placed
-only. A screwdriver opens or shuts a section's panel; open, it turns (tg's
-wrench is the Rotate gesture here) and a crowbar takes it apart. A line
-mapped or built whole links silently. A multitool on the shut core rotor
-checks the line in tg's order (`turbine.dm:497-559`), says the first break,
-and on a whole line logs the rotor in its buffer; the same multitool on the
-gas turbine control computer links the console to that rotor, on the same
-map and not since rebuilt. Opening any panel on the line unlinks it.
+along one line: the inlet compressor behind the core rotor, the outlet
+ahead, each built on a machine frame from its board and its one part
+(`lib/power/gas_turbine.luau`); the vendor sells the boards and tier-one
+parts. A screwdriver opens or shuts a stopped section's panel; open, it
+turns and a crowbar takes it apart. A whole line links silently; a
+multitool on the shut rotor checks it in tg's order (`turbine.dm:497-559`)
+and logs the rotor for the console. An open panel unlinks the line.
 
-The sections move no gas and make no power, and the console opens no window:
-tg's compression, expansion, rpm, damage and grid output run every tick
-(`turbine.dm:625-685`) and wait on a native device. Each part's tier carries
-tg's efficiency (`turbine_parts.dm:31-54`, `:107-117`) in its `component`,
-and its rated rpm and temperature on its examine line (`:18`), from
-`lib/power/turbine_parts.luau`.
+The console's switch (`lib/power/gas_turbine_run.luau`) starts a linked,
+unwrecked rotor and refuses a stop above 1000 rpm (`turbine_computer.dm:94`).
+Running, the sections wear their `running` pictures and a rotor task runs
+tg's pass every 2 s (`turbine.dm:625-685`), every number verbatim. Heat past
+the parts' rating behind the compressor wears the rotor (`:634-662`): an
+alarm is heard nearby, and at zero integrity the pack's blast goes off and
+it stays wrecked. The rotor is a `Generator` the pass sets to `rpm × 4.5` W;
+no section holds gas yet, so it stays at 0 rpm. Part tiers are
+`lib/power/turbine_parts.luau`. `generator` and `solar` declare 100 kW
+and 8 kW, the engine's old stand-ins, not tg numbers.

@@ -6,8 +6,8 @@ local multitool_buffer = require("@lib/tools/multitool_buffer")
 -- declares, and the discrete verbs tg's turbine.dm and turbine_computer.dm
 -- run at a click. A compressor stands behind the core rotor and the outlet
 -- ahead of it, along the rotor's facing; the rotor checks the line, the
--- multitool carries the rotor to the console. The gas flow, rpm, damage and
--- power are native work this pack does not fake (docs/POWER.md, Gas turbine).
+-- multitool carries the rotor to the console. The running loop is
+-- lib/power/gas_turbine_run.luau.
 local gas_turbine = {}
 
 gas_turbine.COMPRESSOR = "inlet_compressor"
@@ -18,10 +18,17 @@ gas_turbine.SECTIONS = { gas_turbine.COMPRESSOR, gas_turbine.CORE, gas_turbine.O
 
 local CLOSED = "closed"
 local OPEN = "open"
+local RUNNING = "running"
 local MULTITOOL = "multitool"
 
--- Panel shut, then open (tg's `panel_open`).
-gas_turbine.STATES = { CLOSED, OPEN }
+-- Panel shut, panel open (tg's `panel_open`), then shut and turning (tg's
+-- `<prefix>_on` overlay while the rotor is active, turbine.dm:117-128).
+gas_turbine.STATES = { CLOSED, OPEN, RUNNING }
+gas_turbine.CLOSED = CLOSED
+gas_turbine.RUNNING = RUNNING
+-- The states the running loop moves a section between; the panel steps
+-- own the rest (the engine's docs/content-schema/structures.md).
+gas_turbine.SCRIPTED_STATES = { CLOSED, RUNNING }
 -- tg's machines default to SOUTH.
 gas_turbine.FACINGS = { "south", "west", "north", "east" }
 
@@ -46,6 +53,8 @@ local REFUSALS = {
     "turbine_panel_open",
     "not_facing_away",
 }
+-- A running section's panel stays shut (`screwdriver_act`, turbine.dm:169-171).
+local STOP_FIRST = MESSAGE .. "stop_first"
 
 -- Every key this module sends, for the roster file to define.
 function gas_turbine.message_keys(): { string }
@@ -55,6 +64,7 @@ function gas_turbine.message_keys(): { string }
         MESSAGE .. "wrong_buffer",
         MESSAGE .. "relinking",
         MESSAGE .. "console_linked",
+        STOP_FIRST,
     }
     for _, refusal in ipairs(REFUSALS) do
         table.insert(keys, MESSAGE .. refusal)
@@ -86,7 +96,8 @@ function gas_turbine.facing_sprites(prototype: string): { [string]: { [string]: 
 end
 
 -- A section's panel and teardown. The screwdriver toggles the panel at no
--- delay (`screwdriver_act`, turbine.dm:167-184); the crowbar takes an
+-- delay (`screwdriver_act`, turbine.dm:167-184), and is refused while the
+-- turbine runs (:169-171); the crowbar takes an
 -- open section apart at no delay (`default_deconstruction_crowbar`,
 -- _machinery.dm:912-923), leaving the frame it came from with the board,
 -- the board's ten units and the frame's five lengths of cable.
@@ -108,6 +119,12 @@ function gas_turbine.section_transitions(prototype: string): { { [string]: any }
             to = CLOSED,
             hint = { label = "lunatic/tfs:ui.affordance.close_panel" },
             done = "lunatic/tfs:lib.gas_turbine.panel_closed",
+        },
+        {
+            at = RUNNING,
+            tool = "screwdriver",
+            hint = { label = "lunatic/tfs:ui.affordance.open_panel" },
+            refuse = { { when = true, label = STOP_FIRST } },
         },
         {
             sound = "crowbar",
@@ -193,6 +210,19 @@ local function aligned(section: Handle, facing: string): boolean
     return own == facing or own == REVERSE[facing]
 end
 
+-- The tile one step along a section's own facing (`get_step(loc, dir)`), or
+-- one step behind it with `sign = -1`; nil past the map edge.
+function gas_turbine.along(section: Handle, sign: number): TileAddress?
+    return beside(section.tile, facing_of(section), sign)
+end
+
+-- The compressor behind a rotor and the outlet ahead of it, either nil
+-- where none stands; `inspect` says whether they make a line.
+function gas_turbine.ends(core: Handle): (Handle?, Handle?)
+    return section_at(gas_turbine.along(core, -1), gas_turbine.COMPRESSOR),
+        section_at(gas_turbine.along(core, 1), gas_turbine.OUTLET)
+end
+
 -- tg's `core_rotor/activate_parts` (turbine.dm:497-572), its checks in its
 -- order: nil when the line is whole, else the refusal it names. The part
 -- checks fall away: a section's socket cannot stand empty here.
@@ -215,7 +245,7 @@ function gas_turbine.inspect(core: Handle): string?
     if not aligned(compressor, facing) then
         return "compressor_misaligned"
     end
-    if compressor.state ~= CLOSED then
+    if compressor.state == OPEN then
         return "compressor_panel_open"
     end
     if turbine == nil then
@@ -224,7 +254,7 @@ function gas_turbine.inspect(core: Handle): string?
     if not aligned(turbine, facing) then
         return "turbine_misaligned"
     end
-    if turbine.state ~= CLOSED then
+    if turbine.state == OPEN then
         return "turbine_panel_open"
     end
     -- tg: the two face the same way, which reads as facing apart (:556-559).
