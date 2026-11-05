@@ -114,6 +114,14 @@ local parts = {
     -- to gate.
     "network_card",
     "machine_board.thermomachine",
+    -- The gas turbine's boards and tier-one parts (machines/tool_vendor.luau).
+    "machine_board.inlet_compressor",
+    "machine_board.core_rotor",
+    "machine_board.turbine_outlet",
+    "machine_board.turbine_computer",
+    "compressor_part",
+    "rotor_part",
+    "stator_part",
     "airlock_button_fitting",
     "machine_board.access_point",
     -- The air alarm hangs in the same wall frame the access point does

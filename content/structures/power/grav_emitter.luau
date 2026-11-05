@@ -4,7 +4,7 @@
 -- centre. It turns with Alt+click loose or bolted down. No recipe makes
 -- one: a map places it, like the heavy parts of tg's machinery.
 local anchorable = require("@lib/anchorable")
-local grav_smes = require("@lib/grav_smes")
+local grav_smes = require("@lib/power/grav_smes")
 
 local FACINGS = { "north", "east", "south", "west" }
 

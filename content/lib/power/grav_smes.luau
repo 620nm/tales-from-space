@@ -1,3 +1,5 @@
+local ignition = require("@lib/ignition")
+
 -- The gravity battery's assembly rules: where the eight parts must stand
 -- and face, the wrench that sets a packed ring between two emitters, and the
 -- torch weld that fuses the parts into one 3x3 machine.
@@ -100,10 +102,7 @@ local function part_at(tile: TileAddress, prototype: string): Handle?
 end
 
 -- Nil past the map's edge, which a part drifting in open space can reach.
-local function tile_beside(centre: TileAddress, dx: number, dy: number): TileAddress?
-    local ok, at = pcall(sim.map_tile, centre, centre.x + dx, centre.y + dy, centre.z)
-    return if ok then at else nil
-end
+local tile_beside = ignition.tile_beside
 
 -- The centre a standing part implies: the tile it would stand beside.
 local function implied_centre(part: Handle): TileAddress?

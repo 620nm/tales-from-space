@@ -1,8 +1,8 @@
-local grav_smes = require("@lib/grav_smes")
-local grav_smes_run = require("@lib/grav_smes_run")
+local grav_smes = require("@lib/power/grav_smes")
+local grav_smes_run = require("@lib/power/grav_smes_run")
 
 -- The finished machine: its messages and its operating cycle
--- (lib/grav_smes_run.luau). Every build step past the weld is a native
+-- (lib/power/grav_smes_run.luau). Every build step past the weld is a native
 -- transition in structures/power/grav_smes.luau.
 local content = { id = "grav_smes" }
 if sim ~= nil then

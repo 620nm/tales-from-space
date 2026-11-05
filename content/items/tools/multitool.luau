@@ -1,17 +1,20 @@
 local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 local load_classes = require("@lib/load_classes")
+local multitool_buffer = require("@lib/tools/multitool_buffer")
 
 -- Reads what a wire is doing before you cut it, and defeats a safety
 -- interlock if you would rather it did that.
 --
--- It has a tool class now, and one machine in the game answers to it:
--- a multitool on a volumetric pump throws its pressure limiters
--- (tg's `multitool_act`, volume_pump.dm:162-170), after which the pump
--- will push past what the kit is rated for and leak a tenth of
--- everything it moves into the room. Nothing else in the construction
--- chain dispatches on the class yet -- a target that declares no
+-- Machines answer its tool class: a multitool on a volumetric pump
+-- throws its pressure limiters (tg's `multitool_act`, volume_pump.dm:162-170),
+-- after which the pump will push past what the kit is rated for and leak a
+-- tenth of everything it moves into the room. A target that declares no
 -- multitool step simply is not interested.
+--
+-- It also carries a BUFFER: the one machine it last logged, which a
+-- second machine reads to link to it (lib/tools/multitool_buffer.luau; the
+-- gas turbine's core rotor logs, its console reads).
 --
 -- tg: /obj/item/multitool (multitool.dm:14).
 local content = {
@@ -46,6 +49,9 @@ local content = {
 content.actions = { action_rules.primary("analyze", action_rules.network("power")) }
 
 if sim ~= nil then
+    sim.define("script_var", multitool_buffer.VAR, { replicate = "server" })
+    sim.define("script_var", multitool_buffer.IDENTITY, { replicate = "server" })
+    sim.define("script_var", multitool_buffer.SERIAL, { replicate = "server" })
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)

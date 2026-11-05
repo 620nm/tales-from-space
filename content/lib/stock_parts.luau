@@ -20,8 +20,9 @@
 -- the plain machine, and tg's own reaction chamber ceiling (0.4 from
 -- 0.1, chem_heater.dm:88 and :390) is still nearly reached.
 --
--- Every `component` in `content/items/` reads its efficiency from here,
--- so the ladder cannot be spelled two ways.
+-- Every stock part's `component` reads its efficiency from here, so the
+-- ladder cannot be spelled two ways. The gas turbine's parts are not stock
+-- parts and climb tg's own ladder (lib/power/turbine_parts.luau).
 local EFFICIENCY = { 1.0, 1.5, 2.0, 3.0 }
 
 return {

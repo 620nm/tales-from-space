@@ -3,16 +3,16 @@
 --
 -- Cells are row-major from the north-west, so footprint cell r * 3 + c + 1
 -- wears sprite `<stage>_<r>_<c>`; the south emitter cell is cell 8, which
--- is the only one a glass panel fits (lib/grav_smes.luau). Not opaque.
+-- is the only one a glass panel fits (lib/power/grav_smes.luau). Not opaque.
 --
 -- ASSEMBLY, pack-tuned (tg has no such machine): welded, then metal for the
 -- yoke clamps, one coil of cable, nine lengths of pipe, metal for the
 -- casing, and glass for the status panel. Each step runs backwards with
 -- the opposite tool and returns what it cost. Welded joints are permanent,
 -- and the screen stays in while the machine runs: both are steps that
--- only refuse. The weld is a script (lib/grav_smes.luau).
+-- only refuse. The weld is a script (lib/power/grav_smes.luau).
 --
--- RUNNING STATES are a script's (lib/grav_smes_run.luau) and
+-- RUNNING STATES are a script's (lib/power/grav_smes_run.luau) and
 -- `scripted_states` hands them over: the disc over the centre tile rides
 -- the centre cell's stack on a layer above standing things, and the
 -- south cell wears one status glyph per `<run state>_<status>` state.
@@ -22,11 +22,11 @@
 -- roles (power/smes.luau: output, input, output). The store takes the
 -- SMES's numbers, five plain batteries (power.dm:32, battery.dm:17) in
 -- and out at 200 kW (smes.dm:26, :37), and bills tg's gravity generator
--- draw while the field runs (lib/grav_smes_run.luau `SELF_DRAW_W`).
+-- draw while the field runs (lib/power/grav_smes_run.luau `SELF_DRAW_W`).
 -- The field is 30 tiles of connected deck at standard gravity, and only
 -- while that draw is met.
 local assembly = require("@lib/assembly")
-local run = require("@lib/grav_smes_run")
+local run = require("@lib/power/grav_smes_run")
 
 local STATUSES = run.STATUSES
 local ANCHOR_CELL = 5

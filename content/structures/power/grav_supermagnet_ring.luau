@@ -5,7 +5,7 @@
 -- then clockwise) and comes from the two emitters it was set between, so it
 -- does not turn by hand. A wrench packs it back onto its cart.
 local anchorable = require("@lib/anchorable")
-local grav_smes = require("@lib/grav_smes")
+local grav_smes = require("@lib/power/grav_smes")
 
 local CORNERS = { "north", "east", "south", "west" }
 
