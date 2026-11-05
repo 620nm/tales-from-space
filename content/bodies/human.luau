@@ -735,9 +735,12 @@ if sim ~= nil then
     local climbing = require("@lib/climbing")
     local wading = require("@lib/wading")
     local fall = require("@lib/fall")
+    local cadaver_stock = require("@lib/cadaver_stock")
     host_illness.attach()
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    -- A spawn answers the spawned plan: the morgue's dead are dressed here.
+    cadaver_stock.install(script_definition)
     -- A step pays the water it wades out of and a stagger's slowdown.
     script_definition:handle("move.cross", { kind = "contribute" }, function(ev: MoveCrossPayload)
         local answer = wading.on_cross(ev)

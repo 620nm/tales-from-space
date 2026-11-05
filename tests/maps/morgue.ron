@@ -2,7 +2,8 @@
 // tray's tile south of it, and a builder's marker between the first two.
 (
     name: "Morgue",
-    environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
+    needs: ["gravity"],
+    environment: (gravity_m_s2: Exact(9.80665), surface_temperature_k: Exact(259.15)),
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),

@@ -183,7 +183,6 @@ function map_boot.install(behavior: Definition): ()
         sim.round.begin({ map = ev.logical or ev.source })
     end
     behavior:handle("maps.instantiate.done", { kind = "react" }, on_instantiated)
-    cadaver_stock.install(behavior)
 end
 
 return map_boot

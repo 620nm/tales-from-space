@@ -48,10 +48,6 @@ local MAX_HITS = 15
 local TOOLBOX_BRUTE = 10
 local LIMBS = { "chest", "head", "l_arm", "r_arm", "l_leg", "r_leg" }
 
--- The chambers a spawn was asked into and has not yet answered, one row per
--- body; a chamber reused for two bodies is listed twice.
-local awaiting: { Handle } = {}
-
 local function roll(count: number): number
     return math.min(count, math.floor(sim.random(STREAM) * count) + 1)
 end
@@ -80,20 +76,8 @@ function cadaver_stock.stock(): ()
         if not reuse then
             table.remove(chambers, index)
         end
-        table.insert(awaiting, chamber)
         sim.body.spawn({ plan = PLAN, into = chamber })
     end
-end
-
--- Takes one row for `chamber` off the book; false when none was awaited.
-local function settle(chamber: Handle): boolean
-    for index, awaited in ipairs(awaiting) do
-        if awaited == chamber then
-            table.remove(awaiting, index)
-            return true
-        end
-    end
-    return false
 end
 
 local function dress(body: Handle): ()
@@ -115,9 +99,11 @@ local function name_of(): string
     return given .. " " .. crew_names.family[roll(#crew_names.family)]
 end
 
+-- A body seated into a cadaver chamber is one of the stock: nothing else
+-- spawns into one, so the answer keeps no book of its own.
 local function on_spawned(ev: EntitySpawnDonePayload): ()
     local chamber = ev.into
-    if chamber == nil or not settle(chamber) then
+    if chamber == nil or chamber.prototype ~= CHAMBER then
         return
     end
     local body = ev.entity
@@ -127,11 +113,15 @@ local function on_spawned(ev: EntitySpawnDonePayload): ()
     dress(body)
     local name = name_of()
     strike(body)
+    -- tg's `death()`: the blows alone need not kill, so the heart is stopped,
+    -- the latch that keeps a corpse dead (`bodies/human.luau`).
+    sim.fail_component(body, { tag = "heart" })
     sim.set_body_facts(body, { animate = false, settled = true, controllable = false, name = name })
     chamber_watch.start(chamber)
 end
 
--- Binds the spawn answers on the mode's behavior (`map_boot.install`).
+-- Binds the spawn answers on the plan's own behavior (`bodies/human.luau`):
+-- an `entity.spawn.done` answers the spawned definition, not its issuer.
 function cadaver_stock.install(behavior: Definition): ()
     behavior:handle("entity.spawn.done", { kind = "react" }, on_spawned)
 end
