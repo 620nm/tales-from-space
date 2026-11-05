@@ -5,7 +5,7 @@
 -- tg's TURBINE_MAX_EFFICIENCY verbatim rather than this pack's stock-part
 -- ladder (lib/stock_parts.luau). The rated rpm and temperature each tier
 -- carries are said on the part's examine line (`examine`) and are the
--- ratings the running loop reads (lib/power/gas_turbine_run.luau).
+-- ratings the running turbine reads (lib/power/gas_turbine_record.luau).
 export type PartKind = "compressor" | "rotor" | "stator"
 
 local turbine_parts = {}

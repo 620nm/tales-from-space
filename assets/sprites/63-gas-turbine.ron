@@ -11,7 +11,7 @@
 // that stack baked in that order, one per facing (DMI dirs S, N, E, W).
 //
 // The `running` rows are each section's `running` state, worn while the
-// rotor runs (lib/power/gas_turbine_run.luau). `core_on`'s emissive twin
+// rotor runs (lib/power/gas_turbine_turns.luau). `core_on`'s emissive twin
 // (:445) is not baked.
 (
     sheets: [

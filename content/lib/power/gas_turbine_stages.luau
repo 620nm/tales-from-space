@@ -2,7 +2,7 @@
 -- pumps into the next and the work it does on the way (`transfer_gases`,
 -- turbine.dm:142-162), and the shaft speed and grid watts the ejected gas
 -- makes (:677-685). Each stage is a section read as a gas holder
--- (`sim.matter_read`); lib/power/gas_turbine_run.luau sequences the passes.
+-- (`sim.matter_read`); lib/power/gas_turbine_turns.luau sequences the passes.
 local gas_turbine_stages = {}
 
 -- The three stages a pass reads, in flow order.

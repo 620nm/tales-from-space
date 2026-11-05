@@ -6,8 +6,8 @@ local multitool_buffer = require("@lib/tools/multitool_buffer")
 -- declares, and the discrete verbs tg's turbine.dm and turbine_computer.dm
 -- run at a click. A compressor stands behind the core rotor and the outlet
 -- ahead of it, along the rotor's facing; the rotor checks the line, the
--- multitool carries the rotor to the console. The running loop is
--- lib/power/gas_turbine_run.luau.
+-- multitool carries the rotor to the console. Running is
+-- lib/power/gas_turbine_run.luau and gas_turbine_turns.luau.
 local gas_turbine = {}
 
 gas_turbine.COMPRESSOR = "inlet_compressor"
