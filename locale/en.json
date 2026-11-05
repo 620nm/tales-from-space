@@ -564,6 +564,7 @@
   "lunatic/tfs:ui.matter.open": "open",
   "lunatic/tfs:ui.matter.gas": "Gas · {reading} · {amount}",
   "lunatic/tfs:ui.matter.liquid": "Liquid · {reading}",
+  "lunatic/tfs:ui.matter.suspended": "Suspended · {reading}",
   "lunatic/tfs:ui.matter.solid": "Solid · {mass} · {reading}",
   "lunatic/tfs:ui.matter.solid_bare": "Solid · {reading}",
   "lunatic/tfs:ui.matter.row": "{reading} · {amount}",

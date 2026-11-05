@@ -41,7 +41,11 @@ export function kelvin(value: number): string {
   return `${fixed(value, 1)} K · ${fixed(value - T0C, 0)} °C`;
 }
 const measure = (phase: string, value: number): string =>
-  phase === "gas" ? kpa(value) : litres(value);
+  phase === "gas"
+    ? kpa(value)
+    : phase === "suspended"
+      ? mass(value)
+      : litres(value);
 const weighed = (grams: number): string => (grams > 0 ? mass(grams) : "");
 
 /** The substance's own colour, or nothing where the pack declared none. */
@@ -57,6 +61,7 @@ function stateHeading(state: MatterStateBlock): string {
   if (state.phase === "gas")
     return S.gasHeading(reading, moles(state.moles ?? 0));
   if (state.phase === "liquid") return S.liquidHeading(reading);
+  if (state.phase === "suspended") return S.suspendedHeading(reading);
   return S.solidHeading(weighed(state.mass_g ?? 0), reading);
 }
 

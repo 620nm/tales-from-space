@@ -135,6 +135,8 @@ export const gasHeading = (reading: string, amount: string): string =>
   tfs("ui.matter.gas", { reading, amount });
 export const liquidHeading = (reading: string): string =>
   tfs("ui.matter.liquid", { reading });
+export const suspendedHeading = (reading: string): string =>
+  tfs("ui.matter.suspended", { reading });
 export const solidHeading = (mass: string, reading: string): string =>
   mass
     ? tfs("ui.matter.solid", { mass, reading })

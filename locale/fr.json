@@ -50,6 +50,7 @@
   "lunatic/tfs:ui.matter.open": "ouvert",
   "lunatic/tfs:ui.matter.gas": "Gaz · {reading} · {amount}",
   "lunatic/tfs:ui.matter.liquid": "Liquide · {reading}",
+  "lunatic/tfs:ui.matter.suspended": "En suspension · {reading}",
   "lunatic/tfs:ui.matter.solid": "Solide · {mass} · {reading}",
   "lunatic/tfs:ui.matter.solid_bare": "Solide · {reading}",
   "lunatic/tfs:ui.module.set": "Régler",

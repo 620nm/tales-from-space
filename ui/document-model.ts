@@ -225,7 +225,7 @@ export interface ControlPanel {
   setpoints: Setpoint[];
   matter?: MatterBlock[];
 }
-export type MatterPhase = "gas" | "liquid" | "solid";
+export type MatterPhase = "gas" | "liquid" | "solid" | "suspended";
 export interface MatterRow {
   key: string;
   name: string;
