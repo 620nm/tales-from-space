@@ -206,6 +206,8 @@ local content = {
             default = "human_l_arm",
             hit_weight = 4,
             hand = 1,
+            -- The far side facing north and east: what it holds draws behind the body.
+            held_behind = { "north", "east" },
         },
         {
             id = "r_arm",
@@ -216,6 +218,8 @@ local content = {
             default = "human_r_arm",
             hit_weight = 4,
             hand = 2,
+            -- The far side facing north and west: what it holds draws behind the body.
+            held_behind = { "north", "west" },
         },
         {
             id = "l_leg",
