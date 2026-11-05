@@ -54,7 +54,7 @@ From bottom (drawn first) to top (drawn last):
    - `support` (`station_base` plating, `lattice`, `catwalk`)
    - `exposed_cover` (`open_floor` / `reinforced_floor` when subfloor access is open)
    - `infrastructure` (`pipe`, `power` cable)
-   - `cover` occupants (`floor_tiles`, `grid_cover`, `reinforcement`, `wall`, `reinforced_wall`, `rock`, `glass_floor`, `reinforced_glass_floor`, `plasma_glass_floor`, `reinforced_plasma_glass_floor`)
+   - `cover` occupants (`floor_tiles`, `grid_cover`, `reinforcement`, `wall`, `reinforced_wall`, `rock`, `glass_floor`, `reinforced_glass_floor`, `lead_glass_floor`, `reinforced_lead_glass_floor`)
 3. `decal` — Trimlines, floor tile paint overlays, hazard stripes, floor markings, blood splatters.
 4. `residue` — Settled blast/volley fragments (`Kind 0`) and fallout dust (`Kind 1`) from [`content/residue_appearances.luau`](../../content/residue_appearances.luau).
 5. `matter_ground` — Condensed liquid puddles/streams (drawn first) and solid powders/granules/crystals/chunks (drawn over liquids) from [`content/matter_appearances.luau`](../../content/matter_appearances.luau).
@@ -88,6 +88,7 @@ There are **three distinct connectivity mechanisms** in the engine and the pack 
   - **Atlas Bake**:
     - For standard `32×32` DMI sheets: `Junctions("prefix", "dmi_state")` in a `groups` entry (e.g. [`assets/sprites/90-smooth-structures.ron`](../../assets/sprites/90-smooth-structures.ron)) automatically expands all 47 sprites `prefix-0` .. `prefix-255`.
     - For oversized overhanging DMI sheets (`40×40` like `smoothrocks.dmi` or `48×48` like `shale.dmi`): `Junctions` refuses non-`32×32` cells, so the 47 states are listed with `DmiWindow([("@sheet", "state-<n>")], 0, x, y)` (e.g. `4, 4` for `40×40` in [`90-smooth-structures.ron`](../../assets/sprites/90-smooth-structures.ron)).
+    - For multi-layer first-party `.aseprite` sheets: `Junctions` is DMI-only, so the 47 states are listed explicitly with `Ase("@sheet", "<n>")` (e.g. `lead_glass_floor` and `reinforced_lead_glass_floor` in [`90-smooth-structures.ron`](../../assets/sprites/90-smooth-structures.ron)).
   - **Luau Declaration** (`content/structures/**/*.luau`):
     ```luau
     sprite = "lattice-0",
@@ -99,7 +100,7 @@ There are **three distinct connectivity mechanisms** in the engine and the pack 
         sprites = "lattice",              -- resolves "lattice-<junction>"
     },
     ```
-- **Imported 47-State Smoothed Families in the pack**:
+- **47-State Smoothed Families in the pack**:
   1. `lattice-0..255` (`90-smooth-structures.ron` <- `obj/smooth_structures/lattice.dmi`, wired in [`lattice.luau`](../../content/structures/construction/lattice.luau))
   2. `catwalk-0..255` (`90-smooth-structures.ron` <- `obj/smooth_structures/catwalk.dmi`, wired in [`catwalk.luau`](../../content/structures/construction/catwalk.luau))
   3. `table-0..255` (`90-smooth-structures.ron` <- `obj/smooth_structures/table.dmi`, wired in [`table.luau`](../../content/structures/furniture/table.luau))
@@ -108,8 +109,8 @@ There are **three distinct connectivity mechanisms** in the engine and the pack 
   6. `rock-0..255` (`90-smooth-structures.ron` <- `turf/smoothrocks.dmi` cropped 32×32, wired in [`rock.luau`](../../content/structures/construction/rock.luau))
   7. `glass_floor-0..255` (`90-smooth-structures.ron` <- `turf/floors/glass.dmi`, wired in [`glass_floor.luau`](../../content/structures/floor_windows/glass_floor.luau))
   8. `reinforced_glass_floor-0..255` (`90-smooth-structures.ron` <- `turf/floors/reinf_glass.dmi`, wired in [`reinforced_glass_floor.luau`](../../content/structures/floor_windows/reinforced_glass_floor.luau))
-  9. `plasma_glass_floor-0..255` (`90-smooth-structures.ron` <- `turf/floors/plasma_glass.dmi`, wired in [`plasma_glass_floor.luau`](../../content/structures/floor_windows/plasma_glass_floor.luau))
-  10. `reinforced_plasma_glass_floor-0..255` (`90-smooth-structures.ron` <- `turf/floors/reinf_plasma_glass.dmi`, wired in [`reinforced_plasma_glass_floor.luau`](../../content/structures/floor_windows/reinforced_plasma_glass_floor.luau))
+  9. `lead_glass_floor-0..255` (`90-smooth-structures.ron` <- `assets/originals/art/turf/lead_glass_floor.aseprite`, wired in [`lead_glass_floor.luau`](../../content/structures/floor_windows/lead_glass_floor.luau))
+  10. `reinforced_lead_glass_floor-0..255` (`90-smooth-structures.ron` <- `assets/originals/art/turf/reinforced_lead_glass_floor.aseprite`, wired in [`reinforced_lead_glass_floor.luau`](../../content/structures/floor_windows/reinforced_lead_glass_floor.luau))
   11. `dirt-0..255` ([`13-dirt.ron`](../../assets/sprites/13-dirt.ron) <- `effects/dirt.dmi`, baked into the atlas).
 
 - **Unimported 47-State Smoothed Tilesets in `tgstation` (and how upstream authors them)**:

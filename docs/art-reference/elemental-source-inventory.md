@@ -33,7 +33,8 @@ revision [assets/tg-revision](../../assets/tg-revision) pins; sprite rosters are
 | `reinforced_wall` | [`10-turf-fixtures-and-tools.ron`](../../assets/sprites/10-turf-fixtures-and-tools.ron) | `turf/walls/reinforced_wall.dmi` `"reinforced_wall-0"` (unsmoothed) | `reinforced_wall` (`cover`) |
 | `reinforced_wall_1`..`6` | [`10-turf-fixtures-and-tools.ron`](../../assets/sprites/10-turf-fixtures-and-tools.ron) | `turf/walls/reinforced_states.dmi` `"r_wall-1..6"` | [`reinforced_wall_frame.luau`](../../content/structures/construction/reinforced_wall_frame.luau) |
 | `rock-0`..`255` (47 states) | [`90-smooth-structures.ron`](../../assets/sprites/90-smooth-structures.ron) | `turf/smoothrocks.dmi` `"smoothrocks-<n>"` (`DmiWindow` 32×32 at `(4,4)` from 40×40) | `rock` (`cover`, `smooth_group = "rock"`) |
-| `glass_floor-0..255`, `reinforced_glass_floor-0..255`, `plasma_glass_floor-0..255`, `reinforced_plasma_glass_floor-0..255` | [`90-smooth-structures.ron`](../../assets/sprites/90-smooth-structures.ron) | `turf/floors/{glass,reinf_glass,plasma_glass,reinf_plasma_glass}.dmi` | Transparent floor windows in `cover` |
+| `glass_floor-0..255`, `reinforced_glass_floor-0..255` | [`90-smooth-structures.ron`](../../assets/sprites/90-smooth-structures.ron) | `turf/floors/{glass,reinf_glass}.dmi` | Transparent floor windows in `cover` |
+| `lead_glass_floor-0..255`, `reinforced_lead_glass_floor-0..255` | [`90-smooth-structures.ron`](../../assets/sprites/90-smooth-structures.ron) | `assets/originals/art/turf/{lead_glass_floor,reinforced_lead_glass_floor}.aseprite` | Radiation-shielded lead glass floor windows in `cover` |
 
 #### C. Decals ([`assets/sprites/11-decals.ron`](../../assets/sprites/11-decals.ron), [`content/lib/decal_paints.luau`](../../content/lib/decal_paints.luau))
 - **Trimlines & Fills**: `decal_trim_line_*`, `decal_trim_end_*`, `decal_trim_box`, `decal_trim_corner_*`, and `decal_trim_fill_*` from `turf/decals.dmi`.
