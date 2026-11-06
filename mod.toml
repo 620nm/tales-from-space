@@ -57,6 +57,7 @@ native_edges = [
     "component.command",
     "speech.radio",
     "speech.relay",
+    "examine.lines",
     "link.message",
     "atmos.hazard",
     "atmos.pressure_target",
