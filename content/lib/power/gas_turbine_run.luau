@@ -146,13 +146,10 @@ end
 -- completed starts its first run. A rotor that has run once never restarts
 -- off the knob, so a section rebuilt later leaves the switch alone; a
 -- refused start is said to the room round the rotor, which stays shut.
-function gas_turbine_run.on_section_initialized(ev: EntityInitializeDonePayload): ()
-    local section = ev.entity
-    if not section.alive then
-        return
-    end
-    local rotor = gas_turbine.core_of(section)
-    if rotor == nil or rotor.vars[gas_turbine.STARTS_RUNNING] ~= true then
+-- The start runs in a task on the rotor: an end section's own anchor
+-- reaches only its 3x3, and the line's far end lies past it.
+local function mapped_start(rotor: Handle): ()
+    if not rotor.alive or rotor.vars[gas_turbine.STARTS_RUNNING] ~= true then
         return
     end
     local record = record_lib.read(rotor)
@@ -167,6 +164,24 @@ function gas_turbine_run.on_section_initialized(ev: EntityInitializeDonePayload)
             message = sim.msg(refusal, {}),
         })
     end
+end
+
+function gas_turbine_run.on_section_initialized(ev: EntityInitializeDonePayload): ()
+    local section = ev.entity
+    if not section.alive then
+        return
+    end
+    local rotor = gas_turbine.core_of(section)
+    if rotor == nil or rotor.vars[gas_turbine.STARTS_RUNNING] ~= true then
+        return
+    end
+    local record = record_lib.read(rotor)
+    if record.active or record.run > 0 or not record_lib.linked(rotor) then
+        return
+    end
+    sim.spawn_task(rotor, function()
+        mapped_start(rotor)
+    end)
 end
 
 -- The power switch off, refused above 1000 rpm (turbine_computer.dm:94);
