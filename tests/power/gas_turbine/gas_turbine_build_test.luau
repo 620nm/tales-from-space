@@ -26,6 +26,7 @@ t.world([==[(
                 (2, 1, "crowbar"),
                 (2, 1, "metal", { "units": 5 }),
                 (4, 1, "cable_coil", { "units": 5 }),
+                (4, 1, "wrench"),
                 (2, 2, "machine_board.inlet_compressor"),
                 (4, 2, "screwdriver"),
                 (2, 3, "compressor_part"),
@@ -117,22 +118,32 @@ assert(site().id == "inlet_compressor", "the frame becomes the section its board
 assert(site().state == "closed", "with its panel shut")
 assert(site().sprite == "inlet_compressor_closed_s", "facing south, tg's default")
 
--- Shut, it does not turn.
-t.rotate(p, SITE_X, SITE_Y, assert(t.target_at(p, SITE_X, SITE_Y, "inlet_compressor")), true)
-t.run_ticks(2)
-assert(site().sprite == "inlet_compressor_closed_s", "a shut section stays put")
-
--- Open, it turns clockwise (tg `turn(dir, -90)`, _machinery.dm:1074).
+-- Open, Alt+click still does not turn it: a section declares no Alt turn,
+-- only the wrench (_machinery.dm:1069-1077).
 local _ = t.messages(p)
 use_on_site("inlet_compressor", 0.2)
 assert(site().state == "open", "the screwdriver opens the panel")
 assert(table.find(heard(), "You open the maintenance panel.") ~= nil, "and says so")
-t.rotate(p, SITE_X, SITE_Y, assert(t.target_at(p, SITE_X, SITE_Y, "inlet_compressor")), true)
+t.use_item(p, assert(t.target_at(p, SITE_X, SITE_Y, "inlet_compressor")), "alt_primary")
+t.use_item(p, assert(t.target_at(p, SITE_X, SITE_Y, "inlet_compressor")), "alt_secondary")
 t.run_ticks(2)
+assert(site().sprite == "inlet_compressor_open_s", "Alt+click leaves an open section put")
+assert(#t.ledger_rows("Rotated") == 0, "and records no turn")
+
+-- The wrench turns it clockwise (tg `turn(dir, -90)`, _machinery.dm:1074).
+swap()
+take(4, 1, "wrench")
+use_on_site("inlet_compressor", 0.2)
 assert(
     site().sprite == "inlet_compressor_open_w",
-    "an open section turns: " .. tostring(site().sprite)
+    "the wrench turns an open section: " .. tostring(site().sprite)
 )
+assert(table.find(heard(), "You turn the section a quarter round.") ~= nil, "and says so")
+assert(#t.ledger_rows("Rotated") == 1, "one turn on the record")
+-- Put the wrench down and bring the screwdriver hand back up.
+t.drop(p)
+t.run_ticks(2)
+swap()
 
 -- The crowbar takes an open section apart into its frame and everything
 -- that went into it.

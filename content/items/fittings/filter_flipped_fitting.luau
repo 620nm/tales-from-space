@@ -1,4 +1,5 @@
 local physical_profiles = require("@lib/physical_profiles")
+local turning = require("@lib/turning")
 -- The mirrored filter, as a fitting. tg's
 -- `/obj/item/pipe/trinary/flippable/filter` with its `flipped` var
 -- turned over (construction.dm; the machine is filter.dm:202-204).
@@ -8,7 +9,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- filtered outlet ends up on once it is bolted down, and that is a
 -- fact about the MACHINE. See items/filter_fitting.luau for why
 -- this is a second item rather than a click on the first.
-return {
+local content = {
     id = "filter_flipped_fitting",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
@@ -27,4 +28,17 @@ return {
     -- (__DEFINES/atmospherics/atmos_piping.dm:80).
     modes = 5,
     mode = 2,
+    -- Alt+click turns it: tg gives every pipe item `simple_rotation`
+    -- (code/game/machinery/pipe/construction.dm:169).
+    gestures = turning.GESTURES,
+    actions = turning.rows(),
 }
+
+if sim ~= nil then
+    turning.attach(
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id }),
+        { route = "self" }
+    )
+end
+
+return content

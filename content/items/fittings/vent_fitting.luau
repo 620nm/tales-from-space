@@ -1,11 +1,12 @@
 local physical_profiles = require("@lib/physical_profiles")
+local turning = require("@lib/turning")
 -- An air vent, in your hands.
 --
 -- tg draws every `/obj/item/pipe` from its machine's own `pipe_state`
 -- in `pipe_item.dmi` (construction.dm:17,216) -- `"uvent"` here
 -- (components/unary_devices/vent_pump.dm:16), and names the loose form
 -- "air vent fitting" (construction.dm:53).
-return {
+local content = {
     id = "vent_fitting",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
@@ -24,4 +25,17 @@ return {
     -- (__DEFINES/atmospherics/atmos_piping.dm:80).
     modes = 5,
     mode = 2,
+    -- Alt+click turns it: tg gives every pipe item `simple_rotation`
+    -- (code/game/machinery/pipe/construction.dm:169).
+    gestures = turning.GESTURES,
+    actions = turning.rows(),
 }
+
+if sim ~= nil then
+    turning.attach(
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id }),
+        { route = "self" }
+    )
+end
+
+return content

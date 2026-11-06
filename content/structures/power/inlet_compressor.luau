@@ -8,8 +8,8 @@ local gas_turbine_wrench = require("@lib/power/gas_turbine_wrench")
 -- Built on a machine frame from its board; its compressor part is the one
 -- socket and goes in at the frame, where tg fits it through the open
 -- hatch afterwards (turbine.dm:249-274). A wrench turns it with the panel
--- open (lib/power/gas_turbine_wrench.luau); `rotates` is that turn's
--- permission, which the engine's Rotate gesture shares.
+-- open (lib/power/gas_turbine_wrench.luau), and only a wrench: it declares
+-- no Alt+click turn, as tg's sections have none (_machinery.dm:1069-1077).
 return {
     id = "inlet_compressor",
     visual_layer = "fixture",
@@ -40,7 +40,6 @@ return {
     scripted_states = gas_turbine.SCRIPTED_STATES,
     facings = gas_turbine.FACINGS,
     facing_sprites = gas_turbine.facing_sprites("inlet_compressor"),
-    rotates = { "open" },
     parts = { slots = { "compressor" } },
     transitions = gas_turbine.section_transitions("inlet_compressor"),
 }

@@ -39,7 +39,6 @@ return {
             west = "grav_supermagnet_loose",
         },
     },
-    rotates = {},
     hint_flags = { grav_smes.RING_FITS },
     actions = {
         {

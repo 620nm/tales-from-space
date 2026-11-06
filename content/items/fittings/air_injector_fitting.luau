@@ -1,10 +1,11 @@
 local physical_profiles = require("@lib/physical_profiles")
+local turning = require("@lib/turning")
 -- An air injector, in your hands.
 --
 -- tg draws every `/obj/item/pipe` from its machine's own
 -- `pipe_state` in `pipe_item.dmi` (construction.dm:17,216) --
 -- `"injector"` here (components/unary_devices/outlet_injector.dm:11).
-return {
+local content = {
     id = "air_injector_fitting",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
@@ -23,4 +24,17 @@ return {
     -- (__DEFINES/atmospherics/atmos_piping.dm:80).
     modes = 5,
     mode = 2,
+    -- Alt+click turns it: tg gives every pipe item `simple_rotation`
+    -- (code/game/machinery/pipe/construction.dm:169).
+    gestures = turning.GESTURES,
+    actions = turning.rows(),
 }
+
+if sim ~= nil then
+    turning.attach(
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id }),
+        { route = "self" }
+    )
+end
+
+return content

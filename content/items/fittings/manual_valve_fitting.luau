@@ -1,4 +1,5 @@
 local physical_profiles = require("@lib/physical_profiles")
+local turning = require("@lib/turning")
 -- A manual valve, in your hands rather than in the run.
 --
 -- tg's `/obj/item/pipe/binary` carrying `pipe_type = .../binary/valve`
@@ -12,7 +13,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- No handlers, no tool class, no stack: this file is a NOUN. What a wrench
 -- does to it is written down in structures/manual_valve.luau, where the
 -- target is the expert.
-return {
+local content = {
     id = "manual_valve_fitting",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
@@ -34,4 +35,17 @@ return {
     -- (__DEFINES/atmospherics/atmos_piping.dm:80).
     modes = 5,
     mode = 2,
+    -- Alt+click turns it: tg gives every pipe item `simple_rotation`
+    -- (code/game/machinery/pipe/construction.dm:169).
+    gestures = turning.GESTURES,
+    actions = turning.rows(),
 }
+
+if sim ~= nil then
+    turning.attach(
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id }),
+        { route = "self" }
+    )
+end
+
+return content

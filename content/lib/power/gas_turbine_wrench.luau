@@ -40,7 +40,7 @@ function gas_turbine_wrench.turn(ev: InteractionUsePayload): boolean | { replace
     if section.state ~= OPEN then
         return { replaced = false }
     end
-    sim.structure.turn({ entity = section, clockwise = true })
+    sim.facing.turn({ entity = section, clockwise = true })
     -- tg plays the wrench's `usesound` at volume 50; a roster sound carries
     -- no volume, so this one plays at the ratchet's own.
     sim.sound.play({ sound = "ratchet", at = ev.at })
