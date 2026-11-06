@@ -175,21 +175,21 @@ local total = vessel.moles
 -- `sim.matter.transfer`, and when it lands each of these becomes that
 -- verb without a roster file noticing.
 -- Each returns the command's refusal word, nil when accepted.
-local function do_pour(self: Handle, target: Handle, amount: number | "all"): MatterRefusal?
+local function do_pour(self: Handle, target: Handle, amount: number | "all"): MatterVerbRefusal?
     -- A pour's overflow is the deck under the far vessel (docs/LUAU-API.md 8.2).
     return sim.matter.pour({ from = self, to = target, amount = amount })
 end
 
-local function do_sip(self: Handle, drinker: Handle, amount: number): MatterRefusal?
+local function do_sip(self: Handle, drinker: Handle, amount: number): MatterVerbRefusal?
     return sim.matter.drink({ from = self, who = drinker, amount = amount })
 end
 
-local function do_spill(self: Handle): MatterRefusal?
+local function do_spill(self: Handle): MatterVerbRefusal?
     -- No `at`: a spill names the tile the gesture is happening on.
     return sim.matter.spill({ from = self })
 end
 
-local function do_charge(self: Handle, source: Handle, amount: number): MatterRefusal?
+local function do_charge(self: Handle, source: Handle, amount: number): MatterVerbRefusal?
     return sim.matter.fill({ from = source, to = self, amount = amount })
 end
 
