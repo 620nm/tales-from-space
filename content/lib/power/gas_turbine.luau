@@ -388,17 +388,18 @@ end
 
 -- How long tg's console takes to read the buffer (turbine_computer.dm:31).
 local CONSOLE_LINK_SECONDS = 0.2
+local CONSOLE_CLICK_VOLUME = 0.1
 
 -- A multitool on the console: link the rotor in its buffer
--- (`multitool_act`, turbine_computer.dm:24-37). A buffer naming a rotor on
--- another map, or one rebuilt since it was logged, names no rotor here.
+-- (`multitool_act`, turbine_computer.dm:24-37). A buffer naming a rotor
+-- taken apart, or rebuilt since it was logged, names no rotor.
 function gas_turbine.link_console(ev: InteractionUsePayload): boolean | { replaced: boolean }
     local console, actor = ev.subject, ev.actor
     local tool = multitool_in(ev)
     if tool == nil then
         return { replaced = false }
     end
-    local core = multitool_buffer.read(tool, console.tile)
+    local core = multitool_buffer.read(tool)
     if core == nil or prototype_of(core) ~= gas_turbine.CORE then
         send(actor, "wrong_buffer")
         return true
@@ -414,13 +415,29 @@ function gas_turbine.link_console(ev: InteractionUsePayload): boolean | { replac
         if not actor.alive or not console.alive or not core.alive then
             return
         end
-        -- tg clicks at the user's turf, volume 10 (:34); a roster sound
-        -- carries no volume, so this one plays at the click's own.
-        sim.sound.play({ sound = "click", at = actor.tile })
-        console.vars[gas_turbine.CONSOLE_LINK] = multitool_buffer.ref(core)
+        -- tg clicks at the user's turf, volume 10 of 100 (:34).
+        sim.sound.play({ sound = "click", at = actor.tile, volume = CONSOLE_CLICK_VOLUME })
+        console.vars[gas_turbine.CONSOLE_LINK] = core:ref()
         send(actor, "console_linked")
     end)
     return true
+end
+
+-- The rotor's examine hint while its line is not linked (tg `examine`,
+-- turbine.dm:438-439, which reads the remembered flag as this does).
+-- `examine.lines` lines are finished prose: the anchor takes no key.
+local UNLINKED_LINE: ExamineLineRow = {
+    key = "turbine_unlinked",
+    text = "Its parts need to be linked with a multitool.",
+}
+
+-- `examine.lines` on the core rotor: a read, never an effect.
+function gas_turbine.examine_lines(ev: ExamineLinesPayload): { lines: { ExamineLineRow } }
+    local lines = table.clone(ev.lines)
+    if ev.subject.vars[gas_turbine.LINKED] ~= true then
+        table.insert(lines, UNLINKED_LINE)
+    end
+    return { lines = lines }
 end
 
 return gas_turbine

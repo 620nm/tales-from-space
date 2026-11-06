@@ -55,6 +55,7 @@ if sim ~= nil then
                 end
                 return gas_turbine.link_parts(ev)
             end
+            behavior:handle("examine.lines", { kind = "transform" }, gas_turbine.examine_lines)
         end
         behavior:handle("interaction.use", { kind = "replace", route = "interact" }, use)
     end

@@ -28,7 +28,7 @@ end
 -- The rotor the console holds a link to, if it still stands (tg
 -- `turbine_core?.resolve()`).
 local function rotor_of(console: Handle): Handle?
-    local rotor = multitool_buffer.resolve(console.vars[gas_turbine.CONSOLE_LINK], console.tile)
+    local rotor = multitool_buffer.resolve(console.vars[gas_turbine.CONSOLE_LINK])
     if rotor == nil or not rotor.alive then
         return nil
     end

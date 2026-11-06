@@ -50,8 +50,6 @@ content.actions = { action_rules.primary("analyze", action_rules.network("power"
 
 if sim ~= nil then
     sim.define("script_var", multitool_buffer.VAR, { replicate = "server" })
-    sim.define("script_var", multitool_buffer.IDENTITY, { replicate = "server" })
-    sim.define("script_var", multitool_buffer.SERIAL, { replicate = "server" })
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
