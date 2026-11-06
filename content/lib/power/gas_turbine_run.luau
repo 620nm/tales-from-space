@@ -30,6 +30,9 @@ local INTAKE_MIN = 0.01
 local INTAKE_MAX = 1
 -- The switch refuses a stop above this (turbine_computer.dm:94).
 local STOP_MAX_RPM = 1000
+-- Pack-tuned: how far a mapped rotor's refused start is heard, the alarm's
+-- reach (lib/power/gas_turbine_turns.luau).
+local REFUSAL_RADIUS = 7
 
 local REFUSALS = { "not_linked", "running", "not_running", "unpowered", "wrecked", "too_fast" }
 
@@ -136,6 +139,34 @@ function gas_turbine_run.start(rotor: Handle, _actor: Handle?): (boolean, string
         end
     end
     return true, nil
+end
+
+-- `entity.initialize.done` on every section, after `gas_turbine`'s own
+-- link: a rotor mapped running (`STARTS_RUNNING`) whose line this stand-up
+-- completed starts its first run. A rotor that has run once never restarts
+-- off the knob, so a section rebuilt later leaves the switch alone; a
+-- refused start is said to the room round the rotor, which stays shut.
+function gas_turbine_run.on_section_initialized(ev: EntityInitializeDonePayload): ()
+    local section = ev.entity
+    if not section.alive then
+        return
+    end
+    local rotor = gas_turbine.core_of(section)
+    if rotor == nil or rotor.vars[gas_turbine.STARTS_RUNNING] ~= true then
+        return
+    end
+    local record = record_lib.read(rotor)
+    if record.active or record.run > 0 or not record_lib.linked(rotor) then
+        return
+    end
+    local started, refusal = gas_turbine_run.start(rotor, nil)
+    if not started and refusal ~= nil then
+        sim.message.broadcast({
+            at = rotor.tile,
+            radius = REFUSAL_RADIUS,
+            message = sim.msg(refusal, {}),
+        })
+    end
 end
 
 -- The power switch off, refused above 1000 rpm (turbine_computer.dm:94);

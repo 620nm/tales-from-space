@@ -46,5 +46,16 @@ return {
     facing_sprites = gas_turbine.facing_sprites("core_rotor"),
     rotates = { "open" },
     parts = { slots = { "rotor" } },
+    -- What a map may place: a rotor already turning, its first run started
+    -- once its line links at stand-up (the engine's
+    -- docs/content-schema/placement.md; lib/power/gas_turbine_run.luau).
+    placement = {
+        running = {
+            var = gas_turbine.STARTS_RUNNING,
+            kind = "flag",
+            default = false,
+            label = "lunatic/tfs:editor.core_rotor.running",
+        },
+    },
     transitions = gas_turbine.section_transitions("core_rotor"),
 }

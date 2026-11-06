@@ -8,7 +8,9 @@
 -- worth of cloudy dirt over the same nine tiles, center-weighted, at
 -- detonate time. `cast` is the part the room sees and hears: flash,
 -- ring, sparks, shake, glow, one fire on the blast tile and the blast
--- itself, every one of them on the FOV-filtered lanes. `burst` throws
+-- itself, every one of them on the FOV-filtered lanes. `apply` and
+-- `cast` take an optional `BlastSize` for a bigger blast; without one
+-- each is exactly the grenade's. `burst` throws
 -- the volley whose fragments the tick flies home; their own dirt --
 -- shards -- lands later, a landing tile at a time off the settle
 -- signals (items/weapons/frag_grenade.luau).
@@ -29,28 +31,58 @@ local residue_kinds = require("@lib/residue_kinds")
 
 local RADIUS = 1.5
 local CENTER: { [string]: number } = { brute = 40, burn = 20 }
+-- Pack-tuned: a sized blast's middle band, between the center's kill and
+-- the ring's wound.
+local MIDDLE: { [string]: number } = { brute = 25, burn = 15 }
 local RING: { [string]: number } = { brute = 15, burn = 10 }
 local VOLLEY_RADIUS = 10
 local VOLLEY_DAMAGE = 14
 
 local blast = {}
 
+-- A bigger blast's reach, in tg's three explosion radii (`explosion(src,
+-- devastation, heavy, light)`) read as Chebyshev tiles off the blast tile,
+-- each band inclusive: at most `devastation` takes the center's blows, at
+-- most `heavy` the middle's, at most `light` the ring's. The fallout and the
+-- flames stay on the nine tiles whatever the size: a handler with no body
+-- reaches only its anchor's 3x3 for matter writes (the engine's
+-- docs/luau-api/effects.md), and a write past it raises.
+export type BlastSize = { devastation: number, heavy: number, light: number }
+
+-- No size is the grenade's own blast: the tile, then the ring round it.
+local GRENADE: BlastSize = { devastation = 0, heavy = 0, light = 1 }
+-- The query's slack past the farthest corner, the grenade's 1.5 off root two.
+local REACH_SLACK = RADIUS - math.sqrt(2)
+
+-- The blows a body `distance` tiles off takes, or nil past the ring.
+local function band(size: BlastSize, distance: number): { [string]: number }?
+    if distance <= size.devastation then
+        return CENTER
+    elseif distance <= size.heavy then
+        return MIDDLE
+    elseif distance <= size.light then
+        return RING
+    end
+    return nil
+end
+
 -- Every body the blast can see. The query is Euclidean, so 1.5 reaches
--- exactly the eight tiles round the blast (a diagonal is root two);
--- the bands are Chebyshev, so the tile itself is the center and
+-- exactly the eight tiles round the blast (a diagonal is root two), and a
+-- sized blast's reaches the corners of its light square (light root two);
+-- the bands are Chebyshev, so the grenade's tile itself is the center and
 -- everything else the ring. `sim.body.read` is the filter: items, machines
 -- and ghosts on those tiles are not bodies and take nothing.
-function blast.apply(at: TileAddress): ()
+function blast.apply(at: TileAddress, size: BlastSize?): ()
     bloodshed.note_blast(at)
-    for _, target in ipairs(sim.query.range(at, RADIUS, {})) do
+    local bands = size or GRENADE
+    local radius = if size ~= nil then size.light * math.sqrt(2) + REACH_SLACK else RADIUS
+    for _, target in ipairs(sim.query.range(at, radius, {})) do
         if sim.body.read(target) ~= nil then
             local tile = target.tile
-            if sim.query.los(at, tile) then
-                local distance = math.max(math.abs(tile.x - at.x), math.abs(tile.y - at.y))
-                sim.damage.apply({
-                    target = target,
-                    amounts = if distance == 0 then CENTER else RING,
-                })
+            local distance = math.max(math.abs(tile.x - at.x), math.abs(tile.y - at.y))
+            local amounts = band(bands, distance)
+            if amounts ~= nil and sim.query.los(at, tile) then
+                sim.damage.apply({ target = target, amounts = amounts })
             end
         end
     end
@@ -81,18 +113,28 @@ function blast.ground(at: TileAddress): ()
     end
 end
 
+-- The visuals' ceilings: the engine's own clamps (docs/luau-api/effects.md),
+-- except the jolt, which the pack keeps well under the 32 px ceiling.
+local FLASH_MAX = 1
+local RING_MAX = 8
+local SPARKS_MAX = 64
+local SHAKE_MAX = 24
+local GLOW_MAX = 4
+
 -- The part the room sees. Strengths and durations are the choreography:
 -- flash peaks first and shortest, the ring and sparks follow, shake and
--- glow decay together. The jolt is the pack's own feel, well under the
--- 32 px ceiling. The fire is the sheet's nine-frame explosion played
--- once, on the blast tile and nowhere else: one blast, one cloud.
-function blast.cast(at: TileAddress): ()
+-- glow decay together. The jolt is the pack's own feel. A sized blast
+-- scales every strength by its `light` reach, up to the ceilings. The
+-- fire is the sheet's nine-frame explosion played once, on the blast
+-- tile and nowhere else: one blast, one cloud.
+function blast.cast(at: TileAddress, size: BlastSize?): ()
     bloodshed.note_blast(at)
-    sim.visual.flash({ at = at, strength = 0.7, duration = 0.25 })
-    sim.visual.ring({ at = at, strength = 1.5, duration = 0.4 })
-    sim.visual.sparks({ at = at, strength = 14, duration = 0.5 })
-    sim.visual.shake({ at = at, strength = 8, duration = 0.6 })
-    sim.visual.glow({ at = at, strength = 2, duration = 0.6 })
+    local scale = if size ~= nil then math.max(size.light, 1) else 1
+    sim.visual.flash({ at = at, strength = math.min(0.7 * scale, FLASH_MAX), duration = 0.25 })
+    sim.visual.ring({ at = at, strength = math.min(1.5 * scale, RING_MAX), duration = 0.4 })
+    sim.visual.sparks({ at = at, strength = math.min(14 * scale, SPARKS_MAX), duration = 0.5 })
+    sim.visual.shake({ at = at, strength = math.min(8 * scale, SHAKE_MAX), duration = 0.6 })
+    sim.visual.glow({ at = at, strength = math.min(2 * scale, GLOW_MAX), duration = 0.6 })
     sim.visual.spawn({ visual_layer = "effects", at = at, sprite = "blast_fire", duration = 1.0 })
     sim.sound.play({ sound = "explosion", at = at })
     -- A hotspot per flame tile (tg explosions.dm:703-704) at the spark's heat.

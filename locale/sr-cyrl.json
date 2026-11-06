@@ -1,6 +1,7 @@
 {
   "lunatic/tfs:editor.laptop.open": "Поклопац отворен",
   "lunatic/tfs:editor.laptop.powered": "Укључен",
+  "lunatic/tfs:editor.core_rotor.running": "Ради од почетка",
   "lunatic/tfs:locale.name": "Српски (ћирилица)",
   "lunatic/tfs:entity.machine_frame.name": "оквир машине",
   "lunatic/tfs:entity.wrench.name": "кључ",
