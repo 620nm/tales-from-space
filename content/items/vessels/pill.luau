@@ -98,7 +98,9 @@ if sim ~= nil then
             })
             return true
         end
-        sim.matter.drink({ from = self, who = user })
+        if sim.matter.drink({ from = self, who = user }) ~= nil then
+            return true -- refused: nothing swallowed, the pill stays whole
+        end
         consume_followups.expect(swallows, self, { user = user, at = ev.at })
         self:consume()
         return true

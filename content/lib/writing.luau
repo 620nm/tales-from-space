@@ -46,7 +46,7 @@ writing.max_body = 8192
 writing.max_fragments = 64
 
 -- A spent writer refuses before the sheet opens: the engine binds only a
--- held writer with uses left (`ui.open` raises otherwise). A TfS
+-- held writer with uses left (`ui.open` refuses otherwise). A TfS
 -- divergence: tg's paper never spends crayon charges (crayons.dm:628,
 -- paper.dm:425-438) and an empty crayon is self-contained and deleted
 -- silently (crayons.dm:71, :305-307). A spent writer here stays in hand,
@@ -126,8 +126,8 @@ function writing.open(actor: Handle, paper: Handle, draft: unknown, implement: H
     if implement ~= nil then
         request.implement = implement
     end
-    ui.open(request)
-    return true
+    -- An implement no longer held refuses the open: nothing was shown.
+    return ui.open(request) == nil
 end
 
 function writing.update(actor: Handle, paper: Handle, draft: unknown): boolean

@@ -180,16 +180,18 @@ if sim ~= nil then
         if into_body then
             -- Through the needle, which is this syringe: `by` is what
             -- the engine checks for a declared sharpness. The note is
-            -- filed after the command is issued, so a call that raises
+            -- filed only when the command is accepted, so a refusal
             -- files nothing: the completion settles exactly one note
             -- per injection it answers.
-            sim.matter.inject({ from = self, into = other, by = self, amount = STROKE })
-            blood_identity.note_transfusion(
-                content.id,
-                other,
-                blood_identity.type_of(self),
-                blood_identity.type_of(other)
-            )
+            local refused = sim.matter.inject({ from = self, into = other, by = self, amount = STROKE })
+            if refused == nil then
+                blood_identity.note_transfusion(
+                    content.id,
+                    other,
+                    blood_identity.type_of(self),
+                    blood_identity.type_of(other)
+                )
+            end
         else
             sim.matter.pour({ from = self, to = other, amount = STROKE })
         end

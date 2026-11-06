@@ -128,8 +128,13 @@ if sim ~= nil then
 
         -- Both effects are queued in this one occurrence after the same
         -- reach, power and composition checks. There is no yield that could
-        -- leave an extraction without its product or admit a stale source.
-        sim.matter.extract({ owner = vessel, amount = request.amount, phases = { "solid" } })
+        -- leave an extraction without its product or admit a stale source;
+        -- a refused extraction mints nothing.
+        local refused =
+            sim.matter.extract({ owner = vessel, amount = request.amount, phases = { "solid" } })
+        if refused ~= nil then
+            return true
+        end
         sim.entity.spawn({
             definition = request.definition,
             at = self.tile,
@@ -223,7 +228,16 @@ if sim ~= nil then
                 if blank == nil then
                     return true
                 end
-                sim.matter.pour({ from = vessel, to = blank, amount = share })
+                if sim.matter.pour({ from = vessel, to = blank, amount = share }) ~= nil then
+                    sim.message.send({
+                        recipient = user,
+                        message = sim.msg(
+                            "lunatic/tfs:fixtures.chem_packager.the_extruder_stops",
+                            {}
+                        ),
+                    })
+                    return true
+                end
             end
             sim.sound.play({ sound = "vend", at = self.tile })
             sim.message.send({

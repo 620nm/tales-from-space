@@ -21,8 +21,12 @@ if sim ~= nil then
         end
         local chamber: Handle = ev.subject
         if chamber.state == data.chamber_items_state or chamber.state == data.chamber_bodies_state then
+            local shown = chamber.state
             sim.appearance.set_state({ entity = chamber, state = data.closed_state })
-            sim.container.open({ container = chamber })
+            if sim.container.open({ container = chamber }) ~= nil then
+                -- A refused open leaves the chamber as it stood.
+                sim.appearance.set_state({ entity = chamber, state = shown })
+            end
             return true
         end
         if chamber.state == data.open_state then

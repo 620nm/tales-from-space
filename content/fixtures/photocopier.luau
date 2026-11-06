@@ -127,8 +127,9 @@ if sim ~= nil then
             return { replaced = false }
         end
         printing.recover(ev.subject, BUSY, "media")
-        sim.item_slot.insert({ subject = ev.subject, item = held, slot = "media" })
-        open(ev.subject, ev.actor)
+        if sim.item_slot.insert({ subject = ev.subject, item = held, slot = "media" }) == nil then
+            open(ev.subject, ev.actor)
+        end
         return true
     end)
 

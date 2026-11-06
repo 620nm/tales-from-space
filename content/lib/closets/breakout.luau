@@ -269,7 +269,10 @@ local function bust_open(operation: BreakoutOperation): ()
 			broken = broken,
 		},
 	})
-	sim.container.open({ container = holder })
+	if sim.container.open({ container = holder }) ~= nil then
+		lapse_breakout(operation, "open_refused")
+		return
+	end
 	local opened = await_confirmation(function()
 		return holder.alive ~= true or holder.state == data.open_state
 	end)
