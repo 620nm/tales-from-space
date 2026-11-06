@@ -57,7 +57,7 @@ assert(#t.items_at(5, 1, UPPER) == 1, "the second crowbar lies on the upper deck
 
 -- 1. Thrown: a crowbar flung onto the hole at (3, 1) comes to rest over it
 -- and drops to the lower level under it.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "crowbar"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "crowbar")))
 t.run_ticks(2)
 assert(t.hands(p).held == "crowbar", "the crowbar is in hand")
 t.throw(p, 3, 1)

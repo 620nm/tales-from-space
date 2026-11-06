@@ -162,7 +162,7 @@ pass()
 
 local function transceiver_said(): { string }
     local _ = t.messages(p)
-    t.click(p, 5, 1, t.target_at(p, 5, 1))
+    t.click(p, 5, 1, assert(t.target_at(p, 5, 1)))
     t.tick()
     local said = t.messages(p)
     t.ui_close(p)

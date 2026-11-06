@@ -194,7 +194,7 @@ t.world(
 local attacker = t.join("assistant")
 local victim = t.join("medic")
 t.run_ticks(3)
-t.click(attacker, 1, 1, t.target_at(attacker, 1, 1, "toolbox"))
+t.click(attacker, 1, 1, assert(t.target_at(attacker, 1, 1, "toolbox")))
 t.run_ticks(2)
 -- One swing a zone: every part wounded is a bleeder of its own, so six
 -- of them lose blood faster than the heart makes it for a while.

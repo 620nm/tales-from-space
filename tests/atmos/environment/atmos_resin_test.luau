@@ -43,7 +43,7 @@ t.tick()
 
 local projector = t.target_at(p, 1, 1, "atmos_resin_projector")
 assert(projector ~= nil, "the emergency projector is on the deck")
-t.click(p, 1, 1, t.target_at(p, 1, 1, "atmos_resin_projector"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "atmos_resin_projector")))
 t.tick()
 assert(t.hands(p).held == "atmos_resin_projector", "the player picked the projector up")
 

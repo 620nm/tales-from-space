@@ -60,7 +60,7 @@ local function hold(id: string)
         t.drop(surgeon)
         t.tick()
     end
-    t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id))
+    t.click(surgeon, 1, 1, assert(t.target_at(surgeon, 1, 1, id)))
     t.run_ticks(2)
 end
 local function step(tool: string, secs: number, done: () -> boolean, why: string)
@@ -116,7 +116,7 @@ t.drop(pat)
 t.run_ticks(2)
 
 -- The doctor makes the incision (incise is not self-operable).
-t.click(doc, 1, 1, t.target_at(doc, 1, 1, "scalpel"))
+t.click(doc, 1, 1, assert(t.target_at(doc, 1, 1, "scalpel")))
 t.run_ticks(2)
 for _ = 1, 30 do
     if has(assert(t.parts(pat)).chest.surgical_states, "skin_cut") then
@@ -130,7 +130,7 @@ assert(has(assert(t.parts(pat)).chest.surgical_states, "skin_cut"), "the doctor 
 -- Now the patient takes the welder off the next tile (in reach), lights
 -- it, and closes their OWN wound (close_incision_self is self_only -- no
 -- second party can perform it). The patient clicks themselves.
-t.click(pat, 1, 1, t.target_at(pat, 1, 1, "welder"))
+t.click(pat, 1, 1, assert(t.target_at(pat, 1, 1, "welder")))
 t.run_ticks(2)
 assert(t.hands(pat).held == "welder", "the patient holds the welder")
 t.use_self(pat) -- strike it on

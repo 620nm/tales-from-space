@@ -153,7 +153,7 @@ assert(volume_out > 90.0)
 local books = moles(volume_in, IN_M3) + moles(volume_out, OUT_M3)
 
 -- Both on, through the panel every machine with a dial on it wears.
-t.click(p, 3, 1, t.target_at(p, 3, 1, "pump"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "pump")))
 t.tick()
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
@@ -163,7 +163,7 @@ for _ = 1, 6 do
     t.move(p, "east")
     t.run_ticks(5)
 end
-t.click(p, 9, 2, t.target_at(p, 9, 2, "volume_pump"))
+t.click(p, 9, 2, assert(t.target_at(p, 9, 2, "volume_pump")))
 t.tick()
 local panel = ui_controls.record(assert(t.ui(p)))
 assert(panel, "a volume pump wears the same panel")
@@ -292,10 +292,10 @@ local held = supply_before + moles(assert(network_matter.pressure(5, 1)), LEAK_O
 -- Defeat the limiters. A multitool in hand and a click on the machine:
 -- tg makes this a TOOL act rather than a button on the panel, because
 -- somebody has to physically get at the mechanism.
-t.click(q, 4, 2, t.target_at(q, 4, 2, "multitool"))
+t.click(q, 4, 2, assert(t.target_at(q, 4, 2, "multitool")))
 t.run_ticks(2)
 assert(t.hands(q).held == "multitool", "the multitool is in hand")
-t.click(q, 3, 1, t.target_at(q, 3, 1, "volume_pump"))
+t.click(q, 3, 1, assert(t.target_at(q, 3, 1, "volume_pump")))
 t.run_ticks(2)
 assert(
     t.ledger_has("MachineToggled", "overclock", "Player"),
@@ -306,7 +306,7 @@ assert(
 -- an empty hand to open -- so put the tool down first.)
 t.drop(q)
 t.run_ticks(2)
-t.click(q, 3, 1, t.target_at(q, 3, 1, "volume_pump"))
+t.click(q, 3, 1, assert(t.target_at(q, 3, 1, "volume_pump")))
 t.tick()
 local limits = nil
 for _, r in ipairs(ui_controls.rows(ui_controls.state(q).readouts)) do
@@ -413,10 +413,10 @@ assert(assert(t.structure_at(3, 1)).state == "shut", "a gate opens the shift shu
 -- Run the west half by hand, so the gate's back port has an EMPTY main
 -- behind it... and then the charged one is on its front, which is
 -- uphill. Nothing may cross.
-t.click(g, 1, 2, t.target_at(g, 1, 2, "pipe"))
+t.click(g, 1, 2, assert(t.target_at(g, 1, 2, "pipe")))
 t.run_ticks(2)
 for _, x in ipairs({ 1, 2 }) do
-    t.click(g, x, 1)
+    t.click_tile(g, x, 1)
     t.run_seconds(1.5)
 end
 assert(network_channels.at(2, 1, "pipe") == "l3", "the west main went down")
@@ -438,7 +438,7 @@ for _ = 1, 2 do
     t.move(g, "east")
     t.run_ticks(5)
 end
-t.click(g, 3, 1, t.target_at(g, 3, 1, "passive_gate"))
+t.click(g, 3, 1, assert(t.target_at(g, 3, 1, "passive_gate")))
 t.tick()
 assert(t.ui(g), "a gate wears the panel")
 ui_controls.toggle(g, "power")
@@ -515,10 +515,10 @@ t.world(
 
 local d = t.join()
 t.tick()
-t.click(d, 6, 2, t.target_at(d, 6, 2, "pipe"))
+t.click(d, 6, 2, assert(t.target_at(d, 6, 2, "pipe")))
 t.run_ticks(2)
 for _, x in ipairs({ 5, 6 }) do
-    t.click(d, x, 1)
+    t.click_tile(d, x, 1)
     t.run_seconds(1.5)
 end
 
@@ -547,7 +547,7 @@ for _ = 1, 2 do
     t.move(d, "west")
     t.run_ticks(5)
 end
-t.click(d, 3, 1, t.target_at(d, 3, 1, "passive_gate"))
+t.click(d, 3, 1, assert(t.target_at(d, 3, 1, "passive_gate")))
 t.tick()
 ui_controls.toggle(d, "power")
 t.run_ticks(2)
@@ -659,10 +659,10 @@ t.world(
 
 local v = t.join()
 t.tick()
-t.click(v, 6, 2, t.target_at(v, 6, 2, "pipe"))
+t.click(v, 6, 2, assert(t.target_at(v, 6, 2, "pipe")))
 t.run_ticks(2)
 for _, x in ipairs({ 5, 6 }) do
-    t.click(v, x, 1)
+    t.click_tile(v, x, 1)
     t.run_seconds(1.5)
 end
 t.drop(v)
@@ -682,7 +682,7 @@ assert(
         .. relief_out
 )
 
-t.click(v, 3, 1, t.target_at(v, 3, 1, "pressure_valve"))
+t.click(v, 3, 1, assert(t.target_at(v, 3, 1, "pressure_valve")))
 t.tick()
 local relief_panel = ui_controls.record(assert(t.ui(v)))
 assert(

@@ -75,7 +75,7 @@ t.tick()
 assert(composition.matches(2, 1, { "glass_floor" }), "a bare hand leaves the glass floor alone")
 assert(not has(t.items_at(2, 1, GROUND), "glass_tile"), "and no tile comes of it")
 
-t.click(p, 1, 1, t.target_at(p, 1, 1, "crowbar")) -- the crowbar is underfoot
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "crowbar"))) -- the crowbar is underfoot
 t.tick()
 assert(t.hands(p).held == "crowbar", "the crowbar is in hand")
 

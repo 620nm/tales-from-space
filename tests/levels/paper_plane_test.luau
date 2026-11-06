@@ -35,7 +35,7 @@ local function committed_text(p: number): string
 end
 
 local function pick_up(p: number, x: number, y: number): ()
-    t.click(p, x, y, t.target_at(p, x, y, "paper"))
+    t.click(p, x, y, assert(t.target_at(p, x, y, "paper")))
     t.run_ticks(2)
     assert(t.hands(p).held == "paper", "the sheet is in hand")
 end

@@ -56,7 +56,7 @@ assert(x == 1 and y == 1, "tool vendors are solid too")
 assert(table.concat(t.messages(p), "\n"):find("wobbles", 1, true), "the shared move.bump fired")
 
 -- Its clean-room shelf document is stocked from ITS OWN list.
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 local ui = ui_controls.record(assert(t.ui(p), "clicking the tool vendor opens its window"))
 assert(ui.document == "modules" and ui.presentation == "shelf", "the generic shelf document")
@@ -247,7 +247,7 @@ t.tick()
 assert(t.count_items("wrench") == 1, "no window, no vending")
 
 -- The machine next door is a DIFFERENT shelf through the same code.
-t.click(p, 2, 2, t.target_at(p, 2, 2))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2)))
 t.tick()
 local cola_ui = ui_controls.record(t.ui(p))
 local cola_product = ui_controls.record(ui_controls.rows(cola_ui.products)[1].payload)

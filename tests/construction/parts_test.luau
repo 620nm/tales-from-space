@@ -165,7 +165,7 @@ local function take(x: number, y: number, id: string)
         px, py = t.pos(p)
     end
     assert(math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1, "the supply is reachable")
-    t.click(p, at[1], at[2], t.target_at(p, at[1], at[2], id))
+    t.click(p, at[1], at[2], assert(t.target_at(p, at[1], at[2], id)))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
     for _ = 1, 16 do
@@ -219,13 +219,13 @@ assert(assert(t.structure_at(8, 1)).id == "machine_frame", "five sheets box up i
 
 put_down()
 take(8, 2, "cable_coil")
-t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
+t.click(p, 8, 1, assert(t.target_at(p, 8, 1, "machine_frame")))
 t.run_seconds(2.5)
 assert(assert(t.structure_at(8, 1)).state == "wired", "five lengths of cable wire it")
 
 put_down()
 take(8, 2, "machine_board.chem_heater")
-t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
+t.click(p, 8, 1, assert(t.target_at(p, 8, 1, "machine_frame")))
 t.run_ticks(2)
 assert(assert(t.structure_at(8, 1)).state == "boarded", "the board clicks into place")
 
@@ -234,7 +234,7 @@ assert(assert(t.structure_at(8, 1)).state == "boarded", "the board clicks into p
 -- for before the board's own stack materials.
 take(8, 2, "screwdriver")
 local _ = t.messages(p)
-t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
+t.click(p, 8, 1, assert(t.target_at(p, 8, 1, "machine_frame")))
 t.run_seconds(4.5)
 local heard = table.concat(t.messages(p), " | ")
 assert(
@@ -244,17 +244,17 @@ assert(
 
 put_down()
 take(8, 2, "glass")
-t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
+t.click(p, 8, 1, assert(t.target_at(p, 8, 1, "machine_frame")))
 t.run_ticks(2)
 put_down()
 
 take(8, 2, "micro_laser.tier3")
-t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
+t.click(p, 8, 1, assert(t.target_at(p, 8, 1, "machine_frame")))
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "a rung three laser fills the socket like any other")
 
 take(8, 2, "screwdriver")
-t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
+t.click(p, 8, 1, assert(t.target_at(p, 8, 1, "machine_frame")))
 t.run_seconds(4.5)
 local built = assert(t.target_at(p, 8, 1))
 assert(built ~= nil, "the assembly becomes the machine its board named")
@@ -265,11 +265,11 @@ put_down()
 -- ---------------------------------------------------------------
 local warm_beaker = assert(t.target_at(p, 10, 2, "beaker.libital"))
 take(8, 2, "beaker.libital")
-t.click(p, 8, 1, t.target_at(p, 8, 1))
+t.click(p, 8, 1, assert(t.target_at(p, 8, 1)))
 t.run_ticks(2)
 
 t.run_seconds(2)
-t.click(p, 8, 1, t.target_at(p, 8, 1))
+t.click(p, 8, 1, assert(t.target_at(p, 8, 1)))
 t.tick()
 local ui = ui_controls.state(p)
 local parts = rows_in(ui, "parts.parts")
@@ -301,9 +301,9 @@ t.ui_close(p)
 walk("west", 5)
 local best_beaker = assert(t.target_at(p, 3, 2, "beaker.libital"))
 take(3, 2, "beaker.libital")
-t.click(p, 3, 1, t.target_at(p, 3, 1))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1)))
 t.run_ticks(2)
-t.click(p, 3, 1, t.target_at(p, 3, 1))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1)))
 t.tick()
 parts = rows_in(t.ui(p), "parts.parts")
 assert(
@@ -325,9 +325,9 @@ t.ui_close(p)
 walk("west", 1)
 local plain_beaker = assert(t.target_at(p, 2, 2, "beaker.libital"))
 take(2, 2, "beaker.libital")
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_ticks(2)
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 parts = rows_in(t.ui(p), "parts.parts")
 assert(
@@ -373,7 +373,7 @@ assert(best <= 400.0 + 1e-9, "none of them crosses the dial: " .. best)
 -- onto the hot one (thermomachine.dm:34, :95-96).
 -- ---------------------------------------------------------------
 walk("east", 7)
-t.click(p, 9, 1, t.target_at(p, 9, 1))
+t.click(p, 9, 1, assert(t.target_at(p, 9, 1)))
 t.tick()
 ui = ui_controls.state(p)
 local dial = ui_controls.rows(ui.setpoints)[1]
@@ -390,7 +390,7 @@ assert(#rows_in(ui, "parts.parts") == 4, "four sockets: two bins and two lasers"
 t.ui_close(p)
 
 walk("east", 1)
-t.click(p, 10, 1, t.target_at(p, 10, 1))
+t.click(p, 10, 1, assert(t.target_at(p, 10, 1)))
 t.tick()
 ui = ui_controls.state(p)
 local upgraded = ui_controls.rows(ui.setpoints)[1]

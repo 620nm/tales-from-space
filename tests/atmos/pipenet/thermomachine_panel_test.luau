@@ -111,7 +111,7 @@ end
 assert(feeding(), "with the bench's APC feeding its circuit")
 assert(t.network_feed(5, 1, "power", "environment") == "l1", "which reaches the machine's own tile")
 
-t.click(p, 5, 1, t.target_at(p, 5, 1, "thermomachine"))
+t.click(p, 5, 1, assert(t.target_at(p, 5, 1, "thermomachine")))
 t.tick()
 assert(t.ui(p), "the unit answers an empty hand with its panel")
 

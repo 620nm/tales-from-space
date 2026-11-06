@@ -160,7 +160,7 @@ near(gas(SIDE_X, SIDE_Y, "o2"), side_o2, 1e-9, "out of either mouth")
 -- clicking one is `ui_interact` (filter.dm:123-127) -- so an empty hand
 -- opens the window rather than working the machine.
 -- ---------------------------------------------------------------
-t.click(p, 3, 1, t.target_at(p, 3, 1, "filter"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "filter")))
 t.tick()
 local ui = ui_controls.record(t.ui(p))
 assert(ui, "clicking a filter opens its window")
@@ -336,7 +336,7 @@ t.tick()
 local was_side_o2, was_side_n2 = gas(SIDE_X, SIDE_Y, "o2"), gas(SIDE_X, SIDE_Y, "n2")
 local was_main = gas(OUT_X, OUT_Y, "o2") + gas(OUT_X, OUT_Y, "n2")
 
-t.click(q, 3, 1, t.target_at(q, 3, 1, "filter"))
+t.click(q, 3, 1, assert(t.target_at(q, 3, 1, "filter")))
 t.tick()
 ui_controls.toggle(q, "power")
 t.run_seconds(30)
@@ -364,26 +364,26 @@ local r = t.join()
 t.tick()
 
 -- Switch it on first, so the refusal has something to refuse.
-t.click(r, 3, 1, t.target_at(r, 3, 1, "filter"))
+t.click(r, 3, 1, assert(t.target_at(r, 3, 1, "filter")))
 t.tick()
 ui_controls.toggle(r, "power")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "running", "running")
 t.ui_close(r)
 
-t.click(r, 3, 2, t.target_at(r, 3, 2, "wrench"))
+t.click(r, 3, 2, assert(t.target_at(r, 3, 2, "wrench")))
 t.run_ticks(2)
 assert(t.hands(r).held == "wrench", "wrench in hand")
 
 local _ = t.messages(r)
-t.click(r, 3, 1, t.target_at(r, 3, 1, "filter"))
+t.click(r, 3, 1, assert(t.target_at(r, 3, 1, "filter")))
 t.run_seconds(2.5)
 assert(said(r, "The filter must be off first."), "a running filter is not something you unbolt")
 assert(t.structure_at(3, 1) ~= nil, "and it is still on the line")
 
 -- Switch it off with the other hand, and the same click works.
 t.swap_hands(r)
-t.click(r, 3, 1, t.target_at(r, 3, 1, "filter"))
+t.click(r, 3, 1, assert(t.target_at(r, 3, 1, "filter")))
 t.tick()
 ui_controls.toggle(r, "power")
 t.run_ticks(2)
@@ -391,7 +391,7 @@ assert(assert(t.structure_at(3, 1)).state == "off", "off")
 t.ui_close(r)
 t.swap_hands(r)
 
-t.click(r, 3, 1, t.target_at(r, 3, 1, "filter"))
+t.click(r, 3, 1, assert(t.target_at(r, 3, 1, "filter")))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "the filter comes up off the pipe")
 -- `yields` mint on the TARGET's tile (docs/CONSTRUCTION.md): what came
@@ -423,7 +423,7 @@ local pre_main_n2 = gas(OUT_X, OUT_Y, "n2")
 
 -- The file's `filter = { "n2" }` reached the machine's roster, not just
 -- its behavior: the panel shows nitrogen already selected.
-t.click(s, 3, 1, t.target_at(s, 3, 1, "filter.n2"))
+t.click(s, 3, 1, assert(t.target_at(s, 3, 1, "filter.n2")))
 t.tick()
 for _, sw in ipairs(ui_controls.rows(ui_controls.state(s).toggles)) do
     if sw.field == "filter" then
@@ -467,7 +467,7 @@ assert(hand.id == "filter", "a bare filter, with the map's own words on it")
 assert(hand.state == "running", "which is running, because the placement said so")
 local hand_side_o2 = gas(SIDE_X, SIDE_Y, "o2")
 local hand_main_n2 = gas(OUT_X, OUT_Y, "n2")
-t.click(h, 3, 1, t.target_at(h, 3, 1, "filter"))
+t.click(h, 3, 1, assert(t.target_at(h, 3, 1, "filter")))
 t.tick()
 for _, sw in ipairs(ui_controls.rows(ui_controls.state(h).toggles)) do
     if sw.field == "filter" then

@@ -197,7 +197,7 @@ assert(
 -- gas by volume, which is the same division the mouths were doing --
 -- and from here it is on its own.
 -- ---------------------------------------------------------------
-t.click(p, 3, 3, t.target_at(p, 3, 3, "wrench"))
+t.click(p, 3, 3, assert(t.target_at(p, 3, 3, "wrench")))
 t.run_ticks(3)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 

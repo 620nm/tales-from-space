@@ -61,10 +61,10 @@ assert(
     math.abs(charged_start - 2000.0) < 20.0,
     "the map's tank opens holding what the map said: " .. charged_start
 )
-t.click(p, 2, 1, t.target_at(p, 2, 1, "metal")) -- a pile of thirty
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "metal"))) -- a pile of thirty
 t.run_ticks(2)
 t.swap_hands(p)
-t.click(p, 2, 3, t.target_at(p, 2, 3, "wrench"))
+t.click(p, 2, 3, assert(t.target_at(p, 2, 3, "wrench")))
 t.run_ticks(2)
 t.swap_hands(p) -- the sheets are the active hand again
 
@@ -91,7 +91,7 @@ assert(frame.state == "displaced", "and it is not bolted yet: " .. tostring(fram
 -- says which state the job wants instead of starting work that cannot
 -- finish.
 local _ = t.messages(p)
-t.click(p, 3, 2, t.target_at(p, 3, 2))
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2)))
 t.run_ticks(2)
 local refused = false
 for _, m in ipairs(t.messages(p)) do
@@ -106,23 +106,23 @@ assert(refused, "an unbolted frame takes no plating, and says so")
 -- Bolt it, plate it, seal it. tg's 0.5 s / 3 s / 2 s.
 -- ---------------------------------------------------------------
 t.swap_hands(p) -- the wrench
-t.click(p, 3, 2, t.target_at(p, 3, 2))
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2)))
 t.run_seconds(1.0)
 assert(assert(t.structure_at(3, 2)).state == "anchored", "the wrench bolts it down")
 
 t.swap_hands(p) -- the sheets
-t.click(p, 3, 2, t.target_at(p, 3, 2))
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2)))
 t.run_seconds(3.5)
 assert(assert(t.structure_at(3, 2)).state == "plated", "twelve more sheets plate it")
 
 t.swap_hands(p) -- put the wrench down and take the torch
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "welder"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "welder")))
 t.run_ticks(2)
 t.use_self(p)
 t.run_ticks(2)
-t.click(p, 3, 2, t.target_at(p, 3, 2))
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2)))
 t.run_seconds(2.5)
 local tank = t.structure_at(3, 2)
 assert(
@@ -159,7 +159,7 @@ assert(
 )
 local room_before = assert(t.room_gas(3, 2)).plasma or 0.0
 
-t.click(p, 3, 2, t.target_at(p, 3, 2))
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2)))
 t.run_seconds(4.5)
 local left = t.structure_at(3, 2)
 assert(

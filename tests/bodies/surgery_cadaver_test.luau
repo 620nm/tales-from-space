@@ -151,7 +151,7 @@ t.move(surgeon, "west")
 t.run_ticks(8)
 assert(t.pos(surgeon) == 3, "beside the console")
 assert(t.set_zone(surgeon, "chest"), "aiming at the chest")
-t.click(surgeon, 2, 2, t.target_at(surgeon, 2, 2))
+t.click(surgeon, 2, 2, assert(t.target_at(surgeon, 2, 2)))
 t.run_ticks(2)
 
 local console = ui_controls.record(assert(t.ui(surgeon), "the console opened a window"))
@@ -173,7 +173,7 @@ t.run_ticks(8)
 assert(t.pos(surgeon) == 4, "back beside the table")
 
 -- ---- and the cut ------------------------------------------------------
-t.click(surgeon, 4, 1, t.target_at(surgeon, 4, 1, "scalpel"))
+t.click(surgeon, 4, 1, assert(t.target_at(surgeon, 4, 1, "scalpel")))
 t.run_ticks(2)
 assert(t.hands(surgeon).held == "scalpel", "the scalpel is back in hand")
 assert(t.set_zone(surgeon, "chest"), "aiming at the chest")

@@ -130,7 +130,7 @@ assert(machine ~= nil, "a dispenser stands on the bench")
 -- ---------------------------------------------------------------
 -- AN EMPTY HAND ASKS; A FULL ONE LOADS.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 local ui = ui_controls.state(p)
 assert(ui, "an empty hand opens the panel")
@@ -174,12 +174,12 @@ assert(
 t.ui_close(p)
 
 local beaker = assert(t.target_at(p, 1, 1, "beaker"))
-t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "beaker")))
 t.tick()
 assert(t.hands(p).held == "beaker", "the beaker is in hand")
 near(total(beaker), 0, 1e-9, "and it ships empty off the shelf")
 
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 assert(t.hands(p).held == nil, "clicking the dispenser with it puts it IN")
 assert(t.ledger_has("Docked", "beaker"), "the dock is on the record")
@@ -187,7 +187,7 @@ assert(t.ledger_has("Docked", "beaker"), "the dock is on the record")
 -- ---------------------------------------------------------------
 -- ONE PRESS IS ONE PRESS.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
@@ -287,10 +287,10 @@ assert(#t.ledger_rows("minted") == before, "an empty dock dispenses nothing")
 
 -- ...and neither does a button this machine does not have. The shelf is
 -- sixteen substances; the registry knows dozens.
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 assert(t.hands(p).held == nil, "the beaker goes back in")
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 assert(ui_controls.find(p, "/toggle/dispense/plasma") == nil, "unstocked substance has no button")
 t.run_ticks(2)
@@ -472,13 +472,13 @@ t.tick()
 
 local bottle = t.target_at(p, 1, 1, "bottle")
 assert(bottle ~= nil, "a bottle is standing on the bench")
-t.click(p, 1, 1, t.target_at(p, 1, 1, "bottle"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "bottle")))
 t.tick()
 assert(t.hands(p).held == "bottle", "the bottle is in hand")
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 assert(t.hands(p).held == nil, "and it goes into the dock")
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 ui_controls.set(p, "amount", 0.25)
 t.run_ticks(2)

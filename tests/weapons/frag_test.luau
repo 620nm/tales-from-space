@@ -217,7 +217,7 @@ end
 -- of its own, so this is the nested-position edge: it bursts where
 -- its armer stands.
 -- ---------------------------------------------------------------
-t.click(p0, 1, 1, t.target_at(p0, 1, 1, "frag_grenade"))
+t.click(p0, 1, 1, assert(t.target_at(p0, 1, 1, "frag_grenade")))
 t.tick()
 assert(t.hands(p0).held == "frag_grenade", "the grenade is in hand")
 assert(has(t.sounds(p0), "grenade_pickup"), "picked up on its own noise")
@@ -319,7 +319,7 @@ placed(v3, 9, 3, "the diagonal witness")
 -- ---------------------------------------------------------------
 -- DECK: armed, refused twice, dropped, and the fuse watched.
 -- ---------------------------------------------------------------
-t.click(p1, 4, 2, t.target_at(p1, 4, 2, "frag_grenade"))
+t.click(p1, 4, 2, assert(t.target_at(p1, 4, 2, "frag_grenade")))
 t.tick()
 t.use_self(p1)
 t.tick()
@@ -377,7 +377,7 @@ t.set_health(p1, { brute = 0 })
 -- THROWN: primed, then thrown. The fuse outlives the flight and the
 -- blast goes off where the grenade came to rest, not where it left.
 -- ---------------------------------------------------------------
-t.click(p1, 3, 3, t.target_at(p1, 3, 3, "frag_grenade"))
+t.click(p1, 3, 3, assert(t.target_at(p1, 3, 3, "frag_grenade")))
 t.tick()
 assert(t.hands(p1).held == "frag_grenade", "the second grenade is in hand")
 t.use_self(p1)
@@ -421,7 +421,7 @@ blast_dirt(3)
 -- below needs hands, so the brute is set back to zero like the first
 -- armer's was. The burn pool is still empty and stays the proof.
 t.set_health(p2, { brute = 0 })
-t.click(p2, 8, 2, t.target_at(p2, 8, 2, "frag_grenade"))
+t.click(p2, 8, 2, assert(t.target_at(p2, 8, 2, "frag_grenade")))
 t.tick()
 t.use_self(p2)
 t.tick()

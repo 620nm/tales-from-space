@@ -123,7 +123,7 @@ local listener: number
 
 local function pocket(p)
     local x, y = t.pos(p)
-    t.click(p, x, y, t.target_at(p, x, y, "encryption_key.medical"))
+    t.click(p, x, y, assert(t.target_at(p, x, y, "encryption_key.medical")))
     t.run_ticks(2)
     assert(t.hands(p).held == "encryption_key.medical", "the key is in hand")
 end
@@ -171,7 +171,7 @@ local function join_all(p: number, x: number, y: number, id: string?, grayed: st
         assert(ui ~= nil and ui.contact_locked, "the box shows the laptop its lock screen")
         laptop.unlock(p)
     else
-        t.click(p, x, y, t.target_at(p, x, y))
+        t.click(p, x, y, assert(t.target_at(p, x, y)))
         t.tick()
         assert(t.ui(p) ~= nil, "the box wears its panel")
         ui_controls.toggle(p, "link_lock")
@@ -348,7 +348,7 @@ assert(
 -- ---------------------------------------------------------------
 t.swap_hands(listener)
 t.tick()
-t.click(listener, 50, 2, t.target_at(listener, 50, 2, "wirecutters"))
+t.click(listener, 50, 2, assert(t.target_at(listener, 50, 2, "wirecutters")))
 t.run_ticks(2)
 assert(t.hands(listener).held == "wirecutters", "the cutters are in hand")
 listener_to_box()
@@ -368,7 +368,7 @@ walk(listener, "west", 2)
 t.drop(listener)
 t.run_ticks(2)
 local _ = t.messages(listener)
-t.click(listener, 45, 1, t.target_at(listener, 45, 1))
+t.click(listener, 45, 1, assert(t.target_at(listener, 45, 1)))
 t.tick()
 assert(
     said(listener, "The transceiver is on the air, carrying Lifeline."),

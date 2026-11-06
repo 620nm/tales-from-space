@@ -107,7 +107,7 @@ end
 -- THE AREA PANEL. Three modules: the cell it keeps, the class gates
 -- only it has, and a block for each of the two lines under it.
 -- ---------------------------------------------------------------
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.tick()
 local apc = ui_controls.state(p)
 assert(apc, "clicking the panel opens its window")
@@ -214,7 +214,7 @@ assert(assert(assert(t.ports_at(1, 2, "power")).channels["l1"]).mode == "output"
 -- ---------------------------------------------------------------
 walk("east")
 walk("east")
-t.click(p, 4, 1, t.target_at(p, 4, 1))
+t.click(p, 4, 1, assert(t.target_at(p, 4, 1)))
 t.tick()
 local smes = ui_controls.state(p)
 assert(smes, "clicking the bank opens its window")

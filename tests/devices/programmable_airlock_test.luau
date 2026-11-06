@@ -118,7 +118,7 @@ end
 -- fixed original onto the laptop's own store: its A:, `tool_host` in contact.
 t.drop(operator)
 t.run_ticks(2)
-t.click(operator, 3, 3, t.target_at(operator, 3, 3, "floppy_disk.atmos_stock"))
+t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, "floppy_disk.atmos_stock")))
 t.run_ticks(2)
 t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, lap)))
 t.run_ticks(2)
@@ -196,7 +196,7 @@ local function press_inside()
     end
     assert(offered, "the button offers its left-click press action")
     local mark = airlock_cycle.mark()
-    t.click(operator, 2, 3, t.target_at(operator, 2, 3, "airlock_button"))
+    t.click(operator, 2, 3, assert(t.target_at(operator, 2, 3, "airlock_button")))
     t.run_ticks(2)
     return mark
 end
@@ -260,7 +260,7 @@ assert(assert(t.door_at(5, 3)).open, "bolting the open leaf holds it against aut
 
 -- The chamber button reverses the cycle: close, drain, then open space.
 local since = airlock_cycle.mark()
-t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
+t.click(visitor, 7, 4, assert(t.target_at(visitor, 7, 4, "airlock_button")))
 t.run_ticks(2)
 until_door(8, true, since)
 assert(
@@ -287,7 +287,7 @@ until_door(5, true, press_inside())
 
 -- An opposite request during travel supersedes the older operation.
 since = airlock_cycle.mark()
-t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
+t.click(visitor, 7, 4, assert(t.target_at(visitor, 7, 4, "airlock_button")))
 t.run_ticks(8)
 press_inside()
 t.run_ticks(80)
@@ -301,10 +301,10 @@ assert(
 local burst_start = #t.ledger_rows("disl_run")
 press_inside() -- Start this sender's pacing sleep.
 for _ = 1, 7 do
-    t.click(operator, 2, 3, t.target_at(operator, 2, 3, "airlock_button"))
+    t.click(operator, 2, 3, assert(t.target_at(operator, 2, 3, "airlock_button")))
 end
 t.tick()
-t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
+t.click(visitor, 7, 4, assert(t.target_at(visitor, 7, 4, "airlock_button")))
 t.run_ticks(80)
 until_door(8, true, burst_start)
 assert(
@@ -337,7 +337,7 @@ assert(
 close_contact()
 local _ = t.messages(visitor)
 since = airlock_cycle.mark()
-t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
+t.click(visitor, 7, 4, assert(t.target_at(visitor, 7, 4, "airlock_button")))
 t.run_ticks(100)
 assert(
     assert(t.door_at(5, 3)).open and not assert(t.door_at(8, 3)).open,
@@ -528,6 +528,6 @@ t.drop(operator)
 t.run_ticks(10)
 local isolated_runs = #t.ledger_rows("disl_run")
 press_inside()
-t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
+t.click(visitor, 7, 4, assert(t.target_at(visitor, 7, 4, "airlock_button")))
 t.run_ticks(30)
 assert(#t.ledger_rows("disl_run") == isolated_runs, "disconnected buttons cannot reach the guest")

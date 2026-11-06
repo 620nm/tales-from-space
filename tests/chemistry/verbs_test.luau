@@ -56,9 +56,9 @@ local medic = t.join("medic")
 local patient = t.join("assistant")
 t.run_ticks(3)
 
-local full = t.target_at(medic, 1, 1, "beaker.libital")
-local jar = t.target_at(medic, 3, 1, "bottle")
-local syringe = t.target_at(medic, 4, 1, "syringe")
+local full = assert(t.target_at(medic, 1, 1, "beaker.libital"))
+local jar = assert(t.target_at(medic, 3, 1, "bottle"))
+local syringe = assert(t.target_at(medic, 4, 1, "syringe"))
 
 local function take(p, x, y, id)
     if t.hands(p).held ~= nil then
@@ -78,7 +78,7 @@ end
 
 -- ---- pour: vessel to vessel ------------------------------------------
 take(medic, 1, 1, full)
-t.click(medic, 2, 1, t.target_at(medic, 2, 1, "beaker"))
+t.click(medic, 2, 1, assert(t.target_at(medic, 2, 1, "beaker")))
 t.run_ticks(2)
 assert(rows("poured") == 1, ("one pour, got %d"):format(rows("poured")))
 
@@ -91,7 +91,7 @@ t.run_ticks(2)
 assert(rows("drank") == 1, ("one swig, got %d"):format(rows("drank")))
 
 -- ---- spill: vessel to the deck ---------------------------------------
-t.click(medic, 1, 2)
+t.click_tile(medic, 1, 2)
 t.run_ticks(2)
 assert(rows("spilled") == 1, ("one spill, got %d"):format(rows("spilled")))
 local puddle = t.ledger_rows("spilled")[1]
@@ -111,7 +111,7 @@ walk(medic, "east")
 walk(medic, "east")
 take(medic, 3, 1, jar)
 assert(t.hands(medic).held == "bottle", "the bottle is in hand")
-t.click(medic, 3, 2, t.target_at(medic, 3, 2))
+t.click(medic, 3, 2, assert(t.target_at(medic, 3, 2)))
 t.run_ticks(2)
 assert(rows("filled") == 1, ("one charge, got %d"):format(rows("filled")))
 assert(rows("poured") == 1, "and it did not pass itself off as a pour")
@@ -123,7 +123,7 @@ assert(rows("poured") == 1, "and it did not pass itself off as a pour")
 walk(medic, "east")
 take(medic, 4, 1, syringe)
 assert(t.hands(medic).held == "syringe", "the syringe is in hand")
-t.click(medic, 4, 1, t.target_at(medic, 4, 1, "beaker.libital"))
+t.click(medic, 4, 1, assert(t.target_at(medic, 4, 1, "beaker.libital")))
 t.run_ticks(2)
 assert(rows("matter_moved") == 1, ("one draw, got %d"):format(rows("matter_moved")))
 assert(rows("poured") == 1, "a draw is not a pour")

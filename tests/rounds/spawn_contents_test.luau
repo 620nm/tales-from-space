@@ -89,7 +89,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "bottle.iodine", "the bottle is in the working hand")
 
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1)) -- swing it at the machine
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1))) -- swing it at the machine
 t.run_ticks(2)
 assert(
     said("only takes empties"),
@@ -105,12 +105,12 @@ assert(t.hands(p).held == "bottle.iodine", "and it is still in your hand")
 -- at the temperature its chiller runs at, in a plain `bottle` that
 -- declares no fill of its own.
 -- ---------------------------------------------------------------
-t.click(p, 3, 2) -- the deck beside you: a spill
+t.click_tile(p, 3, 2) -- the deck beside you: a spill
 t.run_ticks(4)
 assert(assert(t.vessel(bottle)).moles < 1e-6, "the bottle is an empty now")
 
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_ticks(2)
 assert(said("cold bottle of water"), "the machine served one")
 assert(t.hands(p).held == nil, "and swallowed the empty you handed over")

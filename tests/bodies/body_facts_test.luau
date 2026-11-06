@@ -55,7 +55,7 @@ assert(said:find("You black out", 1, true), "and the plan's own sentence reached
 
 -- An unsteerable body cannot pick anything up: the steerability `crit`
 -- takes away is what every interaction gate asks.
-t.click(p, 3, 1, t.target_at(p, 3, 1, "toolbox"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "toolbox")))
 t.tick()
 assert(t.hands(p).held == nil, "and it cannot reach for anything")
 

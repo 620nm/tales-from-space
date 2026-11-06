@@ -30,14 +30,14 @@ t.world(
 
 local p = t.join()
 t.tick()
-t.click(p, 2, 2, t.target_at(p, 2, 2, "welder")) -- grab the welder underfoot-adjacent
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "welder"))) -- grab the welder underfoot-adjacent
 t.use_self(p)
 t.run_ticks(2)
 t.fault(1, 1, 5) -- the hull fails next door
 t.run_seconds(2.0) -- a couple of atmos ticks of venting
 assert(t.is_breached(1, 1), "the fault breached the corner")
 
-t.click(p, 1, 1) -- start the weld (a 4 s do_after)
+t.click_tile(p, 1, 1) -- start the weld (a 4 s do_after)
 t.run_seconds(4.5)
 assert(not t.is_breached(1, 1), "welded shut")
 assert(t.ledger_has("DoAfterStarted", "space"), "the work starting is on the record")
@@ -76,12 +76,12 @@ t.world(
 
 p = t.join()
 t.tick()
-t.click(p, 3, 1, t.target_at(p, 3, 1, "welder")) -- grab the welder
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "welder"))) -- grab the welder
 t.use_self(p)
 t.run_ticks(2)
 t.fault(1, 1, t.now() + 1)
 t.run_seconds(0.5)
-t.click(p, 1, 1) -- start the weld
+t.click_tile(p, 1, 1) -- start the weld
 t.run_seconds(0.5)
 t.drop(p) -- drop the torch mid-count
 t.run_seconds(4.5)

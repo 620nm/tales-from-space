@@ -143,13 +143,13 @@ local function hold(id: string)
         t.drop(surgeon)
         t.tick()
     end
-    t.click(surgeon, 4, 1, t.target_at(surgeon, 4, 1, id))
+    t.click(surgeon, 4, 1, assert(t.target_at(surgeon, 4, 1, id)))
     t.run_ticks(2)
     assert(t.hands(surgeon).held == id, "the surgeon holds the " .. id)
 end
 local function step(tool, ticks, done, why)
     hold(tool)
-    t.click(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name))
+    t.click(surgeon, 3, 2, assert(t.target_at(surgeon, 3, 2, "name:" .. corpse_name)))
     t.run_ticks(ticks)
     assert(done(), why)
 end
@@ -194,7 +194,7 @@ end, "organs cut")
 
 -- ---- 3. take the stopped heart out ------------------------------------
 hold("hemostat")
-t.click(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name))
+t.click(surgeon, 3, 2, assert(t.target_at(surgeon, 3, 2, "name:" .. corpse_name)))
 t.run_ticks(2)
 local win = ui_controls.state(surgeon)
 assert(win ~= nil and win.presentation == "choices", "several organs to reach")
@@ -219,7 +219,7 @@ assert(corpse().animate == false, "no heart at all is no more alive than a stopp
 
 -- ---- 4. ...and put a living one in ------------------------------------
 hold("organ_heart")
-t.click(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name))
+t.click(surgeon, 3, 2, assert(t.target_at(surgeon, 3, 2, "name:" .. corpse_name)))
 t.run_ticks(clock.deadline_ticks(3.0))
 assert(assert(corpse().parts).chest.organs.heart ~= false, "a heart is seated")
 assert(

@@ -119,7 +119,7 @@ assert(t.ports_at(1, 1, "power") == nil, "a generator is not a bridge")
 -- picks up the room circuit by itself, one pass later. Nobody re-wires
 -- anything; the preference list is the whole mechanism.
 -- ---------------------------------------------------------------
-t.click(p, 6, 2, t.target_at(p, 6, 2, "wirecutters"))
+t.click(p, 6, 2, assert(t.target_at(p, 6, 2, "wirecutters")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
 t.click_network(p, 6, 1, assert(t.network_instance(6, 1, "power", "l2")))

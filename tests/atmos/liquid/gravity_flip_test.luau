@@ -18,7 +18,7 @@ local p = bench.world({
 t.set_store_charge(SMES.x, SMES.y, 1.0)
 
 local function press(action: string)
-    t.click(p, SMES.x + 1, SMES.y, t.target_at(p, SMES.x + 1, SMES.y, "grav_smes"))
+    t.click(p, SMES.x + 1, SMES.y, assert(t.target_at(p, SMES.x + 1, SMES.y, "grav_smes")))
     t.tick()
     ui_controls.toggle(p, "action", action)
     t.run_seconds(1.5)

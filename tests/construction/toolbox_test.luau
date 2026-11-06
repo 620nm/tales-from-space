@@ -43,7 +43,7 @@ assert(
 local attacker_id, victim_id = attacker_actor.id, victim_actor.id
 assert(attacker_id ~= victim_id)
 
-t.click(attacker, 1, 1, t.target_at(attacker, 1, 1, "toolbox")) -- the toolbox underfoot
+t.click(attacker, 1, 1, assert(t.target_at(attacker, 1, 1, "toolbox"))) -- the toolbox underfoot
 t.tick()
 assert(t.hands(attacker).held == "toolbox", "picked it up")
 assert(t.vitals(victim) == nil, "nobody has been hurt yet")

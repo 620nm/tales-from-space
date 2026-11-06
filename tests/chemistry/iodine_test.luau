@@ -118,7 +118,7 @@ local charge = (before.solid or 0) + (before.gas or 0)
 t.click(p, 1, 1, bottle) -- pick it up
 t.tick()
 local deck_k = assert(t.room_temperature(2, 1))
-t.click(p, 2, 1) -- the deck beside you, with the bottle in hand
+t.click_tile(p, 2, 1) -- the deck beside you, with the bottle in hand
 t.run_ticks(4)
 
 assert(

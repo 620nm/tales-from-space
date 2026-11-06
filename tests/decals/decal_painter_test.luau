@@ -113,10 +113,10 @@ t.tick()
 -- Painter in one hand, eraser in the other. Both are deck tools and
 -- neither is ever aimed at the other's work: the eraser undoes the
 -- painter, one marking at a time.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "decal_painter"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "decal_painter")))
 t.run_ticks(2)
 t.swap_hands(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "decal_eraser"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "decal_eraser")))
 t.run_ticks(2)
 t.swap_hands(p)
 local hands = t.hands(p)
@@ -307,7 +307,7 @@ assert(only(5, 3).paint == "yellow", "a yellow tiling square on the south-east c
 t.swap_hands(p)
 t.drop(p) -- the eraser, to free a hand for the crowbar
 t.run_ticks(2)
-t.click(p, 3, 2, t.target_at(p, 3, 2, "crowbar"))
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2, "crowbar")))
 t.run_ticks(2)
 assert(t.hands(p).held == "crowbar", "crowbar in hand")
 
@@ -356,7 +356,7 @@ assert(#t.ledger_rows("decal_placed") == before_rows, "a refusal writes no row")
 t.swap_hands(p)
 t.drop(p) -- the crowbar, to free the hand the eraser was put down for
 t.run_ticks(2)
-t.click(p, 4, 2, t.target_at(p, 4, 2, "decal_eraser"))
+t.click(p, 4, 2, assert(t.target_at(p, 4, 2, "decal_eraser")))
 t.run_ticks(2)
 assert(t.hands(p).held == "decal_eraser", "eraser in hand")
 local erasures = #t.ledger_rows("decal_removed")

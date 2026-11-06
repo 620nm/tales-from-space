@@ -86,7 +86,7 @@ t.run_seconds(3)
 assert(backbone_live(), "the hubs join the backbone to the generator below")
 assert(t.lit(2, 1), "and the lamp upstairs burns")
 
-t.click(p, 2, 2, t.target_at(p, 2, 2, "wirecutters"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "wirecutters")))
 t.run_ticks(2)
 t.click_network(p, 3, 2, assert(t.network_instance(3, 2, "power", "l2", GROUND)))
 t.run_seconds(1.5)
@@ -99,13 +99,13 @@ assert(not backbone_live(), "with one hub gone the backbone loses the generator"
 -- (yellow first); three presses from a fresh coil reach the yellow hub.
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 2, 2, t.target_at(p, 2, 2, "cable_coil"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "cable_coil")))
 t.run_ticks(2)
 for _ = 1, 3 do
     t.use_self(p)
     t.run_ticks(2)
 end
-t.click(p, 3, 2, nil, -14, 14)
+t.click_tile(p, 3, 2, -14, 14)
 t.run_seconds(1.5)
 assert(t.network_instance(3, 2, "power", "l2", GROUND) ~= nil, "the coil laid a hub")
 t.run_seconds(3)

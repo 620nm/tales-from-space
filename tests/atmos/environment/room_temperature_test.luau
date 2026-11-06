@@ -203,7 +203,7 @@ t.set_environment({ sink_k = T20C, insolation = 0 })
 
 local p = t.join()
 t.tick()
-t.click(p, 2, 2, t.target_at(p, 2, 2, "analyzer"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "analyzer")))
 t.run_ticks(2)
 assert(t.hands(p).held == "analyzer", "analyzer in hand")
 
@@ -398,10 +398,10 @@ assert(
 -- The analyzer moves to the off hand: an item in the working hand is
 -- the item, not an interface, so the panel is opened bare-handed and
 -- the instrument is picked back up afterwards.
-t.click(q, 1, 2, t.target_at(q, 1, 2, "analyzer"))
+t.click(q, 1, 2, assert(t.target_at(q, 1, 2, "analyzer")))
 t.run_ticks(2)
 t.swap_hands(q)
-t.click(q, 2, 1, t.target_at(q, 2, 1, "air_injector"))
+t.click(q, 2, 1, assert(t.target_at(q, 2, 1, "air_injector")))
 t.tick()
 assert(
     ui_controls.rows(ui_controls.state(q).setpoints)[1].field == "rate",

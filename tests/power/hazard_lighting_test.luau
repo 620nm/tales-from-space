@@ -135,12 +135,12 @@ assert(
 -- before anything is cut: a length recovered from the deck merges
 -- into whatever coil is lying there, so a coil left on the floor
 -- through a snip is not the same object afterwards.
-t.click(p, 7, 2, t.target_at(p, 7, 2, "cable_coil"))
+t.click(p, 7, 2, assert(t.target_at(p, 7, 2, "cable_coil")))
 t.run_ticks(2)
 assert(t.hands(p).held == "cable_coil", "a coil in one hand")
 t.swap_hands(p)
 t.run_ticks(2)
-t.click(p, 7, 2, t.target_at(p, 7, 2, "wirecutters"))
+t.click(p, 7, 2, assert(t.target_at(p, 7, 2, "wirecutters")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in the other")
 t.click_network(p, 8, 2, assert(t.network_instance(8, 2, "power", "l2")))
@@ -183,7 +183,7 @@ assert(math.abs(lamp.power - 0.5) < 1e-6, "and dim, on the flag underneath: " ..
 t.swap_hands(p)
 t.run_ticks(2)
 assert(t.hands(p).held == "cable_coil", "the coil comes back to the working hand")
-t.click(p, 8, 2, nil, -14, 14)
+t.click_tile(p, 8, 2, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(8, 2, "power") == "l2", "the backbone is whole again")
 t.run_seconds(3)
@@ -326,7 +326,7 @@ assert(lamp.color == UNBREATHABLE, "and both alarms have it blue: " .. lamp.colo
 --    which is the whole reason the rows exist -- one alarm cannot
 --    take another's word off a ceiling.
 -- ---------------------------------------------------------------
-t.click(q, 9, 2, t.target_at(q, 9, 2, "wirecutters"))
+t.click(q, 9, 2, assert(t.target_at(q, 9, 2, "wirecutters")))
 t.run_ticks(2)
 assert(t.hands(q).held == "wirecutters", "cutters in hand")
 t.click_network(q, 10, 2, assert(t.network_instance(10, 2, "power", "l1")))
@@ -387,7 +387,7 @@ for _ = 1, 24 do
 end
 assert(t.pos(q) == 2, "at the fitting's own tile")
 local fitting = assert(t.target_at(q, 1, 2), "the target is visible")
-t.click(q, 2, 2, t.target_at(q, 2, 2, "toolbox"))
+t.click(q, 2, 2, assert(t.target_at(q, 2, 2, "toolbox")))
 t.run_ticks(2)
 assert(t.hands(q).held == "toolbox", "something heavy in hand")
 t.click(q, 1, 2, fitting)
@@ -397,7 +397,7 @@ assert(not assert(t.light_at(1, 2)).emits, "and throws nothing")
 
 t.drop(q)
 t.run_ticks(2)
-t.click(q, 2, 2, t.target_at(q, 2, 2, "light_tube"))
+t.click(q, 2, 2, assert(t.target_at(q, 2, 2, "light_tube")))
 t.run_ticks(2)
 assert(t.hands(q).held == "light_tube", "a fresh tube in hand")
 t.click(q, 1, 2, fitting)
@@ -428,7 +428,7 @@ assert(math.abs(lamp.power - 1.5) < 1e-6, "at the flag's power: " .. lamp.power)
 --     which nothing in this world can withdraw -- so the fitting
 --     lands there rather than on white, exactly as in 7.
 -- ---------------------------------------------------------------
-t.click(q, 2, 2, t.target_at(q, 2, 2, "wrench"))
+t.click(q, 2, 2, assert(t.target_at(q, 2, 2, "wrench")))
 t.run_ticks(2)
 assert(t.hands(q).held == "wrench", "a wrench in hand")
 for _ = 1, 6 do
@@ -440,7 +440,7 @@ for _ = 1, 6 do
 end
 assert(t.pos(q) == 4, "beside the fan in the plasma")
 assert(t.hazard_level(4, 1) == "deadly", "the fan is still calling it lethal")
-t.click(q, 4, 1, t.target_at(q, 4, 1, "vent"))
+t.click(q, 4, 1, assert(t.target_at(q, 4, 1, "vent")))
 t.run_seconds(6)
 assert(t.structure_at(4, 1) == nil, "the fan is off the deck")
 assert(t.hazard_level(4, 1) == nil, "and nothing on that tile senses anything")

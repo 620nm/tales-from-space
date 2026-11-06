@@ -50,7 +50,7 @@ assert(
     "and wears the off picture: " .. tostring(resting.sprite)
 )
 
-t.click(p, 2, 1, t.target_at(p, 2, 1, "captains_aid"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "captains_aid")))
 t.tick()
 assert(t.hands(p).held == "captains_aid", "it is in hand")
 
@@ -106,7 +106,7 @@ for _, direction in ipairs(CYCLE) do
         down.sprite == "captains_aid_" .. direction,
         "and the sprite is that position's cell: " .. tostring(down.sprite)
     )
-    t.click(p, 1, 1, t.target_at(p, 1, 1, "captains_aid"))
+    t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "captains_aid")))
     t.tick()
 end
 

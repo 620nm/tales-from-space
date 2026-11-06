@@ -87,7 +87,7 @@ placed(w, 5, 7, "the west witness")
 
 walk(arm, { "east", "east", "east", "east", "east", "east", "south", "south", "south", "south", "south", "south" })
 placed(arm, 7, 7, "the armer")
-t.click(arm, 7, 7, t.target_at(arm, 7, 7, "frag_grenade"))
+t.click(arm, 7, 7, assert(t.target_at(arm, 7, 7, "frag_grenade")))
 t.tick()
 assert(t.hands(arm).held == "frag_grenade", "the grenade is in hand")
 t.use_self(arm)

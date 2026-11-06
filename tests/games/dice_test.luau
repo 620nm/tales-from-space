@@ -57,7 +57,7 @@ assert(resting.state == "6", "a fresh d6 rests on six: " .. tostring(resting.sta
 assert(resting.sprite == "d6_6", "and wears six's picture: " .. tostring(resting.sprite))
 
 -- ---- in the hand (tg's attack_self) ------------------------------------
-t.click(p, 2, 1, t.target_at(p, 2, 1, "d6"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "d6")))
 t.tick()
 assert(t.hands(p).held == "d6", "the die is in hand")
 
@@ -123,7 +123,7 @@ assert(
 )
 
 -- ---- twenty sides, and the one number anybody remembers ----------------
-t.click(p, 2, 1, t.target_at(p, 2, 1, "d20"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "d20")))
 t.tick()
 assert(t.hands(p).held == "d20", "the good one is in hand")
 

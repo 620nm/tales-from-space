@@ -104,7 +104,7 @@ local function take(x: number, y: number, id: string)
         px, py = t.pos(p)
     end
     assert(math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1, "the supply is reachable")
-    t.click(p, at[1], at[2], t.target_at(p, at[1], at[2], id))
+    t.click(p, at[1], at[2], assert(t.target_at(p, at[1], at[2], id)))
     t.run_ticks(2)
     assert(
         t.hands(p).held == id,
@@ -132,7 +132,7 @@ local function put_down()
 end
 
 local function work(seconds)
-    t.click(p, 6, 1, t.target_at(p, 6, 1, "machine_frame"))
+    t.click(p, 6, 1, assert(t.target_at(p, 6, 1, "machine_frame")))
     t.run_seconds(seconds)
 end
 
@@ -198,7 +198,7 @@ t.run_seconds(2.0)
 --    key says nothing -- carries no channel at all.
 -- ---------------------------------------------------------------
 local _ = t.messages(p)
-t.click(p, 6, 1, t.target_at(p, 6, 1))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1)))
 t.tick()
 -- RELAYED, because the APC feeding this tower is a hub and every
 -- device it powers is hardwired under it (docs/devices/joining.md).
@@ -210,7 +210,7 @@ t.ui_close(p)
 t.tick()
 
 local _ = t.messages(p)
-t.click(p, 4, 1, t.target_at(p, 4, 1))
+t.click(p, 4, 1, assert(t.target_at(p, 4, 1)))
 t.tick()
 assert(
     said(p, "There is no channel keyed into it. Until there is, it carries nothing."),
@@ -228,11 +228,11 @@ t.tick()
 --    so the count is asserted while the key is out in the world.)
 -- ---------------------------------------------------------------
 take(5, 1, "screwdriver")
-t.click(p, 6, 1, t.target_at(p, 6, 1))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1)))
 t.run_ticks(2)
 put_down()
 take(5, 1, "crowbar")
-t.click(p, 6, 1, t.target_at(p, 6, 1))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1)))
 t.run_ticks(2)
 local frame = t.structure_at(6, 1)
 assert(
@@ -241,7 +241,7 @@ assert(
 )
 
 -- The frame's own crowbar is the one path the parts come back out by.
-t.click(p, 6, 1, t.target_at(p, 6, 1, "machine_frame"))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1, "machine_frame")))
 t.run_ticks(2)
 put_down()
 assert(
@@ -264,14 +264,14 @@ assert(
 -- picture hides the small loose parts from the same FOV hit-test a player
 -- uses, so finish the generic frame teardown before gathering them.
 take(1, 3, "wirecutters")
-t.click(p, 6, 1, t.target_at(p, 6, 1, "machine_frame"))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1, "machine_frame")))
 t.run_seconds(2.5)
 assert(assert(t.structure_at(6, 1)).state == "empty", "cutting frees the frame wiring")
 put_down()
 take(2, 3, "welder")
 t.use_self(p)
 t.tick()
-t.click(p, 6, 1, t.target_at(p, 6, 1, "machine_frame"))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1, "machine_frame")))
 t.run_seconds(4.5)
 assert(t.structure_at(6, 1) == nil, "the empty frame comes apart")
 put_down()
@@ -344,7 +344,7 @@ put_down()
 t.run_seconds(2.0)
 
 local _ = t.messages(p)
-t.click(p, 6, 1, t.target_at(p, 6, 1))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1)))
 t.tick()
 assert(
     said(p, "The transceiver is on the air, carrying Lifeline, relayed through its network."),

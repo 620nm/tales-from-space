@@ -36,7 +36,7 @@ local attacker = t.join("assistant")
 local victim = t.join("medic")
 t.run_ticks(3)
 
-t.click(attacker, 1, 1, t.target_at(attacker, 1, 1, "toolbox"))
+t.click(attacker, 1, 1, assert(t.target_at(attacker, 1, 1, "toolbox")))
 t.run_ticks(2)
 
 -- One swing. The zone roll decides WHERE the 10 lands, so every

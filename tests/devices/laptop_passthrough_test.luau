@@ -60,7 +60,7 @@ local door = assert(t.door_at(5, 1))
 assert(door.powered and not door.open and not door.latches.bolted, "a powered, shut, public door")
 
 local _ = t.messages(p)
-t.click(p, 5, 1, t.target_at(p, 5, 1))
+t.click(p, 5, 1, assert(t.target_at(p, 5, 1)))
 t.run_ticks(clock.deadline_ticks(0.6) + 8) -- the 0.6 s leaf swing
 local lines = t.messages(p)
 assert(assert(t.door_at(5, 1)).open, "a click with a closed laptop still opens the door")

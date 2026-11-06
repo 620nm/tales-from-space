@@ -224,7 +224,7 @@ local orderly = t.join("medic")
 local stuffed = t.join("assistant")
 t.tick()
 
-local bay = t.target_at(orderly, 2, 1, "cadaver_chamber")
+local bay = assert(t.target_at(orderly, 2, 1, "cadaver_chamber"))
 t.click(orderly, 2, 1, bay)
 t.tick()
 assert(assert(t.structure_at(2, 1)).state == "open", "the chamber stands open")
@@ -278,7 +278,7 @@ t.world(
 
 local keeper = t.join("medic")
 t.tick()
-local walled = t.target_at(keeper, 2, 1, "cadaver_chamber")
+local walled = assert(t.target_at(keeper, 2, 1, "cadaver_chamber"))
 t.click(keeper, 2, 1, walled)
 t.tick()
 t.click(keeper, 2, 1, walled)

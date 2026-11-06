@@ -74,7 +74,7 @@ local function left_holds(id: string)
         t.drop(left)
         t.tick()
     end
-    t.click(left, 1, 1, t.target_at(left, 1, 1, id))
+    t.click(left, 1, 1, assert(t.target_at(left, 1, 1, id)))
     t.run_ticks(2)
     assert(t.hands(left).held == id, "left holds the " .. id)
 end
@@ -128,9 +128,9 @@ assert(t.organ_damage(patient, "eyes") == nil, "the eyes socket is empty")
 -- Both surgeons pick up a donor eye (left's by its feet, right's by its).
 t.drop(left)
 t.tick() -- drop the hemostat first
-t.click(left, 1, 1, t.target_at(left, 1, 1, "organ_eyes"))
+t.click(left, 1, 1, assert(t.target_at(left, 1, 1, "organ_eyes")))
 t.run_ticks(2)
-t.click(right, 3, 1, t.target_at(right, 3, 1, "organ_eyes"))
+t.click(right, 3, 1, assert(t.target_at(right, 3, 1, "organ_eyes")))
 t.run_ticks(2)
 assert(
     t.hands(left).held == "organ_eyes" and t.hands(right).held == "organ_eyes",

@@ -99,7 +99,7 @@ end
 assert(discharged > 5, ("a hung scupper joined the run, %.2f L out"):format(discharged))
 t.click(p, 3, 2, assert(t.target_at(p, 3, 2, "wrench")))
 t.run_ticks(2)
-t.click(p, 3, 1, t.target_at(p, 3, 1, "scupper"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "scupper")))
 t.run_ticks(clock.deadline_ticks(2.0) + 5)
 assert(
     t.structure_at(3, 1) == nil and t.count_items("scupper_fitting") == 1,

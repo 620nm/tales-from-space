@@ -23,7 +23,7 @@ t.world([==[(
 )]==], 7)
 local player = t.join()
 t.tick()
-t.click(player, 1, 2, t.target_at(player, 1, 2, "cable_coil"))
+t.click(player, 1, 2, assert(t.target_at(player, 1, 2, "cable_coil")))
 t.run_ticks(2)
 assert(t.hands(player).held == "cable_coil")
 t.use_self(player)
@@ -79,7 +79,7 @@ for _, item in ipairs({ "wirecutters", "floor_tile" }) do
     for _, channel in ipairs({ "l1", "l2", "l3" }) do
         cables[assert(t.network_instance(2, 1, "power", channel))] = true
     end
-    t.click(player, 1, 2, t.target_at(player, 1, 2, item))
+    t.click(player, 1, 2, assert(t.target_at(player, 1, 2, item)))
     t.run_ticks(2)
     t.click_component(player, 2, 1, catwalk)
     t.run_ticks(2)

@@ -191,7 +191,7 @@ local energy0 = assert(network_matter.energy(BACK_X, BACK_Y))
     + assert(network_matter.energy(SIDE_X, SIDE_Y))
     + assert(network_matter.energy(OUT_X, OUT_Y))
 
-t.click(p, 9, 1, t.target_at(p, 9, 1, "mixer"))
+t.click(p, 9, 1, assert(t.target_at(p, 9, 1, "mixer")))
 t.tick()
 assert(
     ui_controls.state(p).document == "modules" and ui_controls.state(p).presentation == "modules",
@@ -297,7 +297,7 @@ energy0 = assert(network_matter.energy(BACK_X, BACK_Y))
     + assert(network_matter.energy(SIDE_X, SIDE_Y))
     + assert(network_matter.energy(OUT_X, OUT_Y))
 
-t.click(q, 9, 1, t.target_at(q, 9, 1, "mixer"))
+t.click(q, 9, 1, assert(t.target_at(q, 9, 1, "mixer")))
 t.tick()
 ui_controls.set(q, "ratio", 80)
 ui_controls.set(q, "pressure", 200)

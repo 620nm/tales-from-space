@@ -72,7 +72,7 @@ local p = t.join()
 t.tick()
 
 local function take(id: string)
-    t.click(p, 2, 2, t.target_at(p, 2, 2, id))
+    t.click(p, 2, 2, assert(t.target_at(p, 2, 2, id)))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
 end
@@ -103,29 +103,29 @@ assert(assert(t.structure_at(2, 1)).id == "machine_frame", "five sheets box up i
 
 put_down()
 take("cable_coil")
-t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "machine_frame")))
 t.run_seconds(2.5)
 assert(assert(t.structure_at(2, 1)).state == "wired", "five lengths of cable wire it")
 
 put_down()
 take("machine_board.chem_heater")
-t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "machine_frame")))
 t.run_ticks(2)
 assert(assert(t.structure_at(2, 1)).state == "boarded", "the board clicks into place")
 
 put_down()
 take("glass")
-t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "machine_frame")))
 t.run_ticks(2)
 
 put_down()
 take("micro_laser.tier3")
-t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "machine_frame")))
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "a rung three laser fills the socket like any other")
 
 take("screwdriver")
-t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "machine_frame")))
 t.run_seconds(4.5)
 local chamber = t.target_at(p, 2, 1)
 assert(chamber ~= nil, "the assembly becomes the machine its board named")
@@ -165,7 +165,7 @@ assert(
 
 -- The frame's own crowbar is the ONE path a board and its parts come
 -- back out by — the same row that has always undone a board.
-t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "machine_frame")))
 t.run_ticks(2)
 local left = t.items_at(2, 1)
 assert(
@@ -194,7 +194,7 @@ assert(
 put_down()
 take("crowbar")
 walk("east", 4)
-t.click(p, 7, 1, t.target_at(p, 7, 1, "thermomachine.fullupgrade"))
+t.click(p, 7, 1, assert(t.target_at(p, 7, 1, "thermomachine.fullupgrade")))
 t.run_seconds(4.5)
 assert(assert(t.structure_at(7, 1)).id == "machine_frame", "a frame is what is left standing")
 

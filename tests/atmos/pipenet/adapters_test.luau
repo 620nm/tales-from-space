@@ -173,13 +173,13 @@ near(net_moles(4, 2, L4), fused, 0.001, "and layer 4 east")
 local books = fused + moles(assert(t.room_pressure(3, 2)), ROOM_M3)
 
 -- ---- take the adapter out, and the layers part ----
-t.click(p, 6, 2, t.target_at(p, 6, 2, "wrench"))
+t.click(p, 6, 2, assert(t.target_at(p, 6, 2, "wrench")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 for _ = 1, 3 do
     walk(p, "west")
 end
-t.click(p, 3, 1, t.target_at(p, 3, 1, "layer_adapter"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "layer_adapter")))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "the adapter comes up off the deck")
 assert(
@@ -269,7 +269,7 @@ local paint_books = joined + moles(assert(t.room_pressure(3, 2)), ROOM_M3)
 
 -- tg's `paintable = FALSE` (color_adapter.dm:16): this adapter offers
 -- no painting action and the attempted click cannot change its network.
-t.click(c, 6, 2, t.target_at(c, 6, 2, "pipe_painter"))
+t.click(c, 6, 2, assert(t.target_at(c, 6, 2, "pipe_painter")))
 t.run_ticks(2)
 assert(t.hands(c).held == "pipe_painter", "painter in hand")
 for _ = 1, 3 do
@@ -279,7 +279,7 @@ local _ = t.messages(c)
 for _, action in ipairs(t.action_hints(c, composition.deck_target(3, 1))) do
     assert(action.id ~= "paint_pipe", "a nonpaintable adapter offers no painting action")
 end
-t.click(c, 3, 1)
+t.click_tile(c, 3, 1)
 t.run_ticks(4)
 assert(
     not said(c, "The color adapter takes no paint."),
@@ -297,14 +297,14 @@ t.run_ticks(2)
 for _ = 1, 3 do
     walk(c, "east")
 end
-t.click(c, 6, 2, t.target_at(c, 6, 2, "wrench"))
+t.click(c, 6, 2, assert(t.target_at(c, 6, 2, "wrench")))
 t.run_ticks(2)
 assert(t.hands(c).held == "wrench", "wrench in hand")
 for _ = 1, 3 do
     walk(c, "west")
 end
 
-t.click(c, 3, 1, t.target_at(c, 3, 1, "color_adapter"))
+t.click(c, 3, 1, assert(t.target_at(c, 3, 1, "color_adapter")))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "the adapter comes up")
 assert(t.count_items("color_adapter_fitting") == 1, "and hands its fitting back")

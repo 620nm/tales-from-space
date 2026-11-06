@@ -54,7 +54,7 @@ end
 
 assert(ash_total() == 0, "the deck starts clean")
 
-t.click(p, 1, 1, t.target_at(p, 1, 1, "frag_grenade"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "frag_grenade")))
 t.tick()
 t.use_self(p)
 t.tick()

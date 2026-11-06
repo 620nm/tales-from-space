@@ -103,7 +103,7 @@ end
 assert(string.find(fitting_picture(), "light_on", 1, true) == 1, "lit, got " .. fitting_picture())
 
 -- One swing with something heavy.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "toolbox"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "toolbox")))
 t.tick()
 assert(t.hands(p).held == "toolbox", "picked the toolbox up")
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
@@ -128,7 +128,7 @@ assert(
 
 -- The janitor's device, one click.
 t.swap_hands(p)
-t.click(p, 1, 2, t.target_at(p, 1, 2, "light_replacer"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "light_replacer")))
 t.tick()
 assert(t.hands(p).held == "light_replacer", "picked the replacer up")
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
@@ -189,7 +189,7 @@ t.drop(p)
 t.swap_hands(p)
 t.drop(p)
 t.tick()
-t.click(p, 2, 2, t.target_at(p, 2, 2, "box_lights"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "box_lights")))
 t.tick()
 assert(t.hands(p).held == "box_lights", "picked the box up")
 t.take_held(p, 0)
@@ -219,7 +219,7 @@ assert(
 )
 
 -- A tool is not swung at the fitting, so it still gets the fitting's answer.
-t.click(p, 2, 2, t.target_at(p, 2, 2, "wrench"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "wrench")))
 t.tick()
 assert(t.hands(p).held == "wrench", "picked the wrench up")
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))

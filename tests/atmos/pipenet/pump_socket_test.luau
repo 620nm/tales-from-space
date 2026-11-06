@@ -113,7 +113,7 @@ assert(charged > 90.0, "the mapped main opened the shift commissioned: " .. char
 t.run_seconds(5)
 near(assert(network_matter.pressure(1, 2)), charged, 0.001, "a pump that is off is a wall")
 
-t.click(p, 3, 2, t.target_at(p, 3, 2, "volume_pump"))
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2, "volume_pump")))
 t.tick()
 assert(t.ui(p), "the pump wears a panel")
 ui_controls.toggle(p, "power")
@@ -183,7 +183,7 @@ assert(fitting ~= nil, "the loose fitting is targetable")
 t.use_item(q, fitting, "alt_secondary")
 t.use_item(q, fitting, "alt_secondary")
 
-t.click(q, 2, 3, t.target_at(q, 2, 3, "wrench"))
+t.click(q, 2, 3, assert(t.target_at(q, 2, 3, "wrench")))
 t.run_ticks(2)
 assert(t.hands(q).held == "wrench", "the wrench is in hand")
 t.click(q, 2, 2, fitting)

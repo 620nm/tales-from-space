@@ -60,7 +60,7 @@ local p = t.join()
 t.tick()
 
 -- ---- the shelf --------------------------------------------------------
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 local ui = ui_controls.state(p)
 assert(ui.document == "modules" and ui.presentation == "shelf", "the clean-room shelf document")
@@ -111,7 +111,7 @@ assert(t.item_at(2, 1, "dice_bag") ~= nil, "at the machine's feet")
 
 t.ui_close(p)
 t.tick()
-t.click(p, 2, 1, t.target_at(p, 2, 1, "dice_bag"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "dice_bag")))
 t.tick()
 assert(t.hands(p).held == "dice_bag", "the bag is in hand")
 -- A container minted by a vending machine goes through the same one
@@ -135,7 +135,7 @@ t.tick()
 
 -- ...and one of them rolls, which is the whole point of a machine that
 -- hands out dice rather than a floor that has two on it.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "d20"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "d20")))
 t.tick()
 t.use_self(p)
 t.tick()
@@ -145,18 +145,18 @@ t.drop(p)
 t.tick()
 
 -- ---- a deck, and a card off it ----------------------------------------
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 ui_controls.vend(p, "card_deck")
 t.tick()
 assert(t.count_items("card_deck") == 1, "a deck came out")
 t.ui_close(p)
 t.tick()
-t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "card_deck")))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the deck is in hand")
 
-t.click(p, 1, 2)
+t.click_tile(p, 1, 2)
 t.tick()
 local card = t.item_at(1, 2, "card")
 assert(card ~= nil, "a vended deck deals a card")
@@ -180,7 +180,7 @@ assert(
 -- ---- the Captain's Aid, which the machine is stingy with --------------
 t.drop(p)
 t.tick()
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 ui_controls.vend(p, "captains_aid")
 t.tick()
@@ -263,7 +263,7 @@ for _ = 1, 2 do
 end
 local near_x, near_y = t.pos(crew)
 assert(near_x == 3 and near_y == 1, "standing beside it: " .. near_x .. "," .. near_y)
-t.click(crew, 2, 1, t.target_at(crew, 2, 1))
+t.click(crew, 2, 1, assert(t.target_at(crew, 2, 1)))
 t.tick()
 assert(t.ui(crew) ~= nil, "beside it, with power, the shelf opens")
 t.ui_close(crew)
@@ -271,7 +271,7 @@ t.tick()
 
 t.outage()
 t.run_ticks(5)
-t.click(crew, 2, 1, t.target_at(crew, 2, 1))
+t.click(crew, 2, 1, assert(t.target_at(crew, 2, 1)))
 t.tick()
 assert(t.ui(crew) == nil, "with the mains gone the shelf stays shut")
 local heard = table.concat(t.messages(crew), "\n")

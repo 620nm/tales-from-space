@@ -65,7 +65,7 @@ assert(#tallies("fires_lit") == 1, "a fire still burning is still one fire")
 assert(#tallies("fires_out") == 0, "and it has not gone out")
 
 -- Put it out with the pack's own suppressant, and the other edge lands.
-local projector = t.target_at(p, 1, 1, "atmos_resin_projector")
+local projector = assert(t.target_at(p, 1, 1, "atmos_resin_projector"))
 t.click(p, 1, 1, projector)
 t.tick()
 composition.click_deck(p, 1, 1)

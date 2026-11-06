@@ -124,6 +124,6 @@ close(drops.libital, (0.15 / 0.35) * (1 * U), "libital went in proportion")
 
 -- And the deck: a dropper tipped out empties like anything else, onto
 -- a clear tile so the gesture cannot be a pickup instead.
-t.click(p, 3, 2)
+t.click_tile(p, 3, 2)
 t.tick()
 close(total(dropper), 0, "the dropper tips out onto the deck")

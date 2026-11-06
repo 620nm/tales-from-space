@@ -27,7 +27,7 @@ local SOUTH_EMITTER = { 5, 5 }
 local function weld_says(line: string)
     local _ = t.messages(p)
     local x, y = SOUTH_EMITTER[1], SOUTH_EMITTER[2]
-    t.click(p, x, y, t.target_at(p, x, y, "grav_emitter"))
+    t.click(p, x, y, assert(t.target_at(p, x, y, "grav_emitter")))
     t.run_ticks(4)
     assert(bench.told(p, line), "the torch should say: " .. line)
     assert(t.structure_at(5, 4) == nil, "and nothing was welded")
@@ -36,7 +36,7 @@ end
 -- Click a part with the wrench held and wait out the bolts.
 local function wrench(x: number, y: number, id: string)
     bench.hold(p, "wrench", NEAR)
-    t.click(p, x, y, t.target_at(p, x, y, id))
+    t.click(p, x, y, assert(t.target_at(p, x, y, id)))
     t.run_seconds(1.5)
 end
 
@@ -65,7 +65,7 @@ bench.hold(p, "welder", NEAR)
 weld_says("The west emitter must be bolted down.")
 -- The loose part itself answers too.
 local _ = t.messages(p)
-t.click(p, 4, 4, t.target_at(p, 4, 4, "grav_emitter"))
+t.click(p, 4, 4, assert(t.target_at(p, 4, 4, "grav_emitter")))
 t.run_ticks(4)
 assert(bench.told(p, "The west emitter must be bolted down."), "the loose part says why")
 wrench(4, 4, "grav_emitter")

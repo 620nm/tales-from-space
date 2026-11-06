@@ -114,7 +114,7 @@ t.click(
     operator,
     BATTERY.x + 1,
     BATTERY.y,
-    t.target_at(operator, BATTERY.x + 1, BATTERY.y, "grav_smes")
+    assert(t.target_at(operator, BATTERY.x + 1, BATTERY.y, "grav_smes"))
 )
 t.run_ticks(2)
 ui_controls.toggle(operator, "action", "start")
@@ -123,7 +123,7 @@ local battery = tostring(assert(t.structure_at(BATTERY.x, BATTERY.y)).state)
 assert(string.find(battery, "^active") ~= nil, "the battery is up, got " .. battery)
 
 -- 4. A crowbar thrown onto the bare tile falls to the deck below it.
-t.click(thrower, HOLE.x, 5, t.target_at(thrower, HOLE.x, 5, "crowbar"))
+t.click(thrower, HOLE.x, 5, assert(t.target_at(thrower, HOLE.x, 5, "crowbar")))
 t.run_ticks(2)
 assert(t.hands(thrower).held == "crowbar", "the crowbar is in hand")
 t.throw(thrower, HOLE.x, HOLE.y)

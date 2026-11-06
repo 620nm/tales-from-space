@@ -52,7 +52,7 @@ local p = t.join()
 t.tick()
 
 -- Two rods weave a grille, fastened to the deck as tg's is.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "rod"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "rod")))
 t.run_ticks(2)
 ui_controls.build(p, "rod", "grille", 2, 1)
 t.run_seconds(1.5)
@@ -60,7 +60,7 @@ assert(t.ledger_has("StructureStep", "grille", "built"), "the grille stands")
 
 -- Two seconds to fit a pane.
 take(p, 3, 1)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "grille"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "grille")))
 t.run_seconds(2.5)
 assert(t.ledger_has("StructureStep", "grille", "glazed"), "the pane went in")
 
@@ -79,7 +79,7 @@ t.run_ticks(2)
 -- -- as two whole sentences, never one joined with "or"
 -- (docs/LOCALIZATION.md).
 t.messages(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_ticks(4)
 local unsealed, unscrewed = false, false
 for _, m in ipairs(t.messages(p)) do
@@ -93,13 +93,13 @@ assert(unsealed and unscrewed, "a crowbar on a sealed pane is told both rungs it
 
 t.swap_hands(p) -- screwdriver
 t.run_ticks(2)
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_seconds(4.5)
 assert(t.ledger_has("StructureStep", "grille", "unsealed"), "unscrewed")
 
 t.swap_hands(p) -- crowbar
 t.run_ticks(2)
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_seconds(10.5)
 assert(t.ledger_has("StructureStep", "grille", "bolted"), "the pane came out")
 assert(t.count_items("glass") > 0, "and the sheets came back")
@@ -107,7 +107,7 @@ assert(t.count_items("glass") > 0, "and the sheets came back")
 -- An unfastened grille takes no glass, exactly as tg refuses it.
 t.swap_hands(p) -- screwdriver
 t.run_ticks(2)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "grille"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "grille")))
 t.run_ticks(4)
 assert(t.ledger_has("StructureStep", "grille", "unbolted"), "it came loose")
 
@@ -150,13 +150,13 @@ t.world(
 
 p = t.join()
 t.tick()
-t.click(p, 1, 1, t.target_at(p, 1, 1, "rod"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "rod")))
 t.run_ticks(2)
 ui_controls.build(p, "rod", "grille", 2, 1)
 t.run_seconds(1.5)
 
 take(p, 3, 1) -- reinforced sheets
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_seconds(2.5)
 assert(t.ledger_has("StructureStep", "grille", "reinforced"), "bolted in")
 
@@ -166,27 +166,27 @@ assert(t.ledger_has("StructureStep", "grille", "reinforced"), "bolted in")
 take(p, 1, 2) -- welder: heat the security screws
 t.use_self(p)
 t.tick()
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_seconds(15.5)
 assert(t.ledger_has("StructureStep", "grille", "heated"), "screws glowing")
 
 take(p, 3, 2) -- screwdriver
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_seconds(5.5)
 assert(t.ledger_has("StructureStep", "grille", "unscrewed"), "screws out")
 
 take(p, 1, 3) -- crowbar
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_seconds(4.5)
 assert(t.ledger_has("StructureStep", "grille", "popped"), "panel popped")
 
 take(p, 2, 3) -- wirecutters
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_seconds(2.5)
 assert(t.ledger_has("StructureStep", "grille", "cut"), "bars cut")
 
 take(p, 3, 3) -- wrench
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_seconds(4.5)
 assert(t.count_items("rglass") > 0, "the reinforced sheets came back")
 assert(t.ledger_has("StructureStep", "grille", "bolted"), "an empty grille remains")
@@ -241,14 +241,14 @@ local function assert_layers(x: number, y: number, id: string, second: string)
 end
 
 take(p, 1, 1, "lead_glass")
-t.click(p, 2, 1, t.target_at(p, 2, 1, "grille"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "grille")))
 t.run_seconds(2.5)
 assert(assert(t.structure_at(2, 1)).id == "lead_glass_grille", "lead glass swaps in lead_glass_grille")
 assert_layers(2, 1, "lead_glass_grille", "lead_window")
 
 take(p, 1, 3, "crowbar")
 t.messages(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "lead_glass_grille"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "lead_glass_grille")))
 t.run_ticks(4)
 local refused_unsealed = false
 for _, m in ipairs(t.messages(p)) do
@@ -259,19 +259,19 @@ end
 assert(refused_unsealed, "crowbar refusal names only lead_glass_grille's unsealed state")
 
 take(p, 3, 2, "screwdriver")
-t.click(p, 2, 1, t.target_at(p, 2, 1, "lead_glass_grille"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "lead_glass_grille")))
 t.run_seconds(4.5)
 assert(assert(t.structure_at(2, 1)).state == "unsealed", "lead glass unfastened")
 
 take(p, 2, 2, "crowbar")
-t.click(p, 2, 1, t.target_at(p, 2, 1, "lead_glass_grille"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "lead_glass_grille")))
 t.run_seconds(10.5)
 local restored = assert(t.structure_at(2, 1))
 assert(restored.id == "grille" and restored.state == "bolted", "prying leaves a bolted grille")
 assert(t.item_at(2, 1, "lead_glass") ~= nil, "lead_glass sheets recovered")
 
 take(p, 3, 1, "reinforced_lead_glass")
-t.click(p, 2, 3, t.target_at(p, 2, 3, "grille"))
+t.click(p, 2, 3, assert(t.target_at(p, 2, 3, "grille")))
 t.run_seconds(2.5)
 assert(
     assert(t.structure_at(2, 3)).id == "reinforced_lead_glass_grille",
@@ -282,19 +282,19 @@ assert_layers(2, 3, "reinforced_lead_glass_grille", "rlead_window")
 take(p, 1, 2, "welder")
 t.use_self(p)
 t.tick()
-t.click(p, 2, 3, t.target_at(p, 2, 3, "reinforced_lead_glass_grille"))
+t.click(p, 2, 3, assert(t.target_at(p, 2, 3, "reinforced_lead_glass_grille")))
 t.run_seconds(15.5)
 take(p, 2, 2, "screwdriver")
-t.click(p, 2, 3, t.target_at(p, 2, 3, "reinforced_lead_glass_grille"))
+t.click(p, 2, 3, assert(t.target_at(p, 2, 3, "reinforced_lead_glass_grille")))
 t.run_seconds(5.5)
 take(p, 2, 2, "crowbar")
-t.click(p, 2, 3, t.target_at(p, 2, 3, "reinforced_lead_glass_grille"))
+t.click(p, 2, 3, assert(t.target_at(p, 2, 3, "reinforced_lead_glass_grille")))
 t.run_seconds(4.5)
 take(p, 2, 2, "wirecutters")
-t.click(p, 2, 3, t.target_at(p, 2, 3, "reinforced_lead_glass_grille"))
+t.click(p, 2, 3, assert(t.target_at(p, 2, 3, "reinforced_lead_glass_grille")))
 t.run_seconds(2.5)
 take(p, 3, 3, "wrench")
-t.click(p, 2, 3, t.target_at(p, 2, 3, "reinforced_lead_glass_grille"))
+t.click(p, 2, 3, assert(t.target_at(p, 2, 3, "reinforced_lead_glass_grille")))
 t.run_seconds(4.5)
 restored = assert(t.structure_at(2, 3))
 assert(restored.id == "grille" and restored.state == "bolted", "five-tool ladder leaves a bolted grille")

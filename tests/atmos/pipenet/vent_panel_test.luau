@@ -173,7 +173,7 @@ t.run_ticks(2)
 -- grilles are tuned against. A panel that showed anything else would be
 -- a panel reading a constant instead of the machine.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1, t.target_at(p, 2, 1, "vent"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "vent")))
 t.tick()
 local panel = t.ui(p)
 assert(panel ~= nil, "an empty hand on a vent opens a panel")
@@ -263,7 +263,7 @@ near(room_moles(), opening, 0.5, "a switched-off vent hands the corridor nothing
 -- ...and on, it works to the number it was GIVEN. Against the constant
 -- this machine used to be nailed to it would stop at one atmosphere,
 -- which is the whole of what this file catches.
-t.click(p, 2, 1, t.target_at(p, 2, 1, "vent"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "vent")))
 t.tick()
 ui_controls.toggle(p, "power")
 t.run_ticks(2)

@@ -125,7 +125,7 @@ assert(off.id == "air_scrubber", "the map bolted one to the deck")
 assert(off.state == "off", "and tg's ships off")
 assert(off.sprite == "scrubber_off_e", "dark, and aimed: " .. tostring(off.sprite))
 
-t.click(p, 2, 1, t.target_at(p, 2, 1, "air_scrubber"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "air_scrubber")))
 t.tick()
 assert(t.ui(p), "a scrubber wears a panel")
 
@@ -296,7 +296,7 @@ t.world(
 
 local lone = t.join()
 t.tick()
-local unplumbed = t.target_at(lone, 2, 1, "air_scrubber")
+local unplumbed = assert(t.target_at(lone, 2, 1, "air_scrubber"))
 t.click(lone, 2, 1, unplumbed)
 t.tick()
 assert(readout(lone, "room.supply") == "room.supply.fed", "the mains are behind it")
@@ -402,7 +402,7 @@ for _, machine in ipairs({ "filter", "mixer" }) do
         machine .. " is dark, aimed east: " .. assert(cold.sprite)
     )
 
-    t.click(q, 3, 1, t.target_at(q, 3, 1, machine))
+    t.click(q, 3, 1, assert(t.target_at(q, 3, 1, machine)))
     t.tick()
     assert(t.ui(q), machine .. " answers an empty hand with a window")
     ARM[machine](q)
@@ -504,7 +504,7 @@ t.world(
 
 local m = t.join()
 t.tick()
-t.click(m, 3, 1, t.target_at(m, 3, 1, "mixer"))
+t.click(m, 3, 1, assert(t.target_at(m, 3, 1, "mixer")))
 t.tick()
 ui_controls.set(m, "pressure", 4500)
 ui_controls.toggle(m, "power")
@@ -574,7 +574,7 @@ t.tick()
 -- disturb it.
 assert(assert(t.structure_at(4, 2)).sprite == "scrubber_off_w", "aimed by its own plumbing")
 
-t.click(e, 4, 2, t.target_at(e, 4, 2, "air_scrubber"))
+t.click(e, 4, 2, assert(t.target_at(e, 4, 2, "air_scrubber")))
 t.tick()
 assert(readout(e, "room.supply") == "room.supply.fed", "the mains are behind it")
 -- Whole air with the floor down to nothing, so this scrubber never
@@ -591,7 +591,7 @@ t.ui_close(e)
 t.tick()
 
 -- ---- one snip, three tiles away ----
-t.click(e, 4, 1, t.target_at(e, 4, 1, "wirecutters"))
+t.click(e, 4, 1, assert(t.target_at(e, 4, 1, "wirecutters")))
 t.run_ticks(2)
 t.click_network(e, 3, 2, assert(t.network_instance(3, 2, "power", "l1")))
 t.run_seconds(1.5)
@@ -611,7 +611,7 @@ assert(
 -- But NOT switched off. The two are different facts and the panel keeps
 -- them apart: the switch is where the engineer left it, and the supply
 -- line is what changed.
-t.click(e, 4, 2, t.target_at(e, 4, 2, "air_scrubber"))
+t.click(e, 4, 2, assert(t.target_at(e, 4, 2, "air_scrubber")))
 t.tick()
 assert(toggle(e, "power").on == true, "the switch is still thrown")
 assert(
@@ -624,7 +624,7 @@ t.tick()
 -- ---- put the cable back ----
 t.drop(e)
 t.run_ticks(2)
-t.click(e, 5, 1, t.target_at(e, 5, 1, "cable_coil"))
+t.click(e, 5, 1, assert(t.target_at(e, 5, 1, "cable_coil")))
 t.run_ticks(2)
 -- A fresh coil arrives on yellow (tg's CABLE_LAYER_2 default), and this
 -- department runs on red, so dial it twice: yellow -> blue -> red.
@@ -632,7 +632,7 @@ t.use_self(e)
 t.run_ticks(2)
 t.use_self(e)
 t.run_ticks(2)
-t.click(e, 3, 2)
+t.click_tile(e, 3, 2)
 t.run_seconds(1.5)
 assert(network_channels.at(3, 2, "power") == "l1", "the coil lays the red line back")
 assert(t.network_feed(4, 2, "power", "environment") == "l1", "and the machine is back on the panel")

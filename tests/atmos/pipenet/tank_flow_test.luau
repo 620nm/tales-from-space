@@ -163,7 +163,7 @@ local function molar_energy(kelvin: number): number
     return cv * kelvin + offset
 end
 
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 near(window_k(p), rest_k, 1e-6, "the vessel's window agrees with an analyzer held against the run")
 
@@ -382,11 +382,11 @@ end
 local held = assert(t.tank_gas(3, 2)).n2
 local room_0 = room_nitrogen()
 assert(held > 3000.0, "a vessel with real weight in it: " .. held .. " mol")
-t.click(w, 2, 2, t.target_at(w, 2, 2, "welder"))
+t.click(w, 2, 2, assert(t.target_at(w, 2, 2, "welder")))
 t.run_ticks(3)
 t.use_self(w)
 t.tick()
-t.click(w, 3, 2, t.target_at(w, 3, 2))
+t.click(w, 3, 2, assert(t.target_at(w, 3, 2)))
 t.run_seconds(4.5)
 
 assert(t.tank_pressure(3, 2) == nil, "the vessel is gone")

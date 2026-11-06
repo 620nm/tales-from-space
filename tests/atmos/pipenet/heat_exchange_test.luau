@@ -143,7 +143,7 @@ near(net_moles(4, 1, DISTRO), ordinary, 0.001, "and the one next to it is the sh
 -- tg fixes the color at `#404040` with FIXED_COLOUR_PRIORITY
 -- (he_pipes.dm:15). A painter that silently changed nothing would be
 -- the worst of both, so the refusal is spoken.
-t.click(p, 6, 1, t.target_at(p, 6, 1, "pipe_painter"))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1, "pipe_painter")))
 t.run_ticks(2)
 assert(t.hands(p).held == "pipe_painter", "painter in hand")
 walk(p, "west")
@@ -232,13 +232,13 @@ near(joined, moles(junction_kpa, FUSED_M3), 0.05, "both kinds are one body of ga
 near(net_moles(6, 1, DISTRO), joined, 0.001, "the far end of the ordinary run agrees")
 
 -- ---- take it out, and the kinds part again ----
-t.click(j, 6, 2, t.target_at(j, 6, 2, "wrench"))
+t.click(j, 6, 2, assert(t.target_at(j, 6, 2, "wrench")))
 t.run_ticks(2)
 assert(t.hands(j).held == "wrench", "wrench in hand")
 for _ = 1, 3 do
     walk(j, "west")
 end
-t.click(j, 3, 1, t.target_at(j, 3, 1, "radiator_junction"))
+t.click(j, 3, 1, assert(t.target_at(j, 3, 1, "radiator_junction")))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "the junction comes up off the deck")
 assert(t.count_items("radiator_junction_fitting") == 1, "and hands its fitting back")
@@ -586,7 +586,7 @@ local e = t.join()
 t.tick()
 
 -- ---- the machine on the wall ----
-t.click(e, 2, 1, t.target_at(e, 2, 1))
+t.click(e, 2, 1, assert(t.target_at(e, 2, 1)))
 t.tick()
 local shelf: { [string]: ui_controls.Record } = {}
 for _, rec in ipairs(ui_controls.rows(ui_controls.state(e).products)) do
@@ -607,7 +607,7 @@ t.ui_close(e)
 t.run_ticks(2)
 
 -- ---- and the gun in your hand ----
-t.click(e, 3, 1, t.target_at(e, 3, 1, "rpd"))
+t.click(e, 3, 1, assert(t.target_at(e, 3, 1, "rpd")))
 t.run_ticks(2)
 assert(t.hands(e).held == "rpd", "the RPD is in hand")
 t.use_self(e)

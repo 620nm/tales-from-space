@@ -101,7 +101,7 @@ t.run_seconds(1.0)
 -- gesture, not a panel one.
 local function pocket(p)
     local x, y = t.pos(p)
-    t.click(p, x, y, t.target_at(p, x, y, "encryption_key.medical"))
+    t.click(p, x, y, assert(t.target_at(p, x, y, "encryption_key.medical")))
     t.run_ticks(2)
     assert(t.hands(p).held == "encryption_key.medical", "the key is in hand")
 end
@@ -115,7 +115,7 @@ local function drain_all()
 end
 
 -- ---- the panel: one program slot, nothing loaded ------------------------------
-t.click(operator, 2, 1, t.target_at(operator, 2, 1))
+t.click(operator, 2, 1, assert(t.target_at(operator, 2, 1)))
 t.tick()
 local ui = record(assert(t.ui(operator), "a bare hand opens the tower's window"))
 assert(ui.presentation == "panes", "the files module is the panes one")

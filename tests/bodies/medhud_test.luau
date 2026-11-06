@@ -57,7 +57,7 @@ assert(medhud(medic) == nil, "without the glasses the medic is sent nothing")
 assert(medhud(bystander) == nil, "and neither is anyone else")
 
 -- ---- on go the glasses -------------------------------------------------
-t.click(medic, 2, 1, t.target_at(medic, 2, 1, "health_hud"))
+t.click(medic, 2, 1, assert(t.target_at(medic, 2, 1, "health_hud")))
 t.run_ticks(2)
 assert(t.hands(medic).held == "health_hud", "picked up")
 t.equip(medic)

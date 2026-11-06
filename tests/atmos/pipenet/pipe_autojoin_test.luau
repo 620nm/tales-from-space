@@ -64,7 +64,7 @@ t.world(
 
 local p = t.join()
 t.tick()
-t.click(p, 2, 2, t.target_at(p, 2, 2, "pipe"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "pipe")))
 t.run_ticks(2)
 
 -- ---- one length, alone ----
@@ -74,7 +74,7 @@ t.run_ticks(2)
 -- purpose -- the length REACHES every way (nobody has aimed it, which
 -- is what `DIRS_ALL` means) and JOINS nothing at all. Reaching is not
 -- joining; that gap is the whole of the rule.
-t.click(p, 2, 2, nil, -14, 14)
+t.click_tile(p, 2, 2, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(2, 2, "pipe") == "l3", "a length went down under the engineer")
 assert(
@@ -95,13 +95,13 @@ assert(t.target_at(p, 2, 2) == nil, "and nothing standing on it")
 assert(t.target_at(p, 2, 2, "pipe") == nil, "the stack it came from is in a hand")
 
 -- ---- extend it north: two stubs facing each other ----
-t.click(p, 2, 1, nil, -14, 14)
+t.click_tile(p, 2, 1, -14, 14)
 t.run_seconds(1.5)
 assert(shape(2, 2, "l3") == N, "the first length now reaches its neighbor")
 assert(shape(2, 1, "l3") == S, "and the new one reaches back: a two-tile line")
 
 -- ---- and south: a straight ----
-t.click(p, 2, 3, nil, -14, 14)
+t.click_tile(p, 2, 3, -14, 14)
 t.run_seconds(1.5)
 assert(
     shape(2, 2, "l3") == N + S,
@@ -110,7 +110,7 @@ assert(
 assert(shape(2, 3, "l3") == N, "with a cap at each end")
 
 -- ---- branch east: a T ----
-t.click(p, 3, 2, nil, -14, 14)
+t.click_tile(p, 3, 2, -14, 14)
 t.run_seconds(1.5)
 assert(
     shape(2, 2, "l3") == N + S + E,
@@ -119,7 +119,7 @@ assert(
 assert(shape(3, 2, "l3") == W, "and the branch is a stub off it")
 
 -- ---- close the west arm: the cross ----
-t.click(p, 1, 2, nil, -14, 14)
+t.click_tile(p, 1, 2, -14, 14)
 t.run_seconds(1.5)
 assert(
     shape(2, 2, "l3") == N + S + E + W,
@@ -138,7 +138,7 @@ assert(t.ledger_has("NetworkPlaced"), "every length of it is on the record")
 -- ---------------------------------------------------------------
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 1, 1, t.target_at(p, 1, 1, "wrench"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "wrench")))
 t.run_ticks(2)
 t.click_network(p, 2, 2, assert(t.network_instance(2, 2, "pipe", "l3")))
 t.run_seconds(1.5)
@@ -257,7 +257,7 @@ local e = t.join()
 t.tick()
 assert(shape(2, 2, "l3") == E + W, "the mapped main is a straight run")
 
-t.click(e, 2, 2, t.target_at(e, 2, 2, "pipe"))
+t.click(e, 2, 2, assert(t.target_at(e, 2, 2, "pipe")))
 t.run_ticks(2)
 local _ = t.messages(e)
 for _ = 1, 3 do
@@ -267,7 +267,7 @@ end
 assert(said(e, "Pipe layer set to 1."), "the dial wrapped round to the low layer")
 
 for _, y in ipairs({ 1, 2, 3 }) do
-    t.click(e, 2, y, nil, -14, 14)
+    t.click_tile(e, 2, y, -14, 14)
     t.run_seconds(1.5)
 end
 assert(network_channels.at(2, 2, "pipe") == "l1,l3", "both layers are under the tile: " .. network_channels.at(2, 2, "pipe"))

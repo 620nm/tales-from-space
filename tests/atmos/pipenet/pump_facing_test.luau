@@ -53,7 +53,7 @@ local function build(rotations: number, want_sprite: string, drained: { number }
     for _ = 1, rotations do
         t.use_item(q, fitting, "alt_secondary")
     end
-    t.click(q, 1, 1, t.target_at(q, 1, 1, "wrench"))
+    t.click(q, 1, 1, assert(t.target_at(q, 1, 1, "wrench")))
     t.run_ticks(2)
     t.click(q, 2, 2, fitting)
     t.run_seconds(2.5)
@@ -65,7 +65,7 @@ local function build(rotations: number, want_sprite: string, drained: { number }
     )
     -- An empty hand on the panel; the wrench would unbolt it.
     t.swap_hands(q)
-    t.click(q, 2, 2, t.target_at(q, 2, 2, "volume_pump"))
+    t.click(q, 2, 2, assert(t.target_at(q, 2, 2, "volume_pump")))
     t.tick()
     ui_controls.toggle(q, "power")
     t.run_seconds(20)

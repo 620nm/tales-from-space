@@ -141,7 +141,7 @@ end
 -- makes the closing sum below mean something.
 -- ---------------------------------------------------------------
 assert(t.worn(chemist).mask == "breath_mask", "the shift starts with apparatus on")
-t.click(chemist, 3, 3, t.target_at(chemist, 3, 3, "oxygen_tank"))
+t.click(chemist, 3, 3, assert(t.target_at(chemist, 3, 3, "oxygen_tank")))
 t.run_ticks(2)
 assert(t.hands(chemist).held == "oxygen_tank", "the tank is in hand")
 t.use_self(chemist)
@@ -212,7 +212,7 @@ near(
     "and the books hold exactly the press: " .. booked.substances.chlorine .. " mol"
 )
 
-t.click(chemist, 3, 2)
+t.click_tile(chemist, 3, 2)
 t.run_seconds(20)
 
 local loose = room("chlorine")

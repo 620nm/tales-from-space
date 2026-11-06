@@ -120,7 +120,7 @@ assert(standing.state == "anchored", "bolted down: " .. tostring(standing.state)
 -- controls, because the ports are the valves.
 -- ---------------------------------------------------------------
 t.tick()
-t.click(p, 3, 2, t.target_at(p, 3, 2))
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2)))
 t.tick()
 local ui = ui_controls.state(p)
 assert(ui, "clicking the tank opens its window")

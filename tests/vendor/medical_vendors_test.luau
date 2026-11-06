@@ -86,7 +86,7 @@ local NANOMED = {
     },
 }
 
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 local ui = ui_controls.record(t.ui(p))
 assert(
@@ -153,7 +153,7 @@ for _, item in ipairs({ "id_medical", "uniform_chemist", "cola" }) do
 end
 
 t.ui_close(p)
-t.click(p, 2, 3, t.target_at(p, 2, 3))
+t.click(p, 2, 3, assert(t.target_at(p, 2, 3)))
 t.tick()
 ui = ui_controls.record(t.ui(p))
 

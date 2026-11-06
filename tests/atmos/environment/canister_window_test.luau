@@ -62,7 +62,7 @@ assert(can_start > 4000.0, "and the canister starts full: " .. can_start)
 -- Clicking the bottle opens its panel. An empty hand, no tool, no
 -- script: the machine-window path.
 -- ---------------------------------------------------------------
-t.click(p, 2, 2, t.target_at(p, 2, 2))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2)))
 t.tick()
 local ui = ui_controls.record(assert(t.ui(p)))
 assert(ui, "clicking a canister opens its window")
@@ -249,7 +249,7 @@ local valve_before = ui_controls.rows(ui_controls.state(p).toggles)[1].on
 t.ui_close(p)
 assert(ui_controls.find(p, "/toggle/valve/switch") == nil, "closing removes the valve control")
 t.run_ticks(2)
-t.click(p, 2, 2, t.target_at(p, 2, 2))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2)))
 t.tick()
 assert(
     ui_controls.rows(ui_controls.state(p).toggles)[1].on == valve_before,

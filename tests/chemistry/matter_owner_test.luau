@@ -71,11 +71,11 @@ end
 close(total(empty), 0, "the bare beaker ships empty")
 
 -- ---- owner: another vessel --------------------------------------------
-t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker.libital")) -- pick the full one up
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "beaker.libital"))) -- pick the full one up
 t.tick()
 close(total(full), 0.35, "the libital beaker ships full")
 
-t.click(p, 3, 1, t.target_at(p, 3, 1, "beaker"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "beaker")))
 t.tick()
 close(total(empty), 0.25, "a transfer into a vessel moves what it says")
 close(total(full), 0.10, "and the source is down by exactly that")
@@ -106,7 +106,7 @@ local function vapor(key: string): number
 end
 local gas_before = vapor("water")
 
-t.click(p, 2, 2)
+t.click_tile(p, 2, 2)
 t.tick()
 close(total(full), 0, "the beaker is empty")
 
@@ -131,8 +131,8 @@ assert(dried > gas_before, "the puddle is drying into the room: " .. dried .. " 
 -- ---- and the refusals are still native --------------------------------
 -- An empty vessel has nothing to give, whichever owner is on the far
 -- end, and a refusal writes no second row.
-t.click(p, 3, 1, t.target_at(p, 3, 1, "beaker"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "beaker")))
 t.tick()
-t.click(p, 2, 2)
+t.click_tile(p, 2, 2)
 t.tick()
 assert(#t.ledger_rows("spilled") == 1, "the empty beaker spilled nothing")

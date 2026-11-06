@@ -55,7 +55,7 @@ assert(not t.set_zone(surgeon, ""), "and the empty word names nothing")
 -- The chosen zone is where the hands land. Aim at the head, cut, and it
 -- is the HEAD that is open.
 -- =====================================================================
-t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, "scalpel"))
+t.click(surgeon, 1, 1, assert(t.target_at(surgeon, 1, 1, "scalpel")))
 t.run_ticks(2)
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(clock.deadline_ticks(1.6) + 3)
@@ -84,7 +84,7 @@ assert(not has(parts.r_arm.surgical_states, "skin_cut"), "the other arm is a dif
 assert(not t.set_zone(surgeon, "wing"), "no wing on this plan")
 t.drop(surgeon)
 t.tick()
-t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, "retractor"))
+t.click(surgeon, 1, 1, assert(t.target_at(surgeon, 1, 1, "retractor")))
 t.run_ticks(2)
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(clock.deadline_ticks(2.4) + 3)
@@ -141,7 +141,7 @@ end
 assert(t.set_zone(surgeon, assert(zone_for_slot(surgeon, 2))), "the plan declares a pelvis")
 t.drop(surgeon)
 t.tick()
-t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, "scalpel"))
+t.click(surgeon, 1, 1, assert(t.target_at(surgeon, 1, 1, "scalpel")))
 t.run_ticks(2)
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(clock.deadline_ticks(1.6) + 3)
@@ -179,7 +179,7 @@ local attacker = t.join("assistant")
 local victim = t.join("medic")
 t.run_ticks(3)
 
-t.click(attacker, 1, 1, t.target_at(attacker, 1, 1, "toolbox"))
+t.click(attacker, 1, 1, assert(t.target_at(attacker, 1, 1, "toolbox")))
 t.run_ticks(2)
 
 local function brute(zone: string): number

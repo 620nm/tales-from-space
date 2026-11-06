@@ -48,7 +48,7 @@ assert(reason_of(waiting) == INCOMPLETE, "and says why: " .. reason_of(waiting))
 
 -- The loose part is bolted down: the ring's tooltip follows it.
 bench.hold(p, "wrench", NEAR)
-t.click(p, 5, 5, t.target_at(p, 5, 5, "grav_emitter"))
+t.click(p, 5, 5, assert(t.target_at(p, 5, 5, "grav_emitter")))
 t.run_seconds(2)
 bench.hold(p, "welder", NEAR)
 local ready = assert(row(6, 5, RING, WELD), "the ring still offers the weld")
@@ -63,7 +63,7 @@ assert(reason_of(unlit) == "lunatic/tfs:lib.grav_smes.torch_unlit", reason_of(un
 t.use_self(p)
 t.run_ticks(2)
 
-t.click(p, 5, 5, t.target_at(p, 5, 5, "grav_emitter"))
+t.click(p, 5, 5, assert(t.target_at(p, 5, 5, "grav_emitter")))
 t.run_seconds(7)
 assert(assert(t.structure_at(5, 4)).state == "welded", "the weld made a machine")
 
@@ -77,7 +77,7 @@ assert(clamps.implement ~= nil and clamps.implement.sprite ~= "", "it pictures t
 
 local function step(held: string, seconds: number, want: string)
     bench.hold(p, held, NEAR)
-    t.click(p, 5, 5, t.target_at(p, 5, 5, "grav_smes"))
+    t.click(p, 5, 5, assert(t.target_at(p, 5, 5, "grav_smes")))
     t.run_seconds(seconds)
     -- A standing machine wears a status glyph: `standby_<status>`.
     local state = tostring(assert(t.structure_at(5, 4)).state)
