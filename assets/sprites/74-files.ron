@@ -35,7 +35,7 @@
         ("floppy_disk_yellow", Dmi("@floppy", "datadisk2", 0)),
         ("floppy_disk_green", Dmi("@floppy", "datadisk4", 0)),
         ("floppy_disk_purple", Dmi("@floppy", "datadisk5", 0)),
-        ("floppy_disk_grey", Dmi("@floppy", "datadisk6", 0)),
+        ("floppy_disk_gray", Dmi("@floppy", "datadisk6", 0)),
         ("floppy_disk_light_blue", Dmi("@floppy", "datadisk7", 0)),
         ("floppy_disk_atmos_stock", Dmi("@floppy", "datadisk12", 0)),
         // tg storage/boxes/_boxes.dm:5-6,38-41; science_boxes.dm:27-34.

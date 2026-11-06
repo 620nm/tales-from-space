@@ -151,7 +151,7 @@ walk(p, "west")
 t.messages(p)
 t.click_network(p, 3, 1, assert(t.network_instance(3, 1, "pipe", "l3")))
 t.run_ticks(4)
-assert(said(p, "That pipe has a colour of its own."), "the painter says why")
+assert(said(p, "That pipe has a color of its own."), "the painter says why")
 assert(not t.ledger_has("NetworkPainted"), "and nothing reached the record")
 near(net_moles(1, 1, DISTRO), exchange, 0.001, "the run is exactly as it was")
 

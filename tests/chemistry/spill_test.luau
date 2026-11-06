@@ -97,14 +97,14 @@ assert(#t.ledger_rows("spilled") == 1, "the empty beaker spilled nothing")
 -- transition on, so it stays on the deck. Water dries; the drug it was
 -- carrying is still there when it has.
 -- ---------------------------------------------------------------
-local function vapour(key: string)
+local function vapor(key: string)
     local gases = t.room_gas(2, 1)
     return (gases and gases[key]) or 0
 end
 
-assert(vapour("water") < 1e-9, "nothing has evaporated yet")
+assert(vapor("water") < 1e-9, "nothing has evaporated yet")
 t.run_seconds(120)
-local dried = vapour("water")
+local dried = vapor("water")
 assert(dried > 1e-4, "the puddle is drying into the room: " .. dried .. " mol")
 assert(dried < 0.20, "and it cannot dry past what was spilled: " .. dried .. " mol")
-assert(vapour("libital") < 1e-9, "the drug in it has nowhere to go")
+assert(vapor("libital") < 1e-9, "the drug in it has nowhere to go")

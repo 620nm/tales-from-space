@@ -13,7 +13,7 @@ local p = bench.world({
     rows = { "#########", "#.......#", "#.......#", "#.......#", "#.......#", "#########" },
     structures = `(4, 2, "player_spawn", \{"jobs": "engineer"}), ({SMES.x}, {SMES.y}, "grav_smes", "standby")`,
     job = "engineer",
-    pools = { { x = POOL.x, y = POOL.y, litres = 10 } },
+    pools = { { x = POOL.x, y = POOL.y, liters = 10 } },
 })
 t.set_store_charge(SMES.x, SMES.y, 1.0)
 

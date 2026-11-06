@@ -117,7 +117,7 @@ assert(on_table() ~= nil, "the cadaver is on the table")
 assert(on_table().posture == "lying", "laid out on it")
 
 -- ---- out of the jumpsuit ----------------------------------------------
--- The uniform covers the chest (content/items/uniform_grey.luau), which
+-- The uniform covers the chest (content/items/uniform_gray.luau), which
 -- is the `obstructed` refusal, and the cross-body strip is how it comes
 -- off (tests/strip_test.luau).
 t.drop(surgeon)

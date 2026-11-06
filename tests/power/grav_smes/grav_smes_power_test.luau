@@ -16,8 +16,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- three-by-three island of deck floats apart from both, beyond thirty.
 local WIDTH = 44
 local HEIGHT = 11
-local CENTRE_X = 7
-local CENTRE_Y = 5
+local CENTER_X = 7
+local CENTER_Y = 5
 local STANDBY = "^standby"
 
 -- Probe spots: open deck with no wall or machine in reach.
@@ -46,7 +46,7 @@ local function rows(supplied: boolean): string
                 line[x + 1] = "."
             end
         end
-        if supplied and y == CENTRE_Y then
+        if supplied and y == CENTER_Y then
             line[4] = "G"
         end
         table.insert(lines, `"{table.concat(line)}"`)
@@ -73,13 +73,13 @@ local function cables(): string
     for x = 3, 5 do
         table.insert(
             lines,
-            `(x: {x}, y: {CENTRE_Y}, network: "power", channel: "l2", kind: "cable", facing: 15)`
+            `(x: {x}, y: {CENTER_Y}, network: "power", channel: "l2", kind: "cable", facing: 15)`
         )
     end
     -- The west emitter's cell is the last cable's tile.
     table.insert(
         lines,
-        `(x: {CENTRE_X - 1}, y: {CENTRE_Y}, network: "power", channel: "l2", kind: "cable", facing: 15)`
+        `(x: {CENTER_X - 1}, y: {CENTER_Y}, network: "power", channel: "l2", kind: "cable", facing: 15)`
     )
     return table.concat(lines, ",\n")
 end
@@ -139,8 +139,8 @@ local function build(supplied: boolean): Bench
             FAR.y,
             ISLAND.x,
             ISLAND.y,
-            CENTRE_X,
-            CENTRE_Y,
+            CENTER_X,
+            CENTER_Y,
             if supplied then cables() else "",
             airless()
         ),
@@ -194,15 +194,15 @@ local NONE: Weights = { near = false, mid = false, far = false, island = false }
 local FIELD: Weights = { near = true, mid = true, far = true, island = false }
 
 local function state(): string
-    return tostring(assert(t.structure_at(CENTRE_X, CENTRE_Y)).state)
+    return tostring(assert(t.structure_at(CENTER_X, CENTER_Y)).state)
 end
 
 local function press(b: Bench, key: string)
     t.click(
         b.operator,
-        CENTRE_X + 1,
-        CENTRE_Y,
-        t.target_at(b.operator, CENTRE_X + 1, CENTRE_Y, "grav_smes")
+        CENTER_X + 1,
+        CENTER_Y,
+        t.target_at(b.operator, CENTER_X + 1, CENTER_Y, "grav_smes")
     )
     t.run_ticks(2)
     ui_controls.toggle(b.operator, "action", key)
@@ -230,7 +230,7 @@ assert(string.find(state(), STANDBY) ~= nil, "the battery stands in standby, got
 assert_weights(b, NONE, "standby")
 
 -- Too little charge refuses the start and says so.
-t.set_store_charge(CENTRE_X, CENTRE_Y, 0.0)
+t.set_store_charge(CENTER_X, CENTER_Y, 0.0)
 t.messages(b.operator)
 press(b, "start")
 assert(
@@ -241,19 +241,19 @@ assert(string.find(state(), STANDBY) ~= nil, "and stays in standby, got " .. sta
 assert_weights(b, NONE, "a refused start")
 
 -- A charged one spins up and holds weight on connected deck in range.
-t.set_store_charge(CENTRE_X, CENTRE_Y, 1.0)
+t.set_store_charge(CENTER_X, CENTER_Y, 1.0)
 start_to_active(b)
 assert(state() == "active_discharging", "running off its store reads discharging, got " .. state())
 assert_weights(b, FIELD, "running")
 
 -- A battery that runs dry spins itself down, and the weight goes.
-t.set_store_charge(CENTRE_X, CENTRE_Y, 0.0)
+t.set_store_charge(CENTER_X, CENTER_Y, 0.0)
 t.run_seconds(5.0)
 assert(string.find(state(), STANDBY) ~= nil, "a drained battery spins down to standby, got " .. state())
 assert_weights(b, NONE, "drained")
 
 -- The stop button spins a running battery down on purpose.
-t.set_store_charge(CENTRE_X, CENTRE_Y, 1.0)
+t.set_store_charge(CENTER_X, CENTER_Y, 1.0)
 start_to_active(b)
 press(b, "stop")
 t.run_ticks(4)
@@ -273,9 +273,9 @@ assert(
 -- A CABLE UNDER AN EMITTER'S CELL CHARGES THE STORE.
 -- ---------------------------------------------------------------
 local fed = build(true)
-t.set_store_charge(CENTRE_X, CENTRE_Y, 0.0)
+t.set_store_charge(CENTER_X, CENTER_Y, 0.0)
 t.run_seconds(6.0)
-local store = assert(t.store_at(CENTRE_X, CENTRE_Y))
+local store = assert(t.store_at(CENTER_X, CENTER_Y))
 assert(store.charge_j > 0.0, "the west cell's backbone charged the store: " .. store.charge_j)
 assert(
     string.find(state(), "^standby_charging") ~= nil,

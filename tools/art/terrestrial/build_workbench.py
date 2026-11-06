@@ -24,7 +24,7 @@ from schema_contract import (  # noqa: E402
     BIOME_TINT_PRESETS,
     DEFAULT_OUT_DIR,
     JUNCTIONS,
-    NEUTRAL_GREYS,
+    NEUTRAL_GRAYS,
     TERRESTRIAL_DIR,
 )
 
@@ -122,7 +122,7 @@ def build_workbench(out_dir: Path) -> Path:
         "terrestrial": terrestrial,
         "existing": existing,
         "junctions": JUNCTIONS,
-        "neutralGreys": NEUTRAL_GREYS,
+        "neutralGrays": NEUTRAL_GRAYS,
         "biomePresets": BIOME_TINT_PRESETS,
     }
     header = (

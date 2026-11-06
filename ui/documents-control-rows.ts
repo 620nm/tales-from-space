@@ -14,7 +14,7 @@ import type {
 import { documentAction } from "./document-action";
 import { labelId, labelText, type Label } from "./labels";
 import { matterBlock } from "./matter-block";
-import { greyedCard, subjectBadge, subjectCard, unavailableBadge } from "./documents-choices";
+import { grayedCard, subjectBadge, subjectCard, unavailableBadge } from "./documents-choices";
 import { bind, column, entry, press, row, text } from "./view";
 import * as S from "./strings";
 
@@ -165,7 +165,7 @@ function choiceGroup(
     const id = toggleKey(base, value, sourceIndex, all);
     const blocked = unavailableBadge(value);
     const metadata = value.subject ? subjectCard(value.subject, value.label, undefined, blocked) : {};
-    return greyedCard(Choice(id, {
+    return grayedCard(Choice(id, {
       label: metadata.label ?? labelText(value.label),
       ...(metadata.sprite ? { sprite: metadata.sprite } : value.icon ? { sprite: value.icon } : {}),
       ...(value.color ? { color: value.color } : {}),

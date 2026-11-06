@@ -23,7 +23,7 @@ local COLORS = pipe_paints.colors
 -- radiator pipe at `#404040` in `Initialize`
 -- (heat_exchange/he_pipes.dm:15). The multi-deck adapter is unpainted
 -- too (`paintable = FALSE`, pipes/multiz.dm:17).
-local FIXED_COLOUR = { radiator_pipe = true, adapter = true }
+local FIXED_COLOR = { radiator_pipe = true, adapter = true }
 
 local content = {
     id = "pipe_painter",
@@ -79,10 +79,10 @@ if sim ~= nil then
         if network == nil or network.network ~= "pipe" or not sim.network_accessible(x, y, target.instance) then
             return { replaced = false }
         end
-        if FIXED_COLOUR[network.kind] then
+        if FIXED_COLOR[network.kind] then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.pipe_painter.that_pipe_has_a_colour", {}),
+                message = sim.msg("lunatic/tfs:items.pipe_painter.that_pipe_has_a_color", {}),
             })
             return true
         end

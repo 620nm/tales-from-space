@@ -48,7 +48,7 @@ local function line_kpa(latent: number, temp_k: number)
     return TRIPLE_PA * math.exp((-latent / R) * (1.0 / temp_k - 1.0 / TRIPLE_K)) / 1000.0
 end
 
-local function vapour_kpa(temp_k: number)
+local function vapor_kpa(temp_k: number)
     return line_kpa(16200.0, temp_k)
 end
 
@@ -247,8 +247,8 @@ condition(293.15, 300)
 assert(liquid(jar) > 0.05, "at station temperature it is a LIQUID: " .. liquid(jar) .. " mol")
 near(
     assert(t.holder_kpa(jar)),
-    vapour_kpa(assert(t.holder_k(jar))),
-    0.01 * vapour_kpa(assert(t.holder_k(jar))),
+    vapor_kpa(assert(t.holder_k(jar))),
+    0.01 * vapor_kpa(assert(t.holder_k(jar))),
     "standing at its own vapour pressure"
 )
 near(solid(jar), 0.0, 1e-12, "and no solid, because 293 K is well over the triple point")

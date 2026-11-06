@@ -51,7 +51,7 @@ local ONE_ATM_PA = 101325.0
 local WATER_TB = 373.15
 local WATER_K = -40660.0 / 8.314462618
 
-local function vapour_kpa(temp_k: number)
+local function vapor_kpa(temp_k: number)
     return ONE_ATM_PA * math.exp(WATER_K * (1.0 / temp_k - 1.0 / WATER_TB)) / 1000.0
 end
 
@@ -208,7 +208,7 @@ assert(gas_in(jar, "water") > 0.0, "with its own vapour over it")
 -- bottle is always a shade under the dial and the vapour a shade
 -- behind the bottle.
 local warmth = assert(t.holder_k(jar))
-local want = vapour_kpa(warmth)
+local want = vapor_kpa(warmth)
 assert(
     math.abs(assert(t.holder_kpa(jar)) - want) < 0.02 * want,
     "the gauge is water's own vapour pressure at "

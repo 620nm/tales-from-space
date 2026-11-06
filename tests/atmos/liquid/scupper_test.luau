@@ -16,7 +16,7 @@ bench.world({
     rows = { "#######", "#.#...#", "#######" },
     structures = `(5, 1, "player_spawn"), {FEED}, {SCUPPER}`,
     run = { { x = 2, y = 1 } },
-    pools = { { x = 1, y = 1, litres = 40 } },
+    pools = { { x = 1, y = 1, liters = 40 } },
 })
 t.run_seconds(100)
 local fed = bench.standing(1, 1)
@@ -30,7 +30,7 @@ bench.world({
     rows = { "#####", "#.#.#", "#####" },
     structures = `(1, 1, "player_spawn"), {SCUPPER}`,
     run = { { x = 2, y = 1 } },
-    pools = { { x = 3, y = 1, litres = 50 } },
+    pools = { { x = 3, y = 1, liters = 50 } },
 })
 t.run_seconds(30)
 assert(bench.standing(3, 1) > 49.9, "nothing goes back up a scupper")
@@ -42,7 +42,7 @@ local p = bench.world({
     rows = { "#######", "#.#z..#", "#######" },
     structures = `(5, 1, "player_spawn"), {FEED}, {SCUPPER}`,
     run = { { x = 2, y = 1 } },
-    pools = { { x = 1, y = 1, litres = 40 } },
+    pools = { { x = 1, y = 1, liters = 40 } },
 })
 t.run_seconds(100)
 assert(bench.standing(3, 1) > 5, "a scupper discharges into zero gravity")
@@ -82,7 +82,7 @@ p = bench.world({
     structures = `(3, 1, "player_spawn"), {FEED}`,
     items = '(4, 1, "scupper_fitting"), (3, 2, "wrench")',
     run = { { x = 2, y = 1 } },
-    pools = { { x = 1, y = 1, litres = 40 } },
+    pools = { { x = 1, y = 1, liters = 40 } },
 })
 t.click(p, 4, 1, assert(t.target_at(p, 4, 1, "scupper_fitting")))
 t.run_ticks(2)

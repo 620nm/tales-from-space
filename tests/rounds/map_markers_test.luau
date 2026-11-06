@@ -100,16 +100,16 @@ local WEIGHTED = [==[(
 )]==]
 
 t.world(WEIGHTED, 37, "space_station")
-local favoured = 0
+local favored = 0
 local sample = 32
 for _ = 1, sample do
     local player = t.join("engineer")
     x, y = t.pos(player)
     if x == 1 and y == 1 then
-        favoured += 1
+        favored += 1
     end
 end
 assert(
-    favoured >= 24,
-    "relative weights favour the 99-point marker (" .. favoured .. "/" .. sample .. ")"
+    favored >= 24,
+    "relative weights favor the 99-point marker (" .. favored .. "/" .. sample .. ")"
 )

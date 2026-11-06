@@ -137,7 +137,7 @@ if mine.hair ~= "bald" then
     assert(seen.layers[next_layer].color == mine.hair_color, "the rolled hair colour")
     next_layer += 1
 end
-assert(names[next_layer] == "worn_uniform_grey", "the uniform over the body")
+assert(names[next_layer] == "worn_uniform_gray", "the uniform over the body")
 assert(names[next_layer + 1] == "worn_backpack", "then the backpack")
 assert(names[next_layer + 2] == "worn_breath_mask", "then the mask")
 assert(#names == next_layer + 2, "only visible body and worn layers: " .. table.concat(names, " "))

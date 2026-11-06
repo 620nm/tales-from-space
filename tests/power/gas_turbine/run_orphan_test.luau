@@ -178,11 +178,11 @@ assert((watts() or 0) > 0, "the spinning rotor feeds the grid")
 local function stall(): ()
     local held = assert(watts(), "the rotor has set its watts")
     assert(held > 0, "and is feeding the grid")
-    local cancelled = 0
+    local canceled = 0
     for x = 2, 4 do
-        cancelled += t.cancel_tasks(assert(t.structure_at(x, 1)).entity)
+        canceled += t.cancel_tasks(assert(t.structure_at(x, 1)).entity)
     end
-    assert(cancelled >= 3, "the three sections' turns are cancelled: " .. cancelled)
+    assert(canceled >= 3, "the three sections' turns are canceled: " .. canceled)
     t.run_seconds(3.6)
     assert(watts() == held, "the lease holds the watts a pass or two")
     assert(eventually(function()

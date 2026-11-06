@@ -132,14 +132,14 @@ function decodePng(bytes, label) {
     if (kind === "IHDR")
       head = {
         width: body.readUInt32BE(0), height: body.readUInt32BE(4),
-        depth: body[8], colour: body[9], interlace: body[12],
+        depth: body[8], color: body[9], interlace: body[12],
       };
     else if (kind === "IDAT") parts.push(body);
     else if (kind === "IEND") break;
     cursor += 12 + length;
   }
   if (!head) throw new Error(`${label} has no IHDR`);
-  if (head.depth !== 8 || head.colour !== 6 || head.interlace !== 0)
+  if (head.depth !== 8 || head.color !== 6 || head.interlace !== 0)
     throw new Error(
       `${label} is depth ${head.depth} colour type ${head.colour} interlace `
       + `${head.interlace}; atlas pages are 8-bit RGBA, not interlaced`,
@@ -237,14 +237,14 @@ test("stocked_paper_bin_contains_visible_paper", { skip }, () => {
 // Greyscale means greyscale: the baked cable cell must carry NO colour of
 // its own, or the runtime multiply lands on top of a tint that is already
 // there and the wire is the wrong red.
-test("tinted_art_is_baked_grey", { skip }, () => {
+test("tinted_art_is_baked_gray", { skip }, () => {
   for (const name of ["cable_l1_5", "cable_l2_5", "cable_l1_none"]) {
     const pixels = cell(name);
-    let coloured = false;
-    for (let i = 0; i < pixels.length && !coloured; i += 4)
-      coloured = pixels[i + 3] > 0
+    let colored = false;
+    for (let i = 0; i < pixels.length && !colored; i += 4)
+      colored = pixels[i + 3] > 0
         && (pixels[i] !== pixels[i + 1] || pixels[i + 1] !== pixels[i + 2]);
-    assert.ok(!coloured,
+    assert.ok(!colored,
       `${name} is baked with colour in it; the tint belongs at draw time `
       + "(rebake: cargo run -p xtask -- bake-atlas --tg <checkout>)");
   }
@@ -255,7 +255,7 @@ test("tinted_art_is_baked_grey", { skip }, () => {
 // real sprite has tonal variation; a mask does not. The rule fires only
 // where the flat colour is also achromatic, which is what every unbaked
 // greyscale config looks like and what no drawn sprite does.
-test("no_sprite_is_a_bare_colour_mask", { skip }, () => {
+test("no_sprite_is_a_bare_color_mask", { skip }, () => {
   // Deliberately flat: a synthetic fill quad, the void, the ghost
   // silhouette, and the wind streak -- white with its whole shape in the
   // ALPHA, because the gas overlay multiplies it by the gas colour.
@@ -280,9 +280,9 @@ test("no_sprite_is_a_bare_colour_mask", { skip }, () => {
       // Tiny sprites (in-hand fragments) have too few pixels for the ratio
       // to mean anything.
       if (area < 40) continue;
-      let [colour, dominant] = [0, 0];
-      for (const [key, count] of histogram) if (count > dominant) [colour, dominant] = [key, count];
-      const channels = [(colour >> 16) & 0xff, (colour >> 8) & 0xff, colour & 0xff];
+      let [color, dominant] = [0, 0];
+      for (const [key, count] of histogram) if (count > dominant) [color, dominant] = [key, count];
+      const channels = [(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff];
       // Chromatic: drawn art, however flat. A greyscale config's silhouette
       // is grey by construction, so this cannot excuse one.
       if (Math.max(...channels) - Math.min(...channels) > 6) continue;

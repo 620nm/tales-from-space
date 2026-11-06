@@ -13,7 +13,7 @@
   "lunatic/tfs:entity.floppy_disk.yellow.name": "黄色软盘",
   "lunatic/tfs:entity.floppy_disk.green.name": "绿色软盘",
   "lunatic/tfs:entity.floppy_disk.purple.name": "紫色软盘",
-  "lunatic/tfs:entity.floppy_disk.grey.name": "灰色软盘",
+  "lunatic/tfs:entity.floppy_disk.gray.name": "灰色软盘",
   "lunatic/tfs:entity.floppy_disk.light_blue.name": "浅蓝色软盘",
   "lunatic/tfs:entity.floppy_disk.atmos_stock.name": "大气程序软盘",
   "lunatic/tfs:entity.laptop.name": "笔记本电脑",

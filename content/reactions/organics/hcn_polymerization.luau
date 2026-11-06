@@ -1,7 +1,7 @@
 -- HCN polymerisation: liquid hydrogen cyanide setting to tholin.
 --
 -- interactions which require catalysts:
---   4 HCN(l) -> tholin, catalyst ammonia, blocked by sulfuric_acid (hcn_polymerisation)
+--   4 HCN(l) -> tholin, catalyst ammonia, blocked by sulfuric_acid (hcn_polymerization)
 --
 -- Liquid hydrogen cyanide polymerising to tholin, the dark solid. A base
 -- sets it off and an acid stops it, as in industry, where HCN is stored
@@ -27,7 +27,7 @@ local THOLIN_MOLAR_MASS = 108.10
 local HEAT_J_PER_KG = 1.6e6
 
 return {
-    id = "hcn_polymerisation",
+    id = "hcn_polymerization",
     reactants = { ["hcn:liquid"] = HCN_PER_THOLIN },
     products = { ["tholin:solid"] = 1.0 },
     catalysts = { ["ammonia:gas"] = 0.025 },

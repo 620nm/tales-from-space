@@ -122,12 +122,12 @@ ui_controls.toggle(p, "power")
 -- The chamber has to get there before anything can leave, so watch for
 -- the vapour rather than guessing the tick it appears on: the crossing
 -- is a gas for as long as the room stays hot enough to hold it.
-local saw_vapour = false
+local saw_vapor = false
 local saw_two_phases = false
 for _ = 1, 400 do
     t.run_ticks(5)
     if room_gas("water") > 0.0 then
-        saw_vapour = true
+        saw_vapor = true
     end
     -- INSIDE THE GLASS, on the way out. `t.vessel` splits the water by
     -- phase, so a sample taken while the chamber is over the boil
@@ -157,7 +157,7 @@ for _ = 1, 400 do
     end
 end
 
-assert(saw_vapour, "the water crossed into the room as a gas")
+assert(saw_vapor, "the water crossed into the room as a gas")
 assert(saw_two_phases, "and it was gas in the glass before it was gas in the room")
 -- Nearly dry rather than exactly dry, and the arithmetic says why: the
 -- phase step moves a share of what is left each time, so the last drops

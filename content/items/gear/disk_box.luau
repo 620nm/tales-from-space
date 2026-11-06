@@ -18,7 +18,7 @@ return {
         "floppy_disk.light_blue",
         "floppy_disk.dark_blue",
         "floppy_disk.purple",
-        "floppy_disk.grey",
+        "floppy_disk.gray",
         "floppy_disk",
     },
 }

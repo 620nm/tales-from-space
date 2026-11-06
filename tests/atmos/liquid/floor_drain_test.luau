@@ -4,13 +4,13 @@ local bench = require("@helpers/liquid_bench")
 -- its line is full, and leaves beads alone. One drain on a dead-end line
 -- of one length: the drain's port and the length hold 270 L, 256.5 of it
 -- water at the fill cap.
-local function pocket(environment: string, litres: number)
+local function pocket(environment: string, liters: number)
     bench.world({
         environment = environment,
         rows = { "#####", "#.#.#", "#####" },
         structures = '(3, 1, "player_spawn"), (1, 1, "floor_drain", {"pipe": "east"})',
         run = { { x = 2, y = 1 } },
-        pools = { { x = 1, y = 1, litres = litres } },
+        pools = { { x = 1, y = 1, liters = liters } },
     })
 end
 
@@ -43,7 +43,7 @@ local p = bench.world({
     structures = '(2, 1, "player_spawn")',
     items = '(2, 1, "wrench"), (1, 1, "floor_drain_fitting")',
     run = { { x = 1, y = 0 } },
-    pools = { { x = 1, y = 1, litres = 10 }, { x = 2, y = 1, litres = 10 } },
+    pools = { { x = 1, y = 1, liters = 10 }, { x = 2, y = 1, liters = 10 } },
 })
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "wrench")))
 t.run_ticks(2)

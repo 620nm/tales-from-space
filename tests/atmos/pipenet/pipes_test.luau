@@ -482,13 +482,13 @@ assert(t.is_breached(1, 1), "the room is open to space")
 t.run_seconds(40)
 
 local vented = assert(network_matter.pressure(3, 2))
-local neighbour = assert(network_matter.pressure(4, 2))
+local neighbor = assert(network_matter.pressure(4, 2))
 assert(vented < 25.0, "the vented main emptied: " .. vented)
 assert(
-    neighbour > 90.0,
+    neighbor > 90.0,
     "and its parallel neighbour, one tile away on the same layer, never "
         .. "lost a mole: "
-        .. neighbour
+        .. neighbor
 )
 
 -- The control. The identical map with NO facings authored is the old

@@ -29,20 +29,20 @@ t.world(
 )
 t.set_breathing(false)
 
-local function litres(x: number, y: number): number
+local function liters(x: number, y: number): number
     local liquid = t.room_liquid(x, y)
     return if liquid then liquid.water or 0 else 0
 end
 
 t.join()
 t.run_ticks(4)
-assert(litres(4, 1) < 1, "the trench starts dry, got " .. litres(4, 1))
+assert(liters(4, 1) < 1, "the trench starts dry, got " .. liters(4, 1))
 
 t.run_seconds(600)
-assert(litres(4, 1) > 1850, "the far end fills toward the sea's level, got " .. litres(4, 1) .. " L")
-assert(litres(0, 1) > 1350, "the sea stays near full while it feeds it, got " .. litres(0, 1) .. " L")
-assert(litres(5, 1) < 1, "and the land stays dry, got " .. litres(5, 1) .. " L")
+assert(liters(4, 1) > 1850, "the far end fills toward the sea's level, got " .. liters(4, 1) .. " L")
+assert(liters(0, 1) > 1350, "the sea stays near full while it feeds it, got " .. liters(0, 1) .. " L")
+assert(liters(5, 1) < 1, "and the land stays dry, got " .. liters(5, 1) .. " L")
 
-local filled = litres(4, 1)
+local filled = liters(4, 1)
 t.run_seconds(60)
-assert(litres(4, 1) > filled - 1, "the trench stays full, from " .. filled .. " to " .. litres(4, 1))
+assert(liters(4, 1) > filled - 1, "the trench stays full, from " .. filled .. " to " .. liters(4, 1))

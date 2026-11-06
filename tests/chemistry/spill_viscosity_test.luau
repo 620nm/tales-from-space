@@ -75,7 +75,7 @@ local function run(key: string, moles: number)
     assert(math.abs(poured - moles) < 1e-6, ("%s: the blend is what was painted"):format(key))
     assert(held(key, 1) > 59.0, ("%s: sixty litres on one tile"):format(key))
 
-    local crossed, levelled = -1, -1
+    local crossed, leveled = -1, -1
     for step = 1, PATIENCE do
         t.run_ticks(STEP)
         local elapsed = step * STEP
@@ -89,14 +89,14 @@ local function run(key: string, moles: number)
             crossed = elapsed
         end
         if deep - shallow <= 0.05 * deep then
-            levelled = elapsed
+            leveled = elapsed
             break
         end
     end
 
     assert(crossed > 0, ("%s never reached the far end of the corridor"):format(key))
     assert(
-        levelled > 0,
+        leveled > 0,
         ("%s never levelled: %.4f L still on the source"):format(key, held(key, 1))
     )
     -- Sixty litres over six tiles, wherever the clock got to.
@@ -110,10 +110,10 @@ local function run(key: string, moles: number)
         math.abs(t.matter_totals().substances[key] - poured) < 1e-6,
         ("%s: every mole is still on the books"):format(key)
     )
-    return crossed, levelled
+    return crossed, leveled
 end
 
-local water_crossed, water_levelled = run("water", 3330.6)
+local water_crossed, water_leveled = run("water", 3330.6)
 
 -- ---------------------------------------------------------------
 -- SYRUP TAKES LONGER. (viscosity: 24.0 against 1.002 mPa*s)
@@ -125,14 +125,14 @@ local water_crossed, water_levelled = run("water", 3330.6)
 -- speed for everything, so the ratio here is smaller than the ratio of
 -- the viscosities; the ORDER is what the law promises.
 -- ---------------------------------------------------------------
-local acid_crossed, acid_levelled = run("sulfuric_acid", 1119.49)
+local acid_crossed, acid_leveled = run("sulfuric_acid", 1119.49)
 assert(
     acid_crossed > water_crossed,
     ("acid crossed in %d ticks and water in %d"):format(acid_crossed, water_crossed)
 )
 assert(
-    acid_levelled > water_levelled,
-    ("acid levelled in %d ticks and water in %d"):format(acid_levelled, water_levelled)
+    acid_leveled > water_leveled,
+    ("acid leveled in %d ticks and water in %d"):format(acid_leveled, water_leveled)
 )
 
 -- ---------------------------------------------------------------
@@ -145,12 +145,12 @@ assert(
 -- the FILM (485.5 mN/m at 140 degrees is the thickest on this shelf);
 -- it is not what it does to the clock.
 -- ---------------------------------------------------------------
-local mercury_crossed, mercury_levelled = run("mercury", 4047.04)
+local mercury_crossed, mercury_leveled = run("mercury", 4047.04)
 assert(
     mercury_crossed < water_crossed,
     ("mercury crossed in %d ticks and water in %d"):format(mercury_crossed, water_crossed)
 )
 assert(
-    mercury_levelled < water_levelled,
-    ("mercury levelled in %d ticks and water in %d"):format(mercury_levelled, water_levelled)
+    mercury_leveled < water_leveled,
+    ("mercury leveled in %d ticks and water in %d"):format(mercury_leveled, water_leveled)
 )

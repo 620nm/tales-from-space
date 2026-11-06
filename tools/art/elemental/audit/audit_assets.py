@@ -467,7 +467,7 @@ def main():
                 f"Flattened RGBA produces {len(flat_off_gpl)} blended non-GPL RGB values (overlapping_layer_px={overlapping_layer_pixels}): sample={sorted(flat_off_gpl)[:6]}",
             ))
         if bare_mask_failures:
-            findings.append(("CRITICAL", sid, f"FAILS test-bake-art.mjs no_sprite_is_a_bare_colour_mask on {len(bare_mask_failures)} cell(s): {bare_mask_failures[:8]}"))
+            findings.append(("CRITICAL", sid, f"FAILS test-bake-art.mjs no_sprite_is_a_bare_color_mask on {len(bare_mask_failures)} cell(s): {bare_mask_failures[:8]}"))
         elif strict_share_failures:
             findings.append(("MAJOR", sid, f"Chromatic sprite has dominant_rgb_share >= 0.85 on {len(strict_share_failures)} cell(s): {strict_share_failures[:8]}"))
 

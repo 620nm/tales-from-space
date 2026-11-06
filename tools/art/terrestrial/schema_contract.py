@@ -82,7 +82,7 @@ JUNCTIONS: list[int] = [
 ]
 
 # Strictly neutral greyscale swatches (R == G == B) in tales-from-space.gpl
-NEUTRAL_GREYS: dict[str, str] = {
+NEUTRAL_GRAYS: dict[str, str] = {
     "K": "#1B1B1B",  # 27  stripe-dark-1
     "O": "#1D1D1D",  # 29  neutral-1-outline
     "D": "#262626",  # 38  stripe-dark-2

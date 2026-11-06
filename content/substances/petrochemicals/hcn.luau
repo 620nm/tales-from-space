@@ -3,7 +3,7 @@
 -- interactions we use:
 --   4 HCN + 5 O2 -> 4 CO2 + 2 H2O + 2 N2 (hcn_fire)
 -- interactions which require catalysts:
---   4 HCN(l) -> tholin, catalyst ammonia, blocked by sulfuric_acid (hcn_polymerisation)
+--   4 HCN(l) -> tholin, catalyst ammonia, blocked by sulfuric_acid (hcn_polymerization)
 -- interactions we know exist but don't need:
 --   HCN + Cl2 -> ClCN + HCl: cyanogen chloride and HCl have no
 --     substance here

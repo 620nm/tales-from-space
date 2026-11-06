@@ -4,7 +4,7 @@
 -- each in a world of its own so no flask's gas reaches another:
 --
 -- * with a trace of ammonia it polymerises to tholin and runs hot
---   (content/reactions/organics/hcn_polymerisation.luau);
+--   (content/reactions/organics/hcn_polymerization.luau);
 -- * with the same ammonia and a little sulphuric acid it keeps: the acid
 --   blocks the rule, as stabilised HCN is kept in industry;
 -- * with nothing in it, it keeps too: the ammonia is the catalyst.
@@ -70,22 +70,22 @@ local hcn = string.format('("hcn:liquid", %.4f)', HCN_MOL)
 local ammonia = string.format('("ammonia:gas", %.4f)', AMMONIA_MOL)
 local acid = string.format('("sulfuric_acid:liquid", %.4f)', ACID_MOL)
 
-local catalysed = run(hcn .. ", " .. ammonia)
+local catalyzed = run(hcn .. ", " .. ammonia)
 assert(
-    catalysed.tholin > 0.001,
-    ("ammonia sets the HCN polymerising: %.4f mol tholin"):format(catalysed.tholin)
+    catalyzed.tholin > 0.001,
+    ("ammonia sets the HCN polymerizing: %.4f mol tholin"):format(catalyzed.tholin)
 )
 assert(
-    catalysed.peak_k > ROOM_K + 5,
-    ("and the polymerisation runs hot: peak %.1f K"):format(catalysed.peak_k)
+    catalyzed.peak_k > ROOM_K + 5,
+    ("and the polymerization runs hot: peak %.1f K"):format(catalyzed.peak_k)
 )
 
-local stabilised = run(hcn .. ", " .. ammonia .. ", " .. acid)
+local stabilized = run(hcn .. ", " .. ammonia .. ", " .. acid)
 assert(
-    stabilised.tholin == 0,
-    ("sulphuric acid keeps it: %.4f mol tholin"):format(stabilised.tholin)
+    stabilized.tholin == 0,
+    ("sulfuric acid keeps it: %.4f mol tholin"):format(stabilized.tholin)
 )
-assert(stabilised.hcn_liquid > 0, "and the HCN is still liquid")
+assert(stabilized.hcn_liquid > 0, "and the HCN is still liquid")
 
 local plain = run(hcn)
 assert(plain.tholin == 0, ("with no base it keeps: %.4f mol tholin"):format(plain.tholin))

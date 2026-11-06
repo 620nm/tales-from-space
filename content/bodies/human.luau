@@ -695,14 +695,14 @@ local content = {
             { id = "volaju", sprite = "facial_volaju", gender = "m" },
             { id = "three_oclock", sprite = "facial_three_oclock", gender = "m" },
             { id = "five_oclock", sprite = "facial_five_oclock", gender = "m" },
-            { id = "five_oclock_moustache", sprite = "facial_five_oclock_moustache", gender = "m" },
+            { id = "five_oclock_mustache", sprite = "facial_five_oclock_mustache", gender = "m" },
             { id = "seven_oclock", sprite = "facial_seven_oclock", gender = "m" },
             {
-                id = "seven_oclock_moustache",
-                sprite = "facial_seven_oclock_moustache",
+                id = "seven_oclock_mustache",
+                sprite = "facial_seven_oclock_mustache",
                 gender = "m",
             },
-            { id = "moustache", sprite = "facial_moustache", gender = "m" },
+            { id = "mustache", sprite = "facial_mustache", gender = "m" },
             { id = "pencilstache", sprite = "facial_pencilstache", gender = "m" },
         },
 

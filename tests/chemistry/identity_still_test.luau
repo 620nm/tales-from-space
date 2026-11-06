@@ -176,7 +176,7 @@ local function held(handle: SpecObservedTarget, key: string)
     return if contents then contents[key] or 0.0 else 0.0
 end
 
-local function vapour(key: string)
+local function vapor(key: string)
     local n = 0.0
     for _, tile in ipairs(ROOM) do
         local gases = t.room_gas(tile[1], tile[2])
@@ -227,7 +227,7 @@ assert(plateau < 360.0, "twenty kelvin under the dial: " .. plateau)
 
 local boiled_off = 0.4 - held(pot, "ethanol")
 assert(boiled_off > 0.02, "and it is really boiling: " .. boiled_off .. " mol gone")
-assert(vapour("ethanol") > 0.02, "into the room, which is where a still's vapour goes")
+assert(vapor("ethanol") > 0.02, "into the room, which is where a still's vapor goes")
 
 -- Below the onset there is no still. The same beaker, the same
 -- element, twenty kelvin lower: what leaves is evaporation off a
@@ -288,7 +288,7 @@ local first_take = 0.0
 local weakest_take = 1.0
 for sample = 1, 4 do
     t.run_seconds(150)
-    local take = ethanol_share(vapour("ethanol"), vapour("water"))
+    local take = ethanol_share(vapor("ethanol"), vapor("water"))
     local left = ethanol_share(held(pot, "ethanol"), held(pot, "water"))
     assert(take > left + 0.05, "the take-off is stronger than the pot: " .. take .. " vs " .. left)
     if sample == 1 then

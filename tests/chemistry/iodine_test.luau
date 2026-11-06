@@ -15,11 +15,11 @@ local MELT_K, BOIL_K = 386.75, 457.4
 local L_FUS, L_VAP = 15520.0, 41570.0
 local ONE_ATM_PA = 101325.0
 
-local function vapour_pa(temp_k: number)
+local function vapor_pa(temp_k: number)
     return ONE_ATM_PA * math.exp((-L_VAP / R) * (1.0 / temp_k - 1.0 / BOIL_K))
 end
 
-local TRIPLE_PA = vapour_pa(MELT_K)
+local TRIPLE_PA = vapor_pa(MELT_K)
 
 local function sublimation_pa(temp_k: number)
     return TRIPLE_PA * math.exp((-(L_FUS + L_VAP) / R) * (1.0 / temp_k - 1.0 / MELT_K))

@@ -50,7 +50,7 @@
         // one picture.
         //
         // They MUST be baked together. Each alone is what
-        // `no_sprite_is_a_bare_colour_mask` exists to catch: the
+        // `no_sprite_is_a_bare_color_mask` exists to catch: the
         // backing is 87 pixels of pure white (it is a mask, literally),
         // and the glass is 44 pixels 91% of one grey. Composited they
         // are a lit pane with a highlight on it, which is what tg

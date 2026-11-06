@@ -47,19 +47,19 @@ local function near(got: number, want: number, what: string)
 end
 
 local shells = {
-    { x = 1, y = 2, id = "beaker_large", litres = 0.100 },
-    { x = 2, y = 2, id = "beaker_plastic", litres = 0.120 },
-    { x = 3, y = 2, id = "beaker_metamaterial", litres = 0.180 },
-    { x = 4, y = 2, id = "beaker_cryostasis", litres = 0.050 },
-    { x = 5, y = 2, id = "beaker_bluespace", litres = 0.300 },
-    { x = 1, y = 1, id = "water_bottle", litres = 0.050 },
-    { x = 4, y = 1, id = "water_bottle_large", litres = 0.100 },
-    { x = 3, y = 1, id = "spray_bottle", litres = 0.250 },
+    { x = 1, y = 2, id = "beaker_large", liters = 0.100 },
+    { x = 2, y = 2, id = "beaker_plastic", liters = 0.120 },
+    { x = 3, y = 2, id = "beaker_metamaterial", liters = 0.180 },
+    { x = 4, y = 2, id = "beaker_cryostasis", liters = 0.050 },
+    { x = 5, y = 2, id = "beaker_bluespace", liters = 0.300 },
+    { x = 1, y = 1, id = "water_bottle", liters = 0.050 },
+    { x = 4, y = 1, id = "water_bottle_large", liters = 0.100 },
+    { x = 3, y = 1, id = "spray_bottle", liters = 0.250 },
 }
 for _, shell in ipairs(shells) do
     local vessel = assert(t.vessel(assert(t.target_at(p, shell.x, shell.y, shell.id))))
     assert(vessel ~= nil, shell.id .. " has an inside")
-    near(vessel.volume_l, shell.litres, shell.id .. " keeps tg's shell size")
+    near(vessel.volume_l, shell.liters, shell.id .. " keeps tg's shell size")
 end
 
 local small = assert(t.target_at(p, 1, 1, "water_bottle"))

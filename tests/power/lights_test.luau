@@ -63,7 +63,7 @@ assert(light ~= nil and light.status == "ok" and light.emits, "a fresh fitting b
 local light_target = t.target_at(p, 2, 1)
 assert(light_target ~= nil, "the fixture exposes the id a sprite click names")
 assert(light.color == TUNGSTEN, "in the colour the map put in it, got " .. light.color)
-local function lamp_colour_on_the_wire(): string?
+local function lamp_color_on_the_wire(): string?
     for _, src in ipairs(t.light_sources(p)) do
         if src[1] == 2 and src[2] == 1 then
             local color = src[4]
@@ -74,16 +74,16 @@ local function lamp_colour_on_the_wire(): string?
     return nil
 end
 local function told_about_the_lamp()
-    return lamp_colour_on_the_wire() ~= nil
+    return lamp_color_on_the_wire() ~= nil
 end
 assert(told_about_the_lamp(), "the burning lamp is disclosed to the viewer")
 assert(
-    lamp_colour_on_the_wire() == TUNGSTEN,
+    lamp_color_on_the_wire() == TUNGSTEN,
     "and disclosed in its own colour, so the client lights the corridor warm"
 )
 -- The tube drawn on the wall: the fitting's glow layer and the colour
 -- the viewer is told to paint it, or nil while it wears none.
-local function tube_colour_on_the_wall(): string?
+local function tube_color_on_the_wall(): string?
     for _, layer in ipairs(t.seen(p, assert(light_target)).layers) do
         if string.find(layer.sprite, "light_glow", 1, true) == 1 then
             return layer.color or "untinted"
@@ -92,8 +92,8 @@ local function tube_colour_on_the_wall(): string?
     return nil
 end
 assert(
-    tube_colour_on_the_wall() == TUNGSTEN,
-    "the tube on the wall burns the colour of its pool, got " .. tostring(tube_colour_on_the_wall())
+    tube_color_on_the_wall() == TUNGSTEN,
+    "the tube on the wall burns the color of its pool, got " .. tostring(tube_color_on_the_wall())
 )
 -- Under it the fitting still wears its whole lit picture, so whatever
 -- reads that alone (an examine icon, a replay) shows it lit.
@@ -112,7 +112,7 @@ assert(assert(t.light_at(2, 1)).status == "broken", "the tube shattered")
 assert(not assert(t.light_at(2, 1)).emits, "and throws no light")
 assert(assert(t.light_at(2, 1)).lit, "though the branch still feeds the fitting")
 assert(not told_about_the_lamp(), "a dead fixture is a source the viewer is no longer told about")
-assert(tube_colour_on_the_wall() == nil, "and shattered glass does not glow")
+assert(tube_color_on_the_wall() == nil, "and shattered glass does not glow")
 assert(table.concat(t.sounds(p), "\n"):find("glass_break", 1, true), "glass")
 
 -- Vandalism is on the record, both ends of it, attributed to the file
@@ -150,8 +150,8 @@ assert(
     assert(t.light_at(2, 1)).color == TUBE,
     "a fitted tube burns what a tube burns, got " .. assert(t.light_at(2, 1)).color
 )
-assert(lamp_colour_on_the_wire() == TUBE, "and the wire carries the new colour")
-assert(tube_colour_on_the_wall() == TUBE, "and the tube on the wall is the new glass")
+assert(lamp_color_on_the_wire() == TUBE, "and the wire carries the new color")
+assert(tube_color_on_the_wall() == TUBE, "and the tube on the wall is the new glass")
 local repaint = t.ledger_rows("LightChanged")
 assert(
     repaint[#repaint].color == TUBE,

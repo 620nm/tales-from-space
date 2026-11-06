@@ -167,11 +167,11 @@ t.world(ROOM:gsub('"standby"', '"active"'), 7)
 local q = t.join()
 t.run_ticks(4)
 
-local centre = t.seen(q, t.target_at(q, 5, 5, "grav_smes"))
-assert(#centre.layers == 2, "the centre wears two layers, got " .. #centre.layers)
+local center = t.seen(q, t.target_at(q, 5, 5, "grav_smes"))
+assert(#center.layers == 2, "the center wears two layers, got " .. #center.layers)
 assert(
-    centre.layers[2].sprite == "grav_disc_active",
-    "the disc over its own part, got " .. tostring(centre.layers[2].sprite)
+    center.layers[2].sprite == "grav_disc_active",
+    "the disc over its own part, got " .. tostring(center.layers[2].sprite)
 )
 local edge = t.seen(q, t.target_at(q, 4, 5, "grav_smes"))
 assert(#edge.layers == 1, "and no other cell wears it, got " .. #edge.layers)

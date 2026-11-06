@@ -55,7 +55,7 @@ t.world(CORRIDOR, 0)
 local p = t.join()
 t.tick()
 
-local function litres(x)
+local function liters(x)
     local standing = t.room_liquid(x, 1)
     return (standing and standing.water) or 0
 end
@@ -70,7 +70,7 @@ end
 -- never names the depth: what the law promises is a level, and the
 -- level a corridor settles at is arithmetic on what was poured.
 local function level(a, b, why)
-    local ha, hb = litres(a), litres(b)
+    local ha, hb = liters(a), liters(b)
     local deeper = math.max(ha, hb)
     assert(deeper > 1.0, ("%s: (%d,1) and (%d,1) are both dry"):format(why, a, b))
     assert(
@@ -85,7 +85,7 @@ end
 
 local POURED = water_everywhere()
 assert(math.abs(POURED - 3330.6) < 1e-6, ("the blend is what was painted: %.4f mol"):format(POURED))
-assert(litres(1) > 59.9, ("and it is standing on one tile: %.4f L"):format(litres(1)))
+assert(liters(1) > 59.9, ("and it is standing on one tile: %.4f L"):format(liters(1)))
 
 -- ---------------------------------------------------------------
 -- IT SPREADS FROM WHERE IT FELL.
@@ -95,10 +95,10 @@ assert(litres(1) > 59.9, ("and it is standing on one tile: %.4f L"):format(litre
 -- A puddle crosses tiles; it does not appear in a room.
 -- ---------------------------------------------------------------
 t.run_seconds(1)
-assert(litres(1) > litres(2), ("the source is deeper: %.4f vs %.4f"):format(litres(1), litres(2)))
+assert(liters(1) > liters(2), ("the source is deeper: %.4f vs %.4f"):format(liters(1), liters(2)))
 assert(
-    litres(2) > litres(3),
-    ("and the frontier shallower still: %.4f vs %.4f"):format(litres(2), litres(3))
+    liters(2) > liters(3),
+    ("and the frontier shallower still: %.4f vs %.4f"):format(liters(2), liters(3))
 )
 dry(4, "the shut leaf has not been crossed")
 
@@ -113,7 +113,7 @@ dry(4, "the shut leaf has not been crossed")
 t.run_seconds(4)
 level(1, 2, "the corridor levelled")
 level(2, 3, "the corridor levelled")
-assert(litres(1) > 3.0 * FILM_L, ("and it is deep water: %.4f L"):format(litres(1)))
+assert(liters(1) > 3.0 * FILM_L, ("and it is deep water: %.4f L"):format(liters(1)))
 dry(4, "a shut door is a sill")
 dry(5, "and nothing got past it")
 
@@ -125,7 +125,7 @@ assert(
     math.abs(water_everywhere() - POURED) < 1e-6,
     ("nothing was made or lost: %.6f vs %.6f mol"):format(water_everywhere(), POURED)
 )
-assert(litres(1) + litres(2) + litres(3) < 60.1, "and no tile invented any")
+assert(liters(1) + liters(2) + liters(3) < 60.1, "and no tile invented any")
 
 -- ---------------------------------------------------------------
 -- OPEN IT, AND THE SAME WATER GOES THROUGH.
@@ -152,7 +152,7 @@ level(1, 2, "the whole corridor levelled")
 level(2, 3, "the whole corridor levelled")
 level(3, 4, "the whole corridor levelled")
 level(4, 5, "the whole corridor levelled")
-assert(litres(5) > FILM_L, ("the far end is a puddle, not a film: %.4f L"):format(litres(5)))
+assert(liters(5) > FILM_L, ("the far end is a puddle, not a film: %.4f L"):format(liters(5)))
 assert(
     math.abs(water_everywhere() - POURED) < 1e-6,
     ("and still every mole: %.6f vs %.6f mol"):format(water_everywhere(), POURED)
@@ -209,18 +209,18 @@ t.tick()
 t.click(q, 4, 1) -- and tip it onto the deck beside us
 t.tick()
 
-local painted = litres(1)
+local painted = liters(1)
 assert(
     painted > 2.95 and painted < FILM_L,
     ("three litres is under the film: %.4f L"):format(painted)
 )
-local tipped = litres(4)
+local tipped = liters(4)
 assert(tipped > 0.010 and tipped < 0.011, ("and 10.8 mL is on the deck: %.6f L"):format(tipped))
 
 local WATER_START = water_everywhere()
 t.run_seconds(10)
 
-assert(litres(1) > 2.9, ("the film stayed where it was painted: %.4f L"):format(litres(1)))
+assert(liters(1) > 2.9, ("the film stayed where it was painted: %.4f L"):format(liters(1)))
 dry(2, "and its neighbour was never wet")
 dry(3, "nor the tile past that")
 dry(5, "nor the far side of the tipped beaker")
@@ -231,5 +231,5 @@ assert(
 
 -- What left the deck went up, not sideways: the air over the tile the
 -- beaker was tipped onto is carrying it.
-local vapour = assert(t.room_gas(4, 1)).water
-assert(vapour ~= nil and vapour > 1e-3, "the tipped beaker dried into the room")
+local vapor = assert(t.room_gas(4, 1)).water
+assert(vapor ~= nil and vapor > 1e-3, "the tipped beaker dried into the room")

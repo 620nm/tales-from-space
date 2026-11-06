@@ -1,18 +1,18 @@
 local physical_profiles = require("@lib/physical_profiles")
 return {
-    id = "uniform_grey",
+    id = "uniform_gray",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
-    name_label = "lunatic/tfs:entity.uniform_grey.name",
-    name = "grey jumpsuit",
-    sprite = "uniform_grey",
+    name_label = "lunatic/tfs:entity.uniform_gray.name",
+    name = "gray jumpsuit",
+    sprite = "uniform_gray",
     slot = "uniform",
     -- A jumpsuit covers the torso, groin, arms and legs (tg
     -- body_parts_covered = CHEST|GROIN|LEGS|ARMS,
     -- clothing/under/_under.dm:8); the head is bare. An operation on a
     -- covered zone needs it stripped first (docs/SURGERY.md).
     covers = { "chest", "pelvis", "l_arm", "r_arm", "l_leg", "r_leg" },
-    worn_sprite = "worn_uniform_grey",
+    worn_sprite = "worn_uniform_gray",
     -- Cloth, on every jumpsuit. tg _under.dm:15-16.
     pickup_sound = "cloth_pickup",
     drop_sound = "cloth_drop",

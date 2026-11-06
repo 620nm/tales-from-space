@@ -73,12 +73,12 @@ end
 -- is 30.60 of those fifty. Everything the trims below come to is those
 -- four numbers and nothing else.
 local WATER_ML, LIBITAL_ML, GLASS_ML = 18.015, 180.0, 50.0
-local function litres_of(water: number, libital: number)
+local function liters_of(water: number, libital: number)
     return water * WATER_ML + libital * LIBITAL_ML
 end
 -- The share of a 0.25 mol parcel of that mix which fits in what a full
 -- beaker.libital leaves free.
-local FIT = 0.25 * ((GLASS_ML - litres_of(0.20, 0.15)) / litres_of(0.25 * 4 / 7, 0.25 * 3 / 7))
+local FIT = 0.25 * ((GLASS_ML - liters_of(0.20, 0.15)) / liters_of(0.25 * 4 / 7, 0.25 * 3 / 7))
 
 -- An empty beaker off the shelf is still a vessel: it holds nothing and
 -- has fifty millilitres of room (volume_ml on the prototype).

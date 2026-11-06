@@ -60,7 +60,7 @@ local function held(handle): number
     return contents.water or 0
 end
 
-local function sand_litres(): number
+local function sand_liters(): number
     local total = 0
     for x = 0, 2 do
         for y = 0, 2 do
@@ -101,7 +101,7 @@ local tipped = said()
 assert(tipped == "You tip the bottle out onto the ground.", "the spill is reported: " .. tipped)
 assert(held(bottle) < 1e-4, "the bottle is empty, got " .. held(bottle))
 local want = full * WATER_ML_PER_MOL / 1000
-local puddle = sand_litres()
+local puddle = sand_liters()
 assert(math.abs(puddle - want) < 0.1 * want, ("the sand holds the spill: %g L of %g"):format(puddle, want))
 
 -- MOPPING the sand: the stroke takes the puddle back up.

@@ -121,7 +121,7 @@ check("windows-first")
 -- ---------------------------------------------------------------
 t.world(
     [==[(
-    name: "neighbour first",
+    name: "neighbor first",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     levels: [
         (
@@ -159,4 +159,4 @@ t.world(
     nil,
     "free_build"
 )
-check("neighbour-first")
+check("neighbor-first")

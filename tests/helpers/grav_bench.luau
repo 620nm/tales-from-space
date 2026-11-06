@@ -30,8 +30,8 @@ local POSITIONS: { Position } = {
     { key = "sw", id = "grav_supermagnet_ring", x = 4, y = 5, dir = "west" },
 }
 
-bench.CENTRE_X = 5
-bench.CENTRE_Y = 4
+bench.CENTER_X = 5
+bench.CENTER_Y = 4
 
 -- Every position, so a spec can name one by its key.
 function bench.positions(): { Position }

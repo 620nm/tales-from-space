@@ -33,7 +33,7 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 from schema_contract import (  # noqa: E402
-    DEFAULT_OUT_DIR, EAST, GPL_PATH, JUNCTIONS, NE, NEUTRAL_GREYS, NORTH, NW,
+    DEFAULT_OUT_DIR, EAST, GPL_PATH, JUNCTIONS, NE, NEUTRAL_GRAYS, NORTH, NW,
     ORIGINALS_DIR, PACK_ROOT, SE, SOUTH, SW, WEST, aseprite_binary, mcp_python_and_repo, rgba_pixels,
 )
 from specs import SPRITES  # noqa: E402
@@ -491,7 +491,7 @@ def validate_spec(
 
     expected_w, expected_h = (160 if is_smooth_kind(kind) else 32), 32
     colorable = bool(spec.get("colorable", True))
-    allowed_neutral_set = {hx.upper() for hx in NEUTRAL_GREYS.values()}
+    allowed_neutral_set = {hx.upper() for hx in NEUTRAL_GRAYS.values()}
     frames_spec = spec.get("frames", [])
     if not frames_spec:
         raise ValueError(f"{sid}: frames cannot be empty")

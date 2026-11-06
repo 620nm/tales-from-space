@@ -97,9 +97,9 @@ assert(
 -- ---------------------------------------------------------------
 t.run_seconds(30)
 local still = look_at(DEEP)
-local litres = tonumber(string.match(still, "A puddle: ([%d%.]+) L"))
-assert(litres ~= nil, "the pool is still a pool: " .. still)
-assert(litres > 50.0 * 0.99, "and still fifty litres of one: " .. still)
+local liters = tonumber(string.match(still, "A puddle: ([%d%.]+) L"))
+assert(liters ~= nil, "the pool is still a pool: " .. still)
+assert(liters > 50.0 * 0.99, "and still fifty liters of one: " .. still)
 assert(
     look_at(DRY) == "Standard station tiling, laid over the deck plating.",
     "and it never reached the tile beside it"

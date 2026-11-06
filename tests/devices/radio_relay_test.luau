@@ -154,7 +154,7 @@ local booted = {}
 -- on the player's own tile: the empty hand takes it, and it goes back
 -- down with the key in hand again. The router (no id, a machine on its
 -- tile) wears its own panel.
-local function join_all(p: number, x: number, y: number, id: string?, greyed: string?)
+local function join_all(p: number, x: number, y: number, id: string?, grayed: string?)
     local channel = nil
     if id ~= nil then
         channel = "programming"
@@ -180,12 +180,12 @@ local function join_all(p: number, x: number, y: number, id: string?, greyed: st
     assert(rows(t.ui(p, channel), "link_lock")[1].on, "the lock opens for whoever stands at it")
     local listed = rows(t.ui(p, channel), "link_join")
     local offered = #listed
-    if greyed ~= nil then
+    if grayed ~= nil then
         local takeable = #ui_controls.pressable(ui_controls.record(t.ui(p, channel)), "link_join")
         assert(offered - takeable == 1, "one listed row is greyed: " .. (offered - takeable))
         for _, row in ipairs(listed) do
             local why = ui_controls.unavailable(row)
-            assert(why == nil or why == greyed, "greyed for the reason given: " .. tostring(why))
+            assert(why == nil or why == grayed, "grayed for the reason given: " .. tostring(why))
         end
     end
     for _ = 1, offered do
