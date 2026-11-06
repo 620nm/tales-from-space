@@ -35,7 +35,7 @@
 --
 --   salglu        water + salt + sugar
 --   multiver      ash + salt, at 400 K
---   libital       phenol + saltpetre, at 700 K
+--   libital       phenol + saltpeter, at 700 K
 --   aiuri         ammonia + sulphuric acid, under a lid, kept warm
 --   epinephrine   phenol + acetone + diethylamine + chlorine
 --
@@ -57,7 +57,7 @@
 -- actually use. Ammonia is tg's own upgrade-tier button
 -- (chem_dispenser.dm:83).
 --
--- ASH AND SALTPETRE are tg's upgrade tier too (chem_dispenser.dm:84
+-- ASH AND SALTPETER are tg's upgrade tier too (chem_dispenser.dm:84
 -- and :87), promoted to the base shelf here. tg gates that half of the
 -- shelf behind a servo above tier three (chem_dispenser.dm:467-471),
 -- and this machine now HAS a servo socket -- but a shelf is a ROSTER,
@@ -65,7 +65,7 @@
 -- shelf is not something this machine can say. It is not a thing worth
 -- inventing a mechanism for either: a machine that ships with a locked
 -- half is a machine shipping mis-configured, and this one ships whole.
--- Saltpetre has no recipe left at all -- tg's is four fifths permanent
+-- Saltpeter has no recipe left at all -- tg's is four fifths permanent
 -- gas -- so the button is the only way to it.
 --
 -- SALT AND IRON OXIDE are on no tg shelf and are this pack's own
@@ -189,7 +189,7 @@ return {
             -- shelf here because this pack has no upgrade parts.
             { key = "ammonia", name = "ammonia" },
             { key = "ash", name = "ash" },
-            { key = "saltpetre", name = "saltpetre" },
+            { key = "saltpeter", name = "saltpeter" },
             -- On no tg shelf: this pack's own two, for pacing (D1).
             { key = "salt", name = "salt" },
             { key = "iron_oxide", name = "iron oxide" },
@@ -206,7 +206,7 @@ return {
     -- multiplies `recharge_amount` and the bins take a quarter of a
     -- kilowatt off `power_cost` each, both of which are the cell's
     -- numbers. The third is the servo's shelf gate, which is a roster
-    -- rather than a knob (see ASH AND SALTPETRE above).
+    -- rather than a knob (see ASH AND SALTPETER above).
     --
     -- SO THE SOCKETS ARE MAPPED ONTO WHAT EXISTS: the dial. Bins are
     -- capacity in tg wherever they are read, so here they are the

@@ -5,7 +5,7 @@
 -- It is a RECIPE here rather than a button (reactions/acetone.luau),
 -- which is a departure from tg's own shelf: acetone sits on tg's
 -- upgrade tier (chem_dispenser.dm:82), and this pack promoted the
--- upgrade tier's ammonia, ash and saltpetre to the base shelf because
+-- upgrade tier's ammonia, ash and saltpeter to the base shelf because
 -- it has no upgrade parts. Acetone stayed off it because it HAS a
 -- recipe, and a bench where the first medicine is two presses and a
 -- stir is a bench with nothing to learn in it.

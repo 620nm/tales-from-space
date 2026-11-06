@@ -482,7 +482,7 @@ DISCRETE_SOLID_SPRITES: dict[str, dict[str, Any]] = {
         "tag": "idle",
         "default_tint": "#60A584",
         "sample_tints": [
-            {"name": "Saltpetre", "label": "Saltpetre", "hex": "#60A584"},
+            {"name": "Saltpeter", "label": "Saltpeter", "hex": "#60A584"},
             {"name": "Table Salt / Sugar", "label": "Table Salt / Sugar", "hex": "#FFFFFF"},
             {"name": "Sulfur Grains", "label": "Sulfur Grains", "hex": "#BF8C00"},
             {"name": "Black Powder", "label": "Black Powder", "hex": "#515151"},

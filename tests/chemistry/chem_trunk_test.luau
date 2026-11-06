@@ -15,7 +15,7 @@ local ui_controls = require("@helpers/ui_controls")
 --
 --   naphtha                     -> phenol       a bottle, because Cl2
 --   water + chlorine + naphtha   -> phenol       a bottle, because Cl2
---   phenol + saltpetre           -> libital      the reaction chamber
+--   phenol + saltpeter           -> libital      the reaction chamber
 --   ash + salt                   -> multiver     a NARROW window
 --
 -- ...and then somebody drinks it.
@@ -265,7 +265,7 @@ assert(amount(jar, "chlorine") > 0.0, "with chlorine to spare, which is the poin
 --
 -- tg: 1 phenol + 1 oxygen + 1 nitrogen -> 3 libital, required_temp 225,
 -- optimal_temp 700 (recipes/cat2_medicines.dm:51-68). Both gas legs
--- became one solid here -- saltpetre is KNO3 and carries the nitrogen
+-- became one solid here -- saltpeter is KNO3 and carries the nitrogen
 -- and the oxygen in a button that already exists
 -- (reactions/libital.luau).
 --
@@ -278,8 +278,8 @@ take(jar, 2, 2)
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 dial_to(LEG)
-press("saltpetre")
-near(amount(jar, "saltpetre"), LEG, 2e-3, "a press of saltpetre")
+press("saltpeter")
+near(amount(jar, "saltpeter"), LEG, 2e-3, "a press of saltpeter")
 eject()
 
 dock(heater, 3, 1)
@@ -295,8 +295,8 @@ assert(
     assert(t.holder_k(jar)) > 690.0,
     "the chamber reached the plateau: " .. tostring(t.holder_k(jar))
 )
-near(amount(jar, "libital"), 3.0 * LEG, 1e-4, "three of libital for one of saltpetre")
-near(amount(jar, "saltpetre"), 0.0, 1e-4, "which spent every mole of it")
+near(amount(jar, "libital"), 3.0 * LEG, 1e-4, "three of libital for one of saltpeter")
+near(amount(jar, "saltpeter"), 0.0, 1e-4, "which spent every mole of it")
 near(amount(jar, "phenol"), 2.0 * LEG, 1e-4, "and two thirds of the phenol is still standing")
 
 ui_controls.toggle(p, "power")
