@@ -47,25 +47,30 @@ assert(sprite(4, 4) == "grav_emitter_south", "clockwise from east is south: " ..
 turn(4, 4, "grav_emitter", false)
 assert(sprite(4, 4) == "grav_emitter_east", "counter-clockwise back to east: " .. sprite(4, 4))
 
+-- Offers no Alt+right at (x, y): the claim never reaches the server.
+local function offers_no_turn(x: number, y: number, id: string, what: string)
+    local offered, why = pcall(t.use_item, p, assert(t.target_at(p, x, y, id)), "alt_secondary")
+    assert(
+        not offered and string.find(tostring(why), "does not offer that gesture", 1, true) ~= nil,
+        what .. " offers no turn: " .. tostring(why)
+    )
+    t.tick()
+end
+
 -- A set ring wears its arc and stays there.
 assert(
     sprite(4, 3) == "grav_supermagnet_ring_north",
     "the north-west ring wears its arc: " .. sprite(4, 3)
 )
-turn(4, 3, "grav_supermagnet_ring", true)
+offers_no_turn(4, 3, "grav_supermagnet_ring", "a set ring")
 assert(sprite(4, 3) == "grav_supermagnet_ring_north", "a set ring does not turn: " .. sprite(4, 3))
 
 -- Nor does a packed one.
-turn(6, 3, "grav_supermagnet", true)
+offers_no_turn(6, 3, "grav_supermagnet", "a packed supermagnet")
 assert(sprite(6, 3) == "grav_supermagnet_loose", "the cart shows no facing: " .. sprite(6, 3))
 assert(#t.ledger_rows("Rotated") == 6, "a refused turn writes no row")
 
 -- A loose crate is movable but has no facing to turn: it offers no Alt+right
 -- and records nothing.
-local offered, why = pcall(t.use_item, p, assert(t.target_at(p, 4, 5, "crate")), "alt_secondary")
-assert(
-    not offered and string.find(tostring(why), "does not offer that gesture", 1, true) ~= nil,
-    "a loose crate offers no turn: " .. tostring(why)
-)
-t.tick()
+offers_no_turn(4, 5, "crate", "a loose crate")
 assert(#t.ledger_rows("Rotated") == 6, "a loose crate does not turn")
