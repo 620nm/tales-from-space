@@ -274,6 +274,7 @@
   "lunatic/tfs:lib.gas_turbine.relinking": "The console lets go of the rotor it was linked to.",
   "lunatic/tfs:lib.gas_turbine.console_linked": "The console links to the rotor the multitool logged.",
   "lunatic/tfs:lib.gas_turbine.stop_first": "Stop the turbine before you open its panel.",
+  "lunatic/tfs:lib.gas_turbine.unlinked": "Its parts need to be linked with a multitool.",
   "lunatic/tfs:lib.gas_turbine_run.not_linked": "The turbine's line is not linked. Link the rotor with a multitool first.",
   "lunatic/tfs:lib.gas_turbine_run.running": "The turbine is already running.",
   "lunatic/tfs:lib.gas_turbine_run.not_running": "The turbine is not running.",
