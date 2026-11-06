@@ -112,7 +112,7 @@ t.run_seconds(1.0)
 
 local function pocket(p)
     local x, y = t.pos(p)
-    t.click(p, x, y, t.target_at(p, x, y, "encryption_key.medical"))
+    t.click(p, x, y, assert(t.target_at(p, x, y, "encryption_key.medical")))
     t.run_ticks(2)
     assert(t.hands(p).held == "encryption_key.medical", "the key is in hand")
 end
@@ -242,7 +242,7 @@ to_mark()
 t.drop(speaker)
 t.run_ticks(2)
 local _ = t.messages(speaker)
-t.click(speaker, 5, 2, t.target_at(speaker, 5, 2))
+t.click(speaker, 5, 2, assert(t.target_at(speaker, 5, 2)))
 t.tick()
 assert(
     said(speaker, "The transceiver is on the air, carrying Lifeline, relayed through its network."),
@@ -325,7 +325,7 @@ assert(
 -- ---------------------------------------------------------------
 t.swap_hands(speaker)
 t.tick()
-t.click(speaker, 6, 2, t.target_at(speaker, 6, 2, "wirecutters"))
+t.click(speaker, 6, 2, assert(t.target_at(speaker, 6, 2, "wirecutters")))
 t.run_ticks(2)
 assert(t.hands(speaker).held == "wirecutters", "the cutters are in hand")
 t.click_network(speaker, 7, 2, assert(t.network_instance(7, 2, "power", "l1")))

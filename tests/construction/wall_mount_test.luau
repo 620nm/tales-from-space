@@ -51,7 +51,7 @@ local p = t.join()
 t.tick()
 
 local function take(id: string)
-    t.click(p, 1, 1, t.target_at(p, 1, 1, id))
+    t.click(p, 1, 1, assert(t.target_at(p, 1, 1, id)))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
 end
@@ -116,7 +116,7 @@ assert(t.structure_at(1, 1) ~= nil, "the original bracket remains present")
 -- ---------------------------------------------------------------
 put_down()
 take("cable_coil")
-t.click(p, 1, 1, t.target_at(p, 1, 1, "wall_frame"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "wall_frame")))
 t.run_seconds(2.5)
 assert(assert(t.structure_at(1, 1)).state == "wired", "five lengths of cable wire it")
 assert(
@@ -127,7 +127,7 @@ assert(
 -- ...and backwards, because every rung of this ladder runs both ways.
 put_down()
 take("wirecutters")
-t.click(p, 1, 1, t.target_at(p, 1, 1, "wall_frame"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "wall_frame")))
 t.run_seconds(2.5)
 assert(assert(t.structure_at(1, 1)).state == "empty", "the cutters take the wiring back out")
 assert(t.count_items("cable_coil") > 0, "and hand the cable back")
@@ -149,7 +149,7 @@ assert(composition.matches(1, 0, { "station_base", "wall" }), "and stays a wall"
 
 -- Take the box off and the same torch goes through. The frame is bare
 -- again by now, which is the only state a torch will cut one off in.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "wall_frame"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "wall_frame")))
 t.run_seconds(4.5)
 assert(t.structure_at(1, 1) == nil, "the torch takes a bare frame off the wall")
 

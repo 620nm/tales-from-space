@@ -30,7 +30,7 @@ local p = t.join()
 t.tick()
 
 local function take(x: number, id: string)
-    t.click(p, x, 1, t.target_at(p, x, 1, id))
+    t.click(p, x, 1, assert(t.target_at(p, x, 1, id)))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "picked up " .. id .. "; hands=" .. tostring(t.hands(p).held))
 end

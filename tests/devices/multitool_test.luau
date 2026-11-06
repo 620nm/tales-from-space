@@ -63,7 +63,7 @@ local p = t.join()
 t.tick()
 t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 
-t.click(p, 2, 1, t.target_at(p, 2, 1, "multitool")) -- pick the probe up
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "multitool"))) -- pick the probe up
 t.run_ticks(2)
 
 -- ---- a line with something pushing into it ----------------------------
@@ -92,7 +92,7 @@ assert(network_channels.at(3, 1, "power") == "l2", "as the live one is on the ye
 -- The probe declines: nil is the type test every other reader keeps, and
 -- a handler that declines falls through to whatever the click would have
 -- meant otherwise (docs/LUAU-API.md section 9).
-t.click(p, 3, 2)
+t.click_tile(p, 3, 2)
 t.tick()
 assert(
     not said(p, "The cable here is dead."),

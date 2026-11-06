@@ -37,7 +37,7 @@ t.world(
 
 local p = t.join()
 t.tick()
-t.click(p, 1, 1, t.target_at(p, 1, 1, "rpd"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "rpd")))
 t.run_ticks(2)
 assert(t.hands(p).held == "rpd", "the RPD is in hand")
 

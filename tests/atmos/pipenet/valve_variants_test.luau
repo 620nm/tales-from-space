@@ -151,7 +151,7 @@ local function pinned(mine: string, others: { string }, heat: number)
     end
 
     -- Turn it. tg gives the wheel its second (valve.dm:69).
-    t.click(p, 3, 1, t.target_at(p, 3, 1, id))
+    t.click(p, 3, 1, assert(t.target_at(p, 3, 1, id)))
     t.run_seconds(2)
     assert(assert(t.structure_at(3, 1)).state == "open", "the wheel turns")
     t.run_seconds(1)
@@ -294,11 +294,11 @@ near(rows[1].books, rows[2].books, 1e-9, "the two mains start with the same gas 
 near(rows[1].west_k, rows[2].west_k, 1e-9, "at the same two temperatures")
 
 -- ---- open both, each the way its own machine is opened ----
-t.click(v, 4, 1, t.target_at(v, 4, 1, "manual_valve"))
+t.click(v, 4, 1, assert(t.target_at(v, 4, 1, "manual_valve")))
 t.run_seconds(2)
 assert(assert(t.structure_at(4, 1)).state == "open", "the wheel is over")
 
-t.click(v, 4, 3, t.target_at(v, 4, 3, "digital_valve"))
+t.click(v, 4, 3, assert(t.target_at(v, 4, 3, "digital_valve")))
 t.tick()
 local panel = ui_controls.record(t.ui(v))
 assert(
@@ -331,7 +331,7 @@ near(
 )
 
 -- ---- shut both again ----
-t.click(v, 4, 1, t.target_at(v, 4, 1, "manual_valve"))
+t.click(v, 4, 1, assert(t.target_at(v, 4, 1, "manual_valve")))
 t.run_seconds(2)
 assert(assert(t.structure_at(4, 1)).state == "shut", "the wheel is back")
 ui_controls.toggle(v, "power")

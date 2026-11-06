@@ -190,7 +190,7 @@ near(
 -- ---------------------------------------------------------------
 -- The panel.
 -- ---------------------------------------------------------------
-t.click(p, 9, 1, t.target_at(p, 9, 1, "mixer"))
+t.click(p, 9, 1, assert(t.target_at(p, 9, 1, "mixer")))
 t.tick()
 local ui = ui_controls.record(t.ui(p))
 assert(ui, "clicking a mixer opens its window")
@@ -506,7 +506,7 @@ assert(assert(t.structure_at(9, 1)).id == "mixer.flipped", "the mirrored machine
 local west0 = moles(BACK_X, BACK_Y)
 local east0 = moles(OUT_X, OUT_Y)
 local stub0 = moles(SIDE_X, SIDE_Y)
-t.click(q, 9, 1, t.target_at(q, 9, 1, "mixer.flipped"))
+t.click(q, 9, 1, assert(t.target_at(q, 9, 1, "mixer.flipped")))
 t.tick()
 ui_controls.set(q, "pressure", 300)
 ui_controls.toggle(q, "power")
@@ -543,7 +543,7 @@ t.tick()
 assert(assert(t.structure_at(9, 1)).id == "mixer.airmix", "the air mixer is a real id")
 assert(assert(t.structure_at(9, 1)).state == "running", "and it opens the shift running")
 
-t.click(a, 9, 1, t.target_at(a, 9, 1, "mixer.airmix"))
+t.click(a, 9, 1, assert(t.target_at(a, 9, 1, "mixer.airmix")))
 t.tick()
 local air = ui_controls.record(t.ui(a))
 assert(

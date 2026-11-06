@@ -100,7 +100,7 @@ assert(
 -- Click it. The wheel starts moving IMMEDIATELY -- before anything has
 -- happened to the gas, which is the half of tg's behavior that makes an
 -- atmospherics valve feel like a commitment rather than a toggle.
-t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "manual_valve")))
 t.run_ticks(1)
 
 local turning = assert(t.structure_at(3, 1))
@@ -139,7 +139,7 @@ assert(
 -- so does the content file: a valve closing does not look like a valve
 -- opening played backwards, it looks like its own art.
 -- ---------------------------------------------------------------
-t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "manual_valve")))
 t.run_ticks(1)
 assert(
     assert(t.structure_at(3, 1)).sprite == "valve_closing_ew",
@@ -149,7 +149,7 @@ assert(
 -- And a second click during the turn is nothing at all -- not a cancel,
 -- not a queue, not a second turn. tg refuses every interaction while
 -- `switching` is set (valve.dm:65-66).
-t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "manual_valve")))
 t.run_seconds(2.0)
 local shut = assert(t.structure_at(3, 1))
 assert(shut.state == "shut", "it shut once, and stayed shut")
@@ -228,7 +228,7 @@ assert(pump.sprite == "pump_off_e", "dark: " .. tostring(pump.sprite))
 -- The pump wears a panel rather than a wheel, so a hand on it opens the
 -- window instead of switching it (tg's `interact()` on a pump is
 -- `ui_interact`, pump.dm:68) and the switch is thrown there.
-t.click(q, 3, 1, t.target_at(q, 3, 1, "pump"))
+t.click(q, 3, 1, assert(t.target_at(q, 3, 1, "pump")))
 t.tick()
 assert(t.ui(q), "a pump answers an empty hand with a panel")
 ui_controls.toggle(q, "power")

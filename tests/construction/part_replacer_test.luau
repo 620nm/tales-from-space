@@ -52,7 +52,7 @@ end
 -- The chamber's one part row, read off a panel opened with a BARE hand
 -- -- a click with something in it is that thing being used.
 local function socket(p, x, y)
-    t.click(p, x, y, t.target_at(p, x, y))
+    t.click(p, x, y, assert(t.target_at(p, x, y)))
     t.tick()
     local rows = rows_in(t.ui(p), "parts.parts")
     assert(#rows == 1, "one socket, one row: got " .. #rows)
@@ -116,11 +116,11 @@ t.run_seconds(1)
 -- one hand and the tool in the other. The exchanger is a bag like any
 -- other and there is no second road into one.
 -- ---------------------------------------------------------------
-t.click(p, 1, 1, t.target_at(p, 1, 1, "part_replacer"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "part_replacer")))
 t.run_ticks(2)
 assert(t.hands(p).held == "part_replacer", "the exchanger is in hand")
 t.swap_hands(p)
-t.click(p, 1, 1, t.target_at(p, 1, 1, "micro_laser.tier3"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "micro_laser.tier3")))
 t.run_ticks(2)
 assert(t.hands(p).held == "micro_laser.tier3", "and a rung three laser in the other")
 
@@ -143,10 +143,10 @@ assert(
 -- ---------------------------------------------------------------
 t.swap_hands(p)
 local beaker = assert(t.target_at(p, 1, 1, "beaker.libital"))
-t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker.libital"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "beaker.libital")))
 t.run_ticks(2)
 assert(t.hands(p).held == "beaker.libital", "the beaker is in hand")
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "and clicking the chamber with it puts it in")
 
@@ -158,7 +158,7 @@ assert(
     "the plain rung, worth the plain part: " .. tier .. " " .. eff
 )
 
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 assert(word(row(t.ui(p), "dock.vessel").value) == "beaker (libital)", "with the beaker docked")
 ui_controls.set(p, "temperature", 350)
@@ -191,7 +191,7 @@ assert(
 t.swap_hands(p)
 assert(t.hands(p).held == "part_replacer", "the exchanger comes back out")
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_ticks(2)
 assert(
     table.concat(t.messages(p), " | "):find("swap out 1", 1, true) ~= nil,
@@ -235,7 +235,7 @@ assert(
 -- ---------------------------------------------------------------
 t.swap_hands(p)
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_ticks(2)
 assert(#t.ledger_rows("part_swapped") == 1, "still one swap on the record")
 assert(

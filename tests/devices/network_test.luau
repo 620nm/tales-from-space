@@ -132,7 +132,7 @@ local function take(id: string)
         px, py = t.pos(p)
     end
     assert(math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1, "the supply is reachable")
-    t.click(p, at[1], at[2], t.target_at(p, at[1], at[2], id))
+    t.click(p, at[1], at[2], assert(t.target_at(p, at[1], at[2], id)))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
     for _ = 1, 16 do
@@ -157,7 +157,7 @@ local function put_down()
 end
 
 local function work(seconds)
-    t.click(p, 6, 1, t.target_at(p, 6, 1, "machine_frame"))
+    t.click(p, 6, 1, assert(t.target_at(p, 6, 1, "machine_frame")))
     t.run_seconds(seconds)
 end
 
@@ -240,7 +240,7 @@ t.run_seconds(2.0)
 -- worked by somebody standing at it (docs/DEVICES.md §8).
 -- ---------------------------------------------------------------
 local _ = t.messages(p)
-t.click(p, 6, 1, t.target_at(p, 6, 1))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1)))
 t.tick()
 panel = ui_controls.record(assert(t.ui(p), "the device panel is open"))
 assert(panel ~= nil, "the router wears the same panel")
@@ -332,7 +332,7 @@ assert(
 t.ui_close(p)
 t.tick()
 local _ = t.messages(p)
-t.click(p, 6, 1, t.target_at(p, 6, 1))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1)))
 t.tick()
 assert(
     said(p, "The router is on the air, carrying one access point."),
@@ -412,7 +412,7 @@ laptop.close(p)
 put_down()
 t.ui_close(p)
 t.tick()
-t.click(p, 6, 1, t.target_at(p, 6, 1))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1)))
 t.tick()
 assert(
     roster_state(assert(row_for(ui_controls.record(assert(t.ui(p))), "link_drop", point)))

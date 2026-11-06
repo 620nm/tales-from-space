@@ -157,7 +157,7 @@ local _ = t.messages(p)
 -- Under the bottle: a fitting goes UNDER the deck, so what is standing
 -- on the tile is not in its way (tg's `wrench_act` looks for
 -- conflicting atmospherics on the turf and at nothing else).
-t.click(p, 2, 2, nil, -14, 14)
+t.click_tile(p, 2, 2, -14, 14)
 work(p)
 assert(
     not said(p, "There is no pipe under the floor here."),
@@ -235,7 +235,7 @@ assert(t.hands(p).held == "rpd", "the RPD again")
 t.use_self(p)
 t.tick()
 set(p, RECIPE, pick(p, RECIPE, "Pipe"))
-t.click(p, 2, 1, nil, -14, 14) -- one north of the port: the tile its stub reaches
+t.click_tile(p, 2, 1, -14, 14) -- one north of the port: the tile its stub reaches
 work(p)
 assert(network_channels.at(2, 1, "pipe") == "l3", "a length on the distribution layer: " .. network_channels.at(2, 1, "pipe"))
 

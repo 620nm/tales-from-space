@@ -20,7 +20,7 @@ local NEAR = { { 4, 6 }, { 6, 6 }, { 5, 7 }, { 5, 6 }, { 4, 7 }, { 6, 7 } }
 -- One assembly step: hold the thing, click a cell, wait, expect the state.
 local function step(held: string, x: number, y: number, seconds: number, want: string)
     bench.hold(p, held, NEAR)
-    t.click(p, x, y, t.target_at(p, x, y, "grav_smes"))
+    t.click(p, x, y, assert(t.target_at(p, x, y, "grav_smes")))
     t.run_seconds(seconds)
     local body = assert(t.structure_at(5, 4), "the machine stands")
     local state = tostring(body.state)
@@ -35,7 +35,7 @@ assert(t.structure_at(5, 4) == nil, "the center is bare floor")
 bench.hold(p, "welder", NEAR)
 t.use_self(p)
 t.run_ticks(2)
-t.click(p, 5, 5, t.target_at(p, 5, 5, "grav_emitter"))
+t.click(p, 5, 5, assert(t.target_at(p, 5, 5, "grav_emitter")))
 t.run_seconds(7)
 local welded = assert(t.structure_at(5, 4), "the weld left a machine on the center")
 assert(
@@ -51,7 +51,7 @@ end
 
 -- Welded joints do not come apart under the torch.
 local _ = t.messages(p)
-t.click(p, 5, 5, t.target_at(p, 5, 5, "grav_smes"))
+t.click(p, 5, 5, assert(t.target_at(p, 5, 5, "grav_smes")))
 t.run_ticks(4)
 assert(
     bench.told(p, "The welds hold the machine as one piece; there is no cutting it apart."),
@@ -90,7 +90,7 @@ end
 local glass = sheets_at(4, 6)
 _ = t.messages(p)
 bench.hold(p, "glass", NEAR)
-t.click(p, 4, 5, t.target_at(p, 4, 5, "grav_smes"))
+t.click(p, 4, 5, assert(t.target_at(p, 4, 5, "grav_smes")))
 t.run_seconds(4)
 assert(
     bench.told(p, "Wrong Section"),
@@ -100,7 +100,7 @@ assert(assert(t.structure_at(5, 4)).state == "cased", "the machine is still case
 drop_held()
 assert(sheets_at(5, 6) == glass, "no glass was spent")
 bench.hold(p, "glass", NEAR)
-t.click(p, 5, 5, t.target_at(p, 5, 5, "grav_smes"))
+t.click(p, 5, 5, assert(t.target_at(p, 5, 5, "grav_smes")))
 t.run_seconds(4)
 local finished = assert(t.structure_at(5, 4))
 -- A standing machine wears a status glyph, so its state is `standby` or a
@@ -118,7 +118,7 @@ assert(sheets_at(5, 6) == glass - 1, "one sheet of glass was spent")
 
 -- The panel comes back out with a crowbar and hands the sheet back.
 bench.hold(p, "crowbar", NEAR)
-t.click(p, 5, 5, t.target_at(p, 5, 5, "grav_smes"))
+t.click(p, 5, 5, assert(t.target_at(p, 5, 5, "grav_smes")))
 t.run_seconds(4)
 assert(assert(t.structure_at(5, 4)).state == "cased", "the crowbar pries the glass out")
 local back = sheets_at(5, 6) + sheets_at(5, 4)

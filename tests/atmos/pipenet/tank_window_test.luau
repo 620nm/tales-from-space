@@ -103,7 +103,7 @@ t.run_ticks(5)
 t.drop(p)
 t.run_ticks(5)
 
-t.click(p, 2, 1, t.target_at(p, 2, 1, "oxygen_tank"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "oxygen_tank")))
 t.run_ticks(2)
 assert(t.hands(p).held == "oxygen_tank", "the bottle is in hand")
 assert(t.ui(p) == nil, "picking a thing up opens nothing")

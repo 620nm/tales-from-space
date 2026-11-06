@@ -54,14 +54,14 @@ local fuel = assert(t.contents(burner))
 near(fuel.ethanol, 0.375, 1e-9, "the tank arrives with tg's 15 units")
 assert(assert(t.item_at(1, 1, "burner")).state == "cold", "and unlit")
 
-t.click(p, 1, 1, t.target_at(p, 1, 1, "burner"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "burner")))
 t.tick()
 assert(t.hands(p).held == "burner", "picked up")
 
 -- ---------------------------------------------------------------
 -- AN UNLIT BURNER IS A PAPERWEIGHT.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1, t.target_at(p, 2, 1, "beaker.libital"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "beaker.libital")))
 t.tick()
 near(assert(t.holder_k(beaker)), T20C, 1e-9, "cold, it heats nothing")
 local msgs = table.concat(t.messages(p), "\n")
@@ -79,7 +79,7 @@ assert(t.ledger_has("FuelBurnSet"), "striking a light is on the record")
 -- ONE CLICK IS ONE EXPOSURE, AND IT IS TG'S ARITHMETIC EXACTLY.
 -- ---------------------------------------------------------------
 local before = assert(t.holder_k(beaker))
-t.click(p, 2, 1, t.target_at(p, 2, 1, "beaker.libital"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "beaker.libital")))
 t.tick()
 local first = assert(t.holder_k(beaker))
 near(first - before, (ETHANOL_K - before) * COEFF, 1e-6, "the first click is tg's delta")
@@ -88,7 +88,7 @@ near(first - before, 37.997, 0.01, "which is the +38 K a chemist feels")
 -- The second click is the same line with a smaller gap, so it moves
 -- LESS -- the asymptote is the whole shape of the mechanic.
 local second_before = first
-t.click(p, 2, 1, t.target_at(p, 2, 1, "beaker.libital"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "beaker.libital")))
 t.tick()
 local second = assert(t.holder_k(beaker))
 near(second - second_before, (ETHANOL_K - second_before) * COEFF, 1e-6, "and so is the second")
@@ -98,7 +98,7 @@ assert(second - second_before < first - before, "each click buys less than the l
 -- far past the point where a linear model would have sailed through
 -- 2193 K.
 for _ = 1, 200 do
-    t.click(p, 2, 1, t.target_at(p, 2, 1, "beaker.libital"))
+    t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "beaker.libital")))
     t.tick()
 end
 assert(assert(t.holder_k(beaker)) < ETHANOL_K, "no number of clicks reaches the flame itself")
@@ -131,9 +131,9 @@ assert(assert(t.item_at(1, 1, "burner")).sprite == "burner", "and the picture fo
 
 -- A dead burner heats nothing, which is tg's `get_temperature()`
 -- returning `lit * heat` (items.dm:290-291).
-t.click(p, 1, 1, t.target_at(p, 1, 1, "burner"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "burner")))
 t.tick()
 local cold = t.holder_k(beaker)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "beaker.libital"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "beaker.libital")))
 t.tick()
 near(assert(t.holder_k(beaker)), assert(cold), 1e-9, "a burnt-out burner is a paperweight again")

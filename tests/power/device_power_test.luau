@@ -183,7 +183,7 @@ end
 -- The panel is opened bare-handed every time: a tool in the working
 -- hand is not an interface, it is the tool.
 local function open_panel(p: number, id: string)
-    t.click(p, 5, 1, t.target_at(p, 5, 1, id))
+    t.click(p, 5, 1, assert(t.target_at(p, 5, 1, id)))
     t.tick()
     assert(t.ui(p), id .. " answers an empty hand with its panel")
 end
@@ -322,7 +322,7 @@ for _, job in ipairs(TRINARIES) do
     -- the APC and the machine, throw the switch back on, and ask the
     -- books the same question: a switch thrown over a dead circuit is a
     -- promise, not a machine.
-    t.click(p, 5, 2, t.target_at(p, 5, 2, "wirecutters"))
+    t.click(p, 5, 2, assert(t.target_at(p, 5, 2, "wirecutters")))
     t.run_ticks(2)
     assert(t.hands(p).held == "wirecutters", "cutters in hand")
     t.click_network(p, 4, 2, assert(t.network_instance(4, 2, "power", "l1")))
@@ -383,10 +383,10 @@ local p = bench(GATE, LINE, "shut")
 -- a release valve across less than ten kPa (release.rs, "friction in
 -- the mechanism"), so anything under that would be a gate that is
 -- allowed to sit still.
-t.click(p, 5, 2, t.target_at(p, 5, 2, "pipe"))
+t.click(p, 5, 2, assert(t.target_at(p, 5, 2, "pipe")))
 t.run_ticks(2)
 assert(t.hands(p).held == "pipe", "a coil of pipe in hand")
-t.click(p, 6, 2)
+t.click_tile(p, 6, 2)
 t.run_seconds(1.5)
 assert(network_channels.at(6, 2, "pipe") == "l3", "a fresh length went onto the delivery main")
 
@@ -419,7 +419,7 @@ t.run_ticks(2)
 -- a thing the harness does, because `t` exposes the power grid to READ
 -- and leaves the mutation to a tool in somebody's hands (spec/api/
 -- power.rs).
-t.click(p, 5, 2, t.target_at(p, 5, 2, "wirecutters"))
+t.click(p, 5, 2, assert(t.target_at(p, 5, 2, "wirecutters")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
 t.click_network(p, 4, 2, assert(t.network_instance(4, 2, "power", "l1")))
@@ -472,7 +472,7 @@ local was = {
     in_kpa = assert(network_matter.pressure(IN[1], IN[2])),
 }
 
-t.click(p, 6, 2, t.target_at(p, 6, 2, "cable_coil"))
+t.click(p, 6, 2, assert(t.target_at(p, 6, 2, "cable_coil")))
 t.run_ticks(2)
 assert(t.hands(p).held == "cable_coil", "a fresh coil in hand")
 -- A fresh coil arrives on yellow (tg's CABLE_LAYER_2 default) and this
@@ -481,7 +481,7 @@ t.use_self(p)
 t.run_ticks(2)
 t.use_self(p)
 t.run_ticks(2)
-t.click(p, 4, 2)
+t.click_tile(p, 4, 2)
 t.run_seconds(1.5)
 assert(network_channels.at(4, 2, "power") == "l1", "and the coil lays the red line, which is the one this APC feeds")
 t.drop(p)
@@ -527,7 +527,7 @@ walk(p, "east")
 t.swap_hands(p)
 t.run_ticks(2)
 assert(t.hands(p).held == "pipe", "the coil of pipe is where it was parked")
-t.click(p, 7, 2)
+t.click_tile(p, 7, 2)
 t.run_seconds(1.5)
 assert(network_channels.at(7, 2, "pipe") == "l3", "a second fresh length onto the delivery main")
 has_work("which is a second real job, over the friction floor again")

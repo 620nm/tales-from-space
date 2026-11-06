@@ -61,7 +61,7 @@ assert(assert(t.canister_pressure(2, 2)) > 4000.0, "the bottle starts full")
 -- Shut the valve first, through the panel, the way a crewman shuts
 -- one: a loose canister with its valve open is pointed at the room and
 -- would spend itself into the floor instead of straining.
-t.click(p, 2, 2, t.target_at(p, 2, 2))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2)))
 t.tick()
 assert(ui_controls.rows(ui_controls.state(p).toggles)[1].field == "valve")
 ui_controls.toggle(p, "valve")

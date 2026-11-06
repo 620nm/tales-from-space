@@ -173,7 +173,7 @@ assert(
 
 -- What a silent placement actually got, read off the machine's own
 -- panel rather than assumed.
-t.click(p, 2, 1, t.target_at(p, 2, 1, "air_scrubber"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "air_scrubber")))
 t.tick()
 local panel = ui_controls.state(p)
 local setpoints = ui_controls.rows(panel.setpoints)

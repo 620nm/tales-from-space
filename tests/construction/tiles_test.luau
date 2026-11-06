@@ -47,14 +47,14 @@ t.world(
 
 local p = t.join()
 t.tick()
-t.click(p, 1, 2, t.target_at(p, 1, 2, "crowbar")) -- the crowbar is underfoot
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "crowbar"))) -- the crowbar is underfoot
 t.tick()
 t.sounds(p) -- clear the pickup traffic
 t.messages(p)
 
 -- The APC's tile, from the walkway below it.
 assert(composition.matches(2, 1, { "station_base", "floor_tiles" }), "the APC stands on a tiled floor")
-t.click(p, 2, 1, nil, -14, 14)
+t.click_tile(p, 2, 1, -14, 14)
 t.tick()
 assert(composition.matches(2, 1, { "station_base" }), "the tile under the APC comes up")
 assert(has(t.items_at(2, 1), "floor_tile"), "and is refunded where it lay")
@@ -76,10 +76,10 @@ end
 
 walk("east", 3)
 assert(t.pos(p) == 4, "walked under the vent row")
-t.click(p, 4, 1, nil, -14, 14)
+t.click_tile(p, 4, 1, -14, 14)
 t.tick()
 assert(composition.matches(4, 1, { "station_base" }), "the tile under the vent comes up")
-t.click(p, 5, 1, nil, -14, 14)
+t.click_tile(p, 5, 1, -14, 14)
 t.tick()
 assert(composition.matches(5, 1, { "station_base" }), "and the one under the light")
 
@@ -87,10 +87,10 @@ assert(composition.matches(5, 1, { "station_base" }), "and the one under the lig
 walk("west", 3)
 t.drop(p) -- put the crowbar down; the hand is for the tile
 t.tick()
-t.click(p, 2, 1, t.target_at(p, 2, 1, "floor_tile")) -- pick the pried tile back up
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "floor_tile"))) -- pick the pried tile back up
 t.tick()
 t.messages(p)
-t.click(p, 2, 1, nil, -14, 14) -- and lay it
+t.click_tile(p, 2, 1, -14, 14) -- and lay it
 -- Half a second, pinned from both sides: plating already did the
 -- structural work, so the finish on top is the quick half
 -- (content/structures/construction/plating.luau:28).
@@ -132,12 +132,12 @@ t.world(
 
 p = t.join()
 t.run_seconds(1.5) -- let a power pass settle the dead motors
-t.click(p, 1, 1, t.target_at(p, 1, 1, "crowbar")) -- the crowbar
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "crowbar"))) -- the crowbar
 t.tick()
 t.move(p, "east")
 t.run_ticks(6)
 t.sounds(p)
-t.click(p, 3, 1, t.target_at(p, 3, 1)) -- heave the unpowered airlock open
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1))) -- heave the unpowered airlock open
 t.run_seconds(3.0)
 local door_sounds = t.sounds(p)
 assert(
@@ -184,7 +184,7 @@ t.world(
 
 p = t.join()
 t.tick()
-t.click(p, 2, 1, t.target_at(p, 2, 1, "floor_tile")) -- the tiles are underfoot
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "floor_tile"))) -- the tiles are underfoot
 t.run_ticks(2)
 assert(t.hands(p).held == "floor_tile", "a stack of tiles in hand")
 t.fault(1, 1, t.now() + 1) -- the hull fails next door
@@ -192,7 +192,7 @@ t.run_seconds(2.0) -- a couple of atmos ticks of venting
 assert(t.is_breached(1, 1), "the fault breached the corner")
 
 t.messages(p)
-t.click(p, 1, 1, nil, -14, 14) -- start laying deck over the vacuum
+t.click_tile(p, 1, 1, -14, 14) -- start laying deck over the vacuum
 t.run_seconds(1.3)
 assert(t.is_breached(1, 1), "a second and a half is not a second and a bit")
 t.run_seconds(0.4)

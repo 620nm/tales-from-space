@@ -22,7 +22,7 @@ t.tick()
 assert(t.ui(p, "actions") == nil, "empty hands have no item actions")
 
 local function pickup(id)
-    t.click(p, 1, 1, t.target_at(p, 1, 1, id))
+    t.click(p, 1, 1, assert(t.target_at(p, 1, 1, id)))
     t.tick()
 end
 local function action()

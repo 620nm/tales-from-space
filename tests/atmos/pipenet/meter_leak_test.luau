@@ -120,11 +120,11 @@ assert(math.abs(moles(3, 1) - moles(3, 3)) < 1e-9, "the twins start matched")
 
 -- Bolt a gauge onto the northern main, the way a player does: wrench in
 -- hand, fitting on the tile, two seconds of work.
-t.click(p, 3, 2, t.target_at(p, 3, 2, "wrench"))
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2, "wrench")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 walk(p, "north")
-t.click(p, 3, 1, t.target_at(p, 3, 1, "pipe_meter"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "pipe_meter")))
 t.run_seconds(2.5)
 assert(assert(t.structure_at(3, 1)).id == "meter", "a gauge stands on the northern main")
 assert(not lying_at(3, 1, "pipe_meter"), "the fitting was spent into it")
@@ -206,7 +206,7 @@ t.run_seconds(2)
 local sealed = moles(2, 1)
 assert(sealed > 0.0, "a mapped main is commissioned live: " .. sealed)
 
-t.click(r, 2, 2, t.target_at(r, 2, 2, "rpd"))
+t.click(r, 2, 2, assert(t.target_at(r, 2, 2, "rpd")))
 t.run_ticks(2)
 t.use_self(r)
 t.tick()
@@ -227,7 +227,7 @@ end
 
 set("dial1", "Meter")
 set("dial2", "3")
-t.click(r, 2, 1, nil, -14, 14)
+t.click_tile(r, 2, 1, -14, 14)
 t.run_seconds(1.0)
 assert(assert(t.structure_at(2, 1)).id == "meter", "the RPD put a gauge on the main")
 

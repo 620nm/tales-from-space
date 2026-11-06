@@ -32,7 +32,7 @@ local diag = t.join()
 local far = t.join()
 t.tick()
 
-t.click(armer, 1, 1, t.target_at(armer, 1, 1, "frag_grenade"))
+t.click(armer, 1, 1, assert(t.target_at(armer, 1, 1, "frag_grenade")))
 t.tick()
 assert(t.hands(armer).held == "frag_grenade", "the grenade is in hand")
 t.use_self(armer)
@@ -124,7 +124,7 @@ downrange(far, 4, 2, "three tiles out")
 -- THE BRAWL AFTER: an uncorrelated wound never repaints an aimed
 -- mark. Long past the settle, the armer swings a toolbox at the ring
 -- victim — 10 more brute, and the mark still faces east.
-t.click(armer, 1, 1, t.target_at(armer, 1, 1, "toolbox"))
+t.click(armer, 1, 1, assert(t.target_at(armer, 1, 1, "toolbox")))
 t.run_ticks(2)
 assert(t.hands(armer).held == "toolbox", "the toolbox is in hand")
 local before = ui_controls.number(t.health(victim).brute)

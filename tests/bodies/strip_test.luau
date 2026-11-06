@@ -112,7 +112,7 @@ assert(said(crewman, "You take"), "and the crewman is told what they did")
 -- now finds a bare chest and starts cutting.
 t.rest(cadaver, true)
 t.run_ticks(2)
-t.click(crewman, 1, 1, t.target_at(crewman, 1, 1, "scalpel"))
+t.click(crewman, 1, 1, assert(t.target_at(crewman, 1, 1, "scalpel")))
 t.run_ticks(2)
 local parked = #t.ledger_rows("DoAfterStarted")
 t.click(crewman, CX, CY, t.body_target(crewman, cadaver))
@@ -128,7 +128,7 @@ assert(#t.ledger_rows("DoAfterStarted") > parked, "the incision parked")
 -- subject.
 t.drop(crewman)
 t.run_ticks(2)
-t.click(crewman, CX, CY, t.target_at(crewman, CX, CY, "uniform_gray"))
+t.click(crewman, CX, CY, assert(t.target_at(crewman, CX, CY, "uniform_gray")))
 t.run_ticks(2)
 assert(t.hands(crewman).held == "uniform_gray", "the jumpsuit is back in hand")
 

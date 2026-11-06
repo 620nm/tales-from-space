@@ -89,7 +89,7 @@ assert(table.concat(arrow.sprites, "+") == "decal_mark_arrow_e", "and picks the 
 -- `crates/lunatic-server/src/sim/decal_mutation/tests.rs` and
 -- `sim/tests/script_v1_decals.rs`; what a spec here can hold is that
 -- the pack offers no way to ask.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "decal_painter"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "decal_painter")))
 t.run_ticks(2)
 t.use_self(p)
 t.tick()

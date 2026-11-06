@@ -100,7 +100,7 @@ near(vessel(jar).pressure_kpa, 0.0, 1e-9, "and it is empty, so its gauge reads n
 
 local can_before = gas(can, "o2")
 t.messages(p)
-t.click(p, 2, 2, t.target_at(p, 2, 2))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2)))
 t.run_ticks(2)
 
 -- The gauge is the assertion, because the gauge is what a crewman
@@ -126,7 +126,7 @@ assert(
 -- rather than transferring a silent zero.
 t.messages(p)
 local charged = gas(jar, "o2")
-t.click(p, 2, 2, t.target_at(p, 2, 2))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2)))
 t.run_ticks(2)
 near(gas(jar, "o2"), charged, 1e-9, "a bottle at the line's pressure takes no more")
 assert(said(p, "The bottle is already at the line's pressure."), "and it says why")
@@ -135,11 +135,11 @@ assert(said(p, "The bottle is already at the line's pressure."), "and it says wh
 t.drop(p)
 t.tick()
 local glass = assert(t.target_at(p, 3, 1, "beaker"), "the target is visible")
-t.click(p, 3, 1, t.target_at(p, 3, 1, "beaker"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "beaker")))
 t.tick()
 assert(t.hands(p).held == "beaker", "the beaker is in hand")
 t.messages(p)
-t.click(p, 2, 2, t.target_at(p, 2, 2))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2)))
 t.run_ticks(2)
 near(gas(glass, "o2"), 0.0, 1e-12, "an open beaker takes none of it")
 assert(
@@ -160,11 +160,11 @@ for _, open in ipairs({ "beaker.libital", "dropper" }) do
     local x, y = if open == "dropper" then 1 else 3, 2
     local glassware = t.target_at(p, x, y, open)
     assert(glassware ~= nil, open .. " is on the deck")
-    t.click(p, x, y, t.target_at(p, x, y, open))
+    t.click(p, x, y, assert(t.target_at(p, x, y, open)))
     t.tick()
     assert(t.hands(p).held == open, open .. " is in hand")
     t.messages(p)
-    t.click(p, 2, 2, t.target_at(p, 2, 2))
+    t.click(p, 2, 2, assert(t.target_at(p, 2, 2)))
     t.run_ticks(2)
     near(gas(glassware, "o2"), 0.0, 1e-12, "an open " .. open .. " takes none of it")
     assert(
@@ -354,7 +354,7 @@ local function bake(
 
     -- The oxygen, which no button on that shelf can give it.
     walk_to(cx, 2)
-    t.click(p, cx, 1, t.target_at(p, cx, 1))
+    t.click(p, cx, 1, assert(t.target_at(p, cx, 1)))
     t.run_ticks(2)
     local charge = gas(jar, "o2")
     assert(charge > 0.0, "the bottle came away with oxygen in it")

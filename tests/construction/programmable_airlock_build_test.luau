@@ -35,14 +35,14 @@ assert(
 assert(t.count_items("airlock_button_fitting") == 0, "assembly consumes its fitting")
 t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "wrench")))
 t.run_ticks(2)
-t.click(p, 3, 1, t.target_at(p, 3, 1, "bidirectional_vent_fitting"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "bidirectional_vent_fitting")))
 t.run_ticks(clock.deadline_ticks(2.0) + 5)
 assert(
     assert(t.structure_at(3, 1)).id == "bidirectional_vent",
     "the floor fitting becomes the two-port machine"
 )
 assert(t.count_items("bidirectional_vent_fitting") == 0, "the vent fitting is consumed")
-t.click(p, 3, 1, t.target_at(p, 3, 1, "bidirectional_vent"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "bidirectional_vent")))
 t.run_ticks(clock.deadline_ticks(2.0) + 5)
 assert(
     t.structure_at(3, 1) == nil and t.count_items("bidirectional_vent_fitting") == 1,
@@ -52,7 +52,7 @@ t.drop(p)
 t.run_ticks(2)
 t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "screwdriver")))
 t.run_ticks(2)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "airlock_button"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "airlock_button")))
 t.run_ticks(clock.deadline_ticks(2.0) + 5)
 assert(
     t.structure_at(2, 1) == nil and t.count_items("airlock_button_fitting") == 1,

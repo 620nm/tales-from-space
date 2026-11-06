@@ -125,7 +125,7 @@ local TUBE = near.color
 --    on its own cell -- and a cell is exactly what tells the two
 --    layers apart.
 -- ---------------------------------------------------------------
-t.click(p, 3, 2, t.target_at(p, 3, 2, "wirecutters"))
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2, "wirecutters")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
 t.click_network(p, 3, 1, assert(t.network_instance(3, 1, "power", "l2")))
@@ -174,9 +174,9 @@ assert(math.abs(far.power - 0.75) < 0.01, "and three quarters of its power: " ..
 -- ---------------------------------------------------------------
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 3, 2, t.target_at(p, 3, 2, "cable_coil"))
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2, "cable_coil")))
 t.run_ticks(2)
-t.click(p, 3, 1)
+t.click_tile(p, 3, 1)
 t.run_seconds(1.5)
 assert(network_channels.at(3, 1, "power") == "l2", "the backbone is whole again")
 t.run_seconds(3)

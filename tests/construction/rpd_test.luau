@@ -113,7 +113,7 @@ t.world(
 local p = t.join()
 t.tick()
 
-t.click(p, 1, 2, t.target_at(p, 1, 2, "rpd"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "rpd")))
 t.run_ticks(2)
 assert(t.hands(p).held == "rpd", "the RPD is in hand")
 
@@ -171,7 +171,7 @@ assert(shows(p, PAINT) == "green", "and tg's green")
 -- DESTROY together, with loose pipe breakdown first, so Build mode
 -- consumes the fitting the client named instead of dispensing over it.
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "manual_valve_fitting"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "manual_valve_fitting")))
 work(p)
 assert(t.count_items("manual_valve_fitting") == 1, "build mode consumed exactly one named fitting")
 assert(network_channels.at(2, 1, "pipe") == "", "and does not reinterpret the item click as turf")
@@ -219,20 +219,20 @@ assert(t.count_items("wrench") == 1, "putting it down preserves the ordinary ite
 -- without joining is the whole reason layers exist.
 walk(p, "north")
 assert(network_channels.at(2, 1, "pipe") == "", "nothing laid yet")
-t.click(p, 2, 1, nil, -14, 14)
+t.click_tile(p, 2, 1, -14, 14)
 work(p)
 assert(network_channels.at(2, 1, "pipe") == "l3", "one length on the distribution layer: " .. network_channels.at(2, 1, "pipe"))
 
 set(p, LAYER, pick(p, LAYER, "2"))
 set(p, PAINT, pick(p, PAINT, "red"))
 assert(shows(p, LAYER) == "2" and shows(p, PAINT) == "red", "the dials moved")
-t.click(p, 2, 1, nil, -14, 14)
+t.click_tile(p, 2, 1, -14, 14)
 work(p)
 assert(network_channels.at(2, 1, "pipe") == "l2,l3", "a second run crosses the first: " .. network_channels.at(2, 1, "pipe"))
 
 set(p, LAYER, pick(p, LAYER, "4"))
 set(p, PAINT, pick(p, PAINT, "blue"))
-t.click(p, 2, 1, nil, -14, 14)
+t.click_tile(p, 2, 1, -14, 14)
 work(p)
 assert(network_channels.at(2, 1, "pipe") == "l2,l3,l4", "and a third: " .. network_channels.at(2, 1, "pipe"))
 
@@ -259,7 +259,7 @@ walk(p, "east") -- (2, 1), so the next tile along is in reach
 set(p, RECIPE, pick(p, RECIPE, "Manual Valve"))
 assert(shows(p, RECIPE) == "Manual Valve", "the shelf is a list of buttons")
 assert(t.structure_at(3, 1) == nil, "bare deck")
-t.click(p, 3, 1, nil, -14, 14)
+t.click_tile(p, 3, 1, -14, 14)
 work(p)
 local valve = t.structure_at(3, 1)
 assert(valve and valve.id == "manual_valve", "the valve stands, in one action")
@@ -279,7 +279,7 @@ walk(p, "east")
 walk(p, "east") -- (4, 1)
 set(p, RECIPE, pick(p, RECIPE, "Connector"))
 local _ = t.messages(p)
-t.click(p, 4, 1, nil, -14, 14) -- the technician's own tile: a port goes UNDER the deck
+t.click_tile(p, 4, 1, -14, 14) -- the technician's own tile: a port goes UNDER the deck
 work(p)
 local socket = t.structure_at(4, 1)
 assert(socket and socket.id == "connector_port", "a port stands on bare deck, in one action")
@@ -295,7 +295,7 @@ assert(t.ledger_has("StructureStep", "connector_port", "built"), "on the record 
 -- One fitting per turf is a refusal that stayed (tg's
 -- PIPING_ONE_PER_TURF): a second port cannot claim this tile.
 local _ = t.messages(p)
-t.click(p, 4, 1, nil, -14, 14)
+t.click_tile(p, 4, 1, -14, 14)
 work(p)
 assert(
     said(p, "Something is already under the floor here."),
@@ -304,11 +304,11 @@ assert(
 
 -- And the same rule one layer up for components.
 set(p, RECIPE, pick(p, RECIPE, "Manual Valve"))
-t.click(p, 5, 1, nil, -14, 14)
+t.click_tile(p, 5, 1, -14, 14)
 work(p)
 assert(assert(t.structure_at(5, 1)).id == "manual_valve", "a valve goes down on bare deck")
 local _ = t.messages(p)
-t.click(p, 5, 1, nil, -14, 14)
+t.click_tile(p, 5, 1, -14, 14)
 work(p)
 assert(
     said(p, "Something is already under the floor here."),
@@ -341,7 +341,7 @@ walk(p, "west")
 walk(p, "west") -- back to (1, 1), beside it
 assert(t.count_items("manual_valve_fitting") == 1, "the loose fitting is still lying there")
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "manual_valve_fitting"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "manual_valve_fitting")))
 work(p)
 assert(t.count_items("manual_valve_fitting") == 0, "destroy mode ate it")
 assert(t.hands(p).held == "rpd", "and did not pocket it instead")
@@ -397,7 +397,7 @@ local _ = t.messages(p)
 for _, action in ipairs(t.action_hints(p, composition.deck_target(1, 1))) do
     assert(action.id ~= "copy_pipe", "empty deck offers no pipe settings to copy")
 end
-t.click(p, 1, 1, nil, -14, 14) -- the technician's own tile, bare deck
+t.click_tile(p, 1, 1, -14, 14) -- the technician's own tile, bare deck
 t.run_ticks(2)
 assert(
     not said(p, "There is no pipe under the floor here."),
@@ -413,7 +413,7 @@ local _ = t.messages(p)
 for _, action in ipairs(t.action_hints(p, composition.deck_target(1, 2))) do
     assert(action.id ~= "build_pipe", "covered deck offers no pipe construction")
 end
-t.click(p, 1, 2, nil, -14, 14) -- finished floor, one tile south
+t.click_tile(p, 1, 2, -14, 14) -- finished floor, one tile south
 work(p)
 assert(network_channels.at(1, 2, "pipe") == "", "nothing was laid under a tiled floor")
 assert(
@@ -490,7 +490,7 @@ t.world(
 
 local o = t.join()
 t.tick()
-t.click(o, 1, 2, t.target_at(o, 1, 2, "rpd"))
+t.click(o, 1, 2, assert(t.target_at(o, 1, 2, "rpd")))
 t.run_ticks(2)
 t.use_self(o)
 t.tick()
@@ -509,7 +509,7 @@ end
 assert(t.hands(o).held == "rpd", "a rejected run consumes no RPD material")
 
 -- A layer-3 length may cross a layer-2 valve.
-t.click(o, 3, 1, nil, -14, 14)
+t.click_tile(o, 3, 1, -14, 14)
 work(o)
 assert(network_channels.at(3, 1, "pipe") == "l3", "another-layer crossing remains legal: mask " .. tostring(network_channels.at(3, 1, "pipe")))
 
@@ -518,14 +518,14 @@ assert(network_channels.at(3, 1, "pipe") == "l3", "another-layer crossing remain
 -- other component.
 set(o, RECIPE, pick(o, RECIPE, "Connector"))
 local _ = t.messages(o)
-t.click(o, 1, 1, nil, -14, 14)
+t.click_tile(o, 1, 1, -14, 14)
 work(o)
 assert(assert(t.structure_at(1, 1)).id == "manual_valve", "the valve survived")
 assert(said(o, "Something is already under the floor here."), "connector over valve refused")
 
 set(o, RECIPE, pick(o, RECIPE, "Manual Valve"))
 local _ = t.messages(o)
-t.click(o, 2, 1, nil, -14, 14)
+t.click_tile(o, 2, 1, -14, 14)
 work(o)
 assert(assert(t.structure_at(2, 1)).id == "connector_port", "the connector survived")
 assert(said(o, "Something is already under the floor here."), "valve over connector refused")
@@ -537,7 +537,7 @@ for _, case in ipairs({
 }) do
     set(o, RECIPE, pick(o, RECIPE, case.recipe))
     local _ = t.messages(o)
-    t.click(o, case.x, case.y, nil, -14, 14)
+    t.click_tile(o, case.x, case.y, -14, 14)
     work(o)
     assert(t.structure_at(case.x, case.y) == nil, case.recipe .. " did not cover raw pipe")
     assert(said(o, "Something is already under the floor here."), "raw pipe blocks " .. case.recipe)
@@ -585,13 +585,13 @@ t.world(
 
 local u = t.join()
 t.tick()
-t.click(u, 2, 2, t.target_at(u, 2, 2, "rpd"))
+t.click(u, 2, 2, assert(t.target_at(u, 2, 2, "rpd")))
 t.run_ticks(2)
 t.use_self(u)
 t.tick()
 
 set(u, RECIPE, pick(u, RECIPE, "Connector"))
-t.click(u, 2, 1, nil, -14, 14)
+t.click_tile(u, 2, 1, -14, 14)
 work(u)
 assert(assert(t.structure_at(2, 1)).id == "connector_port", "a connector builds beside its run")
 assert(network_channels.at(2, 1, "pipe") == "", "the connector has no raw center length")
@@ -599,7 +599,7 @@ assert(network_channels.at(2, 1, "pipe") == "", "the connector has no raw center
 walk(u, "east")
 walk(u, "east") -- (4,2)
 set(u, RECIPE, pick(u, RECIPE, "Air Scrubber"))
-t.click(u, 4, 1, nil, -14, 14)
+t.click_tile(u, 4, 1, -14, 14)
 work(u)
 assert(assert(t.structure_at(4, 1)).id == "air_scrubber", "a scrubber needs no underlying raw pipe")
 assert(network_channels.at(4, 1, "pipe") == "", "the scrubber is a unary component, not pipe-over-pipe")
@@ -607,7 +607,7 @@ assert(network_channels.at(4, 1, "pipe") == "", "the scrubber is a unary compone
 walk(u, "east")
 walk(u, "east") -- (6,2)
 set(u, RECIPE, pick(u, RECIPE, "Air Injector"))
-t.click(u, 6, 1, nil, -14, 14)
+t.click_tile(u, 6, 1, -14, 14)
 work(u)
 assert(
     assert(t.structure_at(6, 1)).id == "air_injector",
@@ -633,7 +633,7 @@ for _, case in ipairs({
     set(u, LAYER, pick(u, LAYER, case.dial))
     set(u, RECIPE, pick(u, RECIPE, case.recipe))
     local _ = t.messages(u)
-    t.click(u, case.x, 3, nil, -14, 14)
+    t.click_tile(u, case.x, 3, -14, 14)
     work(u)
     assert(t.structure_at(case.x, 3) == nil, case.recipe .. " did not cover its center run")
     assert(network_channels.at(case.x, 3, "pipe") == "l" .. case.dial, case.recipe .. " left the raw run intact")
@@ -649,7 +649,7 @@ end
 set(u, LAYER, pick(u, LAYER, "2"))
 set(u, RECIPE, pick(u, RECIPE, "Manual Valve"))
 local _ = t.messages(u)
-t.click(u, 2, 3, nil, -14, 14)
+t.click_tile(u, 2, 3, -14, 14)
 work(u)
 local crossing = t.structure_at(2, 3)
 assert(

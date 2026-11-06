@@ -33,7 +33,7 @@ local function hold(id: string)
         t.drop(surgeon)
         t.tick()
     end
-    t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id))
+    t.click(surgeon, 1, 1, assert(t.target_at(surgeon, 1, 1, id)))
     t.run_ticks(2)
 end
 

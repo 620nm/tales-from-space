@@ -92,7 +92,7 @@ end
 local water_at_the_start = t.matter_totals().substances.water
 
 assert(math.abs(puddle() - 3.0) < 0.01, ("three liters on the deck, got %g"):format(puddle()))
-t.click(p, 1, 1, t.target_at(p, 1, 1, "mop")) -- pick it up
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "mop"))) -- pick it up
 t.tick()
 assert(held(mop) == 0, "and a dry mop in hand")
 
@@ -125,7 +125,7 @@ assert(held(mop) <= in_the_head, "and takes on nothing")
 -- WRINGING IT OUT into the beaker beside you. A wring is not a
 -- measured pour: what comes out is the head.
 -- ---------------------------------------------------------------
-t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker_bluespace"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "beaker_bluespace")))
 t.tick()
 local wring = said()
 assert(wring == "You wring the mop out.", "the wring is reported: " .. wring)
@@ -137,7 +137,7 @@ assert(
 
 -- And an empty mop has nothing to wring, in the words every empty
 -- vessel uses.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker_bluespace"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "beaker_bluespace")))
 t.tick()
 local spent = said()
 assert(spent == "The mop is empty.", "a dry mop refuses: " .. spent)
@@ -154,7 +154,7 @@ assert(held(mop) > 13, "a wrung mop takes another head")
 -- WALKING OFF spends the stroke, and a click on a busy mop is not a
 -- second stroke: tg's one clean at a time (cleaner.dm:96).
 -- ---------------------------------------------------------------
-t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker_bluespace"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "beaker_bluespace")))
 t.tick()
 composition.click_deck(p, 2, 1)
 t.tick()

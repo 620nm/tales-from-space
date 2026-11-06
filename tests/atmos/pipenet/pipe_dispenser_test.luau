@@ -73,7 +73,7 @@ local p = t.join()
 t.tick()
 
 -- ---- the window ----
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 local ui = ui_controls.state(p)
 assert(ui, "clicking the dispenser opens its window")
@@ -154,9 +154,9 @@ assert(t.count_items("id_captain") == 0, "no dispenser can be talked into mintin
 -- names the pile before it names the machine, exactly as it would in
 -- tg. You pick your fittings up and then the machine is clickable.
 t.ui_close(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "manual_valve_fitting"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "manual_valve_fitting")))
 t.run_ticks(2)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "pump_fitting"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "pump_fitting")))
 t.run_ticks(2)
 local hands = t.hands(p)
 assert(hands.held == "manual_valve_fitting", "the valve fitting is in the working hand")
@@ -164,7 +164,7 @@ assert(hands[2] == "pump_fitting", "and the pump fitting in the other")
 assert(#t.items_at(2, 1) == 0, "the dispenser's tile is clear again")
 
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "the dispenser swallowed what was in the working hand")
 assert(t.hands(p)[2] == "pump_fitting", "and left the other hand alone")
@@ -188,10 +188,10 @@ assert(actor.triggered_by, "and it names who asked")
 -- NEGATIVE: it takes back its OWN kit and nothing else. A wrench is a
 -- tool, not stock, and a machine that ate an engineer's wrench because
 -- they clicked the wrong tile would be a griefing device.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "wrench"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "wrench")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in the working hand")
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "the dispenser does not deal in wrenches")
 assert(not t.ledger_has("ItemConsumed", "wrench"), "and wrote no row about one")

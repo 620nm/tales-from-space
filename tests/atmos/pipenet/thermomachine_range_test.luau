@@ -127,7 +127,7 @@ t.world(
 
 local p = t.join()
 t.tick()
-t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "thermomachine")))
 t.tick()
 
 local charged = moles(1, 1)
@@ -369,7 +369,7 @@ local e = t.join()
 t.tick()
 assert(assert(t.structure_at(3, 1)).state == "shut", "the hand valve opens the shift shut")
 
-t.click(e, 3, 1, t.target_at(e, 3, 1, "manual_valve"))
+t.click(e, 3, 1, assert(t.target_at(e, 3, 1, "manual_valve")))
 t.run_seconds(4)
 assert(assert(t.structure_at(3, 1)).state == "open", "and an engineer opens it onto the line")
 assert(
@@ -381,7 +381,7 @@ for _ = 1, 3 do
     t.move(e, "east")
     t.run_ticks(5)
 end
-t.click(e, 6, 1, t.target_at(e, 6, 1, "thermomachine"))
+t.click(e, 6, 1, assert(t.target_at(e, 6, 1, "thermomachine")))
 t.tick()
 assert(t.ui(e), "the unit at the far end of the line answers an empty hand")
 

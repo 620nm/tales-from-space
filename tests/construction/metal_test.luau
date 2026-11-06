@@ -31,14 +31,14 @@ t.world(
 
 local p = t.join()
 t.tick()
-t.click(p, 2, 1, t.target_at(p, 2, 1, "metal")) -- pick up the sheets
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "metal"))) -- pick up the sheets
 t.run_ticks(2)
 
 ui_controls.build(p, "metal", "girder", 2, 2) -- raise a girder on the neighboring floor
 t.run_seconds(4.5)
 assert(t.ledger_has("StructureStep", "girder", "built"), "the girder rose")
 
-t.click(p, 2, 2, t.target_at(p, 2, 2)) -- plate the standing girder into a wall
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2))) -- plate the standing girder into a wall
 t.run_seconds(4.5)
 assert(composition.matches(2, 2, { "station_base", "floor_tiles", "wall" }), "the wall closed, got " .. composition.describe(2, 2))
 
@@ -46,7 +46,7 @@ assert(composition.matches(2, 2, { "station_base", "floor_tiles", "wall" }), "th
 -- girder can rise here — and the refusal comes at once, not after a
 -- four-second do_after that quietly produces nothing.
 local _ = t.messages(p)
-t.click(p, 1, 1)
+t.click_tile(p, 1, 1)
 t.run_ticks(2)
 local said = t.messages(p)
 local refused = false

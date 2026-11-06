@@ -186,7 +186,7 @@ local r = t.join()
 t.run_ticks(4)
 bench.hold(r, "screwdriver", { { 7, 4 } })
 t.messages(r)
-t.click(r, 6, 4, t.target_at(r, 6, 4, "grav_smes"))
+t.click(r, 6, 4, assert(t.target_at(r, 6, 4, "grav_smes")))
 t.run_seconds(4.5)
 local after = t.structure_at(5, 5)
 assert(

@@ -55,12 +55,12 @@ t.world(
 
 local p = t.join()
 t.tick()
-t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "card_deck")))
 t.run_ticks(2)
 assert(t.hands(p).held == "card_deck", "the deck is in hand")
 
 -- ---- dealing at a table ---------------------------------------------
-t.click(p, 2, 1, t.target_at(p, 2, 1, "table"), 9, -6)
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "table")), 9, -6)
 t.run_ticks(2)
 
 local dealt = assert(t.item_at(2, 1, "card"))
@@ -89,7 +89,7 @@ assert(t.item_at(2, 1, "card_deck") == nil, "and is not lying on the table")
 -- tg has no floor placement at all, so cards on the deck are this
 -- pack's own flavor and they should read as cards that fell out of a
 -- hand. The click below carries a pixel and the card ignores it.
-t.click(p, 1, 2, nil, 12, 12)
+t.click_tile(p, 1, 2, 12, 12)
 t.run_ticks(2)
 local floored = t.item_at(1, 2, "card")
 assert(floored ~= nil, "a card is on the floor tile that was clicked")
@@ -109,11 +109,11 @@ assert(
 -- exactly as any other held thing would be.
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 1, 2, t.target_at(p, 1, 2, "card"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "card")))
 t.run_ticks(2)
 assert(t.hands(p).held == "card", "the card off the floor is in hand")
 
-t.click(p, 2, 2, t.target_at(p, 2, 2, "table"), -12, 4)
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "table")), -12, 4)
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "the card left the hand for the table")
 

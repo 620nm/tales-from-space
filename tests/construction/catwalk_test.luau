@@ -83,11 +83,11 @@ t.world(
 
 local builder = t.join()
 t.tick()
-t.click(builder, 1, 1, t.target_at(builder, 1, 1, "rod"))
+t.click(builder, 1, 1, assert(t.target_at(builder, 1, 1, "rod")))
 t.run_ticks(2)
 t.messages(builder)
 
-t.click(builder, 2, 1)
+t.click_tile(builder, 2, 1)
 t.run_ticks(2)
 assert(composition.matches(2, 1, { "lattice" }), "one rod raises a lattice on Space")
 assert(
@@ -103,13 +103,13 @@ assert(
     "the catwalk construction uses tg's message"
 )
 
-t.click(builder, 1, 2)
+t.click_tile(builder, 1, 2)
 t.run_ticks(2)
 assert(composition.matches(1, 2, { "lattice" }), "the cutter test has a bare lattice")
 
 t.drop(builder)
 t.run_ticks(2)
-t.click(builder, 1, 1, t.target_at(builder, 1, 1, "wirecutters"))
+t.click(builder, 1, 1, assert(t.target_at(builder, 1, 1, "wirecutters")))
 t.run_ticks(2)
 t.messages(builder)
 t.click_component(builder, 1, 2, assert(t.component_instance(1, 2, "lattice")))
@@ -134,16 +134,16 @@ assert(
 -- is exhausted after its first rung; the catwalk's two after its second.
 t.drop(builder)
 t.run_ticks(2)
-t.click(builder, 1, 2, t.target_at(builder, 1, 2, "rod"))
+t.click(builder, 1, 2, assert(t.target_at(builder, 1, 2, "rod")))
 t.run_ticks(2)
-t.click(builder, 1, 2)
+t.click_tile(builder, 1, 2)
 t.run_ticks(2)
 assert(composition.matches(1, 2, { "lattice" }), "one refunded rod rebuilds the lattice")
 assert(t.hands(builder).held == nil, "the lattice refunded exactly one rod")
 
-t.click(builder, 2, 1, t.target_at(builder, 2, 1, "rod"))
+t.click(builder, 2, 1, assert(t.target_at(builder, 2, 1, "rod")))
 t.run_ticks(2)
-t.click(builder, 2, 1)
+t.click_tile(builder, 2, 1)
 t.run_ticks(2)
 t.click_component(builder, 2, 1, assert(t.component_instance(2, 1, "lattice")))
 t.run_ticks(2)
@@ -180,16 +180,16 @@ t.world(
 
 local tiler = t.join()
 t.tick()
-t.click(tiler, 2, 2, t.target_at(tiler, 2, 2, "crowbar"))
+t.click(tiler, 2, 2, assert(t.target_at(tiler, 2, 2, "crowbar")))
 t.run_ticks(2)
-t.click(tiler, 1, 2)
+t.click_tile(tiler, 1, 2)
 t.run_ticks(2)
-t.click(tiler, 2, 3)
+t.click_tile(tiler, 2, 3)
 t.run_ticks(2)
 t.drop(tiler)
 t.run_ticks(2)
 
-t.click(tiler, 1, 2, t.target_at(tiler, 1, 2, "floor_tile"))
+t.click(tiler, 1, 2, assert(t.target_at(tiler, 1, 2, "floor_tile")))
 t.run_ticks(2)
 t.click_component(tiler, 2, 1, assert(t.component_instance(2, 1, "lattice")))
 t.run_ticks(2)
@@ -197,7 +197,7 @@ assert(composition.matches(2, 1, { "station_base" }), "a tile plates Space under
 assert(t.component_instance(2, 1, "lattice") == nil, "the lattice is consumed by plating")
 assert(t.hands(tiler).held == nil, "the lattice plating spent its one tile")
 
-t.click(tiler, 2, 3, t.target_at(tiler, 2, 3, "floor_tile"))
+t.click(tiler, 2, 3, assert(t.target_at(tiler, 2, 3, "floor_tile")))
 t.run_ticks(2)
 t.click_component(tiler, 3, 2, assert(t.component_instance(3, 2, "catwalk")))
 t.run_ticks(2)

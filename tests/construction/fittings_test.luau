@@ -192,7 +192,7 @@ local p = t.join()
 t.tick()
 
 -- The wrench, which is the whole toolkit for this job.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "wrench"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "wrench")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 
@@ -221,7 +221,7 @@ assert(
 -- canister standing on it -- and when it does it earns a reason, not a
 -- dropped click.
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "connector_port"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "connector_port")))
 t.run_ticks(2)
 assert(
     said(p, "Detach the canister from the connector port first."),
@@ -237,14 +237,14 @@ assert(t.target_at(p, 2, 1, "connector_port") ~= nil, "still there, in fact")
 --
 -- The bottle comes off instantly (tg's `wrench_act` on a portable atmos
 -- device has no do_after in it anywhere); the plumbing does not.
-t.click(p, 2, 1, t.target_at(p, 2, 1, "canister"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "canister")))
 t.run_ticks(1)
 assert(
     t.ledger_has("StructureStep", "canister", "displaced"),
     "the canister comes off the port instantly"
 )
 
-t.click(p, 2, 1, t.target_at(p, 2, 1, "connector_port"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "connector_port")))
 t.run_ticks(1)
 assert(
     not t.ledger_has("StructureStep", "connector_port", "gone"),
@@ -287,7 +287,7 @@ assert(opening > 3000.0, "there is real air in the room and the bottle: " .. ope
 -- back down, which is exactly tg's dispatch. Swap to the free hand and
 -- it is an ordinary thing to pick up.
 t.swap_hands(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "connector_port_fitting"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "connector_port_fitting")))
 t.run_ticks(2)
 assert(t.hands(p).held == "connector_port_fitting", "and it goes in your hand")
 assert(not lying_at(2, 1, "connector_port_fitting"), "off the deck")
@@ -321,7 +321,7 @@ assert(lying_at(1, 3, "connector_port_fitting"), "dropped on bare deck")
 
 t.swap_hands(p)
 local _ = t.messages(p)
-t.click(p, 1, 3, t.target_at(p, 1, 3, "connector_port_fitting"))
+t.click(p, 1, 3, assert(t.target_at(p, 1, 3, "connector_port_fitting")))
 t.run_seconds(2.5)
 assert(
     not said(p, "There is no pipe under the floor here."),
@@ -344,14 +344,14 @@ assert(not lying_at(1, 3, "connector_port_fitting"), "the fitting was spent into
 -- Take it straight back up: what the rest of this spec is about is
 -- carrying the socket to the run, and one bolted down here would be a
 -- second port nobody asked for.
-t.click(p, 1, 3, t.target_at(p, 1, 3, "connector_port"))
+t.click(p, 1, 3, assert(t.target_at(p, 1, 3, "connector_port")))
 t.run_seconds(2.5)
 assert(t.structure_at(1, 3) == nil, "up again")
 assert(lying_at(1, 3, "connector_port_fitting"), "and back to being a fitting")
 
 -- ---- put it back together somewhere better ----
 t.swap_hands(p)
-t.click(p, 1, 3, t.target_at(p, 1, 3, "connector_port_fitting"))
+t.click(p, 1, 3, assert(t.target_at(p, 1, 3, "connector_port_fitting")))
 t.run_ticks(2)
 assert(t.hands(p).held == "connector_port_fitting", "picked back up")
 walk(p, "north")
@@ -363,7 +363,7 @@ t.run_ticks(2)
 assert(lying_at(3, 1, "connector_port_fitting"), "dropped over the run")
 
 t.swap_hands(p)
-t.click(p, 3, 1, t.target_at(p, 3, 1, "connector_port_fitting"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "connector_port_fitting")))
 t.run_ticks(1)
 assert(built("connector_port") == 1, "one tick in, it is still a fitting")
 t.run_seconds(2.5)
@@ -401,7 +401,7 @@ walk(p, "north")
 walk(p, "west")
 assert(t.canister_pressure(3, 1) ~= nil, "shoved onto the rebuilt port")
 
-t.click(p, 3, 1, t.target_at(p, 3, 1, "canister"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "canister")))
 t.run_ticks(1)
 assert(
     t.ledger_has("StructureStep", "canister", "anchored"),

@@ -90,8 +90,8 @@ t.world(
 local p = t.join()
 t.tick()
 
-local dispenser = t.target_at(p, 1, 1)
-local heater = t.target_at(p, 3, 1)
+local dispenser = assert(t.target_at(p, 1, 1))
+local heater = assert(t.target_at(p, 3, 1))
 local cold = assert(t.target_at(p, 1, 2, "beaker"))
 local hot = assert(t.target_at(p, 3, 2, "beaker"))
 

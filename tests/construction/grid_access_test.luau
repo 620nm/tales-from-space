@@ -31,7 +31,7 @@ end
 local function take(player: number, network: string)
     local x = if network == "power" then 1 else 3
     local item = if network == "power" then "wirecutters" else "wrench"
-    t.click(player, x, 2, t.target_at(player, x, 2, item))
+    t.click(player, x, 2, assert(t.target_at(player, x, 2, item)))
     t.run_ticks(2)
     assert(t.hands(player).held == item)
 end

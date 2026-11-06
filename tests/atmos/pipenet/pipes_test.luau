@@ -56,10 +56,10 @@ local p = t.join()
 t.tick()
 
 -- Pick up the coil of pipe and run three lengths west to east.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "pipe"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "pipe")))
 t.run_ticks(2)
 for _, x in ipairs({ 1, 2, 3 }) do
-    t.click(p, x, 1, nil, -14, 14)
+    t.click_tile(p, x, 1, -14, 14)
     t.run_seconds(1.5)
 end
 assert(network_channels.at(1, 1, "pipe") == "l3", "a length went down at the west end")
@@ -70,7 +70,7 @@ assert(t.ledger_has("NetworkPlaced"), "every length is on the record")
 -- The finished floor in the middle of the room refuses a length: pipe
 -- is subfloor work and the tile has to be open.
 local _ = t.messages(p)
-t.click(p, 2, 2, nil, -14, 14)
+t.click_tile(p, 2, 2, -14, 14)
 t.run_ticks(4)
 assert(network_channels.at(2, 2, "pipe") == "", "no length under a finished floor")
 assert(
@@ -85,7 +85,7 @@ assert(assert(network_matter.pressure(2, 1)) < 1.0, "and it is empty until somet
 -- Unwrench the middle: the run parts in two and gives back a length.
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 3, 3, t.target_at(p, 3, 3, "wrench")) -- wrench
+t.click(p, 3, 3, assert(t.target_at(p, 3, 3, "wrench"))) -- wrench
 t.run_ticks(2)
 t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "pipe", "l3")))
 t.run_seconds(1.5)
@@ -130,7 +130,7 @@ t.world(
 
 local f = t.join()
 t.tick()
-t.click(f, 2, 2, t.target_at(f, 2, 2, "wrench"))
+t.click(f, 2, 2, assert(t.target_at(f, 2, 2, "wrench")))
 t.run_ticks(2)
 t.click_network(f, 2, 1, assert(t.network_instance(2, 1, "pipe", "l2")))
 t.run_seconds(1.5)
@@ -178,8 +178,8 @@ t.world(
 local a = t.join()
 local b = t.join()
 t.tick()
-t.click(a, 1, 2, t.target_at(a, 1, 2, "wrench"))
-t.click(b, 3, 2, t.target_at(b, 3, 2, "wrench"))
+t.click(a, 1, 2, assert(t.target_at(a, 1, 2, "wrench")))
+t.click(b, 3, 2, assert(t.target_at(b, 3, 2, "wrench")))
 t.run_ticks(2)
 local contested = t.target_at(a, 2, 1, "pipe")
 assert(contested ~= nil, "both engineers aim at the same exact stack")
@@ -188,7 +188,7 @@ _ = t.messages(b)
 _ = t.sounds(a)
 _ = t.sounds(b)
 t.click(a, 2, 1, contested)
-t.click(b, 2, 1, t.target_at(b, 2, 1, "pipe"))
+t.click(b, 2, 1, assert(t.target_at(b, 2, 1, "pipe")))
 t.tick()
 _ = t.messages(a) -- discard both honest start messages
 _ = t.messages(b)
@@ -281,13 +281,13 @@ assert(network_matter.pressure(12, 3) == nil, "but stops short of the closet")
 
 -- Take the length of pipe FIRST and park it in the other hand: a hand
 -- is the one place a decompression cannot take it from.
-t.click(q, 12, 3, t.target_at(q, 12, 3, "pipe"))
+t.click(q, 12, 3, assert(t.target_at(q, 12, 3, "pipe")))
 t.run_ticks(2)
 t.swap_hands(q)
 t.run_ticks(2)
 
 -- Open the closet to space. Nothing feeds it, so it empties.
-t.click(q, 12, 2, t.target_at(q, 12, 2, "welder")) -- the welder, underfoot
+t.click(q, 12, 2, assert(t.target_at(q, 12, 2, "welder"))) -- the welder, underfoot
 t.use_self(q)
 t.tick()
 t.fault(12, 1, t.now() + 1)
@@ -297,7 +297,7 @@ local emptied = assert(t.room_pressure(12, 3))
 assert(emptied < 25.0, "the closet emptied: " .. emptied)
 
 -- Seal it again by hand. Now it is a sealed vacuum with a dead vent.
-t.click(q, 12, 1, nil, -14, 14)
+t.click_tile(q, 12, 1, -14, 14)
 t.run_seconds(4.5)
 assert(not t.is_breached(12, 1), "welded shut")
 t.run_seconds(10)
@@ -320,7 +320,7 @@ t.swap_hands(q)
 t.run_ticks(2)
 t.move(q, "south")
 t.run_ticks(5)
-t.click(q, 12, 3, nil, -14, 14)
+t.click_tile(q, 12, 3, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(12, 3, "pipe") == "l3", "the last length went down")
 assert(network_matter.pressure(12, 3) ~= nil, "and the vent has a run to draw on")
@@ -388,7 +388,7 @@ assert(assert(network_matter.pressure(2, 1, DISTRO)) > 90.0, "the mapped main is
 
 -- Pick the pipe up and walk the dial round from 3 to 1, tg's
 -- 1->2->3->4->5->1 cycle (construction.dm:438-445).
-t.click(e, 2, 2, t.target_at(e, 2, 2, "pipe"))
+t.click(e, 2, 2, assert(t.target_at(e, 2, 2, "pipe")))
 t.run_ticks(2)
 local _ = t.messages(e)
 t.use_self(e)
@@ -403,7 +403,7 @@ assert(said(e, "Pipe layer set to 1."), "and wraps at the top")
 assert(t.ledger_has("ModeSet"), "which layer you chose is on the record")
 
 -- A length on layer 1, straight through the charged layer-3 main.
-t.click(e, 2, 1, nil, -14, 14)
+t.click_tile(e, 2, 1, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(2, 1, "pipe") == "l1,l3", "both layers are under the tile: " .. network_channels.at(2, 1, "pipe"))
 assert(assert(network_matter.pressure(2, 1, DISTRO)) > 90.0, "the main is still charged")
@@ -417,7 +417,7 @@ assert(
 -- sprite names and leaves what is plumbed beneath it.
 t.drop(e)
 t.run_ticks(2)
-t.click(e, 1, 2, t.target_at(e, 1, 2, "wrench")) -- the wrench
+t.click(e, 1, 2, assert(t.target_at(e, 1, 2, "wrench"))) -- the wrench
 t.run_ticks(2)
 t.click_network(e, 2, 1, assert(t.network_instance(2, 1, "pipe", "l3")))
 t.run_seconds(1.5)
@@ -572,12 +572,12 @@ t.world(
 
 local h = t.join()
 t.tick()
-t.click(h, 2, 2, t.target_at(h, 2, 2, "pipe"))
+t.click(h, 2, 2, assert(t.target_at(h, 2, 2, "pipe")))
 t.run_ticks(2)
 
 for _, x in ipairs({ 1, 2 }) do
     local _ = t.messages(h)
-    t.click(h, x, 1, nil, -14, 14)
+    t.click_tile(h, x, 1, -14, 14)
     t.run_seconds(1.5)
     assert(network_channels.at(x, 1, "pipe") == "", "no raw pipe appeared under the component at " .. x)
     local messages = t.messages(h)
@@ -587,6 +587,6 @@ for _, x in ipairs({ 1, 2 }) do
     )
 end
 
-t.click(h, 3, 1, nil, -14, 14)
+t.click_tile(h, 3, 1, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(3, 1, "pipe") == "l3", "layer 3 crosses a layer-2 component")

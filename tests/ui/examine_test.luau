@@ -312,7 +312,7 @@ assert(
     "because the far side is not in the picture: " .. tostring(refusal)
 )
 
-t.click(q, 3, 1, t.target_at(q, 3, 1))
+t.click(q, 3, 1, assert(t.target_at(q, 3, 1)))
 t.run_ticks(15)
 assert(assert(t.door_at(3, 1)).open, "the leaf opens to an empty hand")
 local through = assert(t.target_at(q, 5, 1, "beaker"), "the far side is in view now")

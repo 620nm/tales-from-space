@@ -109,7 +109,7 @@ assert(
     "so every viewer draws the base the wire sent: " .. tostring(boxed.sprite)
 )
 
-t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "card_deck")))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the deck is in hand")
 
@@ -180,7 +180,7 @@ assert(
 -- ---- turning it over --------------------------------------------------
 t.drop(p)
 t.tick()
-t.click(p, 1, 2, t.target_at(p, 1, 2, "card"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "card")))
 t.tick()
 assert(t.hands(p).held == "card", "the card is in hand")
 
@@ -212,7 +212,7 @@ assert(shown:find("card_" .. secret, 1, true), "and NOW the room can see it: " .
 -- ...and back over again, which is what needed `sim.state`: a thing
 -- that toggles has to ask what it is currently showing.
 from_beside(p, function()
-    t.click(p, 1, 1, t.target_at(p, 1, 1, "card"))
+    t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "card")))
     t.tick()
 end)
 t.use_self(p)
@@ -234,10 +234,10 @@ assert(facedown.sprite == "card_back", "back to the back")
 -- business rather than a pickup. The deck lies on the tile it was
 -- dropped on; the player steps beside it to point at it.
 from_beside(p, function()
-    t.click(p, 1, 1, t.target_at(p, 1, 1, "card"))
+    t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "card")))
     t.tick()
     assert(t.hands(p).held == "card", "the card is in hand again")
-    t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
+    t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "card_deck")))
     t.tick()
 end)
 assert(t.hands(p).held == nil, "the card left the hand")
@@ -259,7 +259,7 @@ assert(DECLARED[back.var_state], "and it is one of the pictures the prototype de
 -- string in `ScriptVars`, because a shuffle is not a number the
 -- prototype could have enumerated.
 from_beside(p, function()
-    t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
+    t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "card_deck")))
     t.tick()
 end)
 assert(t.hands(p).held == "card_deck", "the deck is in hand again")
@@ -299,7 +299,7 @@ for deal = 1, 54 do
             "while the base the server sent never moved: " .. tostring(mid.sprite)
         )
         from_beside(p, function()
-            t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
+            t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "card_deck")))
             t.tick()
         end)
         assert(t.hands(p).held == "card_deck", "the deck is back in hand")
@@ -332,7 +332,7 @@ local seen, names = {}, {}
 for card = 1, 54 do
     local on_pile = t.target_at(p, 2, 2, "card")
     assert(on_pile ~= nil, "card " .. card .. " is still on the pile")
-    t.click(p, 2, 2, t.target_at(p, 2, 2, "card"))
+    t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "card")))
     t.tick()
     assert(t.hands(p).held == "card", "card " .. card .. " is in hand")
     t.use_self(p)
@@ -386,10 +386,10 @@ local px, py = t.pos(p)
 assert(px == 2 and py == 1, "standing between the cards and the second deck")
 
 -- An untouched deck is whole, so it takes nothing at all.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "card"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "card")))
 t.tick()
 assert(t.hands(p).held == "card", "a card off the floor is in hand")
-t.click(p, 3, 1, t.target_at(p, 3, 1, "card_deck"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "card_deck")))
 t.tick()
 assert(t.hands(p).held == "card", "an untouched deck refuses a fifty-fifth card")
 local refused = table.concat(t.messages(p), "\n")
@@ -399,7 +399,7 @@ assert(refused:find("The deck is already full.", 1, true), "and says so: " .. re
 -- back. The SECOND return is the one that must bounce.
 t.drop(p)
 t.tick()
-t.click(p, 3, 1, t.target_at(p, 3, 1, "card_deck"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "card_deck")))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the second deck is in hand")
 composition.click_deck(p, 3, 2)
@@ -412,11 +412,11 @@ t.tick()
 -- the dropper's own tile, so putting the deck down moved it off (3, 1).
 -- This return goes in from the DECK's side (items/card_deck.luau): the
 -- deck in the working hand, used on the card in the other.
-t.click(p, 2, 1, t.target_at(p, 2, 1, "card"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "card")))
 t.tick()
 assert(t.hands(p).held == "card", "the card put down a moment ago is in hand")
 t.swap_hands(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "card_deck")))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the deck in the working hand, the card in the other")
 local spent = #t.ledger_rows("ItemConsumed")
@@ -433,10 +433,10 @@ assert(
 t.drop(p)
 t.tick()
 
-t.click(p, 3, 2, t.target_at(p, 3, 2, "card"))
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2, "card")))
 t.tick()
 assert(t.hands(p).held == "card", "and one more card is in hand")
-t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "card_deck")))
 t.tick()
 assert(t.hands(p).held == "card", "a deck already holding fifty-four refuses the next one")
 refused = table.concat(t.messages(p), "\n")
@@ -473,7 +473,7 @@ assert(dealt ~= table.concat(roster, ","), "the deck was shuffled, not read out"
 assert(dealt ~= table.concat(reversed, ","), "and not read out backwards either")
 
 -- ---- the fifty-fifth deal ---------------------------------------------
-t.click(p, 1, 2, t.target_at(p, 1, 2, "card_deck"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "card_deck")))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the empty deck is in hand")
 composition.click_deck(p, 2, 2)

@@ -126,7 +126,7 @@ end
 -- breathing gear in a bag issues it too late. The tank is the act.
 -- ---------------------------------------------------------------
 assert(t.worn(diver).mask == "breath_mask", "the shift starts with apparatus on")
-t.click(diver, 2, 1, t.target_at(diver, 2, 1, "oxygen_tank"))
+t.click(diver, 2, 1, assert(t.target_at(diver, 2, 1, "oxygen_tank")))
 t.run_ticks(2)
 assert(t.hands(diver).held == "oxygen_tank", "the tank is in hand")
 t.use_self(diver)

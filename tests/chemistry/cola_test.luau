@@ -39,7 +39,7 @@ t.tick()
 -- A rough shift so far: some oxygen damage to heal.
 t.set_health(p, { oxy = 30 })
 
-t.click(p, 1, 1, t.target_at(p, 1, 1, "cola")) -- pick up the can
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "cola"))) -- pick up the can
 t.tick()
 assert(t.hands(p).held == "cola", "the can is held")
 -- The bloodstream already holds the body's own 14 mol (560 u x 0.025 mol/u;
@@ -193,7 +193,7 @@ t.world(CANTEEN, 7)
 local probe = t.join()
 t.tick()
 t.set_health(probe, { oxy = 30 })
-t.click(probe, 1, 1, t.target_at(probe, 1, 1, "cola"))
+t.click(probe, 1, 1, assert(t.target_at(probe, 1, 1, "cola")))
 t.tick()
 assert(t.hands(probe).held == "cola", "a fresh can, in hand")
 

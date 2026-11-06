@@ -63,10 +63,10 @@ t.tick()
 -- A fresh coil lays the line the station is already wired with.
 -- tg's coil defaults to CABLE_LAYER_2 (cable.dm:513).
 -- ---------------------------------------------------------------
-t.click(p, 1, 1, t.target_at(p, 1, 1, "cable_coil")) -- pick the coil up
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "cable_coil"))) -- pick the coil up
 t.run_ticks(2)
 for _, x in ipairs({ 1, 2, 3 }) do
-    t.click(p, x, 1, nil, -14, 14)
+    t.click_tile(p, x, 1, -14, 14)
     t.run_seconds(1.5)
 end
 assert(network_channels.at(1, 1, "power") == "l2", "a fresh coil lays the yellow line")
@@ -90,7 +90,7 @@ assert(said(p, "You set the coil to the red power line."), "blue -> red")
 
 -- The red line goes down THROUGH the yellow one. Both are on the
 -- tile, and neither noticed the other.
-t.click(p, 2, 1, nil, -14, 14)
+t.click_tile(p, 2, 1, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(2, 1, "power") == "l1,l2", "two lines share the tile: " .. network_channels.at(2, 1, "power"))
 assert(network_channels.at(1, 1, "power") == "l2", "and the neighbors are untouched")
@@ -99,9 +99,9 @@ assert(network_channels.at(1, 1, "power") == "l2", "and the neighbors are untouc
 -- Sharing a tile is not sharing a circuit. This is the whole point
 -- of layers, and it is the same principle the plumbing keeps.
 -- ---------------------------------------------------------------
-t.click(p, 2, 2, nil, -14, 14)
+t.click_tile(p, 2, 2, -14, 14)
 t.run_seconds(1.5)
-t.click(p, 2, 3, nil, -14, 14)
+t.click_tile(p, 2, 3, -14, 14)
 t.run_seconds(1.5)
 local crossing_red = t.network_segment(2, 1, "power", "l1").segment
 local crossing_yellow = t.network_segment(2, 1, "power", "l2").segment
@@ -118,14 +118,14 @@ assert(t.network_segment(2, 3, "power", "l2").segment == nil, "and the yellow li
 -- ---------------------------------------------------------------
 t.swap_hands(p)
 t.run_ticks(2)
-t.click(p, 3, 3, t.target_at(p, 3, 3, "cable_coil")) -- the second coil
+t.click(p, 3, 3, assert(t.target_at(p, 3, 3, "cable_coil"))) -- the second coil
 t.run_ticks(2)
-t.click(p, 3, 2, nil, -14, 14)
+t.click_tile(p, 3, 2, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(3, 2, "power") == "l2", "a second coil is a second dial")
 t.swap_hands(p)
 t.run_ticks(2)
-t.click(p, 1, 2, nil, -14, 14)
+t.click_tile(p, 1, 2, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(1, 2, "power") == "l1", "and the first coil is still where it was left, ticks later")
 
@@ -137,7 +137,7 @@ assert(network_channels.at(1, 2, "power") == "l1", "and the first coil is still 
 -- ---------------------------------------------------------------
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 1, 3, t.target_at(p, 1, 3, "wirecutters")) -- the cutters
+t.click(p, 1, 3, assert(t.target_at(p, 1, 3, "wirecutters"))) -- the cutters
 t.run_ticks(2)
 t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "power", "l2")))
 t.run_seconds(1.5)

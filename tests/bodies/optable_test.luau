@@ -123,7 +123,7 @@ assert(
 -- because a covered chest is the OTHER refusal.
 t.unequip(patient, "uniform")
 t.run_ticks(2)
-t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, "scalpel"))
+t.click(surgeon, 1, 1, assert(t.target_at(surgeon, 1, 1, "scalpel")))
 t.run_ticks(2)
 t.click(surgeon, 2, 2, t.body_target(surgeon, patient))
 t.run_ticks(4)

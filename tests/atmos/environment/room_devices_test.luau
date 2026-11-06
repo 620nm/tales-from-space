@@ -187,11 +187,11 @@ local waste_n2_0 = pipe_of(1, 1, "n2", "l2")
 assert(room_o2_0 > 0.0 and room_n2_0 > 0.0, "the room holds standard air, which is two gases")
 
 -- ---- switched on, set to carbon dioxide, in a room that has none ----
-t.click(p, 5, 2, nil)
+t.click_tile(p, 5, 2)
 for _ = 1, 3 do
     walk(p, "west")
 end
-t.click(p, 2, 1, t.target_at(p, 2, 1, "air_scrubber"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "air_scrubber")))
 t.tick()
 local panel = ui_controls.state(p)
 assert(panel, "a scrubber wears a panel of its own")
@@ -400,7 +400,7 @@ assert(assert(t.structure_at(3, 1)).state == "off", "off out of the crate")
 local room_0 = assert(t.room_pressure(5, 2))
 assert(room_0 > 90.0 and room_0 < 110.0, "the room opens at about an atmosphere: " .. room_0)
 
-t.click(q, 3, 1, t.target_at(q, 3, 1, "air_injector"))
+t.click(q, 3, 1, assert(t.target_at(q, 3, 1, "air_injector")))
 t.tick()
 local inj = ui_controls.state(q)
 assert(ui_controls.rows(inj.setpoints)[1].field == "rate", "the injector's dial is a volume rate")
@@ -543,7 +543,7 @@ for _, job in ipairs({
         assert(dir == "east" or dir == "west")
         walk(d, dir)
     end
-    t.click(d, job.x, 1, t.target_at(d, job.x, 1, job.id))
+    t.click(d, job.x, 1, assert(t.target_at(d, job.x, 1, job.id)))
     t.tick()
     local ui = ui_controls.state(d)
     local supply = nil
@@ -633,7 +633,7 @@ t.world(
 
 local s = t.join()
 t.tick()
-t.click(s, 1, 2, t.target_at(s, 1, 2, "wrench"))
+t.click(s, 1, 2, assert(t.target_at(s, 1, 2, "wrench")))
 t.run_ticks(2)
 assert(t.hands(s).held == "wrench", "wrench in hand")
 
@@ -644,7 +644,7 @@ for _, job in ipairs({
     -- Stand one tile clear: you cannot raise a machine on the tile you
     -- are standing on (thermal_devices_test.luau asserts the refusal).
     walk(s, "east")
-    t.click(s, job.x, 2, t.target_at(s, job.x, 2, job.id .. "_fitting"))
+    t.click(s, job.x, 2, assert(t.target_at(s, job.x, 2, job.id .. "_fitting")))
     t.run_seconds(2.5)
     local built = t.structure_at(job.x, 2)
     assert(
@@ -662,7 +662,7 @@ for _, job in ipairs({
     { x = 4, id = "air_injector" },
     { x = 3, id = "air_scrubber" },
 }) do
-    t.click(s, job.x, 2, t.target_at(s, job.x, 2, job.id))
+    t.click(s, job.x, 2, assert(t.target_at(s, job.x, 2, job.id)))
     t.run_seconds(2.5)
     assert(t.structure_at(job.x, 2) == nil, job.id .. " comes up off the deck")
     assert(t.count_items(job.id .. "_fitting") == 1, "and hands its fitting back")

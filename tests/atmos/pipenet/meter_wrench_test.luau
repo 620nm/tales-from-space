@@ -70,7 +70,7 @@ t.world(
 local p = t.join()
 t.tick()
 
-t.click(p, 1, 2, t.target_at(p, 1, 2, "wrench"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "wrench")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 

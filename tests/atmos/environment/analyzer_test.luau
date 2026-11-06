@@ -98,7 +98,7 @@ t.world(
 local p = t.join()
 t.tick()
 
-t.click(p, 1, 2, t.target_at(p, 1, 2, "analyzer"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "analyzer")))
 t.run_ticks(2)
 assert(t.hands(p).held == "analyzer", "analyzer in hand")
 
@@ -201,7 +201,7 @@ assert(matching(air, "Naphtha: ", " %)") == nil, "and names nothing that is not 
 -- tg reads the ATOM you pointed at when it has air of its own
 -- (`return_analyzable_air`), and a canister does.
 local _ = t.messages(p)
-t.click(p, 1, 1, t.target_at(p, 1, 1, "canister"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "canister")))
 t.run_ticks(2)
 local can = t.messages(p)
 assert(has(can, "Results of analysis of the canister."), "the bottle answers for itself")
@@ -218,7 +218,7 @@ assert(has(can, "Volume: 2000 L"), "and it is a two thousand liter bottle")
 -- is not commissioned, so it holds nothing at all. tg prints the volume
 -- for an empty mixture and nothing else, deliberately.
 t.swap_hands(p)
-t.click(p, 2, 2, t.target_at(p, 2, 2, "pipe"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "pipe")))
 t.run_ticks(2)
 assert(t.hands(p).held == "pipe", "a length of pipe in the off hand")
 

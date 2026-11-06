@@ -52,10 +52,10 @@ t.world(
 
 local p = t.join()
 t.tick()
-t.click(p, 2, 1, t.target_at(p, 2, 1, "metal")) -- sheets in one hand
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "metal"))) -- sheets in one hand
 t.run_ticks(2)
 t.swap_hands(p)
-t.click(p, 2, 2, t.target_at(p, 2, 2, "wrench")) -- wrench in the other
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "wrench"))) -- wrench in the other
 t.run_ticks(2)
 
 -- A girder rises bolted down: no wrench step, exactly as tg builds one.
@@ -75,7 +75,7 @@ assert(stock - left == 2, "two sheets went into it, not " .. stock - left)
 
 -- The wrench loosens it.
 t.swap_hands(p)
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_seconds(4.5)
 assert(
     t.ledger_has("StructureStep", "girder", "displaced"),
@@ -86,7 +86,7 @@ assert(
 -- state the job wants; a silent no-op would read as a dropped click.
 t.swap_hands(p)
 t.messages(p)
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_ticks(2)
 local said = t.messages(p)
 local refused = false
@@ -109,12 +109,12 @@ assert(t.ledger_has("StructureStep", "girder", "pushed"), "and the shove is on t
 
 -- Bolt it back down where it ended up, and the wall finally closes.
 t.swap_hands(p)
-t.click(p, 1, 3, t.target_at(p, 1, 3))
+t.click(p, 1, 3, assert(t.target_at(p, 1, 3)))
 t.run_seconds(4.5)
 assert(t.ledger_has("StructureStep", "girder", "anchored"), "the wrench turns both ways")
 
 t.swap_hands(p)
-t.click(p, 1, 3, t.target_at(p, 1, 3))
+t.click(p, 1, 3, assert(t.target_at(p, 1, 3)))
 t.run_seconds(4.5)
 assert(composition.matches(1, 3, { "station_base", "floor_tiles", "wall" }), "the wall stands, got " .. composition.describe(1, 3))
 
@@ -152,10 +152,10 @@ t.world(
 
 p = t.join()
 t.tick()
-t.click(p, 2, 1, t.target_at(p, 2, 1, "metal")) -- sheets
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "metal"))) -- sheets
 t.run_ticks(2)
 t.swap_hands(p)
-t.click(p, 2, 2, t.target_at(p, 2, 2, "wrench")) -- wrench
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "wrench"))) -- wrench
 t.run_ticks(2)
 t.swap_hands(p)
 ui_controls.build(p, "metal", "girder", 1, 2) -- raise a girder to work on
@@ -163,7 +163,7 @@ t.run_seconds(4.5)
 assert(t.ledger_has("StructureStep", "girder", "built"), "the girder rose")
 
 t.swap_hands(p)
-t.click(p, 1, 2, t.target_at(p, 1, 2)) -- start unbolting it
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2))) -- start unbolting it
 t.run_ticks(5)
 for _ = 1, 3 do -- and walk out of reach before the four seconds land
     t.move(p, "east")
@@ -218,10 +218,10 @@ t.world(
 
 p = t.join()
 t.tick()
-t.click(p, 2, 2, t.target_at(p, 2, 2, "wrench")) -- wrench in one hand
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "wrench"))) -- wrench in one hand
 t.run_ticks(2)
 t.swap_hands(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "metal")) -- sheets in the other
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "metal"))) -- sheets in the other
 t.run_ticks(2)
 local stacked = sheets_held(p)
 ui_controls.build(p, "metal", "girder", 1, 2)
@@ -231,18 +231,18 @@ assert(stacked - sheets_held(p) == 2, "two sheets went into it")
 
 -- Take the bolts out, so the torch meets the state nothing else takes.
 t.swap_hands(p)
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_seconds(4.5)
 assert(assert(t.structure_at(1, 2)).state == "displaced", "the bolts are out")
 
 t.drop(p) -- the wrench is done; the torch wants the hand
 t.run_ticks(2)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "welder"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "welder")))
 t.run_ticks(2)
 t.use_self(p) -- light it
 t.tick()
 local loose_before = t.count_items("metal")
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_seconds(3.8)
 assert(t.structure_at(1, 2) ~= nil, "four seconds of cutting is four seconds")
 t.run_seconds(0.7)

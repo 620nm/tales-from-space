@@ -79,7 +79,7 @@ assert(
 )
 
 -- Pry the leaf open.
-t.click(p, 2, 2, t.target_at(p, 2, 2, "crowbar"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "crowbar")))
 t.tick()
 assert(t.hands(p).held == "crowbar", "the crowbar is in hand")
 t.move(p, "east")
@@ -87,7 +87,7 @@ t.run_ticks(4)
 t.move(p, "east")
 t.run_ticks(4)
 assert(not assert(t.door_at(4, 2)).powered, "the leaf is dark, so nothing shuts it again")
-t.click(p, 4, 2, t.target_at(p, 4, 2))
+t.click(p, 4, 2, assert(t.target_at(p, 4, 2)))
 t.run_seconds(4)
 assert(assert(t.door_at(4, 2)).open, "pried open")
 

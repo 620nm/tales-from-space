@@ -63,7 +63,7 @@ t.tick()
 local missed = t.last_ui(p)
 assert(missed == nil, "a target-less transparent-pixel click is only ground")
 
-t.click(p, 2, 1, t.target_at(p, 2, 1))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 local raw, pushes = t.last_ui(p)
 assert(raw, "clicking the machine opens its window")

@@ -96,12 +96,12 @@ assert(network_channels.at(2, 2, "power") == "l1", "and so does the cable")
 -- ---------------------------------------------------------------
 -- The wrench. Buried pipe under a tile is not wrenchable.
 -- ---------------------------------------------------------------
-t.click(p, 1, 1, t.target_at(p, 1, 1, "wrench")) -- pick up the wrench
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "wrench"))) -- pick up the wrench
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 local _ = t.messages(p)
 
-t.click(p, 2, 2, nil, -14, 14)
+t.click_tile(p, 2, 2, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(2, 2, "pipe") == "l3", "the buried run is untouched")
 assert(not said(p, "unwrenching"), "and the wrench never started on it")
@@ -121,12 +121,12 @@ assert(t.count_items("pipe") == 2, "the removed length returned as a one-piece i
 -- The wirecutters. Same rule, sabotage side.
 -- ---------------------------------------------------------------
 set_down_clear()
-t.click(p, 3, 1, t.target_at(p, 3, 1, "wirecutters"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "wirecutters")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
 _ = t.messages(p)
 
-t.click(p, 2, 2, nil, -14, 14)
+t.click_tile(p, 2, 2, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(2, 2, "power") == "l1", "the buried cable is untouched")
 assert(not said(p, "snipping"), "and the cutters never bit")
@@ -143,13 +143,13 @@ assert(t.count_items("cable_coil") == 2, "the cut line returned as a one-piece c
 -- ---------------------------------------------------------------
 local placements_before = #t.ledger_rows("NetworkPlaced")
 set_down_clear()
-t.click(p, 1, 3, t.target_at(p, 1, 3, "cable_coil")) -- the coil
+t.click(p, 1, 3, assert(t.target_at(p, 1, 3, "cable_coil"))) -- the coil
 t.run_ticks(2)
 _ = t.messages(p)
 for _, action in ipairs(t.action_hints(p, composition.deck_target(2, 3))) do
     assert(action.id ~= "lay_cable", "covered deck offers no cable laying")
 end
-t.click(p, 2, 3, nil, -14, 14)
+t.click_tile(p, 2, 3, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(2, 3, "power") == "", "no cable goes down over a finished floor")
 assert(#t.ledger_rows("NetworkPlaced") == placements_before, "nothing laid, nothing recorded")
@@ -159,13 +159,13 @@ assert(
 )
 
 set_down_clear()
-t.click(p, 1, 2, t.target_at(p, 1, 2, "pipe")) -- the length of pipe
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "pipe"))) -- the length of pipe
 t.run_ticks(2)
 _ = t.messages(p)
 for _, action in ipairs(t.action_hints(p, composition.deck_target(2, 3))) do
     assert(action.id ~= "lay_pipe", "covered deck offers no pipe laying")
 end
-t.click(p, 2, 3, nil, -14, 14)
+t.click_tile(p, 2, 3, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(2, 3, "pipe") == "", "no length goes down over a finished floor either")
 assert(
@@ -177,9 +177,9 @@ assert(
 -- Pry the tile up and the plumbing is ordinary work again.
 -- ---------------------------------------------------------------
 set_down_clear()
-t.click(p, 3, 3, t.target_at(p, 3, 3, "crowbar")) -- the crowbar
+t.click(p, 3, 3, assert(t.target_at(p, 3, 3, "crowbar"))) -- the crowbar
 t.run_ticks(2)
-t.click(p, 2, 2, nil, -14, 14)
+t.click_tile(p, 2, 2, -14, 14)
 t.run_ticks(2)
 assert(composition.matches(2, 2, { "station_base" }), "the tile came up")
 
@@ -197,7 +197,7 @@ t.move(p, "north")
 t.run_ticks(5)
 
 set_down_clear()
-t.click(p, 3, 2, t.target_at(p, 3, 2, "wrench")) -- the spare wrench, kept clear of the pile at our feet
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2, "wrench"))) -- the spare wrench, kept clear of the pile at our feet
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand again")
 
@@ -244,13 +244,13 @@ t.world(
 
 local c = t.join()
 t.tick()
-t.click(c, 2, 2, t.target_at(c, 2, 2, "floor_tile"))
+t.click(c, 2, 2, assert(t.target_at(c, 2, 2, "floor_tile")))
 t.run_ticks(2)
 assert(t.hands(c).held == "floor_tile", "the tile stack is in hand")
 
 -- A visible pipe has its own exact click channel. Material construction
 -- still belongs to the turf underneath that sprite.
-t.click(c, 1, 1, nil, -14, 14)
+t.click_tile(c, 1, 1, -14, 14)
 t.run_seconds(2)
 assert(composition.matches(1, 1, { "station_base", "floor_tiles" }), "a tile clicked on raw pipe covers the deck")
 assert(network_channels.at(1, 1, "pipe") == "l3", "covering does not consume the raw pipe")
@@ -258,12 +258,12 @@ assert(network_channels.at(1, 1, "pipe") == "l3", "covering does not consume the
 -- A binary machine is the length of pipe, and a unary connector is its
 -- own center plus a directional stub. Both are equally coverable when
 -- the structure sprite itself was the exact target.
-t.click(c, 2, 1, t.target_at(c, 2, 1, "manual_valve"))
+t.click(c, 2, 1, assert(t.target_at(c, 2, 1, "manual_valve")))
 t.run_seconds(2)
 assert(composition.matches(2, 1, { "station_base", "floor_tiles" }), "a floor tile covers a pipe device")
 assert(assert(t.structure_at(2, 1)).id == "manual_valve", "the device remains under the tile")
 
-t.click(c, 3, 1, t.target_at(c, 3, 1, "connector_port"))
+t.click(c, 3, 1, assert(t.target_at(c, 3, 1, "connector_port")))
 t.run_seconds(2)
 assert(composition.matches(3, 1, { "station_base", "floor_tiles" }), "a floor tile covers a connector")
 assert(assert(t.structure_at(3, 1)).id == "connector_port", "the connector remains under the tile")
@@ -313,7 +313,7 @@ t.tick()
 assert(t.target_at(d, 2, 1, "connector_port") ~= nil, "a real port starts under the canister")
 assert(assert(t.canister_pressure(2, 1)) > 4000.0, "the canister starts fastened and full")
 assert(assert(network_matter.pressure(1, 1)) > 90.0, "its port has charged the neighboring run")
-t.click(d, 2, 2, t.target_at(d, 2, 2, "floor_tile"))
+t.click(d, 2, 2, assert(t.target_at(d, 2, 2, "floor_tile")))
 t.run_ticks(2)
 
 -- Naming the native canister is naming the bottle, not its connector and
@@ -326,7 +326,7 @@ assert(composition.matches(2, 1, { "station_base" }), "an explicit canister clic
 assert(t.canister_pressure(2, 1) ~= nil, "the named bottle and port remain intact")
 
 -- A visible corner pixel reaches the deck beside the canister and port.
-t.click(d, 2, 1, nil, -14, 14)
+t.click_tile(d, 2, 1, -14, 14)
 t.run_seconds(2)
 assert(composition.matches(2, 1, { "station_base", "floor_tiles" }), "a ground pixel tiles beneath the canister")
 assert(assert(t.structure_at(2, 1)).id == "canister", "the canister remains above the tile")
@@ -393,7 +393,7 @@ assert(composition.matches(1, 2, { "station_base", "floor_tiles" }), "the side t
 assert(t.network_exposed(1, 2, "power"), "with its cable claim open")
 assert(not t.network_exposed(1, 2, "pipe"), "and its pipe claim shut")
 
-t.click(e, 2, 2, t.target_at(e, 2, 2, "wirecutters"))
+t.click(e, 2, 2, assert(t.target_at(e, 2, 2, "wirecutters")))
 t.run_ticks(2)
 assert(t.hands(e).held == "wirecutters", "cutters in hand")
 _ = t.messages(e)
@@ -428,7 +428,7 @@ assert(composition.matches(1, 2, { "station_base", "floor_tiles" }), "which stay
 -- answers with silence.
 t.drop(e)
 t.run_ticks(2)
-t.click(e, 3, 2, t.target_at(e, 3, 2, "wrench"))
+t.click(e, 3, 2, assert(t.target_at(e, 3, 2, "wrench")))
 t.run_ticks(2)
 assert(t.hands(e).held == "wrench", "wrench in hand")
 _ = t.messages(e)
@@ -440,7 +440,7 @@ assert(
     not plumbed and string.find(tostring(plumb_why), "instance has not been disclosed", 1, true),
     "the pipe cannot be selected through its closed floor panel"
 )
-t.click(e, 1, 1, nil, -14, 14)
+t.click_tile(e, 1, 1, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(1, 1, "pipe") == "l3", "the pipe-only cover keeps its run")
 assert(not said(e, "unwrenching"), "and the wrench never started on it")
@@ -450,7 +450,7 @@ assert(not said(e, "unwrenching"), "and the wrench never started on it")
 -- fresh cable pixel is there to take the click.
 t.drop(e)
 t.run_ticks(2)
-t.click(e, 3, 3, t.target_at(e, 3, 3, "pipe"))
+t.click(e, 3, 3, assert(t.target_at(e, 3, 3, "pipe")))
 t.run_ticks(2)
 assert(t.hands(e).held == "pipe", "the length of pipe in hand")
 _ = t.messages(e)
@@ -465,7 +465,7 @@ local function offers(id, x, y)
 end
 
 assert(not offers("lay_pipe", 1, 1), "the pipe-only cover offers no pipe laying")
-t.click(e, 1, 1, nil, -14, 14)
+t.click_tile(e, 1, 1, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(1, 1, "pipe") == "l3", "no length goes down beside the boxed-in run")
 assert(
@@ -473,7 +473,7 @@ assert(
     "the inapplicable pipe handler does not execute"
 )
 assert(not offers("lay_pipe", 1, 2), "the open cable claim offers no pipe laying")
-t.click(e, 1, 2, nil, -14, 14)
+t.click_tile(e, 1, 2, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(1, 2, "pipe") == "", "and no length goes down over the finished floor")
 assert(
@@ -483,23 +483,23 @@ assert(
 
 -- Control: the panel open to BOTH runs takes the length.
 assert(offers("lay_pipe", 2, 1), "the open panel still offers pipe laying")
-t.click(e, 2, 1, nil, -14, 14)
+t.click_tile(e, 2, 1, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(2, 1, "pipe") == "l3", "and the length goes down")
 
 -- Set the remaining pipe stack down before picking up the coil.
 t.drop(e)
 t.run_ticks(2)
-t.click(e, 1, 3, t.target_at(e, 1, 3, "cable_coil"))
+t.click(e, 1, 3, assert(t.target_at(e, 1, 3, "cable_coil")))
 t.run_ticks(2)
 assert(t.hands(e).held == "cable_coil", "coil in hand")
 _ = t.messages(e)
 
 assert(offers("lay_cable", 1, 1), "the pipe-only cover still offers cable laying")
-t.click(e, 1, 1, nil, -14, 14)
+t.click_tile(e, 1, 1, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(1, 1, "power") == "l2", "and the line goes down on the coil's layer")
 assert(offers("lay_cable", 1, 2), "the open cable claim offers laying over a finished floor")
-t.click(e, 1, 2, nil, -14, 14)
+t.click_tile(e, 1, 2, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(1, 2, "power") == "l2", "and cable goes down over the finished floor")

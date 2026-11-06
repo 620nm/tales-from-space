@@ -82,7 +82,7 @@ assert(assert(t.organ_damage(patient, "heart")) == 100, "the heart is where the 
 -- =====================================================================
 -- REVIVAL A: a defibrillator restarts the heart.
 -- =====================================================================
-t.click(medic, 1, 1, t.target_at(medic, 1, 1, "defib"))
+t.click(medic, 1, 1, assert(t.target_at(medic, 1, 1, "defib")))
 t.run_ticks(2)
 assert(t.hands(medic).held == "defib", "the defibrillator is in hand")
 

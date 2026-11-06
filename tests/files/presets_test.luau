@@ -178,7 +178,7 @@ assert(back_pure > 0.97, "the back intake carries nitrogen: " .. back_pure)
 assert(side_pure > 0.97, "and the side intake oxygen: " .. side_pure)
 
 -- ---- the panel, read and not touched ----
-t.click(p, 5, 1, t.target_at(p, 5, 1, "mixer.airmix"))
+t.click(p, 5, 1, assert(t.target_at(p, 5, 1, "mixer.airmix")))
 t.tick()
 local ui = ui_controls.state(p)
 assert(
@@ -351,7 +351,7 @@ end
 local books_co2, books_o2, books_n2 = books("co2"), books("o2"), books("n2")
 
 -- ---- the panel, read and not touched ----
-t.click(q, 4, 1, t.target_at(q, 4, 1, "filter.co2"))
+t.click(q, 4, 1, assert(t.target_at(q, 4, 1, "filter.co2")))
 t.tick()
 local panel = ui_controls.state(q)
 assert(

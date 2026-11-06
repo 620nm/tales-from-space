@@ -170,7 +170,7 @@ near(
 -- which is itself the sharpest thing "an open valve is not a machine"
 -- could possibly mean.
 -- ---------------------------------------------------------------
-t.click(p, 6, 1, t.target_at(p, 6, 1, "manual_valve"))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1, "manual_valve")))
 t.run_seconds(2)
 assert(assert(t.structure_at(6, 1)).state == "open", "the wheel is over")
 t.run_seconds(2)
@@ -231,7 +231,7 @@ assert(
 -- is exactly what the long one gained, which is the whole of "you
 -- cannot un-mix by shutting the wheel".
 -- ---------------------------------------------------------------
-t.click(p, 6, 1, t.target_at(p, 6, 1, "manual_valve"))
+t.click(p, 6, 1, assert(t.target_at(p, 6, 1, "manual_valve")))
 t.run_seconds(3)
 assert(assert(t.structure_at(6, 1)).state == "shut", "shut again")
 t.run_seconds(1)

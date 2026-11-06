@@ -34,7 +34,7 @@ local function said(needle)
 end
 
 -- ---- on, off, on again, with the active hand ---------------------------
-t.click(crewman, 1, 1, t.target_at(crewman, 1, 1, "eva_suit"))
+t.click(crewman, 1, 1, assert(t.target_at(crewman, 1, 1, "eva_suit")))
 t.run_ticks(2)
 assert(t.hands(crewman).held == "eva_suit", "picked up")
 

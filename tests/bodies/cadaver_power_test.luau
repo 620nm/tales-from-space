@@ -75,7 +75,7 @@ local dark_attendant = t.join("medic")
 local dark_patient = t.join("assistant")
 t.tick()
 
-local dark = t.target_at(dark_attendant, 2, 1, "cadaver_chamber")
+local dark = assert(t.target_at(dark_attendant, 2, 1, "cadaver_chamber"))
 assert(assert(t.structure_at(2, 1)).sprite == "morgue1_s", "an unwired chamber wears its shut face")
 
 -- ...and it goes on showing nothing with somebody shut inside it, even once
@@ -143,7 +143,7 @@ local patient = t.join("assistant")
 local second = t.join("engineer")
 t.tick()
 
-local chamber = t.target_at(attendant, 2, 1, "cadaver_chamber")
+local chamber = assert(t.target_at(attendant, 2, 1, "cadaver_chamber"))
 assert(assert(t.structure_at(2, 1)).sprite == "morgue1_s", "an empty chamber shows no lamp, wired or not")
 
 -- Somebody alive on the slab, and the door shut on them.

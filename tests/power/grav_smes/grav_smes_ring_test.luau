@@ -28,7 +28,7 @@ local function room(emitters: { string }): number
 end
 
 local function wrench_cart(p: number)
-    t.click(p, 5, 4, t.target_at(p, 5, 4, "grav_supermagnet"))
+    t.click(p, 5, 4, assert(t.target_at(p, 5, 4, "grav_supermagnet")))
     t.run_seconds(1.5)
 end
 
@@ -66,7 +66,7 @@ for _, case in ipairs({
     )
 
     -- And back onto its cart.
-    t.click(p, 5, 4, t.target_at(p, 5, 4, "grav_supermagnet_ring"))
+    t.click(p, 5, 4, assert(t.target_at(p, 5, 4, "grav_supermagnet_ring")))
     t.run_seconds(1.5)
     assert(
         bench.told(p, "The supermagnet ring folds back onto its cart."),
@@ -81,12 +81,12 @@ for _, tool in ipairs({ "crowbar", "welder" }) do
     bench.world('(4, 3, "player_spawn"), (5, 4, "grav_supermagnet")', string.format('(4, 3, "%s")', tool))
     local p = t.join()
     t.tick()
-    t.click(p, 5, 4, t.target_at(p, 5, 4, "grav_supermagnet"))
+    t.click(p, 5, 4, assert(t.target_at(p, 5, 4, "grav_supermagnet")))
     t.tick()
     assert(not bench.told(p, NEEDS_WRENCH), "an empty hand says nothing")
     bench.hold(p, tool, { { 4, 3 } })
     local _ = t.messages(p)
-    t.click(p, 5, 4, t.target_at(p, 5, 4, "grav_supermagnet"))
+    t.click(p, 5, 4, assert(t.target_at(p, 5, 4, "grav_supermagnet")))
     t.tick()
     assert(bench.told(p, NEEDS_WRENCH), tool .. " should hear what the cart wants")
     assert((assert(t.structure_at(5, 4))).id == "grav_supermagnet", "and the cart stays packed")

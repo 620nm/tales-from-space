@@ -126,7 +126,7 @@ near(
 -- pair the server clamps to, so no setting can be dialed that the
 -- machine will not honor.
 -- ---------------------------------------------------------------
-t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "thermomachine")))
 t.tick()
 local panel = ui_controls.record(assert(t.ui(p), "a temperature control unit wears its own panel"))
 local setpoint = ui_controls.rows(panel.setpoints)[1]
@@ -198,7 +198,7 @@ assert(
 
 -- The panel tracks the run live rather than reporting the moment it
 -- was opened.
-t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "thermomachine")))
 t.tick()
 near(
     assert(
@@ -258,7 +258,7 @@ t.tick()
 t.run_seconds(3)
 local dead_0 = assert(network_matter.temperature(1, 1))
 
-t.click(d, 3, 1, t.target_at(d, 3, 1, "thermomachine"))
+t.click(d, 3, 1, assert(t.target_at(d, 3, 1, "thermomachine")))
 t.tick()
 assert(
     readout(ui_controls.state(d), "thermo.supply") == "thermo.supply.dead",

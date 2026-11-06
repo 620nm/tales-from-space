@@ -57,7 +57,7 @@ assert(#t.ledger_rows("PullStarted") == 0, "a fastened bottle refuses the grab")
 
 -- Unfasten it: one ratchet, no do_after, exactly as tg's portable
 -- atmos `wrench_act`.
-t.click(p, 3, 1, t.target_at(p, 3, 1, "wrench"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "wrench")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "the wrench is in hand")
 t.click(p, 4, 1, assert(t.target_at(p, 4, 1, canister)))

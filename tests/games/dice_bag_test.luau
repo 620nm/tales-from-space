@@ -42,7 +42,7 @@ local p = t.join()
 t.tick()
 
 -- ---- the roster, in the order the file declares it ---------------------
-t.click(p, 2, 1, t.target_at(p, 2, 1, "dice_bag"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "dice_bag")))
 t.tick()
 assert(t.hands(p).held == "dice_bag", "the bag is in hand")
 
@@ -113,7 +113,7 @@ end
 -- runs it through `manipulate_result` -> `(original - 1) * 10`
 -- (dice.dm:114-116, 222-223). So the CELL is 1..10 and the SENTENCE is
 -- 0..90, and the port's whole risk is those two drifting apart.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "d00"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "d00")))
 t.tick()
 assert(t.hands(p).held == "d00", "the percentile die is in hand")
 
@@ -153,7 +153,7 @@ for _ = 1, 60 do
         )
         seen_zero = true
     end
-    t.click(p, 1, 1, t.target_at(p, 1, 1, "d00"))
+    t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "d00")))
     t.tick()
 end
 assert(seen_zero, "sixty rolls of a ten-sider turn up its bottom face")
@@ -168,7 +168,7 @@ t.tick()
 
 -- Clear the last rolled die from the pickup tile by carrying it away and
 -- dropping it, as a player would; its sprite can cover the d4.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "d00"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "d00")))
 t.tick()
 assert(t.hands(p).held == "d00", "the percentile die can be moved aside")
 t.move(p, "east")
@@ -207,7 +207,7 @@ end
 -- dice.dm:1-3, 90-91). Four is under it, so a d4 landing on 1 is
 -- silent where a d6 landing on 1 is not -- the same branch, two
 -- answers, and the only way to see it is to roll the small one a lot.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "d4"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "d4")))
 t.tick()
 assert(t.hands(p).held == "d4", "the caltrop is in hand")
 
@@ -240,7 +240,7 @@ t.move(p, "east")
 t.run_ticks(5)
 t.move(p, "east")
 t.run_ticks(5)
-t.click(p, 3, 1, t.target_at(p, 3, 1, "d6"))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "d6")))
 t.tick()
 t.move(p, "west")
 t.run_ticks(5)
@@ -248,7 +248,7 @@ t.move(p, "west")
 t.run_ticks(5)
 t.drop(p)
 t.tick()
-t.click(p, 1, 1, t.target_at(p, 1, 1, "d6"))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "d6")))
 t.tick()
 assert(t.hands(p).held == "d6", "the six-sider is in hand")
 local remarked = false

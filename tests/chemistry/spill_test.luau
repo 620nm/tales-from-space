@@ -51,7 +51,7 @@ for _, moles in pairs(assert(before)) do
     gas_before = gas_before + moles
 end
 
-t.click(p, 2, 1) -- the deck beside you, with the beaker in hand
+t.click_tile(p, 2, 1) -- the deck beside you, with the beaker in hand
 t.tick()
 assert(math.abs(total(beaker)) < 1e-9, ("the beaker is empty, got %g"):format(total(beaker)))
 
@@ -78,7 +78,7 @@ assert(rows[1].actor.kind == "script", "attributed to the file that asked")
 
 -- An empty beaker has nothing left to tip out: the gesture is refused
 -- and writes no second row.
-t.click(p, 2, 1)
+t.click_tile(p, 2, 1)
 t.tick()
 assert(#t.ledger_rows("spilled") == 1, "the empty beaker spilled nothing")
 

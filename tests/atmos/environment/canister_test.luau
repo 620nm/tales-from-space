@@ -125,7 +125,7 @@ assert(
 
 -- Take the welder off the deck FIRST: loose things do not survive a
 -- decompression, and a welder dragged into space is a welder lost.
-t.click(p, 2, 2, t.target_at(p, 2, 2, "welder"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "welder")))
 t.run_ticks(2)
 t.use_self(p)
 t.tick()
@@ -157,7 +157,7 @@ assert(assert(emptied) > 10.0, "into a standoff, not a vacuum: " .. emptied)
 
 -- Weld it shut. Now it is a sealed vacuum with a live vent over a
 -- charged run.
-t.click(p, 2, 1)
+t.click_tile(p, 2, 1)
 t.run_seconds(4.5)
 assert(not t.is_breached(2, 1), "welded shut")
 
@@ -335,14 +335,14 @@ assert(assert(t.room_pressure(2, 2)) > 80.0, "the sealed room is still fine")
 -- Until it isn't. Breach it, weld it shut, and give the vent every
 -- chance: it is a fan over a dead line, and a fan moves no air it was
 -- not handed.
-t.click(q, 2, 2, t.target_at(q, 2, 2, "welder"))
+t.click(q, 2, 2, assert(t.target_at(q, 2, 2, "welder")))
 t.run_ticks(2)
 t.use_self(q)
 t.tick()
 t.fault(2, 1, t.now() + 4)
 t.run_seconds(8)
 assert(t.is_breached(2, 1), "the crew room opened")
-t.click(q, 2, 1)
+t.click_tile(q, 2, 1)
 t.run_seconds(4.5)
 assert(not t.is_breached(2, 1), "and was welded shut again")
 
@@ -467,7 +467,7 @@ t.world(
 
 local w = t.join()
 t.tick()
-t.click(w, 1, 2, t.target_at(w, 1, 2, "wrench")) -- the wrench
+t.click(w, 1, 2, assert(t.target_at(w, 1, 2, "wrench"))) -- the wrench
 t.run_ticks(2)
 
 -- Fastened to the port it was mapped on: it is feeding the leak, and
@@ -485,7 +485,7 @@ assert(
 -- own at (1, 1); a wrench takes two seconds to break it out of the run
 -- and hand it back as a fitting, which is the contrast the next step is
 -- about. (The round trip itself is fittings_test.luau's business.)
-t.click(w, 1, 1, t.target_at(w, 1, 1, "connector_port"))
+t.click(w, 1, 1, assert(t.target_at(w, 1, 1, "connector_port")))
 t.run_ticks(1)
 assert(
     not t.ledger_has("StructureStep", "connector_port", "gone"),
@@ -501,7 +501,7 @@ assert(#t.items_at(1, 1) == 1, "and it is lying on the deck as a fitting")
 -- the two must not collide: the wrench used to blank the LED until the
 -- next atmos pass, which is half a second of a canister with no reading
 -- on it, every time an engineer touched one.
-local bottle = t.target_at(w, 2, 1)
+local bottle = assert(t.target_at(w, 2, 1))
 local function lit(who: SpecObservedTarget?, when: string): ()
     local drawn = t.layers(w, who)
     local lights, band = false, false
@@ -564,7 +564,7 @@ local function refused_with(line)
 end
 
 local _ = t.messages(w)
-t.click(w, 3, 1, t.target_at(w, 3, 1))
+t.click(w, 3, 1, assert(t.target_at(w, 3, 1)))
 t.run_ticks(2)
 assert(
     refused_with("There is nothing here to fasten it to."),
@@ -583,7 +583,7 @@ t.run_ticks(3)
 assert(t.canister_pressure(4, 1) ~= nil, "it is over the run now")
 assert(network_matter.pressure(4, 1) ~= nil, "on live pipe, at that")
 local _ = t.messages(w)
-t.click(w, 4, 1, t.target_at(w, 4, 1))
+t.click(w, 4, 1, assert(t.target_at(w, 4, 1)))
 t.run_ticks(2)
 assert(refused_with("There is nothing here to fasten it to."), "a bare run is not a socket")
 assert(not t.ledger_has("StructureStep", "canister", "anchored"), "and nothing was fastened to it")
@@ -594,7 +594,7 @@ t.move(w, "east")
 t.run_ticks(3)
 assert(t.canister_pressure(5, 1) ~= nil, "it is on the second port")
 local moved = assert(t.canister_pressure(5, 1))
-t.click(w, 5, 1, t.target_at(w, 5, 1))
+t.click(w, 5, 1, assert(t.target_at(w, 5, 1)))
 t.run_ticks(1)
 assert(
     t.ledger_has("StructureStep", "canister", "anchored"),
@@ -715,7 +715,7 @@ t.world(
 
 local v = t.join()
 t.tick()
-t.click(v, 1, 1, t.target_at(v, 1, 1, "wrench"))
+t.click(v, 1, 1, assert(t.target_at(v, 1, 1, "wrench")))
 t.run_ticks(2)
 assert(t.hands(v).held == "wrench", "wrench in hand")
 
@@ -729,7 +729,7 @@ assert(
 )
 
 -- Off the socket, instantly, and now nothing holds it down.
-t.click(v, 2, 1, t.target_at(v, 2, 1, "canister"))
+t.click(v, 2, 1, assert(t.target_at(v, 2, 1, "canister")))
 t.run_ticks(1)
 assert(t.ledger_has("StructureStep", "canister", "displaced"), "unfastened")
 
@@ -750,7 +750,7 @@ t.run_ticks(5)
 assert(t.canister_pressure(4, 1) ~= nil, "one more shove puts it on the far socket")
 assert(#t.ledger_rows("structure_step") > 0, "and both shoves are on the record")
 
-t.click(v, 4, 1, t.target_at(v, 4, 1, "canister"))
+t.click(v, 4, 1, assert(t.target_at(v, 4, 1, "canister")))
 t.run_ticks(1)
 assert(
     t.ledger_has("StructureStep", "canister", "anchored"),

@@ -110,7 +110,7 @@ local p = t.join()
 t.run_ticks(10)
 
 local function take(id: string)
-    t.click(p, 4, 1, t.target_at(p, 4, 1, id))
+    t.click(p, 4, 1, assert(t.target_at(p, 4, 1, id)))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
 end
@@ -121,7 +121,7 @@ local function put_down()
 end
 
 local function work(id, seconds)
-    t.click(p, 4, 1, t.target_at(p, 4, 1, id))
+    t.click(p, 4, 1, assert(t.target_at(p, 4, 1, id)))
     t.run_seconds(seconds)
 end
 
@@ -401,7 +401,7 @@ assert(ui_controls.find(eng, "/refusal/ok", scope) == nil, "OK puts it away")
 
 -- The access card itself, in the other hand -- worn or held, the check is the
 -- same one an airlock makes, and the laptop stays the active hand.
-t.click(eng, 5, 1, t.target_at(eng, 5, 1, "id_engineering"))
+t.click(eng, 5, 1, assert(t.target_at(eng, 5, 1, "id_engineering")))
 t.run_ticks(2)
 assert(t.hands(eng).held == "laptop", "the card went into the other hand")
 laptop.unlock(eng)

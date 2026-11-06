@@ -341,7 +341,7 @@ local MAPPED = bottle.contents.n2o.gas
 -- and no table of its own (items/analyzer.luau deleted the one it used
 -- to carry). The same three words the examine pane used on the bench
 -- bottle, on a completely different route in.
-t.click(reader, 4, 1, t.target_at(reader, 4, 1, "analyzer"))
+t.click(reader, 4, 1, assert(t.target_at(reader, 4, 1, "analyzer")))
 t.run_ticks(2)
 assert(t.hands(reader).held == "analyzer", "the analyzer is in hand")
 t.messages(reader)
@@ -404,7 +404,7 @@ assert(
 -- hundred liters a second out of one tile is a wind, and a spec about
 -- breathing should not be a spec about being blown across a room.
 assert(t.worn(diver).mask == "breath_mask", "the shift starts with apparatus on")
-t.click(diver, 4, 2, t.target_at(diver, 4, 2, "oxygen_tank"))
+t.click(diver, 4, 2, assert(t.target_at(diver, 4, 2, "oxygen_tank")))
 t.run_ticks(2)
 assert(t.hands(diver).held == "oxygen_tank", "the tank is in hand")
 t.use_self(diver)

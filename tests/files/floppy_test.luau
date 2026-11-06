@@ -118,9 +118,9 @@ t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 -- verb for this and no window open yet: a held medium docks before a
 -- click can open anything, which is why the drive works for somebody
 -- who has never seen the panel.
-t.click(p, 2, 1, t.target_at(p, 2, 1, "floppy_disk"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "floppy_disk")))
 t.run_ticks(2)
-t.click(p, 3, 1, t.target_at(p, 3, 1))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1)))
 t.tick()
 
 local function audit_rows(kind: string): { ui_controls.Record }
@@ -154,9 +154,9 @@ assert(
 -- The click is SPENT on the refusal rather than falling through to
 -- swinging a disk at the console, so the second one is still in hand
 -- afterwards.
-t.click(p, 2, 2, t.target_at(p, 2, 2, "floppy_disk"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "floppy_disk")))
 t.run_ticks(2)
-t.click(p, 3, 1, t.target_at(p, 3, 1))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1)))
 t.tick()
 assert(
     said(p, "There is already"),
@@ -167,7 +167,7 @@ t.drop(p)
 t.run_ticks(2)
 
 -- ---- the panel ------------------------------------------------------
-t.click(p, 3, 1, t.target_at(p, 3, 1))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1)))
 t.tick()
 local ui = record(assert(t.ui(p), "a bare-handed click opens the terminal's window"))
 assert(ui.presentation == "panes", "the files module is the panes one")
@@ -239,7 +239,7 @@ assert(
 -- ---- type into it ------------------------------------------------------
 local other = t.join()
 t.tick()
-t.click(other, 3, 1, t.target_at(other, 3, 1))
+t.click(other, 3, 1, assert(t.target_at(other, 3, 1)))
 t.tick()
 ui_files.address(other, disk_file, "open")
 t.tick()

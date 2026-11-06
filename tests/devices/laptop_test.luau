@@ -177,14 +177,14 @@ local function take(id: string)
         ["backpack"] = { 2, 3 },
     }
     local at = if t.target_at(p, 2, 2, id) then { 2, 2 } else places[id]
-    t.click(p, at[1], at[2], t.target_at(p, at[1], at[2], id))
+    t.click(p, at[1], at[2], assert(t.target_at(p, at[1], at[2], id)))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "picked up " .. id .. "; hands=" .. tostring(t.hands(p).held))
 end
 
 local function insert(id: string)
     take(id)
-    t.click(p, 2, 2, t.target_at(p, 2, 2, "laptop"))
+    t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "laptop")))
     t.run_ticks(2)
 end
 
@@ -247,7 +247,7 @@ for _, action in ipairs(t.action_hints(p, laptop)) do
     end
 end
 assert(pickup and pickup.implement == nil, "the incompatible tool leaves a key-only pickup action")
-t.click(p, 2, 2, t.target_at(p, 2, 2, "laptop"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "laptop")))
 t.run_ticks(2)
 assert(t.hands(p).held == "screwdriver", "a tool cannot occupy either slot")
 local hands = t.hands(p)
@@ -311,7 +311,7 @@ assert(
 )
 t.drop(p)
 t.run_ticks(2)
-t.click(q, 2, 2, t.target_at(q, 2, 2, "laptop"))
+t.click(q, 2, 2, assert(t.target_at(q, 2, 2, "laptop")))
 t.run_ticks(2)
 assert(t.hands(q).held == "laptop", "another player can take the laptop")
 t.use_item_site(q, { Held = { hand = t.hands(q).active - 1 } }, "secondary")

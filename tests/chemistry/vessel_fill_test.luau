@@ -84,8 +84,8 @@ t.world(
 local p = t.join()
 t.tick()
 
-local full = t.target_at(p, 1, 1, "beaker.water")
-local empty = t.target_at(p, 3, 1, "beaker")
+local full = assert(t.target_at(p, 1, 1, "beaker.water"))
+local empty = assert(t.target_at(p, 3, 1, "beaker"))
 
 -- ---------------------------------------------------------------
 -- ONE: A POUR SHOWS ON BOTH VESSELS, IN THE TICK IT LANDS.
@@ -151,9 +151,9 @@ assert(
 t.drop(p)
 t.tick()
 
-local dispenser = t.target_at(p, 1, 2)
-local heater = t.target_at(p, 3, 2)
-local beaker = t.target_at(p, 2, 1, "beaker")
+local dispenser = assert(t.target_at(p, 1, 2))
+local heater = assert(t.target_at(p, 3, 2))
+local beaker = assert(t.target_at(p, 2, 1, "beaker"))
 
 t.click(p, 2, 1, beaker)
 t.tick()

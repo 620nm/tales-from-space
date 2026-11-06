@@ -52,13 +52,13 @@ t.tick()
 local function take(id)
     t.drop(p)
     t.tick()
-    t.click(p, 2, 1, t.target_at(p, 2, 1, id))
+    t.click(p, 2, 1, assert(t.target_at(p, 2, 1, id)))
     t.tick()
     t.messages(p)
 end
 
 take("rod")
-t.click(p, 1, 1) -- the plating beside the player
+t.click_tile(p, 1, 1) -- the plating beside the player
 t.run_seconds(3.5)
 assert(
     composition.matches(1, 1, { "station_base", "reinforcement" }),
@@ -73,7 +73,7 @@ assert(
 -- `return`, so the right shape of "no" is silence and an unchanged
 -- deck, not a refusal about floor tiles.
 take("crowbar")
-t.click(p, 1, 1)
+t.click_tile(p, 1, 1)
 t.run_seconds(1.0)
 assert(composition.matches(1, 1, { "station_base", "reinforcement" }), "the crowbar changed nothing")
 local said = t.messages(p)
@@ -82,7 +82,7 @@ assert(#t.items_at(1, 1) == 0, "nothing came up off the deck")
 
 -- The wrench does, and hands back exactly what the deck cost.
 take("wrench")
-t.click(p, 1, 1)
+t.click_tile(p, 1, 1)
 t.run_seconds(3.5)
 assert(composition.matches(1, 1, { "station_base" }), "the rods come out, got " .. composition.describe(1, 1))
 assert(has(t.items_at(1, 1), "rod"), "and are lying where they were fitted")
@@ -126,7 +126,7 @@ t.tick()
 local function grab(id)
     t.drop(p)
     t.tick()
-    t.click(p, 2, 2, t.target_at(p, 2, 2, id))
+    t.click(p, 2, 2, assert(t.target_at(p, 2, 2, id)))
     t.tick()
     t.messages(p)
 end
@@ -137,12 +137,12 @@ local function frame_state()
 end
 
 grab("plasteel")
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_seconds(5.5)
 local girder = t.structure_at(1, 2)
 assert(girder ~= nil and girder.id == "reinforced_girder", "one sheet struts the frame")
 
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_seconds(5.5)
 assert(
     composition.matches(1, 2, { "station_base", "floor_tiles", "reinforced_wall" }),
@@ -155,52 +155,52 @@ assert(t.structure_at(1, 2) == nil, "and the girder is consumed into it")
 grab("welder")
 t.use_self(p)
 t.run_ticks(2)
-t.click(p, 1, 2)
+t.click_tile(p, 1, 2)
 t.run_seconds(10.5)
 assert(composition.matches(1, 2, { "station_base", "floor_tiles", "reinforced_wall" }), "the torch got nowhere")
 
 grab("wirecutters")
-t.click(p, 1, 2)
+t.click_tile(p, 1, 2)
 t.run_ticks(4)
 assert(composition.matches(1, 2, { "station_base", "floor_tiles" }), "the grille parts and the hull is open")
 assert(frame_state() == "support_lines", "the frame is standing in it")
 
 -- The first rung repairs: tg's INTACT/SUPPORT_LINES pair is a snip
 -- either way, and going back up is a wall again.
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_ticks(4)
 assert(composition.matches(1, 2, { "station_base", "floor_tiles", "reinforced_wall" }), "the grille is woven shut")
-t.click(p, 1, 2)
+t.click_tile(p, 1, 2)
 t.run_ticks(4)
 assert(frame_state() == "support_lines", "and open again for the ladder")
 
 grab("screwdriver")
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_seconds(4.5)
 assert(frame_state() == "cover", "the support lines come unsecured")
 
 grab("welder")
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_seconds(6.5)
 assert(frame_state() == "cut_cover", "the cover is sliced through")
 
 grab("crowbar")
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_seconds(10.5)
 assert(frame_state() == "anchor_bolts", "the cover is pried away")
 
 grab("wrench")
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_seconds(4.5)
 assert(frame_state() == "support_rods", "the anchoring bolts come out")
 
 grab("welder")
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_seconds(10.5)
 assert(frame_state() == "sheath", "the support rods are sliced")
 
 grab("crowbar")
-t.click(p, 1, 2, t.target_at(p, 1, 2))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2)))
 t.run_seconds(10.5)
 local left = t.structure_at(1, 2)
 assert(

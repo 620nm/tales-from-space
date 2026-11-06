@@ -202,7 +202,7 @@ local function press(b: Bench, key: string)
         b.operator,
         CENTER_X + 1,
         CENTER_Y,
-        t.target_at(b.operator, CENTER_X + 1, CENTER_Y, "grav_smes")
+        assert(t.target_at(b.operator, CENTER_X + 1, CENTER_Y, "grav_smes"))
     )
     t.run_ticks(2)
     ui_controls.toggle(b.operator, "action", key)

@@ -129,7 +129,7 @@ t.world(
 local p = t.join()
 t.tick()
 
-t.click(p, 1, 2, t.target_at(p, 1, 2, "pipe_painter"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "pipe_painter")))
 t.run_ticks(2)
 assert(t.hands(p).held == "pipe_painter", "painter in hand")
 
@@ -182,7 +182,7 @@ for _, y in ipairs({ 1, 2 }) do
         assert(action.id ~= "paint_pipe", "painting needs a visible run")
     end
 end
-t.click(p, 6, 2) -- open deck, no run under it
+t.click_tile(p, 6, 2) -- open deck, no run under it
 t.run_ticks(2)
 assert(
     not said(p, "There is no pipe under the floor here."),
@@ -191,7 +191,7 @@ assert(
 assert(not t.ledger_has("NetworkPainted"), "and writes no row")
 
 -- ...and neither is painting through a floor you have not opened.
-t.click(p, 6, 1) -- tiled, with the run buried under it
+t.click_tile(p, 6, 1) -- tiled, with the run buried under it
 t.run_ticks(2)
 assert(
     not said(p, "The floor is in the way. Pry the tile up first."),
@@ -201,7 +201,7 @@ assert(not t.ledger_has("NetworkPainted"), "still no row")
 assert(network_matter.pressure(2, 1) == assert(network_matter.pressure(7, 1)), "and still one net")
 
 -- ---- **the headline**: a brush cuts the main ----
-t.click(p, 5, 1)
+t.click_tile(p, 5, 1)
 t.run_ticks(2)
 assert(said(p, "You paint the pipe red."), "one length changes color")
 assert(heard(p, "click"), "and the room hears it happen")
@@ -251,7 +251,7 @@ t.use_self(p) -- green -> blue
 t.run_ticks(2)
 assert(said(p, "Pipe painter set to blue."), "the roster wraps, thirteen long")
 
-t.click(p, 5, 1)
+t.click_tile(p, 5, 1)
 t.run_ticks(2)
 assert(said(p, "You paint the pipe blue."), "the stripe comes out")
 t.run_seconds(DRAIN_S)

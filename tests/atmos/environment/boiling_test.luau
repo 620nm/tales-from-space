@@ -82,8 +82,8 @@ t.world(
 local p = t.join()
 t.tick()
 
-local dispenser = t.target_at(p, 1, 2)
-local heater = t.target_at(p, 3, 2)
+local dispenser = assert(t.target_at(p, 1, 2))
+local heater = assert(t.target_at(p, 3, 2))
 local beaker = assert(t.target_at(p, 1, 1, "beaker"))
 
 local function dock(machine, x, y)

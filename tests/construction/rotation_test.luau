@@ -48,7 +48,7 @@ t.use_item(p, fitting, "alt_secondary")
 t.use_item(p, fitting, "alt_secondary")
 assert(#t.ledger_rows("Rotated") == 5, "every accepted quarter-turn is recorded")
 
-t.click(p, 1, 2, t.target_at(p, 1, 2, "wrench"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "wrench")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "the wrench is in hand")
 t.click(p, 2, 2, fitting)
@@ -61,7 +61,7 @@ assert(t.target_at(p, 2, 2, "connector_port_fitting") == nil, "the loose fitting
 
 -- Taking it back up returns the component item rather than deleting it,
 -- and that item remembers the direction when it is fastened again.
-t.click(p, 2, 2, t.target_at(p, 2, 2, "connector_port"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "connector_port")))
 t.run_seconds(2.5)
 local returned = t.target_at(p, 2, 2, "connector_port_fitting")
 assert(returned ~= nil, "unwrenching returned the fitting item")
@@ -128,7 +128,7 @@ for _ = 1, 3 do
     t.use_item(q, valve_fitting, "alt_secondary")
 end -- south -> east
 
-t.click(q, 4, 3, t.target_at(q, 4, 3, "wrench"))
+t.click(q, 4, 3, assert(t.target_at(q, 4, 3, "wrench")))
 t.run_ticks(2)
 t.click(q, 3, 2, valve_fitting)
 t.run_seconds(2.5)
@@ -143,7 +143,7 @@ assert(network_channels.at(3, 2, "pipe") == "", "the valve replaces its center l
 -- north remains charged only if it did not silently fall back to NS.
 t.drop(q)
 t.run_ticks(2)
-t.click(q, 3, 2, t.target_at(q, 3, 2, "manual_valve"))
+t.click(q, 3, 2, assert(t.target_at(q, 3, 2, "manual_valve")))
 t.run_seconds(2)
 assert(assert(t.structure_at(3, 2)).state == "open", "the valve opened")
 t.fault(5, 1, t.now() + 4)

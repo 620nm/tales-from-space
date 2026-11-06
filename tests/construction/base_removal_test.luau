@@ -33,7 +33,7 @@ local function bench(substrate: string?, cover: string?, powered: boolean): numb
 end
 
 local function take(player: number, x: number, y: number, item: string)
-    t.click(player, x, y, t.target_at(player, x, y, item))
+    t.click(player, x, y, assert(t.target_at(player, x, y, item)))
     t.run_ticks(2)
     assert(t.hands(player).held == item)
 end

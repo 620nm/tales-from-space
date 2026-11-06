@@ -90,7 +90,7 @@ t.world(
 local p = t.join()
 t.tick()
 
-t.click(p, 1, 2, t.target_at(p, 1, 2, "wrench"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "wrench")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 
@@ -115,7 +115,7 @@ assert(t.structure_at(3, 2) == nil, "nothing was bolted to nothing")
 assert(lying_at(3, 2, "pipe_meter"), "and the fitting survived the attempt")
 
 -- ---- bolt one onto the run ----
-t.click(p, 2, 1, t.target_at(p, 2, 1, "pipe_meter"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "pipe_meter")))
 t.run_ticks(1)
 assert(not t.ledger_has("StructureStep", "meter", "built"), "one tick in, still a fitting")
 t.run_seconds(2.5)
@@ -186,7 +186,7 @@ assert(read_at_range, "the look carries the reading: " .. table.concat(look.line
 -- ...and a click on it from there reaches nothing at all, because a
 -- look is done with the eyes and a hand is still a hand.
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "meter"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "meter")))
 t.run_ticks(2)
 assert(t.ui(p) == nil, "no panel opens from across the room")
 
@@ -200,7 +200,7 @@ assert(t.ui(p) == nil, "no panel opens from across the room")
 walk(p, "west")
 walk(p, "west")
 t.swap_hands(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "meter"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "meter")))
 t.run_ticks(2)
 local panel = ui_controls.record(t.ui(p))
 assert(panel ~= nil, "an attached gauge answers an empty hand with a panel")
@@ -247,7 +247,7 @@ assert(line.sealed == nil, "a run has no lid to report")
 -- tg's `wrench_act`: forty deciseconds, and `on_deconstruction` mints
 -- the fitting back onto the tile (meter.dm:139-147).
 t.swap_hands(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "meter"))
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "meter")))
 t.run_ticks(1)
 assert(not t.ledger_has("StructureStep", "meter", "gone"), "one tick in, still bolted down")
 t.run_seconds(4.5)
@@ -328,9 +328,9 @@ assert(
 )
 
 -- Pick the length up and lay it on the end of the main.
-t.click(m, 3, 1, t.target_at(m, 3, 1, "pipe"))
+t.click(m, 3, 1, assert(t.target_at(m, 3, 1, "pipe")))
 t.run_ticks(2)
-t.click(m, 3, 1, nil, -14, 14)
+t.click_tile(m, 3, 1, -14, 14)
 
 -- Tick by tick, so that "the tick it happens" means something.
 local laid = false
