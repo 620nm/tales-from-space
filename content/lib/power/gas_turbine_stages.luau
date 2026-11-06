@@ -22,6 +22,8 @@ local RECTIFICATION = 0.3
 local WORK_CONVERSION = 0.01
 local HEAT_CONVERSION = 0.005
 local COMPRESSOR_STATOR_INTERACTION = 0.15
+-- TCMB, the cosmic background floor, kelvin (atmos_core.dm:27).
+local TCMB = 2.7
 
 -- DM's `round(x, step)`: the nearest multiple of `step`.
 function gas_turbine_stages.round_to(x: number, step: number): number
@@ -67,7 +69,8 @@ end
 
 -- `transfer_gases` (turbine.dm:142-162): pump `input` into `output` at
 -- `input`'s pressure times `intake`, heat `output` by the work, and answer
--- the work less `remove`. The parcel keeps its source's volume (`remove`,
+-- the work less `remove`, capped by the heat the output holds above TCMB
+-- (:157-161). The parcel keeps its source's volume (`remove`,
 -- gas_mixture.dm:206).
 function gas_turbine_stages.transfer(
     from: MatterOwner | Handle,
@@ -92,9 +95,17 @@ function gas_turbine_stages.transfer(
         * WORK_CONVERSION
     work -= remove
     sim.matter.transfer({ from = from, to = to, amount = moles, phases = { "gas" } })
-    -- tg caps the work by the output's heat and floors it at TCMB (:157-161);
-    -- a reading carries no heat capacity, so the engine's energy floor stands in.
-    sim.matter.add_energy({ owner = to, joules = work * HEAT_CONVERSION })
+    -- tg reads `output_mix` after the pump (:157-161); a handler's reads do
+    -- not see its own writes, so the merge is figured: the parcel carries
+    -- its source's heat capacity per mole and its temperature. Never zero
+    -- (an empty reading floors it), so tg's zero-capacity return cannot arise.
+    local parcel = input.heat_capacity_j_per_k * moles / input.moles
+    local capacity = output.heat_capacity_j_per_k + parcel
+    local temp_k = (output.heat_capacity_j_per_k * output.temp_k + parcel * input.temp_k)
+        / capacity
+    work = math.min(work, (capacity * temp_k - capacity * TCMB) / HEAT_CONVERSION)
+    local heated_k = math.max((temp_k * capacity + work * HEAT_CONVERSION) / capacity, TCMB)
+    sim.matter.add_energy({ owner = to, joules = capacity * (heated_k - temp_k) })
     return work
 end
 

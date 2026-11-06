@@ -197,6 +197,9 @@ sealed vessel of tg's 1000/3000/6000 L and, running, runs a task on its own
 tile, a tick apart in flow order, for tg's 2 s pass (`turbine.dm:625-685`,
 `lib/power/gas_turbine_turns.luau`): the compressor draws the tile behind, the
 outlet exhausts ahead and sets the rotor, a source (`output_w`) feeding the
-cable under it, to `rpm × 4.5` W. Heat wears it (`:634-662`) to an alarm, then
-a blast as big as the shaft is fast (`:646-659`). A shut rotor feeds 0 W. A run whose rotor misses two passes reads
-stopped; the switch restarts it. `generator`/`solar`: 100/8 kW.
+cable under it, to `rpm × 4.5` W, leased for three passes, so turns cancelled
+outright stop feeding within them. Heat wears it (`:634-662`) to an alarm on
+the engineering channel with tg's alert at 30 tiles, then a blast as big as
+the shaft is fast (`:646-659`). A shut rotor feeds 0 W. A run whose rotor
+misses two passes reads stopped; the switch restarts it, and a start it
+refuses halts it. `generator`/`solar`: 100/8 kW.

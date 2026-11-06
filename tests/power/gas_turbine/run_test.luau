@@ -195,6 +195,11 @@ end, 5)
 assert(worn, "heat past the rating wears the rotor: " .. past_rating())
 assert(number("rpm") == 0 and number("power_w") == 0, "no exhaust is no rpm and no power")
 
+-- What the main under the rotor carries while the rotor feeds nothing: the
+-- generator's own watts.
+local rotor = assert(t.structure_at(3, 1)).entity
+local idle_supply = assert(t.bus_supply(rotor), "the rotor stands on the main")
+
 -- Open the tile ahead of the outlet onto the empty chamber: the next pass
 -- ejects and spins. This pocket drives the shaft to the parts' cap, their
 -- mean rated 50000 rpm (turbine.dm:682), far past the switch's 1000.
@@ -203,7 +208,16 @@ assert(eventually(function()
     return number("rpm") > 1000
 end, 6), "hot gas through the stages spins the shaft past 1000 rpm")
 assert(number("power_w") == number("rpm") * 4.5, "at rpm * 4.5 W (turbine.dm:684)")
-assert(t.ledger_has("MachineSetpoint", "watts"), "set on the rotor feeding the main under it")
+-- The rotor's watts, leased (docs/POWER.md, The gas turbine), reach the main.
+local set = t.ledger_rows("source_output_set")
+local last = assert(set[#set], "the rotor's watts are on the record")
+local at = last.pos
+assert(at ~= nil and at[1] == 3 and at[2] == 1, "set on the rotor")
+assert(ui_controls.number(last.watts) > 0, "to the watts it makes")
+assert(ui_controls.number(last.hold_s) > 0, "on a lease")
+assert(eventually(function()
+    return math.abs((t.bus_supply(rotor) or 0) - idle_supply - number("power_w")) < 1
+end, 6), "the main carries the rotor's watts on top of the generator's")
 
 -- The switch will not stop a shaft this fast.
 local refused = press_power()

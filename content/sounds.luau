@@ -107,6 +107,9 @@ return {
     defib_failed = { asset = "defib_failed" },
     health_analyzer_scan = { asset = "health_analyzer_scan" },
     twobeep_high = { asset = "twobeep_high" },
+    -- The gas turbine's damage alarm: tg plays it at volume 100 with a
+    -- range of 30 (turbine.dm:662); tg's falloff distance of 10 has no field.
+    engine_alert1 = { asset = "engine_alert1", range = 30, volume = 1 },
     -- Violence.
     grenade_arm = { asset = "grenade_arm" },
     punch = { asset = "punch" },
