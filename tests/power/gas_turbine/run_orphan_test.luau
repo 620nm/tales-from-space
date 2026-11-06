@@ -66,7 +66,7 @@ t.world(
                 (4, 1, "turbine_outlet", "closed", { "dir": "east" }),
             ],
             machines: [(4, 3, "turbine_computer")],
-            items: [(2, 2, "multitool"), (3, 2, "wirecutters")],
+            items: [(2, 2, "multitool"), (2, 2, "wirecutters")],
             painted: [
                 (1, 1, "hot_nitrogen"),
                 (2, 2, "room_air"), (3, 2, "room_air"), (4, 2, "room_air"), (1, 3, "room_air"),
@@ -87,6 +87,17 @@ t.world(
 
 local p = t.join()
 t.tick()
+
+-- A second player takes up the wirecutters beside the spawn, for later,
+-- before the air moves them or anything else lands on them, and keeps a free
+-- hand for the console. It touches nothing else until the starter is gone.
+local q = t.join()
+t.run_ticks(2)
+t.click(q, 2, 2, assert(t.target_at(q, 2, 2, "wirecutters"), "q sees the wirecutters"))
+t.run_seconds(0.2)
+assert(t.hands(q).held == "wirecutters", "the wirecutters are in hand")
+t.swap_hands(q)
+t.run_ticks(1)
 
 -- What `player`'s console window shows.
 local function reading(player: number): ui_controls.Record
@@ -142,24 +153,8 @@ end, 5), "heat past the rating wears the rotor")
 local before = integrity(p)
 assert(t.staff_gib(p), "the body that threw the switch is gone")
 
--- A second player takes up the wirecutters laid on the spawn (for later),
--- then opens the console with the free hand: the run still turns, still
--- wearing. Loose things drift with the air, so look for them in reach.
-local q = t.join()
-t.run_ticks(2)
-local wx, wy = nil, nil
-for cx = 2, 4 do
-    for cy = 1, 3 do
-        if table.find(t.items_at(cx, cy), "wirecutters") ~= nil then
-            wx, wy = cx, cy
-        end
-    end
-end
-assert(wx ~= nil and wy ~= nil, "the wirecutters lie in reach of the spawn")
-click(q, wx, wy, "wirecutters", 0.2)
-assert(t.hands(q).held == "wirecutters", "the wirecutters are in hand")
-t.swap_hands(q)
-t.run_ticks(1)
+-- The second player opens the console with its free hand: the run still
+-- turns, still wearing.
 assert(t.hands(q).held == nil, "an empty hand opens the console")
 click(q, 4, 3, "turbine_computer", 0.2)
 assert(reading(q).active == true, "the run outlives its starter")
