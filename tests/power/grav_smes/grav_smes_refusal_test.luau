@@ -53,7 +53,7 @@ t.use_self(p)
 t.run_ticks(2)
 
 -- Wrong facing: an emitter pointing away from the center.
-weld_says("The east emitter must face the centre.")
+weld_says("The east emitter must face the center.")
 turn(6, 4, "grav_emitter", 2)
 
 -- Unanchored emitter: wears its loose picture until bolted down.
