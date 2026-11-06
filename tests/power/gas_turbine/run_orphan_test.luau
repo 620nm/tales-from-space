@@ -66,7 +66,7 @@ t.world(
                 (4, 1, "turbine_outlet", "closed", { "dir": "east" }),
             ],
             machines: [(4, 3, "turbine_computer")],
-            items: [(2, 2, "multitool"), (2, 2, "wirecutters")],
+            items: [(2, 2, "multitool"), (3, 2, "wirecutters")],
             painted: [
                 (1, 1, "hot_nitrogen"),
                 (2, 2, "room_air"), (3, 2, "room_air"), (4, 2, "room_air"), (1, 3, "room_air"),
@@ -142,9 +142,24 @@ end, 5), "heat past the rating wears the rotor")
 local before = integrity(p)
 assert(t.staff_gib(p), "the body that threw the switch is gone")
 
--- A second player opens the console: the run still turns, still wearing.
+-- A second player takes up the wirecutters laid on the spawn (for later),
+-- then opens the console with the free hand: the run still turns, still
+-- wearing. Loose things drift with the air, so look for them in reach.
 local q = t.join()
 t.run_ticks(2)
+local wx, wy = nil, nil
+for cx = 2, 4 do
+    for cy = 1, 3 do
+        if table.find(t.items_at(cx, cy), "wirecutters") ~= nil then
+            wx, wy = cx, cy
+        end
+    end
+end
+assert(wx ~= nil and wy ~= nil, "the wirecutters lie in reach of the spawn")
+click(q, wx, wy, "wirecutters", 0.2)
+assert(t.hands(q).held == "wirecutters", "the wirecutters are in hand")
+t.swap_hands(q)
+t.run_ticks(1)
 assert(t.hands(q).held == nil, "an empty hand opens the console")
 click(q, 4, 3, "turbine_computer", 0.2)
 assert(reading(q).active == true, "the run outlives its starter")
@@ -220,15 +235,8 @@ end, 4), "feeding the grid again")
 -- Stall it again, then cut the main under the rotor: the switch's start is
 -- refused for want of power, and the stalled run it refuses is halted.
 stall()
-local x, y = 2, 2
-for cx = 1, 7 do
-    for cy = 1, 4 do
-        if table.find(t.items_at(cx, cy), "wirecutters") ~= nil then
-            x, y = cx, cy
-        end
-    end
-end
-click(q, x, y, "wirecutters", 0.2)
+t.swap_hands(q)
+t.run_ticks(1)
 assert(t.hands(q).held == "wirecutters", "the wirecutters are in hand")
 t.click_network(q, 3, 2, assert(t.network_instance(3, 2, "power", "l2")))
 t.run_seconds(1.5)
