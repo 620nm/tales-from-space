@@ -3,7 +3,7 @@ local vessel = require("@lib/vessel")
 
 -- A refillable, sealed CO2 extinguisher. The 4 L shell starts with 2 kg
 -- (45.4545 mol) explicitly in the liquid phase; the matter system supplies
--- the vapour-liquid equilibrium and latent cooling as it is discharged.
+-- the vapor-liquid equilibrium and latent cooling as it is discharged.
 --
 -- tg: code/game/objects/items/tools/extinguisher.dm:1-55,285-344. Safety starts
 -- on, its normal burst reaches five tiles and five particles, and a use is
@@ -43,7 +43,7 @@ local content = {
     contents = {
         { substance = "co2:liquid", mol = 2000 / 44.0 },
     },
-    -- A pressure-rated shell: normal CO2 vapour pressure is below the
+    -- A pressure-rated shell: normal CO2 vapor pressure is below the
     -- ladder, while a heated or overfilled shell still has a finite failure.
     failure = {
         integrity = 200,

@@ -161,7 +161,7 @@ test("Cancel while saving retains the receipt and cancels a local continuation",
   assert.equal(b.revision, 4);
   assert.equal(b.pending, undefined);
 });
-test("an older accepted save reconciles a later cancelled retry", () => {
+test("an older accepted save reconciles a later canceled retry", () => {
   const b = pending(); const first = b.pending.request;
   B.cancelGuard(b);
   B.guard(id, command)({});
@@ -169,12 +169,12 @@ test("an older accepted save reconciles a later cancelled retry", () => {
   B.cancelGuard(b);
   assert.equal(b.cancelledSave.request === first, false);
   const next = documents(acknowledged(state("old", 4, "draft"), first));
-  assert.equal(B.pollContinuation(next), undefined, "an older receipt must not revive a cancelled retry");
+  assert.equal(B.pollContinuation(next), undefined, "an older receipt must not revive a canceled retry");
   assert.equal(b.dirty, false);
   assert.equal(b.text, "draft");
   assert.equal(b.revision, 4);
 });
-test("an accepted different draft does not reconcile the cancelled retry", () => {
+test("an accepted different draft does not reconcile the canceled retry", () => {
   const b = dirty();
   B.guard(id, command)({});
   const first = B.saveBuffer(b, { value: "draft A", revision: 3 }, true).payload.request;

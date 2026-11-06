@@ -45,7 +45,7 @@ local ALARM_SOUND = "engine_alert1"
 -- Pack-tuned: how far the failure is heard; tg says nothing at a failure.
 local FAILURE_RADIUS = 7
 -- The rotor's watts are leased for this many passes and renewed every pass:
--- turns cancelled outright (a quarantine, a transfer) stop renewing them,
+-- turns canceled outright (a quarantine, a transfer) stop renewing them,
 -- and the grid loses them unattended, a missed pass to spare.
 local OUTPUT_HOLD_PASSES = 3
 -- The failure's blast grows with the shaft's speed (turbine.dm:646-659):

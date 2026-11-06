@@ -8,7 +8,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- rolls it in your hand (dice.dm:68-69), and `throw_impact` rolls it
 -- again where it lands (dice.dm:71-75). The second is the entire reason
 -- the engine grew a landing anchor — a die is a thing whose interesting
--- behaviour happens after it stops moving, and there was no seam for
+-- behavior happens after it stops moving, and there was no seam for
 -- that until now.
 --
 -- Deliberately not ported: rigging (`rigged`/`rigged_value` and the

@@ -9,7 +9,7 @@
 -- to `<strip>_0_4` the client stitches into joined edges.
 --
 -- The rungs are read off real spills (tests/matter_look/spill_ladder_test).
--- A tile is 1 m x 1 m x 3 m: a litre is a millimetre of wet, water stops
+-- A tile is 1 m x 1 m x 3 m: a liter is a millimeter of wet, water stops
 -- thinning at a 3.3 L film, and a puddle deeper than that is a flood.
 -- Gas rungs are multiples of the substance's own visibility threshold.
 return {
@@ -65,7 +65,7 @@ return {
                     shell = { still = "liquid_pool_smooth_still", moving = "liquid_pool_smooth_ripple" },
                 },
                 -- Open water: 40 cm and deeper, as a 50 cm shallows stands
-                -- well clear of it. One rung, so a shallower neighbour draws
+                -- well clear of it. One rung, so a shallower neighbor draws
                 -- no surf between two tiles of the same sea.
                 {
                     at_ml = 400000,
@@ -148,7 +148,7 @@ return {
             },
         },
         -- Plants: a thin coat over natural ground (terrain.luau's `grass`
-        -- cover lays a litre a tile). It thins as it burns and is gone under 100 mL,
+        -- cover lays a liter a tile). It thins as it burns and is gone under 100 mL,
         -- leaving the ground face and whatever ash the fire made.
         {
             key = "grass",
@@ -175,7 +175,7 @@ return {
         -- row's amount at the maximum, so the one rung always shows and
         -- alpha sits at full. The `ground_face` layer puts it over the
         -- substrate and under decals, residue and everything on the tile.
-        -- The art is greyscale and takes the material's colour as tint.
+        -- The art is grayscale and takes the material's color as tint.
         {
             key = "ground_shell",
             visual_layer = "ground_face",

@@ -38,7 +38,7 @@ local content = {
             .. "mixing. What ends up on the shelf.",
     },
     -- tg's bottle: `volume = 50` (cups/bottle.dm:12), the cup base's
-    -- own figure. One unit is one millilitre.
+    -- own figure. One unit is one milliliter.
     volume_ml = 50,
     -- A neck has a stopper in it. What a shelf keeps is corked, so what
     -- is in it stays in it: a bottle does not breathe with the room the
@@ -66,7 +66,7 @@ local content = {
         -- Iodine crystals: how iodine reaches the bench, since it is
         -- not a dispenser button (docs/CHEMISTRY.md 7). Sealed like
         -- every bottle, so what stands over the crystals is their own
-        -- vapour at the sublimation line -- a few pascals of violet at
+        -- vapor at the sublimation line -- a few pascals of violet at
         -- room temperature -- and nothing escapes until it is tipped
         -- out. Fifty units of tg's bottle
         -- (reagent_containers/cups/bottle.dm:12) is 1.25 mol; a bottle
@@ -77,7 +77,7 @@ local content = {
             name = "bottle (iodine)",
             contents = { iodine = 0.125 },
             examine = {
-                flavor = "Glass with a neck on it. Grey-black crystals, and a "
+                flavor = "Glass with a neck on it. Gray-black crystals, and a "
                     .. "violet haze over them that was not there a moment ago.",
             },
         },

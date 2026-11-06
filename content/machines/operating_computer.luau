@@ -11,7 +11,7 @@
 -- watches that table's patient (:96-101). The engine's `procedures` module
 -- reads the four tiles the machine faces and every body standing on one
 -- of them, which needs no table to exist and means a triage line on the
--- deck reads as well as a theatre does. What it draws is native state
+-- deck reads as well as a theater does. What it draws is native state
 -- throughout -- vitals, blood, the parts that are open, and what each
 -- open part admits next -- so this file spends no script on it.
 --

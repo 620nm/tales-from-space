@@ -26,7 +26,7 @@
 -- cannot drift from itself.
 --
 -- This module returns a table and declares nothing
--- (docs/SCRIPTING.md 1.6). The `sim.define` that binds a behaviour to a
+-- (docs/SCRIPTING.md 1.6). The `sim.define` that binds a behavior to a
 -- prototype happens in the roster file that calls `attach`, so "which
 -- file declared this" still answers with a name off the shelf.
 local action_rules = require("@lib/action_rules")
@@ -72,7 +72,7 @@ local U = 0.025
 -- would notice.
 local DREGS_MOL = 0.001
 
--- And above this it is full: a millilitre of room left is under what any
+-- And above this it is full: a milliliter of room left is under what any
 -- gesture could put in it and under what the fill layer would draw.
 local HEADSPACE_L = 0.001
 
@@ -82,7 +82,7 @@ local HEADSPACE_L = 0.001
 local R_J_PER_MOL_K = 8.314462618
 
 -- ONE STROKE of the valve. Nothing on the station is anywhere near big
--- enough to want this much -- fifty millilitres at twenty atmospheres is
+-- enough to want this much -- fifty milliliters at twenty atmospheres is
 -- four hundredths of a mole -- so it is a bound on the GESTURE rather
 -- than a dial anybody turns: whatever vessel gets authored next, one
 -- click cannot walk off with a canister.
@@ -119,7 +119,7 @@ local SCOOP_SEALED = "lunatic/tfs:lib.vessel.open_before_scooping"
 -- tile standing at least SCOOP_DEPTH_L deep. tg marks scoopable turfs by
 -- type (code/game/turfs/open/water.dm:43,52-53); here depth decides, so a
 -- trench a sea filled scoops and a puddle on the deck tips out. Ten
--- centimetres over the tile: deep enough to dip a vessel under.
+-- centimeters over the tile: deep enough to dip a vessel under.
 local SCOOP_UNITS_MIN = 5
 local SCOOP_UNITS_MAX = 10
 local SCOOP_DEPTH_L = 0.1 * tile_geometry.width_m * tile_geometry.depth_m * 1000
@@ -160,7 +160,7 @@ function vessel.moles(obj: MatterOwner | Handle): number?
     return read and read.moles
 end
 
--- How much room is left, in litres: the shell minus what the condensed
+-- How much room is left, in liters: the shell minus what the condensed
 -- phases actually take up, so "full" is a VOLUME fact and never a count
 -- of moles -- capacity is geometry.
 function vessel.headspace_l(obj: MatterOwner | Handle): number?
@@ -287,7 +287,7 @@ end
 -- What a stroke finds on one tile, in moles, read before anything moves: an
 -- effect lands at the end of the transaction, so a gesture cannot measure
 -- itself by re-reading its own vessel.
--- `liquid_l` is its depth in litres and `deepest` the name of the liquid
+-- `liquid_l` is its depth in liters and `deepest` the name of the liquid
 -- standing most, for the sentence a scoop says.
 type DeckReading = { liquid: number, liquid_l: number, deepest: string?, solid: number, pinned: boolean }
 
@@ -443,10 +443,10 @@ local function begin_soak(
     return true
 end
 
--- Attaches the gestures to one prototype and declares the behaviour that
+-- Attaches the gestures to one prototype and declares the behavior that
 -- carries them. `spec`:
 --
---   id      the prototype id, which is also the behaviour's own name
+--   id      the prototype id, which is also the behavior's own name
 --   noun    what the sentences call it ("beaker", "tube", "can")
 --   phases  which phases a gesture moves; a dropper draws no solids
 --   pour    { units, message? }  -- absent: clicks at things are not

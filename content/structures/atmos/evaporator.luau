@@ -63,7 +63,7 @@ return {
         -- number an operator would dial for "drive it until something
         -- happens". Bay has no dial at all -- its machine is a switch --
         -- so this is the reaction chamber's thermostat, said again on a
-        -- machine with somewhere for the vapour to go.
+        -- machine with somewhere for the vapor to go.
         target_k = 373.15,
         -- The built machine's, exactly as the reaction chamber's is
         -- (tg `chem_heater.dm:86-90`): the file's number is what neutral

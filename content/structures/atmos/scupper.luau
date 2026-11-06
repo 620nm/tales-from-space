@@ -10,8 +10,8 @@
 --
 -- tg has no scupper; these numbers are this pack's.
 --
--- TWO LITRES A SECOND keeps pace with four floor drains on one line.
--- `head_m` 0.5 is the outfall half a metre under the gratings that feed it:
+-- TWO LITERS A SECOND keeps pace with four floor drains on one line.
+-- `head_m` 0.5 is the outfall half a meter under the gratings that feed it:
 -- fifty times a floor drain's, so a line ending here stands near empty and
 -- each drain upstream reaches its film.
 --

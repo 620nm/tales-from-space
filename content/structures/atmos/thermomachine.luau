@@ -54,11 +54,11 @@
 -- would be an expression language at load time, and that is the trade
 -- the three laws exist to refuse.
 --
--- COLOUR. tg tints the whole machine by its setpoint through GAGS
+-- COLOR. tg tints the whole machine by its setpoint through GAGS
 -- (thermomachine.dm:98-117: violet, blue, cyan, lime, yellow, orange,
--- red as the target climbs), which is a runtime recolour this engine's
+-- red as the target climbs), which is a runtime recolor this engine's
 -- baked atlas has no equivalent for. The art is baked at the default
--- setpoint's colour, `COLOR_VIBRANT_LIME` (thermomachine.dm:25) --
+-- setpoint's color, `COLOR_VIBRANT_LIME` (thermomachine.dm:25) --
 -- see tfs/assets/sprites/71-thermomachine.ron.
 return {
     id = "thermomachine",
@@ -103,7 +103,7 @@ return {
         min_k = 73.15,
         max_k = 573.15,
         -- tg's `heat_capacity`, two tier-1 matter bins
-        -- (thermomachine.dm:90). The bath the port's gas is equalised
+        -- (thermomachine.dm:90). The bath the port's gas is equalized
         -- against: bigger bins close the gap faster, which is what the
         -- upgrade path buys in tg and what this number would carry here.
         heat_j_per_k = 5000.0,

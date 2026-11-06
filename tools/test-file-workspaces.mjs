@@ -122,7 +122,7 @@ test("repairing malformed atmosphere keeps source and focus until View is chosen
   assert(get(nodes, "reader"));
   assert(!nodes.some((n) => n.id === input.id));
 });
-test("an unanswered save can be cancelled, preserving Create for retry or discard", () => {
+test("an unanswered save can be canceled, preserving Create for retry or discard", () => {
   const s = createGuard(); render(s);
   const save = act("editor/guard/save"); render(s);
   act("editor/guard/cancel");
@@ -150,7 +150,7 @@ test("a retried save continues only after its own receipt", () => {
   assert.equal(U.pollContinuation([{ ...doc, state: s }]), undefined);
 });
 
-test("a cancelled receipt cannot release a newer pending guard", () => {
+test("a canceled receipt cannot release a newer pending guard", () => {
   const s = createGuard(); render(s);
   const first = act("editor/guard/save"); render(s);
   act("editor/guard/cancel"); render(s);

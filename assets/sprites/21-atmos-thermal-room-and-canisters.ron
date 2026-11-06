@@ -90,9 +90,9 @@
         ("heat_exchanger_e", Dmi("@unary", "he1", 3)),
         ("heat_exchanger_w", Dmi("@unary", "he1", 2)),
         // THE ADAPTERS are pipe rather than machinery -- tg files both
-        // under `/obj/machinery/atmospherics/pipe` -- and each is a CENTRE
+        // under `/obj/machinery/atmospherics/pipe` -- and each is a CENTER
         // PIECE with nothing else in it. Both of tg's own `Initialize`s
-        // say so in one line: the colour adapter clears its icon_state
+        // say so in one line: the color adapter clears its icon_state
         // outright and composes from `adapter_center`
         // (color_adapter.dm:31-33,40-45), and the layer manifold replaces
         // its mapping state with `manifoldlayer_center`
@@ -103,9 +103,9 @@
         // was the loudest form of this whole defect: `manifoldlayer` is
         // the picture tg puts in your HANDS -- all five layers drawn out
         // to the tile edge at both ends, every connection it could ever
-        // make -- and it was baked in UNDER the centre band, so a bolted
+        // make -- and it was baked in UNDER the center band, so a bolted
         // adapter advertised ten runs it had not found. What it wears now
-        // is the centre band alone, plus one `pipe_half_*` per end per
+        // is the center band alone, plus one `pipe_half_*` per end per
         // layer that actually reached something (tg's
         // `get_attached_image`, layermanifold.dm:59-82). An adapter
         // bridging one layer looks like an adapter bridging one layer.
@@ -154,7 +154,7 @@
         // positions: dead, filtering, and emptying the room. tg draws
         // the last one differently on purpose (`scrub_purge`,
         // vent_scrubber.dm:142) and it is the one a passer-by most
-        // needs to recognise. `scrub_on` and `scrub_purge` are tg's own
+        // needs to recognize. `scrub_on` and `scrub_purge` are tg's own
         // 24- and 8-frame loops; bake every frame and its DMI-authored
         // delay so the running and emergency states move exactly as their
         // source art does.
@@ -209,20 +209,20 @@
         ("passive_vent_loose_e", Dmi("@pipe_item", "pvent", 2)),
         ("passive_vent_loose_w", Dmi("@pipe_item", "pvent", 3)),
         // ---- end of the room devices -------------------------------------
-        // A canister: tg's art is greyscale and each gas type paints
+        // A canister: tg's art is grayscale and each gas type paints
         // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with
-        // that colour for now; it moves to per-object paint when the
+        // that color for now; it moves to per-object paint when the
         // renderer can tint a sprite on both paths.
-        // tg's canister greyscale recipe, whole (canister_base.json +
+        // tg's canister grayscale recipe, whole (canister_base.json +
         // canister_post_effects.json): a white shell mask that takes the
-        // colour, two shader passes, and a coloured outline. Baking only
+        // color, two shader passes, and a colored outline. Baking only
         // `base` — which is 329 pixels of pure white — is why this drew
         // as a flat blob with no edge.
         //
-        // Left greyscale with a DECLARED colour rather than a baked one,
+        // Left grayscale with a DECLARED color rather than a baked one,
         // so a canister can be painted by its gas the way tg paints
         // them. The one cost: `add_shader` is a highlight tg adds AFTER
-        // colouring, and added to a white base it clamps away, leaving
+        // coloring, and added to a white base it clamps away, leaving
         // this ~7% darker than tg's. The shape, which is what was
         // actually missing, is exact.
         ("canister", Tinted(DmiBlend(
@@ -243,7 +243,7 @@
         // overlay slot is already spoken for by the gauge, which the
         // sim rewrites every time the pressure band moves; the two
         // would fight for the same component every tick. tg does not
-        // RESET_COLOR this one either, so it takes the gas's colour
+        // RESET_COLOR this one either, so it takes the gas's color
         // along with the rest of the shell, which is why it rides
         // inside the blend.
         ("canister_connected", Tinted(DmiBlend(
@@ -262,12 +262,12 @@
         // canister that gave up under its own pressure looks like
         // (canister.dm:361, `machine_stat & BROKEN`). Inside the blend
         // for the reason `can-connector` is: tg adds it as a plain
-        // overlay with no RESET_COLOR, so it takes the gas's colour
+        // overlay with no RESET_COLOR, so it takes the gas's color
         // along with the rest of the shell, and the canister's own
         // overlay slot is spoken for by the gauge.
         //
         // `broken_cutout` is deliberately not in the stack: it is the
-        // MASK tg's greyscale config subtracts to punch the hole
+        // MASK tg's grayscale config subtracts to punch the hole
         // through the shell, and blending it as a picture would paint
         // the hole in rather than cut it out.
         ("canister_broken", Tinted(DmiBlend(
@@ -282,7 +282,7 @@
             dir: 0,
             paint: (255, 255, 255),
         ), (198, 192, 181))),
-        // The indicator lamps are NOT coloured by the gas (tg's
+        // The indicator lamps are NOT colored by the gas (tg's
         // post_effects leaves them alone), so they ride as their own
         // untinted overlay.
         ("canister_lights", Dmi("@canisters", "lights", 0)),

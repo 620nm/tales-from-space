@@ -21,20 +21,20 @@ local decal_paints = require("@lib/decal_paints")
 -- this pack has no lathe to print toner at. A FOLLOW-UP, not a
 -- decision against it.
 --
--- tg picks decal, colour and direction out of a tgui window with a live
+-- tg picks decal, color and direction out of a tgui window with a live
 -- preview. We have no such window, so the choice is three dials, the
 -- surface the RPD already wears (`piping/rpd.luau`). tg's fourth
--- control, the free colour wheel (`set_painting_tool_color`,
+-- control, the free color wheel (`set_painting_tool_color`,
 -- decal_painter.dm:135-138), is deliberately absent: the pack declares
 -- `decal_colors.free.play = false`, so a raw #RRGGBB in play is refused
--- where it compiles. Free colour is a MAPPER's tool here.
+-- where it compiles. Free color is a MAPPER's tool here.
 local PAINTS = decal_paints.colors
 
 type DecalChoice = { id: string, label: string, colored: boolean, facing: boolean }
 
 -- Every decal a player may lay down, and what the dial calls it. The
--- ids are `content/compositions.luau`'s `decals` roster. The uncoloured
--- rows take no paint: the stripes and the marks carry tg's own colours
+-- ids are `content/compositions.luau`'s `decals` roster. The uncolored
+-- rows take no paint: the stripes and the marks carry tg's own colors
 -- in their own pixels.
 local DECALS: { DecalChoice } = {
     { id = "trim", label = "Trim line", colored = true, facing = false },

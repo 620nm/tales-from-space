@@ -1,12 +1,12 @@
 -- Ordinary air with the shower running: breathable air plus half a mole
--- of water vapour per cubic metre.
+-- of water vapor per cubic meter.
 --
 -- `water:gas` is spelled out because water rests LIQUID at 20 C, so an
 -- unsuffixed row here would paint a room with a puddle in the air
 -- (docs/map-properties/blends.md).
 --
--- The half mole per cubic metre is chosen between two lines. Water's own
--- file makes vapour visible from 0.25 mol/m3 (`visible.mol_per_m3`), so
+-- The half mole per cubic meter is chosen between two lines. Water's own
+-- file makes vapor visible from 0.25 mol/m3 (`visible.mol_per_m3`), so
 -- this room fogs. And the saturation density this engine derives from
 -- water's boil and latent heat is 1.164 mol/m3 at 20 C -- p_sat/RT with
 -- p_sat = 1 atm * exp(-l_vap/R * (1/T - 1/T_boil)) -- so the first

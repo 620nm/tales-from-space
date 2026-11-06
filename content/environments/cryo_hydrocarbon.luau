@@ -12,7 +12,7 @@
 -- falling on its open sky. Both are at 94 K, as every layer must be.
 --
 -- The snow's `extinction_per_m` is chosen from the sight it leaves.
--- Koschmieder: visibility V = 3.912 / sigma metres, and a tile is 1 m, so
+-- Koschmieder: visibility V = 3.912 / sigma meters, and a tile is 1 m, so
 -- about 4.5 tiles wants sigma = 3.912 / 4.5 = 0.87 per m. The engine caps
 -- sight at floor(V) tiles: V = 3.912 / 0.87 = 4.50 m, four tiles at full
 -- intensity (the engine's docs/sim/sight-extinction.md).

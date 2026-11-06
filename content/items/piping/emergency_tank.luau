@@ -1,10 +1,10 @@
 local physical_profiles = require("@lib/physical_profiles")
 local item_actions = require("@lib/item_actions")
 
--- The pocket bottle: three litres, small enough to live in a bag, and
+-- The pocket bottle: three liters, small enough to live in a bag, and
 -- the reason a hull breach is a bad afternoon rather than a death. THE
 -- SHELL IS THE PROTOTYPE and the gas is a variant of it: an empty
--- three-litre bottle is a real thing to hand somebody, and what the
+-- three-liter bottle is a real thing to hand somebody, and what the
 -- station packs is `emergency_tank.oxygen` -- ten atmospheres of it,
 -- about twenty breaths and not one more.
 --
@@ -69,13 +69,13 @@ local content = {
     -- until it is empty or gone (tanks.dm:342-345).
     --
     -- ONE tg SUBTLETY IS FOLDED IN RATHER THAN BUILT: tg's tank wears
-    -- `bomb = 10` armour (`/datum/armor/item_tank`, tanks.dm:68-71),
+    -- `bomb = 10` armor (`/datum/armor/item_tank`, tanks.dm:68-71),
     -- and `run_atom_armor` takes that 10% off every point of the BOMB
     -- damage this ladder deals -- so a tg tank effectively holds
-    -- 200/0.9 = 222 points of it. There is no armour system here and a
+    -- 200/0.9 = 222 points of it. There is no armor system here and a
     -- vessel does not want one, so the number stays 200 and a tank
     -- here gives up about a tenth sooner than tg's. Noted rather than
-    -- silently absorbed, because the day armour lands this is the
+    -- silently absorbed, because the day armor lands this is the
     -- comment that says the rating was never rescaled.
     failure = {
         integrity = 200,
@@ -109,7 +109,7 @@ local content = {
     -- A charge is a line of data, not a second file, and the handlers
     -- below are bound to this shell and govern every variant of it.
     variants = {
-        -- tg's own: oxygen at 10*ONE_ATMOSPHERE in three litres
+        -- tg's own: oxygen at 10*ONE_ATMOSPHERE in three liters
         -- (tank_types.dm:182-183).
         oxygen = {
             name_label = "lunatic/tfs:entity.emergency_tank.oxygen.name",

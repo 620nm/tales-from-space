@@ -22,9 +22,9 @@ local action_rules = require("@lib/action_rules")
 -- THE LINES. tg has three cable layers, and they are the real thing:
 -- connection is gated on the layer bitflag and nothing else
 -- (cable.dm:121), so three cables can share a tile and be three
--- separate circuits. The colours are a mnemonic for the layer, not a
+-- separate circuits. The colors are a mnemonic for the layer, not a
 -- mechanism -- tg's own names for them are "Red/Yellow/Blue Power
--- Line" (__DEFINES/power.dm:5,8,11), and its coil recolours itself to
+-- Line" (__DEFINES/power.dm:5,8,11), and its coil recolors itself to
 -- match whichever layer you picked (cable.dm:596,602,608).
 --
 -- THE HUBS. tg's coil also lays a multi-z cable hub (cable.dm:585,

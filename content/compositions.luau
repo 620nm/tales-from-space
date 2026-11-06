@@ -47,7 +47,7 @@ local function shapes(prefix: string, channels: {string}, cable: boolean)
 end
 
 -- One picture for every shape of a kind, per channel: an adapter is a
--- fixture, not a run that bends with its neighbours.
+-- fixture, not a run that bends with its neighbors.
 local function uniform_shapes(sprite_of: (string) -> string, channels: {string})
     local result: {[string]: {[number]: string}} = {}
     for _, channel in ipairs(channels) do
@@ -150,7 +150,7 @@ local decals: {any} = {
     -- first of /obj/effect/decal/cleanable/blood/splatter's five,
     -- blood.dm:271-272) in tg's deck-pool red, drawn four ways round
     -- so the wound handler can aim the spray off a blast. Colored,
-    -- because the art is a greyscale mask and the red arrives as
+    -- because the art is a grayscale mask and the red arrives as
     -- paint — and the paint is the `blood` entry below, since a
     -- script may only place a DECLARED paint (`free.play` is false).
     -- No crew tool offers this decal: blood on the deck means a
@@ -341,7 +341,7 @@ local composition_declaration: { [string]: any } = {
     decals = decals,
     decal_colors = {
         paints = decal_palette,
-        -- The map and the editor may name a raw colour; an in-game tool
+        -- The map and the editor may name a raw color; an in-game tool
         -- may not. A shift's paint is the station's paint.
         free = { map = true, play = false },
     },

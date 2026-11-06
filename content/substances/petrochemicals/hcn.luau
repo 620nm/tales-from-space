@@ -19,12 +19,12 @@
 -- 0.9 is approximate. Gas cv 27.6 is the 298 K cp of 35.9 less R; the
 -- liquid's is its cp of 70.6, the solid's approximate.
 --
--- THE BOIL SPELLING: at the melting point the vapour line stands at
+-- THE BOIL SPELLING: at the melting point the vapor line stands at
 --   101.325 * exp((25220 / 8.3145) * (1/299.0 - 1/259.86)) = 22.0 kPa
 -- (the real triple point is 18.6 kPa), under 1 atm, so the spelling is
 -- legal. At 94 K the sublimation line (L = 25.22 + 8.406 kJ/mol) is at
 -- 2.6e-8 Pa: outside, HCN snow neither sublimes nor melts. At 293 K the
--- liquid's vapour stands at 83 kPa, so snow carried indoors melts at
+-- liquid's vapor stands at 83 kPa, so snow carried indoors melts at
 -- 260 K and fills the room with gas.
 --
 -- WHAT IT DOES TO YOU, and where 680 000 comes from. Cyanide stops a
@@ -51,7 +51,7 @@ local content = {
     inhale = 0.9,
     metabolism_rate = 0.02,
     color = "#E6EEF0",
-    -- Colourless as a liquid; as snow, a pale frost.
+    -- Colorless as a liquid; as snow, a pale frost.
     appearance = {
         liquid = { profile = "puddle", tint = "#C8DCE0" },
         solid = { profile = "crystalline", tint = "#F2F4F6" },

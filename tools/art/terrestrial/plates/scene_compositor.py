@@ -510,7 +510,7 @@ def build_mars_main_scene() -> DioramaScene:
 
 
 def build_mars_vignette_1b() -> DioramaScene:
-    """6x6 Vignette 1B: the pack's own colours (ammonia `color`, iron_oxide `color`, water solid tint)."""
+    """6x6 Vignette 1B: the pack's own colors (ammonia `color`, iron_oxide `color`, water solid tint)."""
     tints = dict(BIOME_TINT_PRESETS["mars_pack_ammonia"])
     all_t = rect_coords(0, 0, 5, 5)
     cliff = {(0, 0), (1, 0), (0, 1), (1, 1)}

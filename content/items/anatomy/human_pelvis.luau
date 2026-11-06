@@ -21,7 +21,7 @@ return {
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.human_pelvis.name",
     name = "pelvis",
-    -- The greyscale sheet has no groin cell -- tg's `human_chest_m`
+    -- The grayscale sheet has no groin cell -- tg's `human_chest_m`
     -- already draws the torso down to the legs, groin included -- so a
     -- severed pelvis borrows the torso's picture
     -- (assets/sprites/45-bodyparts-and-organs.ron).

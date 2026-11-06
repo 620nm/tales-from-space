@@ -27,7 +27,7 @@ data.max_body_size = 2
 data.plan_containment_size = { human = 2 } :: { [string]: number }
 
 -- Tg paralyzes a body stuffed into a closet by another for 40 deciseconds
--- (`closets.dm:1014`; silicons are exempt there and not modelled here).
+-- (`closets.dm:1014`; silicons are exempt there and not modeled here).
 data.stuff_knockdown_seconds = 4.0
 -- Tg paralyzes a climber knocked off a climbed thing the same long
 -- (`code/datums/elements/climbable.dm:57`).

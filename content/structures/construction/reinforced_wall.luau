@@ -12,7 +12,7 @@
 --
 -- What that leaves standing is the frame, and the frame is where the
 -- other six rungs live: a turf cannot carry assembly states, so tg's
--- `d_state` is modelled as a structure that stands on the plating the
+-- `d_state` is modeled as a structure that stands on the plating the
 -- wall became (docs/CONSTRUCTION.md, "The reinforced wall's ladder").
 -- Cutting the grille is therefore not a step towards demolition so much
 -- as the door into it, and the frame's own first rung welds the grille

@@ -2,7 +2,7 @@ local physical_profiles = require("@lib/physical_profiles")
 local vessel = require("@lib/vessel")
 
 -- The bare beaker: empty off the shelf, and the vessel everything else
--- on a chem bench is poured into. Fifty millilitres of glass, which is
+-- on a chem bench is poured into. Fifty milliliters of glass, which is
 -- the whole of what it holds.
 --
 -- Three gestures, all of them one click with it in your active hand:
@@ -28,10 +28,10 @@ local content = {
     inhand_sprite = { "held_beaker_l", "held_beaker_r" },
     -- How big the GLASS is, which is the whole of how much it holds:
     -- what fits is what the liquid takes up, and the space left above
-    -- it is what a vapour saturates -- and therefore how fast an open
+    -- it is what a vapor saturates -- and therefore how fast an open
     -- beaker of anything volatile gives itself to the room. tg's cup
     -- base declares `volume = 50` (reagent_containers/cups/_cup.dm:6);
-    -- one of tg's units is one millilitre.
+    -- one of tg's units is one milliliter.
     volume_ml = 50,
     -- What it shows through the glass. tg's beaker declares
     -- `fill_icon_thresholds = list(0, 1, 20, 40, 60, 80, 100)`

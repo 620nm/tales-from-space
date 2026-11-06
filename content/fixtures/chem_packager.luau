@@ -25,7 +25,7 @@ if sim ~= nil then
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     -- Everything that is actually IN a vessel, condensed phases only:
-    -- what a pill can carry is a liquid or a powder, and a vapour over
+    -- what a pill can carry is a liquid or a powder, and a vapor over
     -- it belongs to the beaker.
     local function condensed(obj: Handle): number?
         local read = sim.matter_read(obj)

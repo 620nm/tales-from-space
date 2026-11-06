@@ -10,12 +10,12 @@
 // the north-west, e the north-east, w the south-west. The rotated rows
 // are therefore spelled out; the geometric ones use `Directions`.
 //
-// The trim and tile families are pure greyscale (#FFFFFF over #CBCBCB),
+// The trim and tile families are pure grayscale (#FFFFFF over #CBCBCB),
 // so they take a runtime multiply and declare the identity white as
 // their baked default. The warning stripes and the painted marks carry
-// tg's own colours -- yellow-on-black hatching, and a flat #DCDC4B that
+// tg's own colors -- yellow-on-black hatching, and a flat #DCDC4B that
 // already has alpha 215 in the pixels -- so they are declared
-// uncoloured content-side and must never be tinted.
+// uncolored content-side and must never be tinted.
 //
 // Diagonals are raw DMI dir indices 4..7 because the grouped form's
 // `Direction` only names s/n/e/w; those rows use the legacy tuple.
@@ -33,7 +33,7 @@
     sprites: [
         // What a wound leaves: the first of tg's five splatter states
         // (`gibbl1`, blood.dm:271-272), drawn four ways round so the
-        // wound handler can aim the spray off a blast. Greyscale mask,
+        // wound handler can aim the spray off a blast. Grayscale mask,
         // so the red arrives as paint at runtime like the trim above;
         // the turns are quarter-turns clockwise from north, the
         // shrapnel precedent in 12-weapons.ron.
@@ -50,7 +50,7 @@
         ("decal_trim_fill_bend_sw", Tinted(Dmi("@decals", "trimline_fill", 5), (255, 255, 255))),
         ("decal_trim_fill_bend_ne", Tinted(Dmi("@decals", "trimline_fill", 6), (255, 255, 255))),
         ("decal_trim_fill_bend_nw", Tinted(Dmi("@decals", "trimline_fill", 7), (255, 255, 255))),
-        // The stripes keep tg's colours: no tint, no white default.
+        // The stripes keep tg's colors: no tint, no white default.
         ("decal_hazard_bend_se", Dmi("@decals", "warningline", 4)),
         ("decal_hazard_bend_sw", Dmi("@decals", "warningline", 5)),
         ("decal_hazard_bend_ne", Dmi("@decals", "warningline", 6)),
@@ -66,7 +66,7 @@
     ],
     groups: [
         // TRIM -- tg's /obj/effect/turf_decal/trimline, alpha 110
-        // (tilecoloring.dm:169). Greyscale, so white is the identity
+        // (tilecoloring.dm:169). Grayscale, so white is the identity
         // multiply and the paint arrives at runtime.
         (sheet: "decals", tint: Some((255, 255, 255)), sprites: [
             Directions("decal_trim_edge", "trimline"),
@@ -110,8 +110,8 @@
 
         // HAZARD STRIPES -- /obj/effect/turf_decal/stripes
         // (markings.dm:1-59). The base is yellow-on-black hatching and
-        // the red and white sets are flat solids; none is greyscale, so
-        // no group tint and no content colour. tg leaves them at the
+        // the red and white sets are flat solids; none is grayscale, so
+        // no group tint and no content color. tg leaves them at the
         // base alpha 255 (decal.dm:54-59).
         (sheet: "decals", sprites: [
             Directions("decal_hazard_edge", "warningline"),

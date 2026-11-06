@@ -21,7 +21,7 @@ outlines or explicit words; disabled actions retain disclosed explanations.
 
 ## Composition contract
 
-`ui/theme/tokens.ts` owns every pack colour; `theme/roles.ts` retunes the
+`ui/theme/tokens.ts` owns every pack color; `theme/roles.ts` retunes the
 engine component kit. Computer roles are scoped under the computer skin.
 `theme/kit.ts` owns common control geometry. Other sheets own surface-specific
 layout. Pack rules cannot theme trusted recovery or editor controls.
@@ -53,7 +53,7 @@ modal ownership, readers and buffering use the engine's
 `docs/pack-ui/components.md` and `docs/pack-ui/authoring.md` contracts.
 
 Paper is one flowing sheet: writing continues after the existing ink with the
-held tool's font and colour. The Write press leaves those marks permanently;
+held tool's font and color. The Write press leaves those marks permanently;
 unsubmitted text stays local through ordinary view refreshes. Earlier ink is
 selectable but remains outside the editing host. Blank-sheet text is a placeholder.
 Drafts render Markdown while typing, deleting and undoing, using the same inert
@@ -116,7 +116,7 @@ and Ready remain available for one follow-up click behind the name save.
 
 Every player-visible sentence names a catalog key; [WORDS.md](WORDS.md) owns
 the grammar. Inline style is placement only: position, edges, dimensions,
-grid tracks/cells and animation. Data colours use an explicit `theme-lint:
+grid tracks/cells and animation. Data colors use an explicit `theme-lint:
 allow` annotation. Every other look is a class in its theme sheet.
 
 The engine kit class vocabulary is reserved. Pack classes are grouped by

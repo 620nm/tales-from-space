@@ -542,7 +542,7 @@ def validate_spec(
                 if rgb in reserved_rgb:
                     raise ValueError(f"{sid} f{f_idx}/{lname}: swatch {hx_u} is RESERVED ({reserved_rgb[rgb]})")
                 if colorable and (not (rgb[0] == rgb[1] == rgb[2]) or hx_u not in allowed_neutral_set):
-                    raise ValueError(f"{sid} f{f_idx}/{lname}: colorable=True requires neutral grey, got {hx_u}")
+                    raise ValueError(f"{sid} f{f_idx}/{lname}: colorable=True requires neutral gray, got {hx_u}")
                 if hx_u not in used_hexes:
                     used_hexes.append(hx_u)
 

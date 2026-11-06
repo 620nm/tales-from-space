@@ -1,6 +1,6 @@
 # Terrestrial asset guide
 
-The art rules, neutral-greyscale tint contract, 5-block seam invariants, 4-layer
+The art rules, neutral-grayscale tint contract, 5-block seam invariants, 4-layer
 shoreline stack and spectral anti-repetition constraints behind the planetary terrain,
 ice, cliff, ocean, botanical decal and outcrop sprites. Core pack art direction lives in
 [ART.md](../ART.md); bitmask connectivity mechanisms and elemental matter conventions
@@ -13,7 +13,7 @@ to the checkout pinned by [assets/tg-revision](../../assets/tg-revision).
 
 ## 1. Scope & Roster
 
-`assets/originals/art/terrestrial/*.aseprite` holds 20 first-party neutral-greyscale
+`assets/originals/art/terrestrial/*.aseprite` holds 20 first-party neutral-grayscale
 originals rostered in [assets/sprites/94-terrestrial.ron](../../assets/sprites/94-terrestrial.ron).
 They pair directly with `solid_debris_jagged_smooth`
 (`assets/originals/art/matter/solids/solid_debris_jagged_smooth.aseprite` in
@@ -40,10 +40,10 @@ scree and rubble blend across planetary shelves.
 
 ---
 
-## 2. Neutral-Greyscale Multiply-Tint Contract
+## 2. Neutral-Grayscale Multiply-Tint Contract
 
 - **Strict achromatic palette membership (`R == G == B`, `max_chroma == 0`)**: Every
-  active pixel uses one of the 12 neutral grey swatches in
+  active pixel uses one of the 12 neutral gray swatches in
   [palettes/tales-from-space.gpl](palettes/tales-from-space.gpl): Set 7 `#1B1B1B` (`27`),
   `#262626` (`38`); Set 3 `#1D1D1D` (`29`), `#2B2B2B` (`43`), `#444444` (`68`), `#626262`
   (`98`), `#929292` (`146`), `#AAAAAA` (`170`), `#C4C4C4` (`196`), `#D9D9D9` (`217`); Set 5
@@ -57,7 +57,7 @@ scree and rubble blend across planetary shelves.
   never stack over opaque layers inside the `.aseprite` source, keeping flattened PNG
   exports 100% on-palette.
 - **Multi-biome reuse under runtime multiply tinting**: Runtime sRGB byte multiply
-  `((px * tint + 127) // 255)` lets one greyscale strip render distinct worlds without
+  `((px * tint + 127) // 255)` lets one grayscale strip render distinct worlds without
   duplicate sprites:
   - **Martian cryo-ammonia sea**: liquid-ammonia sea (`#5EB5C4`) and pale ammonia surf
     (`#E6F7F5`) over iron-oxide silicate shelves and basaltic scree (`#B85C3C`, basin
@@ -71,7 +71,7 @@ scree and rubble blend across planetary shelves.
   `tools/art/terrestrial/schema_contract.py` is either a `PackTint` address (a substance's
   `color`, `appearance.<phase>.tint` or `visible.tint`, or a terrain profile's `face_tint`),
   read from `content/` when the kit loads and refused if absent, or a `#RRGGBB` art
-  proposal for a colour the pack does not declare yet.
+  proposal for a color the pack does not declare yet.
 
 ---
 
@@ -132,7 +132,7 @@ strips, each `edges_only` with its own tint (the engine's `docs/looks/matter-run
    ground. The seabed is unlisted in `blending` (`docs/turfs/ground.md`), so the shore's
    land tile draws its own edge over a seabed underlay. Nothing else lies under the water:
    no ocean dilated under ice, no rock joined across sea or ice.
-2. **`ocean_body_smooth`**, on sea tiles only, joined to sea neighbours. Its nearshore
+2. **`ocean_body_smooth`**, on sea tiles only, joined to sea neighbors. Its nearshore
    alpha steps (`112 -> 168 -> 216 -> 255`) let the bed read through the shallows at the
    edge. A whole-sea tile draws the flat block.
 3. **`ocean_backwash_smooth`**, **`ocean_swash_smooth`**, **`ocean_foam_lace_smooth`**, in
@@ -189,7 +189,7 @@ flat block tiles as a `32 px` lattice. Each of the three strips therefore ships 
 - **Shared outer band**: a variant re-cuts only the interior with extra slab seeds
   (`build_basalt_plate_32(inner_seeds=...)`); cells within `4 px` of the edge are block
   `4`'s, so its outer 2 px ring is block `4`'s pixel for pixel and it joins every
-  neighbour block `4` joins.
+  neighbor block `4` joins.
 - **Repetition audit** (`terrestrial_kit.py`, every run exporting a strip and its
   variants): at least three variants; outer ring identical to block `4`; every pair of
   the four pictures differs on `>= 5%` of pixels; and on a hashed `16×16` field, at most

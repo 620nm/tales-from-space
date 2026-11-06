@@ -194,7 +194,7 @@ export function moduleSections(
       }));
     const children: UiNode[] = [];
     // The first section's leading readings are the document's headline;
-    // everything after it stays a labelled list.
+    // everything after it stays a labeled list.
     const stats = place === 0 ? rows.slice(0, 4) : [];
     if (stats.length) children.push(statBlocks(`${key}/stats`, stats));
     if (rows.length > stats.length)

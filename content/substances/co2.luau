@@ -3,7 +3,7 @@
 -- at station pressure.
 --
 -- THE DIAGRAM, and why it is a triple point rather than a boiling
--- point. CO2 has no normal boiling point: its solid's vapour pressure
+-- point. CO2 has no normal boiling point: its solid's vapor pressure
 -- clears one atmosphere at 194.7 K, which is BELOW the 216.55 K triple
 -- point, so a block of it on a warm deck goes straight to gas and
 -- never puddles. A `boil` spelling is refused for exactly that reason

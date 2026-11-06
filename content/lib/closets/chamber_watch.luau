@@ -1,6 +1,6 @@
 -- What a shut cadaver chamber does about its contents, one pass a second from
 -- its close until it opens or goes: the lamp (`morgue.dm:391-410`), the alarm
--- (`:241,281-283`) and the corpses' held organs (`:278-298`, modelled as the
+-- (`:241,281-283`) and the corpses' held organs (`:278-298`, modeled as the
 -- preservation rather than the temperature). The chamber runs on its cord, so
 -- power loss drops all three.
 --

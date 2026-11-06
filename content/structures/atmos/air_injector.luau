@@ -23,7 +23,7 @@
 -- injector that quietly refused at some pressure would be a different
 -- machine wearing this one's sprite.
 --
--- The rate is litres per second of its OWN run, so what it delivers
+-- The rate is liters per second of its OWN run, so what it delivers
 -- depends on what is behind it: a charged main injects fast, a spent
 -- one injects slowly, off one number and with no special case for
 -- either. Fifty out of the crate (tg's `volume_rate = 50`), and the

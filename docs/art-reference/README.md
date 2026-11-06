@@ -6,7 +6,7 @@ palette rules, animation timing and LED restraint policy. Nothing here ships.
 ## Reference organization and Aseprite setup
 
 - `palettes/tales-from-space.gpl` is the unified GIMP/Aseprite palette
-  ([ART.md](../ART.md) §Palette): 20 named sets and 155 unique colours
+  ([ART.md](../ART.md) §Palette): 20 named sets and 155 unique colors
   covering station metals, copper/brass, dark rubber, panel glass, wood,
   ceramic beige, safety paint, signals/emissives, leadership gold,
   department primaries/secondaries, and antagonist reservations.
@@ -26,7 +26,7 @@ palette rules, animation timing and LED restraint policy. Nothing here ships.
   and audit the elemental sprites are in
   [tools/art/elemental/](../../tools/art/elemental/README.md).
 - [terrestrial-asset-guide.md](terrestrial-asset-guide.md) holds the
-  neutral-greyscale planetary terrain, 12-frame 4-layer shoreline, broadband
+  neutral-grayscale planetary terrain, 12-frame 4-layer shoreline, broadband
   botanical decal and matte outcrop rules; the tools that author, render and
   audit them are in
   [tools/art/terrestrial/](../../tools/art/terrestrial/README.md).
@@ -54,7 +54,7 @@ palette rules, animation timing and LED restraint policy. Nothing here ships.
 | `04-computers.png` | Shared console shells (`computer.dmi`), single dominant screen motifs (2026 `accounts` and `supply`, `crew`, `power`), 4 bespoke redrawn facings (`NORTH`/`EAST`/`WEST`), and outline-free 2025 `turret_control`. |
 | `05-telecomms.png` | **The LED & animation anti-pattern (`telecomms.dmi`)**: box and dish silhouettes are structurally fine, but 7 of 8 machines blink `7–121 px` at `75–100 ms` across `6–16` frames while completely idle. Contrast with `broadcaster` (`1f` static idle, `6f` `broadcaster_send` on transmit). |
 | `06-furniture.png` | Calm room surfaces: `table-0` (`75%` top plane), `glass_table-0`, 32×48 `med` and `eng` lockers, 2026 `medicalcrate`, 2024 `coffeemaker`, ceramic-beige `mw_complete`, and `autolathe`. |
-| `07-palette.png` | All 20 sets (155 colours) of `tales-from-space.gpl` plus the pixel-budget breakdown of `sheater-off` (502 opaque pixels, 7 colours, 1 `#b91411` power LED pixel). |
+| `07-palette.png` | All 20 sets (155 colors) of `tales-from-space.gpl` plus the pixel-budget breakdown of `sheater-off` (502 opaque pixels, 7 colors, 1 `#b91411` power LED pixel). |
 | `08-context.png` | Contact test at 3× on `floors.dmi` (`white` and `floor`): medical and 2024–2026 engineering rows read clearly by silhouette and value, whereas a telecomms row drowns in blinking cyan/amber noise. |
 | `09-information.png` | Informative displays: 2026 `vitals_monitor.dmi` (dark when idle; every lit region maps to a limb or vital) and 2025 `wall_healer.dmi` (4 substance bars drop as stock is spent). |
 

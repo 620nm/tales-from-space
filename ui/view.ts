@@ -1,6 +1,6 @@
 // Node plumbing: the id-to-command table every press is registered in,
 // and the thin wrappers the screens build with. Presentation belongs to
-// the kit and `theme.ts`; nothing here spells a colour or a size.
+// the kit and `theme.ts`; nothing here spells a color or a size.
 import type {
   Json,
   StyleProps,

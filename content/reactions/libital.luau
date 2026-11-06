@@ -33,9 +33,9 @@
 --
 -- IT SWELLS, hard. A mole of phenol is 88 mL and a mole of saltpetre
 -- 48, against 540 for the three libital that come out, so a whole
--- extent needs 404 millilitres of room it does not have. Geometry caps
+-- extent needs 404 milliliters of room it does not have. Geometry caps
 -- every swelling extent by the free shell volume and grows no vessel
--- (D16, docs/MATTER.md 5), so a fifty-millilitre bottle makes about a
+-- (D16, docs/MATTER.md 5), so a fifty-milliliter bottle makes about a
 -- tenth of an extent and the bench works in the amounts that fit.
 return {
     id = "libital",

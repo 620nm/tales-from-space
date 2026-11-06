@@ -1,7 +1,7 @@
 -- A ceiling tube in its fitting. The one thing on the station whose
 -- whole job is to be looked at.
 --
--- The colour is per PLACEMENT, because a colour is a property of the
+-- The color is per PLACEMENT, because a color is a property of the
 -- tube somebody screwed in rather than of the fitting on the wall:
 -- each placement chooses it through its `color` property.
 --
@@ -57,9 +57,9 @@ return {
     },
     -- A lit fitting keeps its whole lit picture, `light_on`, so an
     -- examine icon or a replay still shows it lit. The `light_layer` is
-    -- that tube alone, greyscale and opaque on exactly its pixels: the
-    -- engine multiplies it by the colour the fitting burns and draws it
-    -- over, so the tube on the wall is the colour of the pool on the
+    -- that tube alone, grayscale and opaque on exactly its pixels: the
+    -- engine multiplies it by the color the fitting burns and draws it
+    -- over, so the tube on the wall is the color of the pool on the
     -- floor (the engine's docs/content-schema/fixture-states.md, and
     -- docs/power/lit-face.md for why tg draws its tube untinted).
     appearance = {

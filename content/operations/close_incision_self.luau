@@ -1,8 +1,8 @@
--- Cauterise your OWN wound (tg _operation.dm:134-171): x2 time, 5 burn,
+-- Cauterize your OWN wound (tg _operation.dm:134-171): x2 time, 5 burn,
 -- any heat source. Only the patient can do it to themselves.
 return {
     id = "close_incision_self",
-    name = "cauterise your own wound",
+    name = "cauterize your own wound",
     self_only = true,
     any = { "skin_cut", "skin_open" },
     clears = {

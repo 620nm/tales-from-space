@@ -28,7 +28,7 @@
 --   diethylamine  ammonia + ethanol, under a lid
 --   phenol        water + chlorine + naphtha, under a lid
 --   resin         naphtha, with polymer catalyst, at 360–380 K
---   wax           naphtha, with sulphuric acid, at 370–400 K
+--   wax           naphtha, with sulfuric acid, at 370–400 K
 --   toner         resin + carbon + wax, warm mixed below those windows
 --
 -- ...and the medicine trunk that stands on top of them:
@@ -36,7 +36,7 @@
 --   salglu        water + salt + sugar
 --   multiver      ash + salt, at 400 K
 --   libital       phenol + saltpetre, at 700 K
---   aiuri         ammonia + sulphuric acid, under a lid, kept warm
+--   aiuri         ammonia + sulfuric acid, under a lid, kept warm
 --   epinephrine   phenol + acetone + diethylamine + chlorine
 --
 -- THE PERMANENT GASES ARE NOT ON IT. Oxygen, nitrogen, hydrogen and
@@ -51,7 +51,7 @@
 -- CHLORINE AND AMMONIA STAY, and they are why that rule is about the
 -- PHASE rather than about the button. Both are gases at the nozzle's
 -- 300 K, so both are refused over an open beaker -- but both CONDENSE:
--- pressed into a sealed bottle they reach their own vapour pressure
+-- pressed into a sealed bottle they reach their own vapor pressure
 -- (about 8 atm for chlorine, 8.6 for ammonia) and the rest of the
 -- press stands there as liquid, which is a reactant a bench can
 -- actually use. Ammonia is tg's own upgrade-tier button
@@ -76,7 +76,7 @@
 -- somewhere.
 --
 -- MOST OF THE REST OF TG'S BASE SHELF is here now: bromine, copper,
--- lithium, mercury, phosphorus, sulfur and sulphuric acid, each one
+-- lithium, mercury, phosphorus, sulfur and sulfuric acid, each one
 -- line, the same deal the pipe dispenser's shelf offers. Only the acid
 -- is a leg of anything yet (aiuri); the other six are on the shelf
 -- because the shelf is tg's and a button that waits for its recipe
@@ -184,7 +184,7 @@ return {
             { key = "mercury", name = "mercury" },
             { key = "phosphorus", name = "phosphorus" },
             { key = "sulfur", name = "sulfur" },
-            { key = "sulfuric_acid", name = "sulphuric acid" },
+            { key = "sulfuric_acid", name = "sulfuric acid" },
             -- tg's upgrade tier (chem_dispenser.dm:81-88), on the base
             -- shelf here because this pack has no upgrade parts.
             { key = "ammonia", name = "ammonia" },

@@ -4,7 +4,7 @@
 //
 // Speech is lettering, not a panel: tgstation's runechat, whose look is
 // `interface/skin.dmf:79` (`.maptext`) and whose life is
-// `code/datums/chatmessage.dm:1-18`. Sizes and colours live in
+// `code/datums/chatmessage.dm:1-18`. Sizes and colors live in
 // `theme.ts`; what a speaker's words are painted is `voice.ts`.
 import type { UiNode } from "@lunatic/ui";
 import { Stack, color } from "@lunatic/ui";

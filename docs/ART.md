@@ -1,9 +1,9 @@
 # Art direction
 
 First-party art (drawn for this pack under `assets/originals/art/`) and
-every recolour of a baked tg sprite follow this file. The station is
+every recolor of a baked tg sprite follow this file. The station is
 drawn in tgstation's idiom at the revision `assets/tg-revision` pins
-(`3c5ff70be69`); where this file diverges, chiefly in colour identity
+(`3c5ff70be69`); where this file diverges, chiefly in color identity
 and indicator restraint, it wins. The unified palette is
 [tales-from-space.gpl](art-reference/palettes/tales-from-space.gpl);
 visual plates, coordinate tables, the file icon recipe and provenance
@@ -25,14 +25,14 @@ weather planes (22d319fa860). Its resprites since 2023 share four habits:
   wallmounts drop the hard outline (0d684300114, 50bd8054b44), and a
   family shares one palette (77a90bd99e6 circuit shells, 88fb9423904
   command blue, 9d045f7cb69 medbots matching medkits).
-- Greyscale art coloured by configuration (GAGS), clothing above all
-  (2427db409ef, 38dc2369ef1), with job colours as defines
+- Grayscale art colored by configuration (GAGS), clothing above all
+  (2427db409ef, 38dc2369ef1), with job colors as defines
   (229910f33dd, `code/__DEFINES/preferences.dm:185-201`).
 - Metal holds its hue and gains saturation as value drops (`lathes.dmi`:
   hue 228–232°, saturation 5% to 42%). Cloth hue-shifts, shadows toward
   violet and highlights toward yellow (`rsecurity` 330° to 3°, `centcom`
   150° to 120°); a reversed shift is a bug (ab90ddbf821). Department
-  colours are settled (`COLOR_*` 86ef806f1ae; `CIRCUIT_COLOR_*` b7cb5cea163).
+  colors are settled (`COLOR_*` 86ef806f1ae; `CIRCUIT_COLOR_*` b7cb5cea163).
 
 ## Form and spatial geometry
 
@@ -43,7 +43,7 @@ may use partial alpha. Two solid strips are the exception, each on one
 layer: `terrain_ice_sheet_smooth`'s submerged skirt is alpha 160 and
 `terrain_cliff_stepped_smooth`'s base shadow alpha 96
 ([terrestrial-asset-guide.md](art-reference/terrestrial-asset-guide.md) §1).
-Block the silhouette first so it reads in greyscale.
+Block the silhouette first so it reads in grayscale.
 Light falls from the top of the screen: top faces take the highlight and
 south faces sit darker, with no left/right bias. Using Rec.709 luma
 (`0.2126 R + 0.7152 G + 0.0722 B`), across 1,363 south-facing tg
@@ -116,10 +116,10 @@ author sub-tick durations below `100 ms`.
 
 ## Palette (`tales-from-space.gpl`)
 
-All station materials, department colours and antagonist reservations
+All station materials, department colors and antagonist reservations
 live in one unified GIMP/Aseprite palette,
 [tales-from-space.gpl](art-reference/palettes/tales-from-space.gpl)
-(`20` sets, `155` unique colours; visualised in `07-palette.png`). Swatch
+(`20` sets, `155` unique colors; visualized in `07-palette.png`). Swatch
 names use single hyphenated tokens (`structure-1-outline`) because
 Aseprite's `.gpl` reader truncates swatch names at the first space.
 
@@ -132,7 +132,7 @@ Aseprite's `.gpl` reader truncates swatch names at the first space.
 Every ramp runs dark to light, and each set header names its tg source or
 says TfS. A department primary has five steps and its secondary three;
 gold has five; structural metal has eight. File icons keep their own
-fixed colours ([art-reference](art-reference/README.md)).
+fixed colors ([art-reference](art-reference/README.md)).
 
 ## Departments
 
@@ -164,18 +164,18 @@ Leadership swaps its secondary for gold. Gold is trim, insignia and rank
 marks, never a field, and stays 20 ΔE2000 from the field's steps 2–4
 (on engineering yellow use gold 1; on cargo russet use gold 4–5). Each
 department's secondary stays at least 12 ΔE2000 from gold 2–4, and no
-other department colour is amber (hue 30–45° at `>=50%` saturation).
+other department color is amber (hue 30–45° at `>=50%` saturation).
 Captain, HoS and CMO part by value (navy dark, command blue mid, medical
 blue light, 16–39 ΔE2000 apart); HoP leaf green and CentCom forest green
 part by hue (21 ΔE2000).
 
 ## What antagonists reserve
 
-The reservation covers character designs (mobs, uniforms, suits, armour):
+The reservation covers character designs (mobs, uniforms, suits, armor):
 
 - **Black**: Antagonists build on black from set 19 (`void-1`..`5`). Crew
   designs keep black to outlines and small accents (boots, gloves, belts)
-  from sets 1–5, never the main field; sets 9–18 hold no colour with max
+  from sets 1–5, never the main field; sets 9–18 hold no color with max
   channel below `0x20`.
 - **Black with red**: The antagonist signature (syndicate MOD lays
   crimson over near-black). No crew design pairs a black field with red.

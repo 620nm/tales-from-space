@@ -1,5 +1,5 @@
 r"""
-Unified neutral-greyscale sprite roster (`SPRITES`) for Tales from Space Terrestrial Art
+Unified neutral-grayscale sprite roster (`SPRITES`) for Tales from Space Terrestrial Art
 (`tools/art/terrestrial/specs/`).
 """
 from __future__ import annotations

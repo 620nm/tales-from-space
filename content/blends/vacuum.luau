@@ -3,7 +3,7 @@
 --
 -- No row list, because a blend for nothing is nothing -- the engine
 -- deposits what it is told and is told nothing, which leaves an empty
--- INTERIOR cell the neighbours flow into. That is the difference
+-- INTERIOR cell the neighbors flow into. That is the difference
 -- between this and space, which is a boundary they flow into forever
 -- (docs/ATMOS.md 11).
 --

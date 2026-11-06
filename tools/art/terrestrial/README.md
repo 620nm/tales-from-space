@@ -1,6 +1,6 @@
 # Terrestrial sprite tools
 
-Authors, exports and audits the 20 neutral-greyscale planetary terrain, flat-variant,
+Authors, exports and audits the 20 neutral-grayscale planetary terrain, flat-variant,
 shoreline, botanical decal and outcrop `.aseprite` sources under `assets/originals/art/terrestrial/`
 (paired with `solid_debris_jagged_smooth` under `assets/originals/art/matter/solids/`).
 The art rules are
@@ -13,9 +13,9 @@ nothing generated is tracked.
 
 | Path | Purpose |
 |---|---|
-| `terrestrial_kit.py` | Validates `specs/`, exports `.aseprite` frames through Aseprite MCP, audits palette membership, neutral-greyscale chroma (`R == G == B`), bare-mask contrast, 47-junction seams and 12-frame loop pacing, runs the flat repetition audit over each strip's `flat_of` variants, and writes `manifests/terrestrial.json`. |
-| `pack_tints.py` | Reads the `PackTint` roles of `schema_contract.py`'s biome presets from the pack's `content/` Luau (substance colours and tints, terrain `face_tint`); a missing address is an error. |
-| `specs/` | Procedural and hand-authored neutral-greyscale layer rows, opacities, frame durations, default biome tints and citations per sprite. |
+| `terrestrial_kit.py` | Validates `specs/`, exports `.aseprite` frames through Aseprite MCP, audits palette membership, neutral-grayscale chroma (`R == G == B`), bare-mask contrast, 47-junction seams and 12-frame loop pacing, runs the flat repetition audit over each strip's `flat_of` variants, and writes `manifests/terrestrial.json`. |
+| `pack_tints.py` | Reads the `PackTint` roles of `schema_contract.py`'s biome presets from the pack's `content/` Luau (substance colors and tints, terrain `face_tint`); a missing address is an error. |
+| `specs/` | Procedural and hand-authored neutral-grayscale layer rows, opacities, frame durations, default biome tints and citations per sprite. |
 | `extract_reference_assets.py` | Extracts read-only pack matter/station sprites and pinned `tgstation` outdoor references into `target/art/terrestrial/cache/` and `manifests/existing.json`. |
 | `plates/render_audit_plates.py` | Renders strip telemetry, 5-point visual refinement and `4×4` anti-repetition audit plates under `target/art/terrestrial/plates/`. |
 | `plates/render_biome_plates.py` | Renders Martian ammonia, polar ice and Earth coastal biome dioramas plus 12-frame (`200 ms/f`) shoreline GIF loops under `target/art/terrestrial/plates/`. |

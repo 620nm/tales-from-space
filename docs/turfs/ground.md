@@ -27,7 +27,7 @@ blank tile is open onto the beyond. Blends `silica_ground`, `basalt_ground`,
 matter. A plated tile draws none. `sheet_ice` has its own profile: it
 stands on the `ice_floor` floor and its face is the `ice_shell` look, the
 smooth ice sheet, whose translucent skirt shows that floor 0.7 darker at a
-shell's edge. A profile without `face_tint` takes its material's colour, so
+shell's edge. A profile without `face_tint` takes its material's color, so
 ice, basalt and soil read apart; only a sea's bed is tinted sand.
 `warm_outdoors` and `mars_surface` have `sink_k` equal to
 `surface_temperature_k`, so dry ground sleeps; no mode rolls `mars_surface`
@@ -75,7 +75,7 @@ fronted by steps. Mining it is not implemented. Specs:
 
 A boulder, `outcrop` (tg `/obj/structure/flora/rock`, `flora.dm:1027-1041`), is
 a dense, bolted structure that sight passes; `outcrop.cluster` is its
-fieldstone-cluster art. The art is greyscale under a `color` that defaults to
+fieldstone-cluster art. The art is grayscale under a `color` that defaults to
 basalt's and a map may override. Both sit in the Terrain section's Natural category.
 Mining one is not implemented. Spec: `tests/terrain/cliff_test.luau`.
 
@@ -83,7 +83,7 @@ Plants are covers: cell matter over the ground, never ground and never air.
 A map's ground hint names a cover (`cover: Some("grass")`) per column, and
 install lays it on the column's surface tile beside the environment's air:
 `content/terrain.luau` `covers` holds `grass` (0.3 kg/m²) and `moss`
-(0.2 kg/m²), a litre-thin coat of `content/substances/plants/` drawn by the
+(0.2 kg/m²), a liter-thin coat of `content/substances/plants/` drawn by the
 `grass` and `moss` looks. A flame latches a plant tile like any fuel
 (`content/lib/ignition.luau`); `grass_fire` and `moss_fire` burn the coat to
 CO2, steam and ash, and the fire spreads tile to tile until the ground is

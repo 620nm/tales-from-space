@@ -4,7 +4,7 @@
 -- it -- iodine and radium are the precedent for a substance file with
 -- no button.
 --
--- tg gives it a name, a colour and a damage figure and nothing else:
+-- tg gives it a name, a color and a damage figure and nothing else:
 -- /datum/reagent/toxin (code/modules/reagents/chemistry/reagents/
 -- toxin_reagents.dm:4-21), `color = "#CF3600"` (:7), `toxpwr = 1.5`
 -- (:13). Mass, heat capacity and density are the shelf's D2

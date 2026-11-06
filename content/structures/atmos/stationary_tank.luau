@@ -1,4 +1,4 @@
--- The stationary pressure tank: 2500 litres of gas bolted to the deck,
+-- The stationary pressure tank: 2500 liters of gas bolted to the deck,
 -- with a mouth on each cardinal and no valve on any of them (tg's
 -- /obj/machinery/atmospherics/components/tank, code/modules/
 -- atmospherics/machinery/components/tank.dm).
@@ -70,14 +70,14 @@ return {
     name_label = "lunatic/tfs:entity.stationary_tank.name",
     name = "pressure tank",
     sprite = "stationary_tank",
-    -- The shell is greyscale art plus a multiply, exactly as tg draws
+    -- The shell is grayscale art plus a multiply, exactly as tg draws
     -- it (`greyscale_config = /datum/greyscale_config/
-    -- stationary_canister`, tank.dm:30-32). tg's colour is the PLATING
+    -- stationary_canister`, tank.dm:30-32). tg's color is the PLATING
     -- MATERIAL's rather than the gas's -- iron, `#B6BEC2`
     -- (basemats.dm:2-5) -- and that is what the atlas bakes the cell's
     -- default at, so a tank nobody has painted looks as it always did.
-    -- The window and the knobs keep their own baked colour: GAGS
-    -- colours the icon, not the overlays over it.
+    -- The window and the knobs keep their own baked color: GAGS
+    -- colors the icon, not the overlays over it.
     color = "#B6BEC2",
     ui = { modules = { "tank" } },
     dense = true,
@@ -125,7 +125,7 @@ return {
     -- it gives, which is tg's own "you have all shift to notice". At a
     -- fifth left it starts LEAKING rather than emptying at once (tg
     -- hangs a `gas_leaker` on it, tank.dm:96), and a leaking reservoir
-    -- shedding a quarter of 2500 litres per pass is a department-wide
+    -- shedding a quarter of 2500 liters per pass is a department-wide
     -- problem in under a minute.
     failure = {
         integrity = 800,
@@ -144,7 +144,7 @@ return {
     transitions = {
         -- tg's `welder_act_secondary`: 4 seconds, and the vessel is
         -- opened (tank.dm:409-431). tg doubles the time and flings you
-        -- across the room when the thing is still pressurised
+        -- across the room when the thing is still pressurized
         -- (`unsafe_pressure_release`); here the gas simply goes where
         -- tg's `on_deconstruction` puts it -- into the room, all of it,
         -- through the engine's one vessel-spill seam -- which is quite

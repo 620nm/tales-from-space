@@ -6,7 +6,7 @@
 // filesystem. Two files claiming one sprite name is a bake error.
 //
 // tg draws a row of tables as forty-seven pre-baked frames rather than
-// as one picture with a border: an object counts the neighbours it
+// as one picture with a border: an object counts the neighbors it
 // belongs with, packs the answer into a byte, and wears
 // `"[base_icon_state]-[junction]"` (`code/__HELPERS/icon_smoothing.dm:285`).
 // Only 47 of the 256 byte values can be reached, and a sheet carries
@@ -34,10 +34,10 @@
     ],
     // `rock-<n>` is the 47 reachable junctions of tg's `smoothrocks`
     // family (minerals.dm:6-21; icon_state `smoothrocks-<n>`). Its cells
-    // are 40x40 (tg draws them at -4,-4 over the neighbours), which
+    // are 40x40 (tg draws them at -4,-4 over the neighbors), which
     // `Junctions` refuses (dmi.rs `require_tile_cell`), so each frame is
-    // the cell's centre 32x32 window at (4, 4). The 4px overhang tg
-    // draws over neighbouring tiles is lost.
+    // the cell's center 32x32 window at (4, 4). The 4px overhang tg
+    // draws over neighboring tiles is lost.
     sprites: [
         ("rock-0", DmiWindow([("@smoothrocks", "smoothrocks-0")], 0, 4, 4)),
         ("rock-1", DmiWindow([("@smoothrocks", "smoothrocks-1")], 0, 4, 4)),
@@ -203,7 +203,7 @@
         // here: a sheet is art, and belonging is a word content invents
         // (tfs/content/structures/*.luau). tg keeps its own three the
         // same way -- one .dmi each, and one `smoothing_groups` line
-        // apiece deciding who is whose neighbour
+        // apiece deciding who is whose neighbor
         // (tables_racks.dm:15-31,618-631,744-755).
         (
             sheet: "table",

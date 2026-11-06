@@ -29,8 +29,8 @@ local RESIN_FLOOR = 0.1
 -- more than nothing and at least `min_mol`.
 type Fuel = { id: string, phase: "gas" | "liquid" | "solid", min_mol: number }
 
--- Liquids burn as vapour over their pool; plants burn where they stand.
--- Acetone and naphtha are unmodelled.
+-- Liquids burn as vapor over their pool; plants burn where they stand.
+-- Acetone and naphtha are unmodeled.
 local FUELS: { Fuel } = {
     { id = "ethanol", phase = "gas", min_mol = MIN_FUEL_MOL },
     { id = "ethanol", phase = "liquid", min_mol = 0 },
@@ -49,7 +49,7 @@ local MIN_LOX_MOL = MIN_FUEL_MOL
 local LOX_FUELS: { Fuel } = {
     { id = "methane", phase = "liquid", min_mol = MIN_FUEL_MOL },
 }
--- Rules whose firing lights the neighbours; other reactions also raise
+-- Rules whose firing lights the neighbors; other reactions also raise
 -- `matter.ignition.done` (the engine's docs/reactions/fire.md).
 local FIRES = {
     ["lunatic/reaction:ethanol_fire"] = true,
@@ -108,7 +108,7 @@ type Tending = {
     latched: number,
     -- Whether the task began in this cell's own ignition edge. A task
     -- carries its spawner's reach, and only that anchor reaches every
-    -- neighbour a spread may latch.
+    -- neighbor a spread may latch.
     anchored: boolean,
 }
 
@@ -206,7 +206,7 @@ end
 
 -- The cell's tending row, its task started unless a live one holds it.
 -- A later task on the same row key ends an older, delayed one, and an
--- `anchored` call replaces a row a tool or a neighbour began.
+-- `anchored` call replaces a row a tool or a neighbor began.
 local function ensure_tending(at: TileAddress, anchored: boolean): Tending
     local spread_ticks = sim.ticks(SPREAD_SECONDS)
     local held = tending_row(at)

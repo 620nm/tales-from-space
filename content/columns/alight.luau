@@ -1,5 +1,5 @@
 -- The spark latch: a tile is alight while this column is held.
--- Ethanol fire requires it, so a warm room of vapour does not start
+-- Ethanol fire requires it, so a warm room of vapor does not start
 -- burning by itself; an ignition source sets the column and the fire
 -- then sustains itself on fuel and heat.
 --

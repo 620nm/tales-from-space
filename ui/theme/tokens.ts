@@ -1,4 +1,4 @@
-// The station's palette: the only file under ui/ that spells a colour.
+// The station's palette: the only file under ui/ that spells a color.
 // Every other value is one of these, or one of these through `alpha`
 // (tools/theme-lint.mjs). Flat fills only: the style grammar has no
 // gradient, so the look is carried by value contrast and a hairline.
@@ -36,6 +36,6 @@ export const sky = "#a4c4df";
 export const paper = "#f1ead4";
 export const paperInk = "#202c2d";
 
-/** A palette colour at a coverage, as the grammar's `#rrggbbaa`. */
+/** A palette color at a coverage, as the grammar's `#rrggbbaa`. */
 export const alpha = (hex: string, coverage: number): string =>
   hex + Math.round(Math.max(0, Math.min(1, coverage)) * 255).toString(16).padStart(2, "0");

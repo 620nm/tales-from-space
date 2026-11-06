@@ -190,7 +190,7 @@ The native mode loader reads a `gamemodes/` file in a bare VM with no `sim` and
 no shared library, purely to extract `rules`. The script host then loads the
 same file as content, where `sim` and the `lib/` globals exist. That is the
 whole reason for the `if sim ~= nil` guard around `shift.validate` and the
-`sim.define("behavior", ...)` binding — it is not defence, just the difference
+`sim.define("behavior", ...)` binding — it is not defense, just the difference
 between the two passes.
 
 Each mode binds its behavior with `prototype = content.id`, so the mode hears

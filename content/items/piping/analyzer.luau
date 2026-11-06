@@ -18,7 +18,7 @@ local action_rules = require("@lib/action_rules")
 -- line: total moles, then each gas with its share, then temperature in
 -- both scales, the volume, and the pressure. Two blocks tg has no
 -- equivalent for sit between the gas rows and the temperature -- what
--- is LYING there and what is FROZEN there, in millilitres -- because
+-- is LYING there and what is FROZEN there, in milliliters -- because
 -- one reading here answers for all three states. tg rounds everything to
 -- 0.01 and prints what is left, so 21.6 stays 21.6 rather than becoming
 -- 21.60; `r2` below is that. (tg also prints heat capacity and thermal
@@ -58,7 +58,7 @@ local function sentence_case(s: string): string
 end
 
 -- WHAT IS STANDING IN THIS PHASE, and how much room it takes. `gas` is
--- a number of moles and `liquid_ml`/`solid_ml` are millilitres, which
+-- a number of moles and `liquid_ml`/`solid_ml` are milliliters, which
 -- is what a puddle and a lump are worth reading in and the unit every
 -- vessel in the pack is authored in (docs/luau-api/matter.md). A phase
 -- nothing is standing in is absent from the reading rather than zero,

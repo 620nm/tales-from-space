@@ -16,7 +16,7 @@ return {
     cv = 52.4,
     phase = { unmodeled = "solid" },
     density = { solid = 2.9 },
-    -- A blue-grey dark rock, the same grey the terrestrial art tools
+    -- A blue-gray dark rock, the same gray the terrestrial art tools
     -- use for basalt (tools/art/terrestrial/schema_contract.py).
     color = "#5E626E",
 }

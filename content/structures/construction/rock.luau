@@ -9,7 +9,7 @@ return {
     turf = "component:rock",
     -- Mineral walls join each other (minerals.dm:10-12, base state
     -- `smoothrocks` :21). SMOOTH_BORDER has no engine equivalent: the
-    -- map edge is not a neighbour.
+    -- map edge is not a neighbor.
     smooth = {
         group = "mineral_walls",
         sprites = "rock",

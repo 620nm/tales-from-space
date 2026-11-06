@@ -14,6 +14,6 @@ return {
     cv = 44.6,
     phase = { unmodeled = "solid" },
     density = { solid = 2.65 },
-    -- Pale grey quartz.
+    -- Pale gray quartz.
     color = "#C8C4BC",
 }

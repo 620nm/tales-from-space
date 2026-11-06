@@ -50,7 +50,7 @@ export const workspaceRules: UiStyleRule[] = [
   rule("workspace-machine-name", { fontSize: 15, fontWeight: "bold" }),
   // The device's address and link state, small beside its name.
   rule("workspace-machine-link", { fontSize: 11, color: dim, whiteSpace: "nowrap" }),
-  // The link state beside it keeps its reading's tone: no colour here.
+  // The link state beside it keeps its reading's tone: no color here.
   rule("workspace-machine-state", { fontSize: 11, whiteSpace: "nowrap" }),
   rule("workspace-drive-title", { fontSize: 15, fontWeight: "bold" }),
   // A file's two lines wear classes rather than an inline style: two

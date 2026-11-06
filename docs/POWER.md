@@ -57,7 +57,7 @@ changes electrical delivery or what a lamp reports.
 
 Hovering an open port draws arrows to visible consumers: solid green for a
 powered connection, solid amber for an unpowered connection, and thinner,
-faint dashed grey for reachable alternatives with lower preference. Closed
+faint dashed gray for reachable alternatives with lower preference. Closed
 covers and a pointer outside the port draw no arrows. The prototype owns
 all three styles and its `open` eligibility state.
 
@@ -137,7 +137,7 @@ in the round record, and a spec reads it through `t.structure_at`'s
 `flow.reserve.done` fires when a gated panel starts, or stops, feeding
 its bus off its own cell, and the panel emits the `low_power` light flag
 onto its network, set or clear (`lib/netmsg.luau`). Every fitting it
-feeds hears it as parent or sibling and dims to half power, colourless:
+feeds hears it as parent or sibling and dims to half power, colorless:
 the flag is a condition in the fitting's flag stack, and the worst
 condition wins. Which output layers a panel feeds off its cell is the
 map's `<layer>_reserve` flag (the engine's `docs/power/map-format.md`).
@@ -154,7 +154,7 @@ supersedes area effects (`light.dm:282-289`):
 
 | | value | tg |
 |---|---|---|
-| colour | `#FF3232` | COLOR_VIVID_RED (`colors.dm:64`) |
+| color | `#FF3232` | COLOR_VIVID_RED (`colors.dm:64`) |
 | range | a quarter of the tube's: 6 → 1.5 | `bulb_low_power_brightness_mul` 0.25 |
 | power | 0.75 × the cell's level, never under 0.5 | `bulb_low_power_pow_mul`, `_pow_min` |
 
@@ -167,7 +167,7 @@ where tg bills its cell to EQUIP (`power.dm:253`, called at
 class therefore stops recharging too.
 
 The tube's pixels need no picture of their own: the engine draws the
-fitting's greyscale `light_layer` in the colour and power it burns, so
+fitting's grayscale `light_layer` in the color and power it burns, so
 the red above is also the tube on the wall.
 
 ## The multitool
@@ -197,7 +197,7 @@ sealed vessel of tg's 1000/3000/6000 L and, running, runs a task on its own
 tile, a tick apart in flow order, for tg's 2 s pass (`turbine.dm:625-685`,
 `lib/power/gas_turbine_turns.luau`): the compressor draws the tile behind, the
 outlet exhausts ahead and sets the rotor, a source (`output_w`) feeding the
-cable under it, to `rpm × 4.5` W, leased for three passes, so turns cancelled
+cable under it, to `rpm × 4.5` W, leased for three passes, so turns canceled
 outright stop feeding within them. Heat wears it (`:634-662`) to an alarm on
 the engineering channel with tg's alert at 30 tiles, then a blast as big as
 the shaft is fast (`:646-659`). A shut rotor feeds 0 W. A run whose rotor

@@ -11,8 +11,8 @@ local vessel = require("@lib/vessel")
 -- in proportion, until the head is full.
 --
 -- tg's head is `max_reagent_volume = 15` (mop.dm:21), a unit of nothing in
--- particular; here a spill is real litres and the head is a real quarter
--- litre. The stroke is tg's `mopspeed` (mop.dm:22).
+-- particular; here a spill is real liters and the head is a real quarter
+-- liter. The stroke is tg's `mopspeed` (mop.dm:22).
 local content = {
     id = "mop",
     visual_layer = "item",
@@ -23,7 +23,7 @@ local content = {
     inhand_sprite = { "held_mop_l", "held_mop_r" },
     category = "tools",
     examine = {
-        flavor = "A grey head on a long handle. It answers the deck and "
+        flavor = "A gray head on a long handle. It answers the deck and "
             .. "nothing else, and it is the only answer the deck has.",
     },
     -- `force`, `throwforce`, `throw_speed`, `throw_range` (mop.dm:10-13).

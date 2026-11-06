@@ -2,7 +2,7 @@
 -- ice at 94 K is as hard as granite. A tile NAMES it as its ground; see
 -- silica_ground.luau for why a ground is a `per_m3` density of solid.
 --
--- Moles in one cubic metre: 0.917 g/mL * 10^6 g per m3 over 18.015 g/mol
+-- Moles in one cubic meter: 0.917 g/mL * 10^6 g per m3 over 18.015 g/mol
 -- (substances/water.luau) = 50 902 mol.
 --
 -- It lays the `ice_ground` profile, not `sheet_ice`: rock, not a frozen

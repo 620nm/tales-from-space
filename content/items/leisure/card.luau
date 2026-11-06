@@ -55,7 +55,7 @@ local consume_followups = require("@lib/consume_followups")
 
 -- The roster, the spelling, the state pair, the English names and the
 -- deck's thickness all come out of `lib/cards.luau`, which the deck
--- reads too: one copy of each, and no comment apologising for a second
+-- reads too: one copy of each, and no comment apologizing for a second
 -- one (docs/SCRIPTING.md 1.6).
 
 local content = {
@@ -82,7 +82,7 @@ local content = {
     -- that declines still falls through to the pickup, so a card
     -- clicked at anything else is picked up as usual.
     acts_on_items = true,
-    -- tg's single card sits five 32nds left of centre
+    -- tg's single card sits five 32nds left of center
     -- (code/modules/cards/singlecard.dm:8) -- a permanent anchor for
     -- the type rather than a jitter, so a card dealt onto a table keeps
     -- reading as a card wherever the scatter puts it.

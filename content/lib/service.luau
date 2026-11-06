@@ -12,7 +12,7 @@ service.max_payload = 8192
 -- A sheet scanned and printed in lockstep lands on both machines together, so
 -- a `fax.print` may carry the sim-clock second its sender began transmitting.
 -- A peer's stamp is trusted for timing only, and only within a hop's transit:
--- a receiver honours a stamp no older than this and never a future one.
+-- a receiver honors a stamp no older than this and never a future one.
 service.max_transit_seconds = 0.25
 -- How long a sender waits after its scan for the recipient's verdict before it
 -- reports the send failed.

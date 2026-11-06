@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-// Where a colour and a look may be spelled under ui/.
+// Where a color and a look may be spelled under ui/.
 //
-// A hex colour lives in `ui/theme/tokens.ts` and nowhere else: every
+// A hex color lives in `ui/theme/tokens.ts` and nowhere else: every
 // other file draws with a token, so a repaint is one edit. An inline
 // `style` on a node says only where the node goes and how big it is —
 // position, offsets, size, grid placement, and the `animation` the host
 // composes its own fade over (docs/pack-ui/styles.md) — and never how
 // it looks: that belongs to a class in `ui/theme/`. A line that must
-// carry a value from data (a substance's colour, a heading's level)
+// carry a value from data (a substance's color, a heading's level)
 // says so with `theme-lint: allow` on its own line or the one before.
 //
 //   node tools/theme-lint.mjs     exit 1 on a finding
@@ -79,7 +79,7 @@ for (const path of sources(UI)) {
   const lineAt = (offset) => text.slice(0, offset).split("\n").length;
   const allowed = (line) => ALLOW.test(lines[line - 1] ?? "") || ALLOW.test(lines[line - 2] ?? "");
   if (path !== TOKENS)
-    for (const hit of text.matchAll(HEX)) findings.push(`${file}:${lineAt(hit.index)}: colour ${hit[0]} outside ui/theme/tokens.ts`);
+    for (const hit of text.matchAll(HEX)) findings.push(`${file}:${lineAt(hit.index)}: color ${hit[0]} outside ui/theme/tokens.ts`);
   // `style: {` on a node, `style = {` on a const, and `style.prop =`.
   for (const hit of text.matchAll(/\bstyle\b\s*(?::\s*[\w|\s<>[\]]+?)?\s*[:=]\s*(?:[^{;\n]*\?\s*)?\{/g)) {
     const line = lineAt(hit.index);

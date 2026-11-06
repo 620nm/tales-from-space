@@ -49,7 +49,7 @@ export const kitRules: UiStyleRule[] = [
   rule("choice-unavailable", { backgroundColor: field }, "hover"),
   rule("choice-hit", { cursor: "not-allowed" }, { state: "disabled", within: "choice-unavailable" }),
 
-  // Typed fields: a well with the pane's frame colour.
+  // Typed fields: a well with the pane's frame color.
   rule("entry", {
     flexGrow: 1, minWidth: 0, minHeight: 28, color: ink, fontSize: 12,
     backgroundColor: field, border: edge(line), borderRadius: 2,

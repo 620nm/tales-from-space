@@ -2,7 +2,7 @@
 --
 -- tg keeps all seven rungs on the TURF, as a `d_state` var counting
 -- from INTACT to SHEATH (reinf_walls.dm:50-191). A turf entry here
--- cannot: a turf has no assembly states, so the ladder is modelled as a
+-- cannot: a turf has no assembly states, so the ladder is modeled as a
 -- structure standing on the plating the wall became, and the wall's own
 -- table has exactly one row -- the cutters that open the grille -- which
 -- leaves this frame behind. The two halves add up to tg's seven, the

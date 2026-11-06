@@ -9,9 +9,9 @@
 // tg keeps every fill picture on ONE sheet away from the containers
 // themselves (`fill_icon = 'icons/obj/medical/reagent_fillings.dmi'`,
 // code/modules/reagents/reagent_containers.dm:303) and picks a state
-// out of it by percentage, colouring the whole layer with the mixture's
-// blended colour (`update_overlays`, reagent_containers.dm:287-307).
-// Everything on this sheet is therefore authored GREYSCALE and drawn as
+// out of it by percentage, coloring the whole layer with the mixture's
+// blended color (`update_overlays`, reagent_containers.dm:287-307).
+// Everything on this sheet is therefore authored GRAYSCALE and drawn as
 // a tinted overlay -- the same bargain docs/COLOR.md describes for
 // cable and pipe paint, and the reason a hundred reagents need six
 // pictures rather than six hundred.

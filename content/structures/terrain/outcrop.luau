@@ -1,7 +1,7 @@
 -- A boulder. tg's `/obj/structure/flora/rock` (code/game/objects/structures/flora.dm:1027-1041):
 -- dense (:1032) and bolted where it lies (`anchored`, :6; `can_uproot = FALSE`, :1039),
--- and sets no `opacity`, so sight passes it. The art is greyscale; `color` tints it,
--- basalt's colour by default (substances/ground/basalt.luau), and a map may override it.
+-- and sets no `opacity`, so sight passes it. The art is grayscale; `color` tints it,
+-- basalt's color by default (substances/ground/basalt.luau), and a map may override it.
 --
 -- WHAT IS NOT PORTED: mining it for basalt (`harvest_verb = "mine"`, :1037,
 -- `get_potential_products`, :1042-1043) and its integrity.

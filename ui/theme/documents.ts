@@ -36,7 +36,7 @@ export const documentRules: UiStyleRule[] = [
   // A device's heading carries its address and link state, small.
   rule("doc-head", { alignItems: "center", gap: 8, minWidth: 0 }),
   rule("doc-heading-meta", { fontFamily: "mono", fontSize: 11, color: dim, whiteSpace: "nowrap" }),
-  // The link state keeps its reading's tone: no colour here.
+  // The link state keeps its reading's tone: no color here.
   rule("doc-heading-state", { fontFamily: "mono", fontSize: 11, whiteSpace: "nowrap" }),
   rule("doc-status", { fontSize: 11, color: dim }),
   rule("doc-unavailable", { fontSize: 11, color: ink }),

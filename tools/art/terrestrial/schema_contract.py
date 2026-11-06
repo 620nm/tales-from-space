@@ -81,7 +81,7 @@ JUNCTIONS: list[int] = [
     203, 207, 223, 239, 255,
 ]
 
-# Strictly neutral greyscale swatches (R == G == B) in tales-from-space.gpl
+# Strictly neutral grayscale swatches (R == G == B) in tales-from-space.gpl
 NEUTRAL_GREYS: dict[str, str] = {
     "K": "#1B1B1B",  # 27  stripe-dark-1
     "O": "#1D1D1D",  # 29  neutral-1-outline
@@ -116,7 +116,7 @@ BIOME_TINT_SOURCES: dict[str, dict[str, str | PackTint]] = {
         "haze": _SUB("ammonia", "visible.tint"),
     },
     "mars_pack_ammonia": {
-        "label": "Mars — Pack Ammonia Colour & Hematite",
+        "label": "Mars — Pack Ammonia Color & Hematite",
         "silicate": _SUB("iron_oxide", "color"),
         "silicate_low": "#693514",
         "ice": _SUB("water", "appearance.solid.tint"),

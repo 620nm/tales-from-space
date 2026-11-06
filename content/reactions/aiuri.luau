@@ -1,5 +1,5 @@
 -- Aiuri. tg: `/datum/chemical_reaction/medicine/aiuri`, 4 aiuri from
--- 1 ammonia + 1 sulphuric acid + 2 hydrogen, required_temp 50,
+-- 1 ammonia + 1 sulfuric acid + 2 hydrogen, required_temp 50,
 -- optimal_temp 300, overheat_temp 315, temp_exponent_factor 5,
 -- thermic_constant -400 (recipes/cat2_medicines.dm:110-126).
 --
@@ -9,7 +9,7 @@
 -- the count move with the legs -- two in, two out, the same arithmetic
 -- lube and acetone got. The other departure is the one liquid ammonia
 -- always brings: the leg names a phase that stands only under a lid,
--- about 8.6 atmospheres of the substance's own vapour, so this is
+-- about 8.6 atmospheres of the substance's own vapor, so this is
 -- bottle work.
 --
 -- The window is tg's three numbers through the documented mapping

@@ -25,19 +25,19 @@
 -- are two unrelated systems that cannot name the same substance.
 -- Here one substance carries all three phases, so a twin
 -- would be a second name for one molecule — two ids to filter for, two
--- rows on an analyser, and a fire whose humidity could never rain out
+-- rows on an analyzer, and a fire whose humidity could never rain out
 -- because the thing it made had no liquid phase.
 --
 -- tg: /datum/reagent/water, `color = "#AAAAAA77"` (other_reagents.dm:
--- 117). The trailing 77 is BYOND's alpha byte and is DROPPED: colour
+-- 117). The trailing 77 is BYOND's alpha byte and is DROPPED: color
 -- here is a three-byte multiply with no alpha of its own
 -- (crates/lunatic-core/src/color.rs), so water tints its fill the same
--- grey tg does and simply does not thin it.
+-- gray tg does and simply does not thin it.
 --
--- `visible.tint` is STEAM: the colour water wears in its gas phase,
+-- `visible.tint` is STEAM: the color water wears in its gas phase,
 -- which is what a boiled beaker gives off and what a plasma fire makes.
 -- Almost white with the faintest blue in it (0.90/0.93/0.97 in the old
--- renderer): fog reads as a thinning of the room rather than a colour
+-- renderer): fog reads as a thinning of the room rather than a color
 -- laid over it, which is the only way a hazard overlay can sit on top
 -- of a corridor without hiding what is in it. Renderers ask per phase,
 -- so a puddle is never mistaken for a cloud.
@@ -52,7 +52,7 @@ return {
     -- spreads a puddle, viscosity sets how fast, and surface tension
     -- against the angle it stands at decides how thin the film can get
     -- before it stops. Water is thin and beads: it runs across a deck in
-    -- seconds and leaves about three millimetres on every tile it
+    -- seconds and leaves about three millimeters on every tile it
     -- crossed, which is why a spill here is a chore rather than a stain.
     flow = {
         -- mPa*s at 20 C (CRC Handbook 97th ed. / NIST WebBook).
@@ -66,8 +66,8 @@ return {
     terrain = { solid = "sheet_ice" },
     color = "#AAAAAA",
     -- What water LOOKS LIKE on a deck (docs/chemistry/substances.md).
-    -- The shared `puddle` ladder is neutral grey art, so the liquid
-    -- layer's tint carries the blue; `color` above stays the grey the
+    -- The shared `puddle` ladder is neutral gray art, so the liquid
+    -- layer's tint carries the blue; `color` above stays the gray the
     -- reading panels use. Ice keeps the shared crystalline silhouette,
     -- in the pale blue the terrestrial art's ice sheet is drawn for.
     appearance = {
@@ -76,11 +76,11 @@ return {
     },
     visible = { mol_per_m3 = 0.25, factor = 20, tint = "#E6EDF7", visual_layer = "gas_haze" },
     -- Where this sits in a tool that offers every substance there is
-    -- (docs/MAP-PROPERTIES.md, the recipe panel). Authored as vapour: a humid
+    -- (docs/MAP-PROPERTIES.md, the recipe panel). Authored as vapor: a humid
     -- room, which condenses out on the first atmos pass exactly as it
     -- should.
     relevance = 50,
-    -- Liquid in a beaker and vapour over a burner: gas whenever a room is
+    -- Liquid in a beaker and vapor over a burner: gas whenever a room is
     -- hot or thin enough, and nothing a station scrubs on principle.
     group = "volatile",
     -- What a placard says about this substance alone

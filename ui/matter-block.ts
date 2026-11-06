@@ -48,11 +48,11 @@ const measure = (phase: string, value: number): string =>
       : litres(value);
 const weighed = (grams: number): string => (grams > 0 ? mass(grams) : "");
 
-/** The substance's own colour, or nothing where the pack declared none. */
+/** The substance's own color, or nothing where the pack declared none. */
 function dot(id: string, hex: string | null | undefined): UiNode | null {
   const paint = hex ? color(hex) : undefined;
   return paint
-    ? { id, type: "panel", class: ["dot"], style: { backgroundColor: paint } } // theme-lint: allow the substance's own colour
+    ? { id, type: "panel", class: ["dot"], style: { backgroundColor: paint } } // theme-lint: allow the substance's own color
     : null;
 }
 

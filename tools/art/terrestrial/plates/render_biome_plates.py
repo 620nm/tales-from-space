@@ -222,7 +222,7 @@ def main() -> None:
         plates_dir / "03_mars_ammonia_spotcheck.png",
         out_dir,
         plate_title="PLATE 03 — MARS PLANETARY DIORAMA: RUST-SILICATE CLIFFS, CALVING ICE, LIQUID AMMONIA SEA & PIER",
-        plate_subtitle="Neutral-greyscale 47-junction terrestrial kit + inherited TfS elemental matter/station turfs + curated tgstation planetary spires & vents",
+        plate_subtitle="Neutral-grayscale 47-junction terrestrial kit + inherited TfS elemental matter/station turfs + curated tgstation planetary spires & vents",
         main_title="1A. MARS CRYO-AMMONIA COAST, STEPPED MESA, CALVING POLAR ICE & RESEARCH PIER (14x9)",
         main_caption=(
             f"Silicate {mars_cryo['silicate']}/{mars_cryo['silicate_low']} • Mesa {mars_cryo['cliff']} • "

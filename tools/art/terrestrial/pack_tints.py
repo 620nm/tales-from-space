@@ -1,5 +1,5 @@
 r"""
-Reads tint colours out of the pack's Luau content so plates and the workbench draw what
+Reads tint colors out of the pack's Luau content so plates and the workbench draw what
 the pack declares. A tolerant reader for data tables: string, number and table values,
 `local` string constants; anything else (expressions, calls) reads as absent.
 Fails closed: a missing file, entry or key raises `PackTintError`.
@@ -168,7 +168,7 @@ def resolve_tint(content: Path, tint: PackTint) -> str:
 
 
 def resolve_presets(content: Path, sources: dict[str, dict[str, str | PackTint]]) -> dict[str, dict[str, str]]:
-    r"""Each preset with every `PackTint` replaced by the colour the pack declares."""
+    r"""Each preset with every `PackTint` replaced by the color the pack declares."""
     return {
         name: {role: resolve_tint(content, v) if isinstance(v, PackTint) else v for role, v in roles.items()}
         for name, roles in sources.items()

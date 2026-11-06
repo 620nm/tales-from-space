@@ -17,7 +17,7 @@
 //
 // The half-pipes used to be COMPOSITED IN HERE, one `pipe_intact` cell
 // per node direction, and that was the defect: a picture cannot know
-// what is next door, so a filter never reached its neighbours, a pump
+// what is next door, so a filter never reached its neighbors, a pump
 // with one end unplumbed still showed a full-width tube, and no machine
 // ever gained or lost a connection when somebody laid or cut the run
 // beside it. Baked art answers "what is this machine"; only the sim can

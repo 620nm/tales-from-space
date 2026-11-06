@@ -1,4 +1,4 @@
--- Ten litres of water, as a dose: what somebody left in the bottom of a
+-- Ten liters of water, as a dose: what somebody left in the bottom of a
 -- supply bottle.
 --
 -- The bottle is the same canister every gas store on the station uses,
@@ -8,7 +8,7 @@
 -- for a second noun.
 --
 -- Authored as an absolute AMOUNT (`amount = "total"`), because ten
--- litres is ten litres whatever it was poured into -- a density would
+-- liters is ten liters whatever it was poured into -- a density would
 -- mean a bigger shell held more of it, which is what a pressure does
 -- and not what a puddle does.
 --
@@ -23,7 +23,7 @@ local n = LITRES * ML_PER_L * DENSITY_G_PER_ML / MOLAR_MASS_G_PER_MOL
 
 return {
     id = "water_10l",
-    name = "Water, ten litres",
+    name = "Water, ten liters",
     name_label = "lunatic/tfs:blends.water_10l.name",
     rows = {
         { "water", n },

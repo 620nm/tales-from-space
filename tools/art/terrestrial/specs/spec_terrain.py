@@ -1,5 +1,5 @@
 r"""
-Neutral-greyscale pixel-art generators and specs for Tales from Space Terrestrial
+Neutral-grayscale pixel-art generators and specs for Tales from Space Terrestrial
 terrain, glacial ice, stepped cliffs, and matte boulder outcrops (`TERRAIN_SPRITES`).
 """
 from __future__ import annotations
@@ -626,7 +626,7 @@ def gen_prop_rough_outcrop_2() -> list[dict[str, Any]]:
 # ==============================================================================
 # 6. Flat variants — alternative block-4 pictures for `flats` (anti-wallpaper)
 #    Each re-cuts the plain flat block's interior with extra slab seeds and keeps its
-#    outer band, so any variant joins any neighbour the plain block joins.
+#    outer band, so any variant joins any neighbor the plain block joins.
 # ==============================================================================
 def _flat_variant_specs(
     strip_id: str,

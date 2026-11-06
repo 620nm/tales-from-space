@@ -113,9 +113,9 @@ revision [assets/tg-revision](../../assets/tg-revision) pins; sprite rosters are
 3. **Viscous/Oil Puddles, Caustic Spills, Geysers & Showers**:
    - `icons/obj/watercloset.dmi` (`32×32`, `code/game/objects/structures/shower.dm:207`): `"puddle"`, `"puddle-splash"(1d,2f)`, `"puddle-oil"(1d,9f)`, `"puddle-oil-splash"(1d,5f)`, `"water"(4d,4f)` (falling shower spray).
    - `icons/effects/effects.dmi` (`32×32`): `"fuel_pool"` & `"fuel_pool_hivis"` (`cleanable/fuel.dm:1-118`), `"waste_spill"` & `"waste_spill_active"(1d,5f)` (bubbling caustic sludge, `cleanable/toxic.dm:3-73`), `"greenglow"` (`mess.dm:113-144`).
-   - `icons/obj/mining_zones/terrain.dmi` (`32×64`, `lavaland/geyser.dm:7-44`): `"geyser"`, `"geyser_acid"(1d,5f)`, `"geyser_soup"(1d,6f)` (greyscale tintable bubbling spring), `"well"(1d,5f)`.
+   - `icons/obj/mining_zones/terrain.dmi` (`32×64`, `lavaland/geyser.dm:7-44`): `"geyser"`, `"geyser_acid"(1d,5f)`, `"geyser_soup"(1d,6f)` (grayscale tintable bubbling spring), `"well"(1d,5f)`.
 4. **Extinguisher & Metal Foam (`icons/effects/effects.dmi`, `32×32`, `effect_system/fluid_spread/effects_foam.dm:13-360`)**:
-   - `"foam"` (greyscale extinguisher foam billow), `"foam-disolve"(1d,6f)`, `"mfoam"`, `"mfoam-disolve"(1d,6f)`, `"metalfoam"`, `"ironfoam"`.
+   - `"foam"` (grayscale extinguisher foam billow), `"foam-disolve"(1d,6f)`, `"mfoam"`, `"mfoam-disolve"(1d,6f)`, `"metalfoam"`, `"ironfoam"`.
 5. **Blood Splatters, Drips, Trails, Footprints & Organic Messes**:
    - `icons/effects/blood.dmi` (`32×32`, 160 states): `"splatter1..6"`, `"hitsplatter1..3"(4d,11f)`, `"drip1..5"`, `"tracks"(8d)`, `"trails_1..2"(8d)`, `"gibbl2..5"`, `"gib1..6"`, `"remains*"`, `"vomit_1..4"`, `"vomittox_1..4"`.
    - `icons/effects/footprints.dmi` (`32×32`, 14 states): `"blood1..2"(4d)` (entering/exiting footprints), `"footprint1..2"(4d)`, paw/claw/bot variants.
@@ -137,7 +137,7 @@ revision [assets/tg-revision](../../assets/tg-revision) pins; sprite rosters are
 1. **Animated Atmospheric Gas Overlays (`icons/effects/atmospherics.dmi`, `32×32`, 21 states, `code/modules/atmospherics/gasmixtures/gas_types.dm:55-340`)**:
    - `"water_vapor"(1d,8f)` (`#b0c4de` rolling mist/steam cloud), `"plasma"(1d,3f)`, `"nitrous_oxide"(1d,12f)`, `"freon"(1d,8f)`, `"nitrium"(1d,12f)`, `"tritium"(1d,5f)`, `"miasma"(1d,8f)`, `"fusion_gas"(1d,6f)`, `"healium"(1d,12f)`, `"proto_nitrate"(1d,12f)`, `"zauker"(1d,12f)`, `"halon"(1d,12f)`, `"antinoblium"(1d,6f)` + 8 `*_old` variants.
 2. **Billowing Smoke, Steam Wisps, Mist & Dust Clouds**:
-   - `icons/effects/96x96.dmi` (`96×96`, `effect_system/fluid_spread/effects_smoke.dm:4-15`): `"smoke"(4d,3f)` (3×3 billowing greyscale smoke cloud, tintable), `"smoke2"(1d,3f)`.
+   - `icons/effects/96x96.dmi` (`96×96`, `effect_system/fluid_spread/effects_smoke.dm:4-15`): `"smoke"(4d,3f)` (3×3 billowing grayscale smoke cloud, tintable), `"smoke2"(1d,3f)`.
    - `icons/effects/effects.dmi` (`32×32`): `"smoke"(4d,4f)` (1-tile directional smoke), `"smoke_trail"(1d,11f)` (`effects_trail.dm:111`), `"extinguish"(8d,4f)` (extinguisher mist burst), `"dust_cloud"(1d,7f)` & `"light_dust_cloud"(1d,7f)` (ore-vent dust clouds, `vent_misc.dm:16-19`).
    - `icons/effects/steam.dmi` (`32×32`, `components/grillable.dm:201`): `"steam_single"(1d,8f)`, `"steam_triple"(1d,8f)` (rising steam wisps).
    - `icons/obj/watercloset.dmi` (`32×32`, `structures/shower.dm:413-420`): `"mist"` (translucent tile mist overlay).
@@ -174,7 +174,7 @@ revision [assets/tg-revision](../../assets/tg-revision) pins; sprite rosters are
    - `"heavy"(4d,14f)`: Full-tile roaring inferno (`volume > 0.95 * CELL_VOLUME`).
    - `"fire"(1d,3f)`: Generic burning object/component overlay (`components/burning.dm:1`).
    - `"overcharged"(1d,9f)`: Additive plasma/arc overlay for ultra-hot fires (`>400,000 K`, `LINDA_fire.dm:254`).
-   - *(Upstream tints greyscale/base fire across temperature ramps: red-orange at `1000–3000 K`, white-blue at `>40,000 K`, or cyan for cold freon fires.)*
+   - *(Upstream tints grayscale/base fire across temperature ramps: red-orange at `1000–3000 K`, white-blue at `>40,000 K`, or cyan for cold freon fires.)*
 2. **Lava Turfs & Emissive Masks (`icons/turf/floors.dmi`, `icons/turf/floors/lava.dmi`, `lava_mask.dmi`, `code/game/turfs/open/lava.dm:7-105, 373-435`)**:
    - Unsmoothed (`icons/turf/floors.dmi`): `"lava"(1d,32f)` + `"lava-lightmask"`.
    - Smoothed (`icons/turf/floors/lava.dmi`, `32×32`, 47 bitmask states `lava-*`, each `1d,4f` animated) + `icons/turf/floors/lava_mask.dmi` (47 emissive masks), paired with inverse shore outlines `basalt_outline.dmi`, `siderite_outline.dmi`, `shale_outline.dmi`.

@@ -8,7 +8,7 @@
 --
 -- SELF-SENSING. The `sense` block names every side, so the effective
 -- mask is the room minus the wall it hangs on. The `self` sample IS
--- the room: the tile it stands on, read live. Neighbours ride along
+-- the room: the tile it stands on, read live. Neighbors ride along
 -- for context, but the station-air question is answered from home.
 --
 -- ENDPOINT, CLASS `sensor`. It carries its own address and joins one

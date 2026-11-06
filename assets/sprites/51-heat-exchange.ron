@@ -1,16 +1,16 @@
 // Radiator pipe: the run, the junction that meets ordinary pipe,
 // and the two loose fittings. tg keeps three sheets for the family
 // (`he-simple.dmi`, `he-manifold.dmi`, `he-junction.dmi`) and composes a
-// manifold from a base, a centre and one stub per joined end
+// manifold from a base, a center and one stub per joined end
 // (`heat_exchange/manifold.dm:29-38`). This engine derives a length's
-// SHAPE from its neighbours instead, so the sixteen adjacencies are
+// SHAPE from its neighbors instead, so the sixteen adjacencies are
 // composed here, at bake time, and the client learns nothing new: a
 // shape is `<family>_l<layer>_<dirs>` exactly as ordinary pipe is.
 //
 // The stubs tg underlays are pixel-identical to what its base already
-// draws (they exist so each end can take its NEIGHBOUR's colour, which
+// draws (they exist so each end can take its NEIGHBOR's color, which
 // is a thing only tg's per-object paint needs), so they are not composed
-// here. The CENTRE is not: it is one shared cell that tg places with
+// here. The CENTER is not: it is one shared cell that tg places with
 // `PIPING_LAYER_DOUBLE_SHIFT`, five pixels per layer off the middle one,
 // which is what the placed layers below spell.
 //
@@ -25,7 +25,7 @@
     ],
     sprites: [
         // Piping layer 2. tg ships the run and the arms pre-shifted per
-        // layer; only the centre is a shared cell, placed by its consumer.
+        // layer; only the center is a shared cell, placed by its consumer.
         ("radiator_pipe_l2_0", Dmi("@radiator_simple", "pipe00-2", 0)),
         ("radiator_pipe_l2_1", Dmi("@radiator_simple", "pipe10-2", 0)),
         ("radiator_pipe_l2_2", Dmi("@radiator_simple", "pipe01-2", 0)),
@@ -59,7 +59,7 @@
         ])),
 
         // Piping layer 3. tg ships the run and the arms pre-shifted per
-        // layer; only the centre is a shared cell, placed by its consumer.
+        // layer; only the center is a shared cell, placed by its consumer.
         ("radiator_pipe_l3_0", Dmi("@radiator_simple", "pipe00-3", 0)),
         ("radiator_pipe_l3_1", Dmi("@radiator_simple", "pipe10-3", 0)),
         ("radiator_pipe_l3_2", Dmi("@radiator_simple", "pipe01-3", 0)),
@@ -93,7 +93,7 @@
         ])),
 
         // Piping layer 4. tg ships the run and the arms pre-shifted per
-        // layer; only the centre is a shared cell, placed by its consumer.
+        // layer; only the center is a shared cell, placed by its consumer.
         ("radiator_pipe_l4_0", Dmi("@radiator_simple", "pipe00-4", 0)),
         ("radiator_pipe_l4_1", Dmi("@radiator_simple", "pipe10-4", 0)),
         ("radiator_pipe_l4_2", Dmi("@radiator_simple", "pipe01-4", 0)),
@@ -128,10 +128,10 @@
         // The junction, which is a length of pipe with an attribute: one
         // end takes ordinary pipe and the other takes this family
         // (`heat_exchange/junction.dm:30-33`). Drawn from tg's own sheet
-        // on the middle layer, as the colour adapter is.
+        // on the middle layer, as the color adapter is.
         //
         // FOUR pictures, not two. tg's junction is aimed rather than
-        // normalised onto an axis: its `dir` is the end that takes THIS
+        // normalized onto an axis: its `dir` is the end that takes THIS
         // family and `REVERSE_DIR(dir)` the end that takes ordinary pipe
         // (junction.dm:27-33), so turning one around swaps which run
         // each end binds. `pipe11-3` is the state with both ends joined,

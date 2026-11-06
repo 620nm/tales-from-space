@@ -21,7 +21,7 @@
 -- or 650 and nothing happens at all.
 --
 -- IT NEEDS A LID AND AN ATMOSPHERE. Liquid ammonia only stands still
--- under its own vapour pressure, and the oxygen comes off a canister,
+-- under its own vapor pressure, and the oxygen comes off a canister,
 -- so this is a sealed bottle on a heater with a gas share over the
 -- liquid. The gate is a hundred kilopascals of oxygen -- an
 -- ATMOSPHERE rather than a quantity, which is what a partial-pressure

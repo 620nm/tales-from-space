@@ -2,7 +2,7 @@
 r"""
 Render the 4 Terrestrial Art audit & reference spotcheck plates into `<out-dir>/plates/`:
   - `01_tg_outdoor_gems.png` (curated `tgstation` outdoor, planetary, cliff & shoreline reference)
-  - `02_terrestrial_strips_audit.png` (raw greyscale strips, Mars/Earth tints, 12f surf & props)
+  - `02_terrestrial_strips_audit.png` (raw grayscale strips, Mars/Earth tints, 12f surf & props)
   - `08_feedback_fixes_spotcheck.png` (12f 4-layer surf, silky ocean, flat decals, outcrops & seams)
   - `09_anti_repetition_spotcheck.png` (4x4 tiling anti-repetition at 2x pixel & 1x game scale)
 """
@@ -199,10 +199,10 @@ def render_plate_01(bank: AssetBank, out_dir: Path) -> Path:
 
     # Band 3: Planetary Rock, Martian Siderite / Ironsand, Ice & Cliffs
     y_cur += 556
-    cy = draw_band_box(y_cur, 450, "3. PLANETARY ROCK, MARTIAN SIDERITE / IRONSAND, ICE & CLIFFS (2x)", "40x40 & 48x48 cliff ridges • greyscale colorable mountain_wall & moon • siderite/shale • 32x64 vents & spires")
+    cy = draw_band_box(y_cur, 450, "3. PLANETARY ROCK, MARTIAN SIDERITE / IRONSAND, ICE & CLIFFS (2x)", "40x40 & 48x48 cliff ridges • grayscale colorable mountain_wall & moon • siderite/shale • 32x64 vents & spires")
     b3_islands = [
         (_render_smooth_island(bank, "ground", "tg_icerock_cliff", island_3x3), "tg_icerock_cliff (40x40, -4,-4)", "over snow • icerock_cliff.dmi (cliff.dm:123)"),
-        (_render_smooth_island(bank, "tg_moon", "tg_mountain_wall", island_3x3, base_tint="#B85C3C", split_smooth_tint_right="#9E482C"), "tg_mountain_wall (Grey vs Mars #9E482C)", "over tinted moon • minerals.dm:669-674 (colorable)"),
+        (_render_smooth_island(bank, "tg_moon", "tg_mountain_wall", island_3x3, base_tint="#B85C3C", split_smooth_tint_right="#9E482C"), "tg_mountain_wall (Gray vs Mars #9E482C)", "over tinted moon • minerals.dm:669-674 (colorable)"),
         (_render_smooth_island(bank, "tg_ironsand_1", "tg_red_rock_wall", island_3x3), "tg_red_rock_wall (48x48, -8,-8)", "over ironsand1 • red_rock.dmi (minerals.dm:612)"),
         (_render_smooth_island(bank, "tg_basalt", "tg_siderite_smooth", island_3x3), "tg_siderite_smooth (48x48, -8,-8)", "over tg_basalt • siderite.dmi (asteroid.dm:368)"),
     ]
@@ -219,7 +219,7 @@ def render_plate_01(bank: AssetBank, out_dir: Path) -> Path:
         ("siderite_growth1", None, "tg_ironsand_5", "siderite_1", "flora.dm:1110"),
         ("siderite_growth2", None, "tg_ironsand_9", "siderite_2", "flora.dm:1110"),
         ("ore_vent_ice", None, "ground", "ore_vent_ice", "ore_vent.dm:709"),
-        ("geyser", None, "tg_basalt", "geyser (grey)", "geyser.dm:7"),
+        ("geyser", None, "tg_basalt", "geyser (gray)", "geyser.dm:7"),
         ("geyser", "#9EA858", "tg_moon", "geyser (NH3)", "tinted #9EA858"),
     ]
     for idx, (pid, ptint, btid, plbl, pcit) in enumerate(tall_props):
@@ -249,7 +249,7 @@ def render_plate_01(bank: AssetBank, out_dir: Path) -> Path:
         draw.text((px, py + 68), rlbl, font=f_tiny, fill=TXT_HI)
 
     moon_variants = [
-        ("tg_moon", "#FFFFFF", "moon (grey)"), ("tg_moon", "#B85C3C", "moon (#B85C3C)"),
+        ("tg_moon", "#FFFFFF", "moon (gray)"), ("tg_moon", "#B85C3C", "moon (#B85C3C)"),
         ("tg_moon", "#8798A6", "moon (#8798A6)"), ("tg_ironsand_1", None, "ironsand1"), ("tg_ironsand_9", None, "ironsand9"),
     ]
     for idx, (mid, mtint, mlbl) in enumerate(moon_variants):
@@ -371,7 +371,7 @@ def render_plate_02(bank: AssetBank, out_dir: Path) -> Path:
     sec3_h = 44 + max(1, math.ceil(len(single_records) / 2)) * 180
     plate = Image.new("RGBA", (plate_w, sec3_y + sec3_h + 20), (14, 17, 24, 255))
     draw = ImageDraw.Draw(plate)
-    draw.text((20, 16), f"PLATE 02 — TALES FROM SPACE TERRESTRIAL KIT AUDIT ({len(bank.terrestrial_records)} ASSETS: RAW GREYSCALE STRIPS, BIOME TINTS, 4-LAYER SURF & PROPS)", fill=(242, 236, 218, 255))
+    draw.text((20, 16), f"PLATE 02 — TALES FROM SPACE TERRESTRIAL KIT AUDIT ({len(bank.terrestrial_records)} ASSETS: RAW GRAYSCALE STRIPS, BIOME TINTS, 4-LAYER SURF & PROPS)", fill=(242, 236, 218, 255))
 
     surf_overlay_ids = ("ocean_backwash_smooth", "ocean_swash_smooth", "ocean_foam_lace_smooth")
     for idx, rec in enumerate(smooth_records):
@@ -399,12 +399,12 @@ def render_plate_02(bank: AssetBank, out_dir: Path) -> Path:
             plate.paste(s_box, (24, y0 + 30))
         for b_i in range(5):
             draw.rectangle([24 + b_i * 64, y0 + 30, 88 + b_i * 64, y0 + 94], outline=(72, 82, 105, 255))
-        draw.text((24, y0 + 98), f"Raw Greyscale 2x Strip (f{f_preview+1}) [0:conv | 1:V | 2:H | 3:conc | 4:flat]", fill=(165, 176, 198, 255))
+        draw.text((24, y0 + 98), f"Raw Grayscale 2x Strip (f{f_preview+1}) [0:conv | 1:V | 2:H | 3:conc | 4:flat]", fill=(165, 176, 198, 255))
 
         raw_bay = _render_smooth_patch(atlas_im, mask_concave_bay, "#FFFFFF", frame_idx=f_preview, flat_bg_rgba=(20, 22, 30, 255))
         plate.paste(raw_bay.resize((136, 68), Image.Resampling.NEAREST), (24, y0 + 116))
         draw.rectangle([24, y0 + 116, 160, y0 + 184], outline=(72, 82, 105, 255))
-        draw.text((168, y0 + 124), "Raw Grey Bay", fill=(165, 176, 198, 255))
+        draw.text((168, y0 + 124), "Raw Gray Bay", fill=(165, 176, 198, 255))
         draw.text((168, y0 + 142), f"chroma={j255['max_chroma']}", fill=(130, 215, 155, 255))
 
         if sid in surf_overlay_ids:

@@ -3,7 +3,7 @@
 -- sim.spawn_item a script-created entity with Script-actor provenance
 -- in the round ledger.
 -- What the machine serves for a returned empty: forty-five of the
--- bottle's fifty millilitres. Water is 18 g/mol and a millilitre a gram,
+-- bottle's fifty milliliters. Water is 18 g/mol and a milliliter a gram,
 -- so 2.5 mol is 45 mL.
 local SERVE_MOL = 2.5
 -- Six degrees, which is what a drinks chiller runs at. A vessel arrives
@@ -79,7 +79,7 @@ if sim ~= nil then
     -- machine's own product, minted the way every vended thing is.
     --
     -- `Handle.base` is what makes "a bottle" mean EVERY bottle. A
-    -- labelled preconfiguration is a prototype of its own with its own id
+    -- labeled preconfiguration is a prototype of its own with its own id
     -- (`bottle.iodine`), and asking what it was DERIVED from is how a
     -- machine accepts the whole family without listing it
     -- (docs/CONTENT-SCHEMA.md section 1.1a) -- otherwise this file needs

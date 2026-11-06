@@ -53,7 +53,7 @@ local function open_from(actor: Handle, solid: TileSolidity, dx: number, dy: num
     end
 end
 
--- The tile and its eight neighbours, on the tile's own level (tg `range(1,
+-- The tile and its eight neighbors, on the tile's own level (tg `range(1,
 -- get_turf(src))` is one z, code/modules/mob/mob_movement.dm:309).
 function brace.toward(ev: MoveBracePayload): { toward: { string } }
     if not grips(ev.actor) then

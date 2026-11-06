@@ -34,7 +34,7 @@ when the body's `blood_harmony` life handler runs, it removes blood above normal
 pass, independently of the drip task (`content/lib/blood_harmony.luau:53-78,105-120`). Drawing
 transfers liquid only, so liquid medicine moves with the drawn mixture. Each draw takes the
 smaller of the rate over its two-second stroke and the vessel's remaining capacity. Blood's
-400 g/mol mass and 1 g/mL density mean each litre of headspace holds 2.5 mol
+400 g/mol mass and 1 g/mL density mean each liter of headspace holds 2.5 mol
 (`content/substances/blood.luau:6-11,31-34`). Drawing continues below 40% of `blood_normal`;
 the beep check uses the safe fraction and a 5% chance per positive-rate draw stroke
 (`code/__DEFINES/mobs.dm:20-24`; `code/game/machinery/iv_drip.dm:252-267`). A full draw vessel,

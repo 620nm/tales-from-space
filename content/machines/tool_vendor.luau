@@ -13,7 +13,7 @@
 -- has no prototypes for them.
 --
 -- It shares `script = "vendor"` with the softdrinks machine: opening
--- a window on click and wobbling when bumped is the behaviour of a
+-- a window on click and wobbling when bumped is the behavior of a
 -- vending machine, not of any particular one.
 return {
     id = "tool_vendor",

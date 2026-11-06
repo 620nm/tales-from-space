@@ -22,7 +22,7 @@
 -- Tritium's heat capacity is 10 J/(mol·K) against carbon dioxide's 30
 -- and steam's 40 (substances/tritium.luau), so the same 3e6 J lands in
 -- a fraction of the heat capacity and a supersaturated fire runs away
--- far harder than an ordinary one. That is tg's behaviour and it falls
+-- far harder than an ordinary one. That is tg's behavior and it falls
 -- out of the numbers rather than being written anywhere.
 return {
     id = "plasma_fire_supersaturated",

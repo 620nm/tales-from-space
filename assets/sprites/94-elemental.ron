@@ -9,9 +9,9 @@
 // `c` playing every frame of the tag. The client picks each 16x16 quarter
 // of a tile from the block its two sides and corner select.
 //
-// Gas, liquid and solid sprites are neutral greys the substance's own tint
+// Gas, liquid and solid sprites are neutral grays the substance's own tint
 // multiplies at draw time, so no tint is declared here. Fire sprites carry
-// their own colours except the two `tintable` ones, which are grey too.
+// their own colors except the two `tintable` ones, which are gray too.
 (
     sheets: [
         ("gas_cloud_smooth_gentle", "art/matter/gasses/gas_cloud_smooth_gentle.aseprite"),

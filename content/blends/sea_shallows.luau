@@ -1,4 +1,4 @@
--- The same water, half a metre deep: sea_water's own shore, laid by the
+-- The same water, half a meter deep: sea_water's own shore, laid by the
 -- `shallows` terrain profile (terrain.luau).
 local DENSITY_G_PER_ML = 1.0 -- substances/water.luau
 local MOLAR_MASS = 18.015

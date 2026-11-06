@@ -18,7 +18,7 @@
 -- phases the way chlorine carries its gas figure -- one number rather
 -- than three, two of which would be invented.
 --
--- The vapour line clears 6.8 kPa at the melting point, which is far
+-- The vapor line clears 6.8 kPa at the melting point, which is far
 -- under one atmosphere, so `boil` is the legal spelling here and
 -- `triple` is not (D10).
 -- tg: /datum/reagent/bromine (other_reagents.dm:2246).

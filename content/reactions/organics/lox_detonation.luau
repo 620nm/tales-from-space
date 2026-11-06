@@ -10,7 +10,7 @@
 -- lights it against the liquid oxygen (lib/ignition.luau `LOX_FUELS`).
 --
 -- Energy: methane's lower heating value, 802.3 kJ/mol
--- (reactions/organics/methane_fire.luau), less the vaporisation of the
+-- (reactions/organics/methane_fire.luau), less the vaporization of the
 -- liquids it starts from: methane 8.17 kJ/mol and oxygen 6.82 kJ/mol
 -- (substances/petrochemicals/methane.luau, substances/o2.luau), so
 -- 780.5 kJ per mole of methane.

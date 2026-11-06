@@ -19,7 +19,7 @@ what a structure holds.
 
 ## Tub
 
-| tg | Behaviour | Decision |
+| tg | Behavior | Decision |
 | --- | --- | --- |
 | `janitor.dm:1` | At least 1 u counts as holding | luau: `MINIMUM_MOL`, 0.025 mol |
 | `janitor.dm:4-7,54-57` | Names, sprites | api |
@@ -37,7 +37,7 @@ what a structure holds.
 
 ## Rack
 
-| tg | Behaviour | Decision |
+| tg | Behavior | Decision |
 | --- | --- | --- |
 | `janitor.dm:58-64` | Six typed slots, four signs | adapted: `storage = 9`, the same count, untyped |
 | `janitor.dm:69,72` | `janitor_devices` | omitted: no custodial locator (`radar.dm:296-306`) |

@@ -6,10 +6,10 @@
 -- canister.dm), 21/79 at room temperature -- so 45 atmospheres, which
 -- in a 2 m3 bottle is 3741.6 moles (docs/ATMOS.md 11).
 --
--- Authored as moles PER CUBIC METRE (`amount = "per_m3"`), because this
+-- Authored as moles PER CUBIC METER (`amount = "per_m3"`), because this
 -- blend is a DENSITY and the engine scales it by whatever it is poured
--- into: each cubic metre holds 1870.8 mol, so the 2 m3 bottle holds
--- 3741.6 mol and reads the same 4559.6 kPa as one cubic metre of it --
+-- into: each cubic meter holds 1870.8 mol, so the 2 m3 bottle holds
+-- 3741.6 mol and reads the same 4559.6 kPa as one cubic meter of it --
 -- pressure is a density, not an amount.
 --
 -- It is a blend rather than a canister subtype for the reason the whole

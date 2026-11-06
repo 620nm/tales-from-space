@@ -1,6 +1,6 @@
 -- Aiuri: the burn medicine, and the one rule on this bench that takes
 -- heat OUT of the vessel it runs in (reactions/aiuri.luau). Liquid
--- ammonia and sulphuric acid in a bottle, and the bottle frosts.
+-- ammonia and sulfuric acid in a bottle, and the bottle frosts.
 --
 -- WHERE THE NUMBERS COME FROM. The bridge is spelled out in
 -- substances/multiver.luau: a tg `/datum/reagent/medicine/c2` has

@@ -5,7 +5,7 @@
 -- Real molar mass and the real molar heat capacity (Hg, 28.0
 -- J/(mol*K)), with an authored `unmodeled` rest phase per D2
 -- (docs/CHEMISTRY.md): mercury boils at 630 K, which the reaction
--- chamber reaches -- and mercury vapour is a genuinely lethal thing
+-- chamber reaches -- and mercury vapor is a genuinely lethal thing
 -- that nothing here would do anything with, so a curve would be a
 -- promise the game does not keep.
 -- tg: /datum/reagent/mercury (other_reagents.dm:1045).
@@ -16,7 +16,7 @@ return {
     cv = 28.0,
     phase = { unmodeled = "liquid" },
     -- Real mercury, 13.53 g/mL: the densest thing on this shelf by a
-    -- long way, and a mole of it is fifteen millilitres.
+    -- long way, and a mole of it is fifteen milliliters.
     density = { liquid = 13.53 },
     -- How it flows (docs/chemistry/substances.md, `flow`). Mercury is
     -- about as runny as water and wets NOTHING: the enormous surface
@@ -36,6 +36,6 @@ return {
     color = "#484848",
     -- What a placard says about this substance alone
     -- (docs/chemistry/substances.md, `hazard`).
-    -- NFPA 704 for mercury; the vapour is the poison.
+    -- NFPA 704 for mercury; the vapor is the poison.
     hazard = { health = 3, fire = 0, instability = 0, special = "skull" },
 }

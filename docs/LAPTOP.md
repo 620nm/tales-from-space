@@ -97,7 +97,7 @@ Create retains its filename and extension while the unsaved-work guard
 owns the workspace. Cancel restores Create with that naming draft; Save
 keeps the guard open until its receipt; Discard continues once. Cancel also
 releases a pending save guard so a refused save cannot trap the naming draft;
-a late receipt cannot continue the cancelled operation.
+a late receipt cannot continue the canceled operation.
 Disk ejection guards only dirty work on B:. Revoked providers, lost media and
 closed documents cancel pending continuations.
 

@@ -14,7 +14,7 @@
 --   p_sat(94) = 11700 * exp(-8190/8.314 * (1/94 - 1/90.69)) = 17.15 kPa.
 -- The engine refuses an ambient row above that line at load.
 --
--- `per_m3`: moles per cubic metre, p/RT. n = 150000 / (8.314 * 94)
+-- `per_m3`: moles per cubic meter, p/RT. n = 150000 / (8.314 * 94)
 -- = 191.93 mol/m3, of which methane 9.597 and nitrogen 182.34.
 local R = 8.314
 local T = 94.0

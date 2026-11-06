@@ -19,7 +19,7 @@
 --    taken.
 -- 2. The missing-blood oxygen cost, tg's own rule.
 --
--- Every tg unit here is a centilitre and 0.025 mol
+-- Every tg unit here is a centiliter and 0.025 mol
 -- (docs/chemistry/tg-bridge.md), so each tg figure is carried x 0.025.
 local blood_identity = require("@lib/blood_identity")
 

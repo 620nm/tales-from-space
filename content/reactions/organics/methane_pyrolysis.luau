@@ -12,7 +12,7 @@
 -- (NIST WebBook), so -74 870 J per extent (the engine's
 -- docs/chemistry/reactions.md).
 --
--- Window: iron-catalysed methane decomposition runs 700-900 C
+-- Window: iron-catalyzed methane decomposition runs 700-900 C
 -- (973.15-1173.15 K, the plateau here). The bench heater tops out at
 -- 1000 K (machines/chem_heater.luau), on the plateau. Shared bell
 -- exponent and rescaled base rate (the engine's docs/chemistry/rate-law.md).

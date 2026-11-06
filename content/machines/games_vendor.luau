@@ -5,7 +5,7 @@
 --
 -- A die on a table is one die; a machine that hands out dice is a rec
 -- room. It shares the softdrinks machine's and the YouTool's script:
--- opening a window on click and wobbling when bumped is the behaviour
+-- opening a window on click and wobbling when bumped is the behavior
 -- of a vending machine, not of any particular one.
 --
 -- THREE OF TG'S SIX SHELVES, and the ruling behind the three that are

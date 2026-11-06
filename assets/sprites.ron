@@ -4,7 +4,7 @@
     // the block entirely and bakes without one.
     //
     // No plan in this pack draws itself out of it any more — a crewman
-    // is a coloured layer stack now (`content/bodies/human.luau`'s
+    // is a colored layer stack now (`content/bodies/human.luau`'s
     // `looks`, docs/LOOKS.md) — but the composite stays: it is one
     // whole-body picture for any plan that wants one, and the engine's
     // own test fixtures name it.
@@ -264,7 +264,7 @@
         "light_glow_w",
     ],
     // The running gravity battery's field disc bends the scene and whoever
-    // stands in it about its centre tile, winding inward and rolling back:
+    // stands in it about its center tile, winding inward and rolling back:
     // pack-tuned (radius in tiles, strength as a fresh Lens, swing in
     // seconds; the engine's docs/assets/rosters.md).
     lens: [(

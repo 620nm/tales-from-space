@@ -36,7 +36,7 @@
     const subEl = document.getElementById("topbar-subtitle");
     if (subEl) {
       subEl.innerHTML =
-        `${TERRESTRIAL_ASSETS.length} Neutral-Greyscale Terrestrial Assets &bull; ` +
+        `${TERRESTRIAL_ASSETS.length} Neutral-Grayscale Terrestrial Assets &bull; ` +
         `${EXISTING_ASSETS.length} TfS Matter, Station &amp; <code>tgstation</code> Reference Gems &bull; ` +
         `12-Frame 4-Layer Shoreline &bull; 47-Junction Auto-Smoothing &bull; Live sRGB Multiply`;
     }
@@ -356,7 +356,7 @@
       }
     } else {
       rows.push(["Source Domain", rec.source, "Reference comparison catalog", "INFO"]);
-      rows.push(["Colorability", rec.colorable ? "Neutral Greyscale (sRGB Multiply)" : "Baked RGB Palette", "Runtime tint mode", "INFO"]);
+      rows.push(["Colorability", rec.colorable ? "Neutral Grayscale (sRGB Multiply)" : "Baked RGB Palette", "Runtime tint mode", "INFO"]);
       rows.push(["Cell & Anchor", `${rec.cell_w}x${rec.cell_h} @ (${rec.offset_x}, ${rec.offset_y})`, `kind=${rec.kind}, frames=${rec.frame_count}`, "INFO"]);
     }
 
@@ -412,7 +412,7 @@
     const tel = rec.telemetry_summary;
     document.getElementById("insp-telemetry").textContent = tel
       ? Object.entries(tel).map(([k, v]) => `${k}=${v}`).join(" • ")
-      : (rec.colorable ? "colorable=true (neutral greyscale)" : "colorable=false (baked palette)");
+      : (rec.colorable ? "colorable=true (neutral grayscale)" : "colorable=false (baked palette)");
 
     document.getElementById("insp-single-heading").textContent = rec.kind === "oversized"
       ? "2× Anchor Pedestal (3×3)"

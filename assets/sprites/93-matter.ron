@@ -16,8 +16,8 @@
     sprites: [
         // `icons/effects/blood.dmi`, floor1..floor3 and floor5..floor6:
         // broad pool/splash art. Stable tile hashing chooses among them.
-        // floor4 and floor7 are single-colour masks, so the atlas's
-        // accidental-greyscale guard deliberately excludes them.
+        // floor4 and floor7 are single-color masks, so the atlas's
+        // accidental-grayscale guard deliberately excludes them.
         ("matter_liquid_1", Dmi("@blood", "floor1", 0)),
         ("matter_liquid_2", Dmi("@blood", "floor2", 0)),
         ("matter_liquid_3", Dmi("@blood", "floor3", 0)),
@@ -47,7 +47,7 @@
         // `icons/turf/floors.dmi`, tg's two river tiles: eight frames
         // at delays 1,2,3,2,1,2,3,2 with rewind, so the surface moves
         // and reverses instead of looping with a seam. They are the
-        // upper tiers of a deep liquid pool, a square metre of standing
+        // upper tiers of a deep liquid pool, a square meter of standing
         // water rather than a splash on the deck.
         //
         // ART ONLY. tg's water turf carries a slowdown, an immersion

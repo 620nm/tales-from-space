@@ -1,6 +1,6 @@
--- Ethanol vapour burning in air: C2H5OH + 3 O2 -> 2 CO2 + 3 H2O.
+-- Ethanol vapor burning in air: C2H5OH + 3 O2 -> 2 CO2 + 3 H2O.
 --
--- Only the gas burns; a puddle burns through its vapour, so the flame
+-- Only the gas burns; a puddle burns through its vapor, so the flame
 -- follows the fuel as the pool boils off. The `alight` column is the
 -- spark: the rule cannot fire without it, and once lit the fire holds
 -- on fuel and heat from 250 K. The rate fades to nothing at 312 K, so a

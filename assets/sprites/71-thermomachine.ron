@@ -6,21 +6,21 @@
 // so the atlas layout is a function of the manifest and not of the
 // filesystem. Two files claiming one sprite name is a bake error.
 //
-// GREYSCALE, AND THE COLOUR IS THE MACHINE'S WHOLE IDENTITY IN TG.
+// GRAYSCALE, AND THE COLOR IS THE MACHINE'S WHOLE IDENTITY IN TG.
 // The thermomachine is a GAGS object: `greyscale_config =
 // /datum/greyscale_config/thermomachine` with `greyscale_colors =
 // COLOR_VIBRANT_LIME` (thermomachine.dm:24-25), and its config
 // (json_configs/thermomachine.json) is two layers per state -- a
-// `temp_meter*` display that TAKES the colour, under a `thermo_base*`
+// `temp_meter*` display that TAKES the color, under a `thermo_base*`
 // body that does not. That is exactly the shape `DmiBlend` bakes, so
 // the pair is composited here with the meter painted and the body left
 // alone, which is what `paint`'s per-layer flag is for.
 //
-// WHICH colour is the one thing that cannot be baked. tg recolours the
+// WHICH color is the one thing that cannot be baked. tg recolors the
 // machine live from its SETPOINT -- violet below 200 K through blue,
 // cyan, lime, yellow and orange to red above 400
-// (thermomachine.dm:98-117) -- and a baked atlas cell has one colour
-// forever. So the art is baked at the colour a freshly built unit
+// (thermomachine.dm:98-117) -- and a baked atlas cell has one color
+// forever. So the art is baked at the color a freshly built unit
 // actually wears: its target ships at T20C, which falls in tg's
 // `BODYTEMP_COLD_WARNING_1 to BODYTEMP_HEAT_WARNING_1` band, which is
 // `COLOR_VIBRANT_LIME` (#00FF00). A unit dialled down to freezer

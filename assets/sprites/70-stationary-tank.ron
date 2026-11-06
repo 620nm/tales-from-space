@@ -10,30 +10,30 @@
 // its sheet carries all 47 junction states a bank of tanks can stand
 // in. Nothing in this engine resolves a junction bitmask to a sprite
 // name, so only the ISOLATED state is baked — `canister-0`, the tank
-// with no neighbour on any side, which is what a single vessel with
+// with no neighbor on any side, which is what a single vessel with
 // walking room around it looks like in tg too. The other 46 are the
 // picture of a merged bank, and the merger that would justify them is
 // deferred with it (see `AtmosDevice::volume_l`).
 //
-// COLOUR. Both sheets are greyscale art: tg tints them through GAGS
+// COLOR. Both sheets are grayscale art: tg tints them through GAGS
 // (`greyscale_config = /datum/greyscale_config/stationary_canister`,
 // tank.dm:30-32), and both json configs are a single `icon_state`
 // layer at `color_ids: [1]` — one flat multiply and nothing else. The
-// colour is NOT a property of the gas inside; it is the PLATING
+// color is NOT a property of the gas inside; it is the PLATING
 // MATERIAL's, taken from `custom_materials` through `MATERIAL_GREYSCALE`
 // (tank.dm:17-18, atom_materials.dm:255-294). tg's default plating is
 // iron, `/datum/material/iron` `color = "#B6BEC2"` (basemats.dm:2-5),
-// which is the (182, 190, 194) below. `Tinted` keeps the pixels grey
-// and hands that colour to the renderer, so the day a tank remembers
+// which is the (182, 190, 194) below. `Tinted` keeps the pixels gray
+// and hands that color to the renderer, so the day a tank remembers
 // what it was plated with, one object can paint itself without a
 // second bake.
 //
 // The knobs, the frame and the plated frame are baked RAW, because tg
-// draws them raw: neither greyscale config mentions `knob`, `frame` or
+// draws them raw: neither grayscale config mentions `knob`, `frame` or
 // `plated_frame`, and `knob_overlays` is built straight off the .dmi
 // (tank.dm:77-80). tg's ten crack states are skipped entirely — they
 // belong to the `crackable` element, which is deferred, and they are
-// pre-coloured translucent green rather than greyscale anyway.
+// pre-colored translucent green rather than grayscale anyway.
 (
     sheets: [
         ("tank", "obj/pipes_n_cables/stationary_canisters.dmi"),
@@ -52,10 +52,10 @@
         // They MUST be baked together. Each alone is what
         // `no_sprite_is_a_bare_colour_mask` exists to catch: the
         // backing is 87 pixels of pure white (it is a mask, literally),
-        // and the glass is 44 pixels 91% of one grey. Composited they
+        // and the glass is 44 pixels 91% of one gray. Composited they
         // are a lit pane with a highlight on it, which is what tg
         // actually shows on an empty tank. `paint: (255, 255, 255)` is
-        // the identity multiply — the real colour is `Tinted`'s, handed
+        // the identity multiply — the real color is `Tinted`'s, handed
         // to the renderer rather than baked in, so the tank's plating
         // material can paint it later.
         ("stationary_tank_window", Tinted(DmiBlend(

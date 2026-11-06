@@ -165,7 +165,7 @@ export interface GameplayView {
       id: number;
       sequence: number;
       channel?: string | null;
-      /** Who was heard: what the lettering's colour is hashed from. */
+      /** Who was heard: what the lettering's color is hashed from. */
       name?: string | null;
       text: string;
     }[];

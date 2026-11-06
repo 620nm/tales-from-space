@@ -1,7 +1,7 @@
 local physical_profiles = require("@lib/physical_profiles")
 local vessel = require("@lib/vessel")
 
--- A two-litre pressure flask for gas synthesis. It keeps the bottle's
+-- A two-liter pressure flask for gas synthesis. It keeps the bottle's
 -- handling and fill art while giving the chemistry lab a shell large enough
 -- for a useful syngas batch.
 local content = {

@@ -36,7 +36,7 @@
 -- atmospherics component's `initialize_directions` IS its dir
 -- (components/unary_devices/unary_devices.dm:14) -- so a port aimed at
 -- bare deck feeds nothing, whatever is laid on its other three sides.
--- Its own tile is the component's centre and must not also carry a raw
+-- Its own tile is the component's center and must not also carry a raw
 -- pipe on the same layer. Turn the loose fitting with Alt+left/Alt+right
 -- before wrenching it down when automatic alignment is not the shape
 -- you want.

@@ -1,6 +1,6 @@
 local physical_profiles = require("@lib/physical_profiles")
 -- tg storage/boxes/science_boxes.dm:27-34 supplies eight floppy disks,
--- one of each sleeve colour. The pack supplies them unpackaged, in a
+-- one of each sleeve color. The pack supplies them unpackaged, in a
 -- rainbow; ordinary storage owns all handling.
 return {
     id = "disk_box",

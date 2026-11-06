@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 r"""
 Procedural pixel-art specification entrypoint for Tales from Space — Solid Matter & Soil (`solids`).
-Assembles the 13 neutral-greyscale solid sprites (`SPRITES`) from `solids_discrete` and
+Assembles the 13 neutral-grayscale solid sprites (`SPRITES`) from `solids_discrete` and
 `solids_surfaces` in canonical manifest order.
 """
 from __future__ import annotations

@@ -15,7 +15,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- -- which is the suit slot in content/part_tree.luau.
 --
 -- What is deliberately NOT here: tg's slowdown, cold protection,
--- armour and helmet requirement. There is no prototype field for any of
+-- armor and helmet requirement. There is no prototype field for any of
 -- them, and inventing one to hold a number nothing reads would be a
 -- knob rather than a feature. When those systems land, this file grows
 -- the line they need.

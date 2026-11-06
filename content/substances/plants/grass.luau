@@ -5,7 +5,7 @@
 -- tg has no grass reagent, so the numbers are real plant matter. One mole
 -- is one cellulose unit, C6H10O5 at 162.14 g/mol; dry plant matter holds
 -- about 1.3 J/(g*K), which is 211 J/(mol*K). 0.3 g/mL is a sward, leaf and
--- the air between, not packed fibre: a chosen figure. Grass does not melt.
+-- the air between, not packed fiber: a chosen figure. Grass does not melt.
 return {
     id = "grass",
     name = "grass",
