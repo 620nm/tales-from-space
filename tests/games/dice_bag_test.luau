@@ -118,7 +118,7 @@ t.tick()
 assert(t.hands(p).held == "d00", "the percentile die is in hand")
 
 local seen_zero = false
-local readings = {}
+local readings: { [number]: boolean } = {}
 for _ = 1, 60 do
     t.use_self(p)
     t.tick()
