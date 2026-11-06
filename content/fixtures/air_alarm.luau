@@ -140,16 +140,20 @@ if sim ~= nil then
         local last = self.vars["alarm_flags"] or {}
         local now = derive(self)
         local again = last.dirty == true
+        local unsent = false
         for _, band in ipairs(BANDS) do
             local active = if band == "deadly" then now.deadly else now.unbreathable
             if again or (last[band] == true) ~= active then
-                sim.link.emit({
+                local refused = sim.link.emit({
                     subject = self,
                     payload = netmsg.light_flag(if active then "set" else "clear", band),
                 })
+                -- A refused emission fires no `link.emit.done`: mark it here.
+                unsent = unsent or refused ~= nil
             end
         end
-        self.vars["alarm_flags"] = { deadly = now.deadly, unbreathable = now.unbreathable }
+        self.vars["alarm_flags"] =
+            { deadly = now.deadly, unbreathable = now.unbreathable, dirty = unsent or nil }
     end)
 
     -- AN EMISSION NOBODY GOT is the one case a difference cannot be

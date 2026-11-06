@@ -78,9 +78,13 @@ if sim ~= nil then
                 end
             end
             if best then
-                spent[best] = true
-                fitted += 1
-                sim.component.swap({ subject = claim.entity, slot = index, part = bag[best] })
+                -- Only an accepted swap spends the part and counts as fitted.
+                local refused =
+                    sim.component.swap({ subject = claim.entity, slot = index, part = bag[best] })
+                if refused == nil then
+                    spent[best] = true
+                    fitted += 1
+                end
             end
         end
         -- And then ask the machine what it is worth, whether or not a

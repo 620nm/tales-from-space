@@ -170,14 +170,14 @@ function writing.append(paper: Handle?, writer: Handle?, text: unknown): boolean
     then
         return false
     end
-    sim.documents.append({
+    local why = sim.documents.append({
         document = paper,
         uid = writing.file_uid,
         expected_revision = document.revision,
         text = text,
         writer = writer,
     })
-    return true
+    return why == nil
 end
 
 -- Every held writing item opens the same paper document. Keep this route in
