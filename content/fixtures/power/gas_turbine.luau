@@ -1,10 +1,12 @@
 local gas_turbine = require("@lib/power/gas_turbine")
 local gas_turbine_run = require("@lib/power/gas_turbine_run")
 local gas_turbine_console = require("@lib/power/gas_turbine_console")
+local gas_turbine_wrench = require("@lib/power/gas_turbine_wrench")
 
 -- The gas turbine's handlers (lib/power/gas_turbine.luau): every section
 -- links the line it completes when it stands up (starting a rotor mapped
--- running) and hears its own panel,
+-- running), hears its own panel and turns to a wrench while it is open
+-- (lib/power/gas_turbine_wrench.luau),
 -- the core rotor answers the multitool that links the line, and the console
 -- answers the multitool carrying a rotor and opens its window to an empty
 -- hand (lib/power/gas_turbine_console.luau). A section set running takes its
@@ -12,6 +14,9 @@ local gas_turbine_console = require("@lib/power/gas_turbine_console")
 local content = { id = "gas_turbine" }
 if sim ~= nil then
     for _, key in ipairs(gas_turbine.message_keys()) do
+        sim.define("message", key, { placeholders = {} })
+    end
+    for _, key in ipairs(gas_turbine_wrench.message_keys()) do
         sim.define("message", key, { placeholders = {} })
     end
     for _, key in ipairs(gas_turbine_console.message_keys()) do
@@ -42,13 +47,16 @@ if sim ~= nil then
                 gas_turbine_run.on_section_changed(ev)
             end
         )
+        local use = gas_turbine_wrench.turn
         if id == gas_turbine.CORE then
-            behavior:handle(
-                "interaction.use",
-                { kind = "replace", route = "interact" },
-                gas_turbine.link_parts
-            )
+            use = function(ev: InteractionUsePayload): boolean | { replaced: boolean }
+                if gas_turbine_wrench.turn(ev) == true then
+                    return true
+                end
+                return gas_turbine.link_parts(ev)
+            end
         end
+        behavior:handle("interaction.use", { kind = "replace", route = "interact" }, use)
     end
     local console = sim.define(
         "behavior",

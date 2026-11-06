@@ -1,4 +1,5 @@
 local gas_turbine = require("@lib/power/gas_turbine")
+local gas_turbine_wrench = require("@lib/power/gas_turbine_wrench")
 
 -- The gas turbine's output section: it expels the spent gas onto the tile
 -- ahead of it. tg's `/obj/machinery/power/turbine/turbine_outlet`
@@ -6,9 +7,9 @@ local gas_turbine = require("@lib/power/gas_turbine")
 --
 -- Built on a machine frame from its board; its stator part is the one
 -- socket and goes in at the frame, where tg fits it through the open
--- hatch afterwards (turbine.dm:249-274). Turned with the panel open:
--- tg's wrench (`default_change_direction_wrench`, _machinery.dm:1069-1077)
--- is the Rotate gesture here.
+-- hatch afterwards (turbine.dm:249-274). A wrench turns it with the panel
+-- open (lib/power/gas_turbine_wrench.luau); `rotates` is that turn's
+-- permission, which the engine's Rotate gesture shares.
 return {
     id = "turbine_outlet",
     visual_layer = "fixture",
@@ -22,6 +23,7 @@ return {
         flavor = "The exhaust end of a gas turbine. Spent gas leaves through it, "
             .. "colder than it came in.",
     },
+    actions = { gas_turbine_wrench.turn_row() },
     dense = true,
     -- tg's sections stop air (`can_atmos_pass = ATMOS_PASS_DENSITY`,
     -- turbine.dm:10), so the intake and the exhaust stay apart.

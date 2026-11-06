@@ -256,6 +256,8 @@
   "lunatic/tfs:ui.affordance.deconstruct": "Deconstruct",
   "lunatic/tfs:ui.affordance.link_parts": "Link turbine parts",
   "lunatic/tfs:ui.affordance.link_console": "Link turbine",
+  "lunatic/tfs:ui.affordance.rotate": "Rotate",
+  "lunatic/tfs:lib.gas_turbine_wrench.turned": "You turn the section a quarter round.",
   "lunatic/tfs:lib.gas_turbine.panel_opened": "You open the maintenance panel.",
   "lunatic/tfs:lib.gas_turbine.panel_closed": "You close the maintenance panel.",
   "lunatic/tfs:lib.gas_turbine.wrong_way": "This rotor is turned the wrong way round for its line.",
