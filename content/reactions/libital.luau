@@ -7,7 +7,7 @@
 -- phenol plus loose oxygen plus loose nitrogen, and both of those are
 -- permanent gases here -- a source deposits what a substance IS, and a
 -- gas over an open vessel is refused (D19, docs/CHEMISTRY.md 7).
--- Saltpetre is KNO3: it carries the nitrogen and the oxygen in one
+-- Saltpeter is KNO3: it carries the nitrogen and the oxygen in one
 -- solid a button already dispenses, which is what a nitrate is FOR.
 -- The product count stays at tg's three (D1 -- libital is fictional, so
 -- there is no atom balance to keep) and the ratio becomes one solid leg
@@ -31,7 +31,7 @@
 -- which is the largest exotherm on this shelf, and it works with the
 -- chamber rather than against it.
 --
--- IT SWELLS, hard. A mole of phenol is 88 mL and a mole of saltpetre
+-- IT SWELLS, hard. A mole of phenol is 88 mL and a mole of saltpeter
 -- 48, against 540 for the three libital that come out, so a whole
 -- extent needs 404 milliliters of room it does not have. Geometry caps
 -- every swelling extent by the free shell volume and grows no vessel
@@ -39,7 +39,7 @@
 -- tenth of an extent and the bench works in the amounts that fit.
 return {
     id = "libital",
-    reactants = { ["phenol:liquid"] = 1.0, ["saltpetre:solid"] = 1.0 },
+    reactants = { ["phenol:liquid"] = 1.0, ["saltpeter:solid"] = 1.0 },
     products = { ["libital:liquid"] = 3.0 },
     energy = 16942.5,
     rate = {

@@ -15,11 +15,11 @@
 -- The row is unsuffixed, so it lands in the phase water RESTS in at
 -- this temperature: liquid (docs/content-schema/blends.md). Water's own
 -- file is where the 1.0 g/mL and the 18.015 g/mol come from.
-local LITRES = 10.0
+local LITERS = 10.0
 local ML_PER_L = 1000.0
 local DENSITY_G_PER_ML = 1.0
 local MOLAR_MASS_G_PER_MOL = 18.015
-local n = LITRES * ML_PER_L * DENSITY_G_PER_ML / MOLAR_MASS_G_PER_MOL
+local n = LITERS * ML_PER_L * DENSITY_G_PER_ML / MOLAR_MASS_G_PER_MOL
 
 return {
     id = "water_10l",

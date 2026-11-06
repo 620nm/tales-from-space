@@ -21,8 +21,8 @@ local L_VAP_J_PER_MOL = 40660.0
 local T_BOIL_K = 373.15
 local p_sat = ONE_ATMOSPHERE_PA * math.exp(-L_VAP_J_PER_MOL / R * (1.0 / T - 1.0 / T_BOIL_K))
 local SATURATED = p_sat / (R * T)
-local VAPOUR = 0.5
-assert(VAPOUR < SATURATED)
+local VAPOR = 0.5
+assert(VAPOR < SATURATED)
 
 return {
     id = "humid_air",
@@ -30,7 +30,7 @@ return {
     rows = {
         { "o2", n * 0.21 },
         { "n2", n * 0.79 },
-        { "water:gas", VAPOUR },
+        { "water:gas", VAPOR },
     },
     temperature_k = T,
     amount = "per_m3",

@@ -111,8 +111,8 @@ dry(4, "the shut leaf has not been crossed")
 -- the fifth is behind it.
 -- ---------------------------------------------------------------
 t.run_seconds(4)
-level(1, 2, "the corridor leveled")
-level(2, 3, "the corridor leveled")
+level(1, 2, "the corridor levelled")
+level(2, 3, "the corridor levelled")
 assert(liters(1) > 3.0 * FILM_L, ("and it is deep water: %.4f L"):format(liters(1)))
 dry(4, "a shut door is a sill")
 dry(5, "and nothing got past it")
@@ -148,10 +148,10 @@ t.run_seconds(4)
 assert(assert(t.door_at(4, 1)).open, "pried open")
 
 t.run_seconds(10)
-level(1, 2, "the whole corridor leveled")
-level(2, 3, "the whole corridor leveled")
-level(3, 4, "the whole corridor leveled")
-level(4, 5, "the whole corridor leveled")
+level(1, 2, "the whole corridor levelled")
+level(2, 3, "the whole corridor levelled")
+level(3, 4, "the whole corridor levelled")
+level(4, 5, "the whole corridor levelled")
 assert(liters(5) > FILM_L, ("the far end is a puddle, not a film: %.4f L"):format(liters(5)))
 assert(
     math.abs(water_everywhere() - POURED) < 1e-6,
@@ -221,7 +221,7 @@ local WATER_START = water_everywhere()
 t.run_seconds(10)
 
 assert(liters(1) > 2.9, ("the film stayed where it was painted: %.4f L"):format(liters(1)))
-dry(2, "and its neighbor was never wet")
+dry(2, "and its neighbour was never wet")
 dry(3, "nor the tile past that")
 dry(5, "nor the far side of the tipped beaker")
 assert(

@@ -11,8 +11,8 @@ export interface FileBuffer {
   sourceView?: boolean;
   sourceVisible?: boolean;
   pending?: SaveReceipt;
-  /** A canceled native save whose acknowledgement can still reconcile the draft. */
-  cancelledSave?: SaveReceipt;
+  /** A cancelled native save whose acknowledgement can still reconcile the draft. */
+  canceledSave?: SaveReceipt;
   continuation?: Command;
   /** A local workspace change waiting behind the same dirty guard. */
   guardLocal?: () => void;
@@ -90,12 +90,12 @@ export function editorBuffer(id: string, doc: DocumentIdentity, state: Partial<M
   // A canceled save has no continuation to release. Its request may be
   // hidden by a newer canceled retry, so the accepted native snapshot is
   // the only receipt available for this bounded reconciliation marker.
-  if (buffer.cancelledSave && matchesNative(buffer.cancelledSave)) {
-    if (buffer.text === buffer.cancelledSave.text) buffer.dirty = false;
-    buffer.cancelledSave = undefined;
+  if (buffer.canceledSave && matchesNative(buffer.canceledSave)) {
+    if (buffer.text === buffer.canceledSave.text) buffer.dirty = false;
+    buffer.canceledSave = undefined;
   }
-  if (buffer.cancelledSave && buffer.cancelledSave.revision !== open.revision) {
-    buffer.cancelledSave = undefined;
+  if (buffer.canceledSave && buffer.canceledSave.revision !== open.revision) {
+    buffer.canceledSave = undefined;
   }
   if (!buffer.dirty) { buffer.text = open.body; buffer.revision = open.revision; }
   buffer.open = open;
@@ -175,7 +175,7 @@ export function discardGuard(current: FileBuffer): Command | undefined {
   return command;
 }
 export function cancelGuard(current: FileBuffer): void {
-  if (current.pending) current.cancelledSave = current.pending;
+  if (current.pending) current.canceledSave = current.pending;
   current.guard = undefined; current.guardLocal = undefined;
   current.continuation = undefined; current.continuationLocal = undefined;
   current.pending = undefined;

@@ -93,7 +93,7 @@ scree and rubble blend across planetary shelves.
     Lone-pixel pruning bridges seam coordinates `{0, 15, 16, 31}` inward by 1 px rather
     than erasing boundary pixels asymmetrically; seam luma ratios stay `<= 2.75`.
   - `dominant_rgb_share < 0.85` holds on every raw block and every stitched junction tile
-    with `>= 40` active pixels, passing `no_sprite_is_a_bare_colour_mask` in
+    with `>= 40` active pixels, passing `no_sprite_is_a_bare_color_mask` in
     [tools/test-bake-art.mjs](../../tools/test-bake-art.mjs) with `lone_pixel_count == 0`.
   - Static `j=0` terrain, ice, cliff and scree islands preserve north-lit top-down shading
     (`luma_top > luma_bottom`).

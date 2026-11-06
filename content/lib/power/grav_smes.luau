@@ -104,8 +104,8 @@ end
 -- Nil past the map's edge, which a part drifting in open space can reach.
 local tile_beside = ignition.tile_beside
 
--- The center a standing part implies: the tile it would stand beside.
-local function implied_centre(part: Handle): TileAddress?
+-- The centre a standing part implies: the tile it would stand beside.
+local function implied_center(part: Handle): TileAddress?
     local tile = part.tile
     if tile == nil then
         return nil
@@ -120,7 +120,7 @@ local function implied_centre(part: Handle): TileAddress?
 end
 
 type Inspection = {
-    centre: TileAddress?,
+    center: TileAddress?,
     parts: { Handle },
     refusal: string?,
 }
@@ -128,14 +128,14 @@ type Inspection = {
 -- Walks the eight positions around the center `part` implies and names the
 -- first thing wrong, in the player's words.
 local function inspect(part: Handle): Inspection
-    local result: Inspection = { centre = implied_centre(part), parts = {}, refusal = nil }
-    local centre = result.centre
-    if centre == nil then
+    local result: Inspection = { center = implied_center(part), parts = {}, refusal = nil }
+    local center = result.center
+    if center == nil then
         result.refusal = MESSAGE .. "blocked"
         return result
     end
     for _, spec in ipairs(PARTS) do
-        local at = tile_beside(centre, spec.dx, spec.dy)
+        local at = tile_beside(center, spec.dx, spec.dy)
         local found = if at ~= nil then part_at(at, spec.prototype) else nil
         if found == nil and at ~= nil and spec.prototype == RING and part_at(at, PACKED_RING) ~= nil then
             result.refusal = MESSAGE .. "loose." .. spec.position
@@ -352,8 +352,8 @@ local function torch_refusal(torch: Handle): string?
     return nil
 end
 
-local function replacement(centre: TileAddress): StructureReplaceSpawn
-    return { definition = BODY, at = centre, state = WELDED }
+local function replacement(center: TileAddress): StructureReplaceSpawn
+    return { definition = BODY, at = center, state = WELDED }
 end
 
 -- A lit welder on any anchored emitter or set ring: fuses the eight parts
@@ -373,8 +373,8 @@ function grav_smes.weld(ev: InteractionUsePayload): boolean | { replaced: boolea
         send(actor, inspection.refusal)
         return true
     end
-    local centre = assert(inspection.centre)
-    local request: StructureReplaceRequest = { remove = inspection.parts, spawn = replacement(centre) }
+    local center = assert(inspection.center)
+    local request: StructureReplaceRequest = { remove = inspection.parts, spawn = replacement(center) }
     if not sim.structure.can_replace(request).ok then
         send(actor, MESSAGE .. "blocked")
         return true
@@ -402,8 +402,8 @@ function grav_smes.weld(ev: InteractionUsePayload): boolean | { replaced: boolea
             send(actor, again.refusal)
             return
         end
-        local centre_again = assert(again.centre)
-        local fresh: StructureReplaceCommand = { remove = again.parts, spawn = replacement(centre_again) }
+        local center_again = assert(again.center)
+        local fresh: StructureReplaceCommand = { remove = again.parts, spawn = replacement(center_again) }
         if not sim.structure.can_replace(fresh).ok then
             send(actor, MESSAGE .. "blocked")
             return

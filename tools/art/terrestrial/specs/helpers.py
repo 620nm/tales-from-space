@@ -13,14 +13,14 @@ import sys
 from typing import Any
 
 if __package__ and "." in __package__:
-    from ..schema_contract import NEUTRAL_GREYS
+    from ..schema_contract import NEUTRAL_GRAYS
 else:
     _TERRESTRIAL_DIR = str(Path(__file__).resolve().parents[1])
     if _TERRESTRIAL_DIR not in sys.path:
         sys.path.insert(0, _TERRESTRIAL_DIR)
-    from schema_contract import NEUTRAL_GREYS  # type: ignore[import-not-found]
+    from schema_contract import NEUTRAL_GRAYS  # type: ignore[import-not-found]
 
-GREY: dict[str, str] = dict(NEUTRAL_GREYS)
+GRAY: dict[str, str] = dict(NEUTRAL_GRAYS)
 
 LIGHT_X = -0.38
 LIGHT_Y = -0.925
@@ -58,7 +58,7 @@ def build_layers(
         used = sorted({ch for r in rows for ch in r if ch != "."})
         if not used:
             used = ["A"]
-        legend = {ch: GREY[ch] for ch in used}
+        legend = {ch: GRAY[ch] for ch in used}
         out.append(
             {
                 "name": name,

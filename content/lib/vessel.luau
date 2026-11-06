@@ -98,7 +98,7 @@ local LEVEL_KPA = 1.0
 -- names a key of its own, which is a finished sentence and takes
 -- nothing (docs/LOCALIZATION.md 5).
 local UNSEALED = "lunatic/tfs:lib.vessel.unsealed"
-local LEVELLED = "lunatic/tfs:lib.vessel.levelled"
+local LEVELED = "lunatic/tfs:lib.vessel.leveled"
 local CHARGED = "lunatic/tfs:lib.vessel.charged"
 local DREGS = "lunatic/tfs:lib.vessel.dregs"
 local POUR = "lunatic/tfs:lib.vessel.pour"
@@ -247,7 +247,7 @@ local function charge(
     if head_kpa <= LEVEL_KPA then
         sim.message.send({
             recipient = user,
-            message = sim.msg(LEVELLED, { noun = spec.noun }),
+            message = sim.msg(LEVELED, { noun = spec.noun }),
         })
         return true
     end

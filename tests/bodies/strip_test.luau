@@ -83,7 +83,7 @@ assert(panel.presentation == "choices", "a slot grid is a list of choices")
 local order = row_labels(panel)
 local uniform = row(panel, "Uniform")
 assert(uniform ~= nil and uniform.field == "strip", "the filled slot has a strip button")
-assert(word(uniform.text) == "grey jumpsuit", "and the button IS the garment")
+assert(word(uniform.text) == "gray jumpsuit", "and the button IS the garment")
 -- An empty slot the crewman is not holding anything for is a row that
 -- says so, and carries no button at all.
 local suit = row(panel, "Suit")
@@ -103,7 +103,7 @@ assert(said(cadaver, "starts taking your"), "the victim is told it is happening"
 -- of four seconds (tg's own `strip_delay` default, items.dm:164).
 t.run_ticks(clock.deadline_ticks(4.0) + 5)
 assert(t.worn(cadaver).uniform == nil, "the slot is empty")
-assert(has(t.items_at(CX, CY), "uniform_grey"), "and it landed at their feet")
+assert(has(t.items_at(CX, CY), "uniform_gray"), "and it landed at their feet")
 assert(#t.ledger_rows("Stripped") > 0, "the record names both people")
 assert(said(crewman, "You take"), "and the crewman is told what they did")
 
@@ -128,9 +128,9 @@ assert(#t.ledger_rows("DoAfterStarted") > parked, "the incision parked")
 -- subject.
 t.drop(crewman)
 t.run_ticks(2)
-t.click(crewman, CX, CY, t.target_at(crewman, CX, CY, "uniform_grey"))
+t.click(crewman, CX, CY, t.target_at(crewman, CX, CY, "uniform_gray"))
 t.run_ticks(2)
-assert(t.hands(crewman).held == "uniform_grey", "the jumpsuit is back in hand")
+assert(t.hands(crewman).held == "uniform_gray", "the jumpsuit is back in hand")
 
 t.drag(crewman, CX, CY, t.body_target(crewman, cadaver), AX, AY, t.body_target(crewman, crewman))
 t.run_ticks(2)
@@ -144,7 +144,7 @@ assert(refill ~= nil and refill.field == "dress", "the empty slot offers to be f
 local refill_text = ui_controls.record(refill.text)
 local refill_args = ui_controls.record(refill_text.args)
 assert(
-    refill_text.id == "wearables.put_on" and refill_args.item == "grey jumpsuit",
+    refill_text.id == "wearables.put_on" and refill_args.item == "gray jumpsuit",
     "and a dress button can never be misread as a strip one: " .. tostring(word(refill.text))
 )
 

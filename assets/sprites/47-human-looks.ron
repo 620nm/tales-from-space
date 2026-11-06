@@ -58,8 +58,8 @@
         // outside tg's own random roll (hair.dm:123, :137, :183). The
         // other two, `Boddicker` and `Buzzcut`, are left out here and
         // not there: the back of each is forty-one pixels of one flat
-        // gray, which the atlas lint reads as an unbaked grayscale
-        // config and is right to (`no_sprite_is_a_bare_colour_mask`).
+        // grey, which the atlas lint reads as an unbaked greyscale
+        // config and is right to (`no_sprite_is_a_bare_color_mask`).
         //
         // The head of the file, then, rather than a filter of it:
         // `natural_spawn` DEFAULTS to true (_sprite_accessory.dm:47-49)
@@ -139,10 +139,10 @@
             Directions("facial_volaju", "facial_volaju"),
             Directions("facial_three_oclock", "facial_3oclock"),
             Directions("facial_five_oclock", "facial_fiveoclock"),
-            Directions("facial_five_oclock_moustache", "facial_5oclockmoustache"),
+            Directions("facial_five_oclock_mustache", "facial_5oclockmoustache"),
             Directions("facial_seven_oclock", "facial_7oclock"),
-            Directions("facial_seven_oclock_moustache", "facial_7oclockmoustache"),
-            Directions("facial_moustache", "facial_moustache"),
+            Directions("facial_seven_oclock_mustache", "facial_7oclockmoustache"),
+            Directions("facial_mustache", "facial_moustache"),
             Directions("facial_pencilstache", "facial_pencilstache"),
         ]),
     ],

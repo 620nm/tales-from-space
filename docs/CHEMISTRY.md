@@ -81,7 +81,7 @@ over. The whole argument lives in the file's own comment; the summary:
 - **On, because condensable.** Chlorine and ammonia are refused over an
   open beaker and land in a sealed bottle as liquid under their own vapor
   pressure (about 8 atm and 8.6 atm), which is a reactant a bench can use.
-- **Promoted off tg's upgrade tier.** Ammonia, ash, saltpetre. tg gates
+- **Promoted off tg's upgrade tier.** Ammonia, ash, saltpeter. tg gates
   that half behind a servo above tier three (`chem_dispenser.dm:467-471`),
   but a shelf is a ROSTER and `parts.scale` moves numbers, not rosters. A
   machine that ships with a locked half ships mis-configured.
@@ -123,8 +123,8 @@ diethylamine) and tg's base element shelf:
 |---|---|---|---|---|
 | salglu | water + salt + sugar | 0.0025 | 0.25 brute + 0.25 burn, on a 1-in-3 roll | — |
 | multiver | ash + salt, at 400 K | 0.0025 | 0.5 tox | 0.5 onto the lungs |
-| libital | phenol + saltpetre, at 700 K | 0.003 | 1.5 brute | — (lunatic-calibrated, half tg's 3) |
-| aiuri | ammonia + sulfuric acid, warm | 0.0025 | 2 burn | 0.25 onto the eyes |
+| libital | phenol + saltpeter, at 700 K | 0.003 | 1.5 brute | — (lunatic-calibrated, half tg's 3) |
+| aiuri | ammonia + sulphuric acid, warm | 0.0025 | 2 burn | 0.25 onto the eyes |
 | epinephrine | phenol + acetone + diethylamine + chlorine | 0.00125 | 0.5 of each of the four pools, **only past `crit`** | — |
 
 Multiver and aiuri are `/datum/substance/medicine/c2`, tg's medicine that

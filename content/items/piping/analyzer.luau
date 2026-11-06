@@ -173,7 +173,7 @@ local function report(user: Handle, of: string, sample: MatterRead)
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:items.analyzer.liquid", {
-                millilitres = r2(liquid_ml),
+                milliliters = r2(liquid_ml),
             }),
         })
         print_rows(user, liquid, liquid_names, liquid_order, liquid_ml, "mL")
@@ -182,7 +182,7 @@ local function report(user: Handle, of: string, sample: MatterRead)
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:items.analyzer.solid", {
-                millilitres = r2(solid_ml),
+                milliliters = r2(solid_ml),
             }),
         })
         print_rows(user, solid, solid_names, solid_order, solid_ml, "mL")

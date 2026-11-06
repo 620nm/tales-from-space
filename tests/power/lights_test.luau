@@ -62,7 +62,7 @@ local light = t.light_at(2, 1)
 assert(light ~= nil and light.status == "ok" and light.emits, "a fresh fitting burns")
 local light_target = t.target_at(p, 2, 1)
 assert(light_target ~= nil, "the fixture exposes the id a sprite click names")
-assert(light.color == TUNGSTEN, "in the color the map put in it, got " .. light.color)
+assert(light.color == TUNGSTEN, "in the colour the map put in it, got " .. light.color)
 local function lamp_color_on_the_wire(): string?
     for _, src in ipairs(t.light_sources(p)) do
         if src[1] == 2 and src[2] == 1 then
@@ -79,7 +79,7 @@ end
 assert(told_about_the_lamp(), "the burning lamp is disclosed to the viewer")
 assert(
     lamp_color_on_the_wire() == TUNGSTEN,
-    "and disclosed in its own color, so the client lights the corridor warm"
+    "and disclosed in its own colour, so the client lights the corridor warm"
 )
 -- The tube drawn on the wall: the fitting's glow layer and the color
 -- the viewer is told to paint it, or nil while it wears none.

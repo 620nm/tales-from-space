@@ -13,7 +13,7 @@ type WelderOperation = {
 	target: Handle,
 	tool: Handle,
 	flame_state: string,
-	cancelled: boolean,
+	canceled: boolean,
 	task: Task?,
 }
 
@@ -39,7 +39,7 @@ local function remove_operation(operation: WelderOperation)
 end
 
 local function cancel_operation(operation: WelderOperation)
-	operation.cancelled = true
+	operation.canceled = true
 	remove_operation(operation)
 	local task = operation.task
 	if task ~= nil then
@@ -163,7 +163,7 @@ function welding.begin(
 		target = target,
 		tool = tool,
 		flame_state = "lit",
-		cancelled = false,
+		canceled = false,
 		task = nil,
 	}
 	local task: Task? = nil
@@ -171,7 +171,7 @@ function welding.begin(
 		task = sim.spawn_task(actor, function()
 			local outcome = sim.do_after(actor, sim.ticks(4.0), {})
 			remove_operation(operation)
-			if operation.cancelled or outcome ~= "ok" then
+			if operation.canceled or outcome ~= "ok" then
 				return
 			end
 			if actor.alive ~= true or target.alive ~= true or tool.alive ~= true then

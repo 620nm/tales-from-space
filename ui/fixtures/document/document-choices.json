@@ -28,7 +28,7 @@
               "on": true,
               "on_text": "Selected",
               "off_text": "Select",
-              "field": "colour",
+              "field": "color",
               "option": "0",
               "group": "Lighting",
               "section": "Control"
@@ -38,7 +38,7 @@
               "on": false,
               "on_text": "Selected",
               "off_text": "Select",
-              "field": "colour",
+              "field": "color",
               "option": "1",
               "group": "Lighting",
               "section": "Control"
@@ -48,7 +48,7 @@
               "on": false,
               "on_text": "Selected",
               "off_text": "Select",
-              "field": "colour",
+              "field": "color",
               "option": "2",
               "group": "Lighting",
               "section": "Control"
@@ -61,7 +61,7 @@
   "steps": [
     {
       "type": "click",
-      "id": "doc/1/1/part/0/toggle/colour/1",
+      "id": "doc/1/1/part/0/toggle/color/1",
       "expect": {
         "actionCount": 1
       }

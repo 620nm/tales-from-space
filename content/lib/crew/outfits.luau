@@ -15,7 +15,7 @@ export type OutfitRow = { slot: string, item: string, contents: { string }? }
 local crew_outfits = {}
 
 crew_outfits.assistant = {
-    { slot = "uniform", item = "uniform_grey" },
+    { slot = "uniform", item = "uniform_gray" },
     { slot = "id", item = "id_assistant" },
     { slot = "mask", item = "breath_mask" },
     { slot = "back", item = "backpack", contents = { "emergency_tank.oxygen", "headset" } },

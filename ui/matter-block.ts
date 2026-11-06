@@ -18,7 +18,7 @@ export function kpa(value: number): string {
   if (size >= 10) return `${fixed(value, 1)} kPa`;
   return `${fixed(value, 2)} kPa`;
 }
-export function litres(value: number): string {
+export function liters(value: number): string {
   const size = Math.abs(value);
   if (size < 1) return `${fixed(value * 1000, 1)} mL`;
   if (size < 100) return `${fixed(value, 2)} L`;
@@ -45,7 +45,7 @@ const measure = (phase: string, value: number): string =>
     ? kpa(value)
     : phase === "suspended"
       ? mass(value)
-      : litres(value);
+      : liters(value);
 const weighed = (grams: number): string => (grams > 0 ? mass(grams) : "");
 
 /** The substance's own color, or nothing where the pack declared none. */
@@ -78,8 +78,8 @@ function rowLine(phase: string, entry: MatterRow): string {
 /** The block itself: the shell's readings, then a heading per state. */
 export function matterBlock(id: string, block: MatterBlock): UiNode {
   const shell = LabeledList(`${id}/shell`, [
-    { label: S.SHELL, value: litres(block.volume_l ?? 0) },
-    { label: S.HEADSPACE, value: litres(block.headspace_l ?? 0) },
+    { label: S.SHELL, value: liters(block.volume_l ?? 0) },
+    { label: S.HEADSPACE, value: liters(block.headspace_l ?? 0) },
     { label: S.TEMPERATURE, value: kelvin(block.temperature_k ?? 0) },
     ...(block.sealed === undefined || block.sealed === null
       ? []

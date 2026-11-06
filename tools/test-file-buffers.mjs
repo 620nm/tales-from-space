@@ -141,7 +141,7 @@ test("Cancel while saving retains the receipt and cancels a command continuation
   const b = pending(); const request = b.pending.request;
   B.cancelGuard(b);
   assert.equal(b.pending, undefined, "Cancel releases the active save lock");
-  assert.equal(b.cancelledSave.request, request, "Cancel keeps the native receipt for reconciliation");
+  assert.equal(b.canceledSave.request, request, "Cancel keeps the native receipt for reconciliation");
   const next = documents(acknowledged(state("old", 4, "draft"), request));
   assert.equal(B.pollContinuation(next), undefined, "Cancel must not run the command continuation");
   assert.equal(b.dirty, false);
@@ -153,7 +153,7 @@ test("Cancel while saving retains the receipt and cancels a local continuation",
   const b = localPending(() => continued++); const request = b.pending.request;
   B.cancelGuard(b);
   assert.equal(b.pending, undefined, "Cancel releases the active save lock");
-  assert.equal(b.cancelledSave.request, request, "Cancel keeps the native receipt for reconciliation");
+  assert.equal(b.canceledSave.request, request, "Cancel keeps the native receipt for reconciliation");
   const next = documents(acknowledged(state("old", 4, "draft"), request));
   assert.equal(B.pollContinuation(next), undefined, "Cancel must not run the local continuation");
   assert.equal(continued, 0);
@@ -167,7 +167,7 @@ test("an older accepted save reconciles a later canceled retry", () => {
   B.guard(id, command)({});
   B.saveBuffer(b, { value: "draft", revision: 3 }, true);
   B.cancelGuard(b);
-  assert.equal(b.cancelledSave.request === first, false);
+  assert.equal(b.canceledSave.request === first, false);
   const next = documents(acknowledged(state("old", 4, "draft"), first));
   assert.equal(B.pollContinuation(next), undefined, "an older receipt must not revive a canceled retry");
   assert.equal(b.dirty, false);

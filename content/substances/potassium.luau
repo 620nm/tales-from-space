@@ -1,4 +1,4 @@
--- Potassium: saltpetre's metal, and in tg the other half of the oldest
+-- Potassium: saltpeter's metal, and in tg the other half of the oldest
 -- joke in chemistry (potassium and water). That reaction is NOT ported
 -- -- it is an explosion, and explosions are on the deferred list -- so
 -- what this is today is a fertiliser component. Real mass, real molar

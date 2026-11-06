@@ -12,7 +12,7 @@ from typing import Any
 
 # Strictly neutral grayscale (`R == G == B`) swatches from `tales-from-space.gpl` ONLY.
 # Never use `#0A0A0D` (chroma = 3).
-GREY: dict[str, str] = {
+GRAY: dict[str, str] = {
     "K": "#1B1B1B",  # 27  stripe-dark-1
     "O": "#1D1D1D",  # 29  neutral-1-outline
     "D": "#262626",  # 38  stripe-dark-2
@@ -140,7 +140,7 @@ def build_layer(
         "opacity": opacity,
         "blend_mode": blend_mode,
         "rows": rows,
-        "legend": {ch: GREY[ch] for ch in used},
+        "legend": {ch: GRAY[ch] for ch in used},
     }
 
 

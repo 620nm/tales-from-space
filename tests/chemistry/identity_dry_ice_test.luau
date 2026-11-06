@@ -249,7 +249,7 @@ near(
     assert(t.holder_kpa(jar)),
     vapor_kpa(assert(t.holder_k(jar))),
     0.01 * vapor_kpa(assert(t.holder_k(jar))),
-    "standing at its own vapor pressure"
+    "standing at its own vapour pressure"
 )
 near(solid(jar), 0.0, 1e-12, "and no solid, because 293 K is well over the triple point")
 undock()

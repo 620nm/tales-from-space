@@ -159,8 +159,8 @@ local function burnable(reading: MatterRead): boolean
 end
 
 -- Nil past the map's edge or for a stale address.
-function ignition.tile_beside(centre: TileAddress, dx: number, dy: number): TileAddress?
-    local ok, at = pcall(sim.map_tile, centre, centre.x + dx, centre.y + dy, centre.z)
+function ignition.tile_beside(center: TileAddress, dx: number, dy: number): TileAddress?
+    local ok, at = pcall(sim.map_tile, center, center.x + dx, center.y + dy, center.z)
     return if ok then at else nil
 end
 

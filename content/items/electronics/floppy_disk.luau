@@ -73,10 +73,10 @@ return {
             name = "purple floppy disk",
             sprite = "floppy_disk_purple",
         },
-        grey = {
-            name_label = "lunatic/tfs:entity.floppy_disk.grey.name",
-            name = "grey floppy disk",
-            sprite = "floppy_disk_grey",
+        gray = {
+            name_label = "lunatic/tfs:entity.floppy_disk.gray.name",
+            name = "gray floppy disk",
+            sprite = "floppy_disk_gray",
         },
         light_blue = {
             name_label = "lunatic/tfs:entity.floppy_disk.light_blue.name",
