@@ -106,7 +106,7 @@ function firearm.fire(subject: Handle, actor: Handle, primary: Handle?): ()
         tell(actor, "lunatic/tfs:lib.firearm.no_target")
         return
     end
-    local refused = sim.aimed_attack.fire({
+    sim.aimed_attack.fire({
         source = subject,
         primary = primary,
         reach = RANGE,
@@ -124,10 +124,6 @@ function firearm.fire(subject: Handle, actor: Handle, primary: Handle?): ()
         },
         report = { fired = true },
     })
-    -- A cooldown refuses silently; an empty magazine clicks.
-    if refused == "no_charges" then
-        tell(actor, "lunatic/tfs:lib.firearm.clicked_empty")
-    end
 end
 
 -- Top the weapon up from the actor's carried magazines, each round a
