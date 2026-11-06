@@ -44,7 +44,7 @@ local consume_followups = require("@lib/consume_followups")
 --
 -- A card comes back BOTH ways round, because tg does:
 --   * card in hand, deck under the cursor -- items/card.luau's
---     `interaction.use` recognises the deck and writes `order` itself, which is
+--     `interaction.use` recognizes the deck and writes `order` itself, which is
 --     tg's `deck/item_interaction` (deck.dm:192-202);
 --   * DECK in hand, card under the cursor -- this file's `interaction.use`
 --     below, which is tg's `singlecard/item_interaction`: an unwielded

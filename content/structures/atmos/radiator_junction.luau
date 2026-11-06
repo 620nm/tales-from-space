@@ -29,7 +29,7 @@
 -- color adapter around and it does exactly what it did; turn this
 -- around and the two runs it was welding come apart, because the end
 -- that takes radiator pipe is now pointing at the main. tg aims it
--- and never normalises it, and neither does this.
+-- and never normalizes it, and neither does this.
 --
 -- IT CONDUCTS NOTHING. tg gives it `WALL_HEAT_TRANSFER_COEFFICIENT`,
 -- which is 0.0 (__DEFINES/atmospherics/atmos_core.dm:119), behind a

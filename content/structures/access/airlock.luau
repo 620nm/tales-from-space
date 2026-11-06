@@ -114,7 +114,7 @@ return {
     },
     examine = {
         flavor = "A powered leaf on a track. It opens for anyone it "
-            .. "recognises and shuts itself behind them.",
+            .. "recognizes and shuts itself behind them.",
     },
     -- The doors a mapper reaches for often enough to name. Each is the
     -- same three properties any placement may already write, said

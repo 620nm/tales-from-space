@@ -1,4 +1,4 @@
--- Tholin: the brown tar HCN polymerises into, and a cold world's dust.
+-- Tholin: the brown tar HCN polymerizes into, and a cold world's dust.
 --
 -- interactions we know exist but don't need:
 --   tholin made in the air by ultraviolet light on N2 and CH4: the

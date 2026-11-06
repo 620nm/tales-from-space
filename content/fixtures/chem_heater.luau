@@ -1,5 +1,5 @@
 -- What the reaction chamber's SOCKET is worth, which is the one thing
--- about this machine that is a judgement rather than an arithmetic
+-- about this machine that is a judgment rather than an arithmetic
 -- (machines/chem_heater.luau).
 --
 -- The prototype declares an environment modifier: a chamber loses a

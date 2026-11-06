@@ -10,7 +10,7 @@
 -- own it can hold.
 --
 -- `drive = {}` with no `reads` list, deliberately. This is the general
--- terminal -- the one that opens everything the station recognises --
+-- terminal -- the one that opens everything the station recognizes --
 -- and a machine that reads only some of the roster is a machine with a
 -- reason to be narrow. There is not one here yet.
 --

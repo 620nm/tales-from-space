@@ -1,5 +1,4 @@
--- Aluminium: thermite's fuel. Spelled tg's way (tg says "aluminium",
--- not "aluminum"). Real mass, real molar heat capacity.
+-- Aluminium: thermite's fuel. IUPAC spelling, as tg spells it. Real mass, real molar heat capacity.
 -- tg: /datum/reagent/aluminium (other_reagents.dm:1352).
 return {
     id = "aluminium",

@@ -4,7 +4,7 @@ local netmsg = require("@lib/netmsg")
 --
 -- Everything a fan DOES is native: which way it blows, the dead band
 -- it holds a room to, the pressures it reads, the picture it wears
--- (docs/atmos/room-devices.md). Even the judgement about the air is
+-- (docs/atmos/room-devices.md). Even the judgment about the air is
 -- the engine's -- it sorts this fan's own tile into one of three words
 -- once an atmos pass, against the bands `content/tuning.luau` sets,
 -- and raises the anchor only on a crossing

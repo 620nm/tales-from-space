@@ -18,7 +18,7 @@ local network = require("@lib/network")
 -- (fixtures/access_point.luau, fixtures/network_router.luau).
 --
 -- WHAT IT DOES WITH WHAT IT HEARS is the second half, and the only
--- half that is a judgement. The engine sorts the air on each powered
+-- half that is a judgment. The engine sorts the air on each powered
 -- fan's own tile into three words and hands the fan a band crossing
 -- (docs/atmos/hazard-sensing.md); the fan repeats it onto the network
 -- (fixtures/vent.luau); this box turns the room into light. That

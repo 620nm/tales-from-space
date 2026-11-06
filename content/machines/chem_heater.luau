@@ -7,7 +7,7 @@
 -- content is the whole of this file: what it is called, what it looks
 -- like with and without something in it, where its dial opens and how
 -- hard it drives. The one verb it owns is what its socket is WORTH,
--- which is a judgement rather than an arithmetic, and that lives in
+-- which is a judgment rather than an arithmetic, and that lives in
 -- `fixtures/chem_heater.luau`.
 --
 -- THE COEFFICIENT IS THE LASER. tg's `RefreshParts` sets
@@ -95,7 +95,7 @@ return {
         --
         -- The rung at which a laser stops caring is the script's
         -- (fixtures/chem_heater.luau), because "a better part carries
-        -- its own shielding" is a judgement about parts and not a
+        -- its own shielding" is a judgment about parts and not a
         -- number the physics needs.
         environment = {
             temperature = { ideal_k = 293.15, loss_per_k = 0.002, floor = 0.2 },

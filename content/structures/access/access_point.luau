@@ -36,7 +36,7 @@ return {
     sprite = "access_point",
     mount = true,
     corded = true,
-    -- The one thing about this box that is a judgement rather than a
+    -- The one thing about this box that is a judgment rather than a
     -- mechanism is what it SAYS about itself, and that lives in
     -- fixtures/access_point.luau.
     script = "access_point",

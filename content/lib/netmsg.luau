@@ -51,7 +51,7 @@ netmsg.ATMOS_HAZARD = "atmos.hazard" -- { kind, level, previous }
 -- warning you about the air should not also shrink to a puddle around
 -- each fixture, because then you cannot see the door.
 --
--- The colors are pack judgements. RED for air that kills, which is
+-- The colors are pack judgments. RED for air that kills, which is
 -- the one alarm color nobody has to be taught. BLUE for air that
 -- merely cannot be breathed, because a blue room reads as a different
 -- emergency from a fire and a crewman coming through the door should

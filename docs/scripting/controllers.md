@@ -70,7 +70,7 @@ Correlation IDs are nonempty strings of at most 64 bytes.
 `accepted = true` advances the host's duplicate watermark for that button.
 Authoritative press sequences are tracked per sender, so a newer packet
 from another button cannot erase an older admitted press. Denials do not
-advance the watermark. Cancellable task identities permit an edited guest
+advance the watermark. Cancelable task identities permit an edited guest
 to replace a deadline with an earlier one without polling.
 
 ## Delivery and limits

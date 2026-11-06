@@ -466,7 +466,7 @@ near(room_air(), settled, 0.5, "a stopped injector injects nothing")
 --
 -- Two hundred liters a second into an already overfull room, and the
 -- engineer at the panel stays where they stand. A machine's own
--- draught does not drag: bulk flow spreads the output over the room,
+-- draft does not drag: bulk flow spreads the output over the room,
 -- and the wind on the engineer's tile peaks near 2e-3 Pa, far under
 -- `wind_drag_pa` (content/tuning.luau). The machine stays in reach
 -- while it runs, and the same hand switches it off.
@@ -478,7 +478,7 @@ t.run_seconds(30)
 local after_x, after_y = t.pos(q)
 assert(
     after_x == before_x and after_y == before_y,
-    "the injector's own draught leaves the engineer standing: "
+    "the injector's own draft leaves the engineer standing: "
         .. before_x
         .. ","
         .. before_y

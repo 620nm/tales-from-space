@@ -116,7 +116,7 @@ local function print_rows(
         local amount = rows[id]
         local share = amount / total * 100
         -- tg prints its gas names in Title Case; a substance file
-        -- writes an ordinary noun, so the readout capitalises rather
+        -- writes an ordinary noun, so the readout capitalizes rather
         -- than asking every author to shout.
         sim.message.send({
             recipient = user,

@@ -24,7 +24,7 @@
 -- Seventy liters, which is one length of ordinary pipe: tg gives a pipe
 -- `UNARY_PIPE_VOLUME * device_type` and this has two ends
 -- (pipes.dm:27-28). It is pipe, not a machine -- no switch, no power,
--- no direction of flow. And like the layer adapter it normalises its
+-- no direction of flow. And like the layer adapter it normalizes its
 -- facing (`PIPING_CARDINAL_AUTONORMALIZE`), because a tube with two
 -- ends has two axes and not four facings.
 return {
