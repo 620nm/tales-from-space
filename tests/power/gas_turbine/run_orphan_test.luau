@@ -93,7 +93,7 @@ t.tick()
 -- hand for the console. It touches nothing else until the starter is gone.
 local q = t.join()
 t.run_ticks(2)
-t.click(q, 2, 2, assert(t.target_at(q, 2, 2, "wirecutters"), "q sees the wirecutters"))
+t.click(q, 2, 2, (assert(t.target_at(q, 2, 2, "wirecutters"), "q sees the wirecutters")))
 t.run_seconds(0.2)
 assert(t.hands(q).held == "wirecutters", "the wirecutters are in hand")
 t.swap_hands(q)
