@@ -183,8 +183,9 @@ tg's gas turbine (`code/modules/power/turbine/`) stands in three sections
 along one line: the inlet compressor behind the core rotor, the outlet
 ahead, each built on a machine frame from its board and its one part
 (`lib/power/gas_turbine.luau`); the vendor sells the boards and tier-one
-parts. A screwdriver opens or shuts a stopped section's panel; open, it
-turns and a crowbar takes it apart. A whole line links silently; a
+parts. A screwdriver opens or shuts a stopped section's panel; open, a
+wrench turns it a quarter clockwise (`lib/power/gas_turbine_wrench.luau`,
+`_machinery.dm:1069-1077`) and a crowbar takes it apart. A whole line links silently; a
 multitool on the shut rotor checks it in tg's order (`turbine.dm:497-559`)
 and logs the rotor for the console. An open panel unlinks the line.
 

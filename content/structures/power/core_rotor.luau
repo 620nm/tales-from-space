@@ -1,4 +1,5 @@
 local gas_turbine = require("@lib/power/gas_turbine")
+local gas_turbine_wrench = require("@lib/power/gas_turbine_wrench")
 
 -- The gas turbine's middle section and its brain: it checks that the line
 -- is whole, is what the console links to, and feeds the grid while it
@@ -7,9 +8,9 @@ local gas_turbine = require("@lib/power/gas_turbine")
 --
 -- Built on a machine frame from its board; its rotor part is the one
 -- socket and goes in at the frame, where tg fits it through the open
--- hatch afterwards (turbine.dm:249-274). Turned with the panel open:
--- tg's wrench (`default_change_direction_wrench`, _machinery.dm:1069-1077)
--- is the Rotate gesture here.
+-- hatch afterwards (turbine.dm:249-274). A wrench turns it with the panel
+-- open (lib/power/gas_turbine_wrench.luau); `rotates` is that turn's
+-- permission, which the engine's Rotate gesture shares.
 return {
     id = "core_rotor",
     visual_layer = "fixture",
@@ -27,7 +28,7 @@ return {
         flavor = "The heart of a gas turbine: the shaft the hot gas spins, and the "
             .. "electronics that keep the three sections in step.",
     },
-    actions = { gas_turbine.link_parts_row() },
+    actions = { gas_turbine.link_parts_row(), gas_turbine_wrench.turn_row() },
     dense = true,
     -- tg's sections stop air (`can_atmos_pass = ATMOS_PASS_DENSITY`,
     -- turbine.dm:10), so the intake and the exhaust stay apart.
