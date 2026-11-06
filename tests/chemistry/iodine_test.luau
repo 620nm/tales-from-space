@@ -7,7 +7,7 @@
 --
 -- Every number here is the registry's own arithmetic, spelled out from
 -- the file's four constants so the assertion is against the line and
--- not against a snapshot: vapour line anchored at (457.4 K, 1 atm),
+-- not against a snapshot: vapor line anchored at (457.4 K, 1 atm),
 -- P_t = vap(386.75 K), sublimation line anchored at (386.75 K, P_t)
 -- with L_sub = L_fus + L_vap by Hess.
 local R = 8.314462618
@@ -15,11 +15,11 @@ local MELT_K, BOIL_K = 386.75, 457.4
 local L_FUS, L_VAP = 15520.0, 41570.0
 local ONE_ATM_PA = 101325.0
 
-local function vapour_pa(temp_k: number)
+local function vapor_pa(temp_k: number)
     return ONE_ATM_PA * math.exp((-L_VAP / R) * (1.0 / temp_k - 1.0 / BOIL_K))
 end
 
-local TRIPLE_PA = vapour_pa(MELT_K)
+local TRIPLE_PA = vapor_pa(MELT_K)
 
 local function sublimation_pa(temp_k: number)
     return TRIPLE_PA * math.exp((-(L_FUS + L_VAP) / R) * (1.0 / temp_k - 1.0 / MELT_K))
@@ -75,7 +75,7 @@ end
 --
 -- A `contents` fill lands at the substance's rest phase at the fill's
 -- temperature (docs/CONTENT-SCHEMA.md 1.1): under the line, so solid.
--- The bottle's own sweep then puts exactly the line's worth of vapour
+-- The bottle's own sweep then puts exactly the line's worth of vapor
 -- over the crystals: n = P_sub(T) * V_headspace / (R * T), which at
 -- 293 K is a few micromoles -- and the gauge reads that line and
 -- nothing else, because there is no air in the bottle to add to it.
@@ -97,10 +97,10 @@ near(
 local headspace_m3 = reading.headspace_l / 1000.0
 local n_line = sublimation_pa(reading.temp_k) * headspace_m3 / (R * reading.temp_k)
 near(
-    assert(before.gas, "the bottle contains iodine vapour"),
+    assert(before.gas, "the bottle contains iodine vapor"),
     n_line,
     n_line * 0.05,
-    "the haze is the line's worth of vapour, no more"
+    "the haze is the line's worth of vapor, no more"
 )
 
 local booked = t.matter_totals()
@@ -137,7 +137,7 @@ t.run_seconds(120)
 local plume = tile_iodine(2, 1) + tile_iodine(1, 1) + tile_iodine(3, 1) + tile_iodine(4, 1)
 assert(
     plume > landed + 1e-4,
-    "two minutes later the crystal is going up as vapour: " .. landed .. " -> " .. plume
+    "two minutes later the crystal is going up as vapor: " .. landed .. " -> " .. plume
 )
 local control = assert(t.room_temperature(4, 1))
 assert(

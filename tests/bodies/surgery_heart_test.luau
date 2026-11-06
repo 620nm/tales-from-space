@@ -9,7 +9,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- stops when a new one seats.
 
 local ARENA = [==[(
-    name: "theatre",
+    name: "theater",
     legend: { ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     levels: [
         (

@@ -17,7 +17,7 @@ local ui_controls = require("@helpers/ui_controls")
 
 -- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
 -- plant standing in the room: his lungs are a driven vessel that holds
--- several litres of the air inside itself and turns what it takes in
+-- several liters of the air inside itself and turns what it takes in
 -- into something else (docs/BIOLOGY.md, `sim/holder/bellows.rs`). That
 -- is a source and a sink, and the books below are the ATMOSPHERICS
 -- engine's -- so the crew are switched off as scaffolding, the same
@@ -42,7 +42,7 @@ local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
--- Moles in an analyser's reading, off whichever holder.
+-- Moles in an analyzer's reading, off whichever holder.
 local function total(mix: { [string]: number }?)
     local sum = 0.0
     for _, moles in pairs(mix or {}) do
@@ -102,7 +102,7 @@ near(assert(network_matter.pressure(3, 1)), 101.325, 0.01, "the run at one atmos
 
 local settled_kpa = pressure_of(tank_0 + run_0, TANK_M3 + RUN_M3, T20C)
 
--- ONE atmos pass -- half a second -- and it is over. tg equalises
+-- ONE atmos pass -- half a second -- and it is over. tg equalizes
 -- completely in a pass and so does this: a vessel is not a machine
 -- working towards a setpoint, it is a room with steel walls.
 t.run_ticks(clock.deadline_ticks(0.5))
@@ -165,7 +165,7 @@ end
 
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-near(window_k(p), rest_k, 1e-6, "the vessel's window agrees with an analyser held against the run")
+near(window_k(p), rest_k, 1e-6, "the vessel's window agrees with an analyzer held against the run")
 
 local INJECTED = 10000000.0
 local energy_0 = assert(network_matter.energy(3, 1)) + vessel_n * molar_energy(rest_k)

@@ -12,7 +12,7 @@ local N, S, E, W = 1, 2, 4, 8
 
 -- The shape the client will draw here: `t.network_joined`, the engine's
 -- own `joined_dirs` fed from live state. A bit comes back only when
--- three things hold at once -- the neighbour carries this layer, this
+-- three things hold at once -- the neighbor carries this layer, this
 -- length reaches toward it, and it reaches back (tg's
 -- `connection_check`, both ends asked at once). Paint and component
 -- ports are in the derivation too; neither is in play on any map below
@@ -97,7 +97,7 @@ assert(t.target_at(p, 2, 2, "pipe") == nil, "the stack it came from is in a hand
 -- ---- extend it north: two stubs facing each other ----
 t.click(p, 2, 1, nil, -14, 14)
 t.run_seconds(1.5)
-assert(shape(2, 2, "l3") == N, "the first length now reaches its neighbour")
+assert(shape(2, 2, "l3") == N, "the first length now reaches its neighbor")
 assert(shape(2, 1, "l3") == S, "and the new one reaches back: a two-tile line")
 
 -- ---- and south: a straight ----
@@ -132,9 +132,9 @@ assert(t.ledger_has("NetworkPlaced"), "every length of it is on the record")
 --
 -- The shape of a length is never stored, so nothing has to be told to
 -- forget: the junction's tile stops carrying the layer and every
--- neighbour's picture falls out of the same derivation one length
+-- neighbor's picture falls out of the same derivation one length
 -- later. This is why `PipeChanged` says the client must redraw the four
--- neighbours too.
+-- neighbors too.
 -- ---------------------------------------------------------------
 t.drop(p)
 t.run_ticks(2)
@@ -157,7 +157,7 @@ assert(t.ledger_has("NetworkRemoved"), "and pulling it is on the record")
 -- ---------------------------------------------------------------
 -- AN AIMED LENGTH DRAWS WHAT IT REACHES, NOT WHAT IT TOUCHES.
 --
--- The same cross, mapped rather than built, with the centre length
+-- The same cross, mapped rather than built, with the center length
 -- aimed east-west and nothing else touched. Four lengths meet on that
 -- tile and the picture is two lines passing -- Josh's ruling made
 -- visible ("two pipes can carry poison and oxygen and run parallel;
@@ -198,7 +198,7 @@ t.world(
 t.join()
 t.tick()
 
-assert(t.network_dirs(2, 2, "pipe", "l3") == E + W, "the mapper aimed the centre across")
+assert(t.network_dirs(2, 2, "pipe", "l3") == E + W, "the mapper aimed the center across")
 assert(
     shape(2, 2, "l3") == E + W,
     "so it draws as a straight line THROUGH the junction: " .. tostring(shape(2, 2, "l3"))

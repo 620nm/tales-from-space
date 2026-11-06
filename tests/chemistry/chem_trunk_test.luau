@@ -25,7 +25,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- press of it over an open beaker is refused -- what landed would leave
 -- through the same mouth before the chemist looked up. Pressed into a
 -- vessel with a stopper in it the identical press lands and condenses
--- under its own vapour pressure, and LIQUID chlorine is what phenol's
+-- under its own vapor pressure, and LIQUID chlorine is what phenol's
 -- recipe names. The stopper is not a convenience; it is the second
 -- lesson of the bench, after salt taught the first
 -- (tests/chem_bench_test.luau).
@@ -35,7 +35,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- a recipe whose products take more room than its reactants stops when
 -- the glass is full rather than growing it. Three libital at 180 mL a
 -- mole come out of 136 mL of legs, so a whole extent swells the
--- contents by 404 mL against a fifty-millilitre bottle: a tenth of an
+-- contents by 404 mL against a fifty-milliliter bottle: a tenth of an
 -- extent is what this vessel can actually make, and the presses below
 -- are half of that again so the assertion is about the CLAMP and never
 -- about the shell.
@@ -45,7 +45,7 @@ local NOZZLE_K = 300.0
 -- bulky and because the point is the chain rather than the yield.
 local LEG = 0.05
 -- Chlorine goes in at twice the recipe's share. Not greed: a saturated
--- headspace keeps some of it as VAPOUR whatever the vessel holds
+-- headspace keeps some of it as VAPOR whatever the vessel holds
 -- (about 0.017 mol at 303 K in this bottle), and a rule naming the
 -- liquid cannot reach that. Twice the share means the liquid outlasts
 -- the water and the naphtha, so the run ends on stoichiometry rather than
@@ -430,7 +430,7 @@ put_down()
 -- ---------------------------------------------------------------
 -- SEVEN: AIURI, THE ONE THAT MAKES COLD.
 --
--- tg: 1 ammonia + 1 sulphuric acid + 2 hydrogen -> 4 aiuri,
+-- tg: 1 ammonia + 1 sulfuric acid + 2 hydrogen -> 4 aiuri,
 -- required_temp 50, optimal_temp 300, overheat_temp 315,
 -- thermic_constant -400 (recipes/cat2_medicines.dm:110-126). The
 -- hydrogen legs are gone and the count fell with them
@@ -530,7 +530,7 @@ dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 dial_to(LEG)
 press("sulfuric_acid")
-near(amount(flask, "sulfuric_acid"), LEG, 1e-9, "a press of sulphuric acid")
+near(amount(flask, "sulfuric_acid"), LEG, 1e-9, "a press of sulfuric acid")
 
 -- Six seconds is three holder steps, in a DOCKED vessel, which is
 -- insulated from the deck (sim/holder/heat.rs). Nothing warms this but

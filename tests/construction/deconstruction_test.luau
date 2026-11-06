@@ -17,7 +17,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- written once and cannot know which rungs a particular unit was
 -- assembled from; the roster in front of it can, and the engine mints
 -- that alongside the file's own rows whenever a step takes the thing
--- out of the world. An upgraded unit prised apart hands back its
+-- out of the world. An upgraded unit pried apart hands back its
 -- upgrade, which is tg's `component_parts` (_machinery.dm:925-968).
 
 local function count(list, id)
@@ -184,7 +184,7 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- TWO: AN UPGRADED UNIT PRISED APART HANDS BACK ITS UPGRADE.
+-- TWO: AN UPGRADED UNIT PRIED APART HANDS BACK ITS UPGRADE.
 --
 -- A temperature control unit is a STRUCTURE — it stands in a pipe run —
 -- so it comes apart by its own crowbar row rather than by a teardown

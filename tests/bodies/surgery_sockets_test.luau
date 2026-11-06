@@ -4,7 +4,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- Which organs a surgeon can reach, and self-surgery (docs/SURGERY.md
 -- §6.4/§6.5). A socket's `requires` is the saw lock: the brain and the
 -- chest organs sit behind a sawed bone, the eyes and ears do not. And a
--- patient can cauterise their OWN wound, which no second party can do
+-- patient can cauterize their OWN wound, which no second party can do
 -- for them.
 
 local ARENA = [==[(
@@ -104,7 +104,7 @@ assert(not blob:find("brain", 1, true), "the brain is NOT -- it needs the bone s
 t.ui_close(surgeon)
 
 -- =====================================================================
--- Self-surgery: a patient cauterises their OWN incision.
+-- Self-surgery: a patient cauterizes their OWN incision.
 -- =====================================================================
 t.world(ARENA, 0)
 local doc = t.join("medic")
@@ -147,7 +147,7 @@ for _ = 1, 40 do
 end
 local s = assert(t.parts(pat)).chest.surgical_states
 assert(not has(s, "skin_cut") and not has(s, "skin_open"), "the patient sealed their own wound")
--- The self-cauterise costs 5 burn.
+-- The self-cauterize costs 5 burn.
 assert(ui_controls.number(assert(t.parts(pat)).chest.burn) > 0, "and it burned to do it (5 burn)")
 
-print("sockets: eyes reachable without a saw, brain not; self-cauterise works")
+print("sockets: eyes reachable without a saw, brain not; self-cauterize works")

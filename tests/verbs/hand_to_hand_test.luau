@@ -9,7 +9,7 @@ local composition = require("@helpers/composition")
 -- hand is as clickable as the one on the deck and the ordinary attack
 -- chain runs against it. Here a held item has no tile, so the gesture
 -- is its own message (`t.use_on_other`, the HUD's occupied-off-hand
--- slot click) and the engine synthesises the same target a floor click
+-- slot click) and the engine synthesizes the same target a floor click
 -- would have named. The claim under test is exactly that: THE CONTENT
 -- DOES NOT KNOW THE DIFFERENCE. Not one line of items/card.luau was
 -- touched to make the first half of this file pass.

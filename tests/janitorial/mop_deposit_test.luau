@@ -21,7 +21,7 @@ t.world(
                 "#.#.#",
                 "#####",
             ],
-            // Walled apart at the corners: ice would chill and freeze its neighbours.
+            // Walled apart at the corners: ice would chill and freeze its neighbors.
             painted: [(3, 1, "beads"), (1, 3, "ash_drift"), (1, 1, "iced"), (3, 3, "salt_flood")],
             structures: [(2, 2, "player_spawn")],
             items: [(2, 2, "mop")],

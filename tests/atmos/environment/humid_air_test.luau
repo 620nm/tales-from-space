@@ -1,7 +1,7 @@
 -- A room with the humidity up.
 --
 -- `content/blends/humid_air.luau` is standard air with half a mole of
--- water vapour per cubic metre. It is chosen between two lines the pack
+-- water vapor per cubic meter. It is chosen between two lines the pack
 -- and the engine each own one of, and this spec is where the engine's
 -- half is checked against the engine rather than against the header's
 -- own arithmetic:
@@ -49,7 +49,7 @@ t.tick()
 
 local atmos_cell = require("@helpers/atmos_cell")
 
--- The blend's vapour density (mol per m3) and water's visibility threshold
+-- The blend's vapor density (mol per m3) and water's visibility threshold
 -- (mol per m3), each turned into a cell's moles by its 3 m3 volume.
 local PER_M3 = 0.5
 local TILES = 3
@@ -80,8 +80,8 @@ assert(
 
 -- ---------------------------------------------------------------
 -- Leave it. Nothing rains out. The engine's own saturation curve is
--- above this density at room temperature, so the vapour is still
--- vapour half a minute later -- the pack picked the number, the
+-- above this density at room temperature, so the vapor is still
+-- vapor half a minute later -- the pack picked the number, the
 -- engine is what agrees with it.
 -- ---------------------------------------------------------------
 t.run_seconds(35)

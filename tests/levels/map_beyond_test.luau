@@ -12,7 +12,7 @@
 --      edge pushes the body too, under its own cause).
 --
 -- A closed environment keeps refusing Open on the lowest level; that is
--- the engine's fixture test, not a pack behaviour.
+-- the engine's fixture test, not a pack behavior.
 local ONE_ATM_KPA = 101.325
 local READ_TOLERANCE_KPA = 0.05
 local HAZARD_KPA = 20.0

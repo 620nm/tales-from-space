@@ -19,7 +19,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 -- up, could not be shoved, and could not be got rid of -- station litter
 -- with a sprite.
 --
--- The port is the only device modelled so far, but nothing below is
+-- The port is the only device modeled so far, but nothing below is
 -- about ports: `build = { from_item = ..., tool = ... }` and a
 -- transition's `yields` are the two halves of the generic round trip,
 -- and the next twenty devices are twenty content files.

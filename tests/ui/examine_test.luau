@@ -81,9 +81,9 @@ local taps = t.target_at(p, 3, 0)
 local beaker = t.target_at(p, 4, 1, "beaker")
 assert(t.target_at(p, 6, 1, "bottle") == nil, "the wall hides the bottle from target selection")
 
--- The tinted run of one line: which words are written in a colour, and
--- which colour. A line is spans now, and `spans[i]` is always the same
--- text as `lines[i]` -- the cuts fall at colour changes, never at word
+-- The tinted run of one line: which words are written in a color, and
+-- which color. A line is spans now, and `spans[i]` is always the same
+-- text as `lines[i]` -- the cuts fall at color changes, never at word
 -- breaks -- so a spec can assert either and mean the same sentence.
 local function tinted(look: SpecExamine, line: string)
     for i, l in ipairs(look.lines) do
@@ -118,7 +118,7 @@ assert(has(look, "It is empty."), "and an empty beaker says so: " .. dump(look))
 -- ...and the burner, which is holding its own fuel and is not lit.
 -- A condensed row leads with the VOLUME and keeps the moles behind
 -- it: what a crewman is deciding about is how much is in there, and
--- millilitres are the unit the vessel was authored in.
+-- milliliters are the unit the vessel was authored in.
 local lamp = t.examine(p, 1, 1, burner)
 assert(lamp ~= nil, "the burner answers")
 assert(
@@ -177,11 +177,11 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- FIVE: WHAT STATE IT IS IN, AND WHAT COLOUR IT IS.
+-- FIVE: WHAT STATE IT IS IN, AND WHAT COLOR IT IS.
 --
 -- Two things a crewman has through glass and the pane used to throw
--- away: which state of matter each substance is in, and the colour of
--- the substance itself. The colour is the SAME field that tints the
+-- away: which state of matter each substance is in, and the color of
+-- the substance itself. The color is the SAME field that tints the
 -- vessel's fill overlay (`color` in the substance file), so the word
 -- on the pane and the wash behind the glass cannot disagree.
 -- ---------------------------------------------------------------
@@ -206,8 +206,8 @@ assert(first == "3.6 mL · 0.20 mol of liquid water.", "the larger share leads: 
 assert(second == "27.0 mL · 0.15 mol of liquid libital.", "and the smaller follows: " .. dump(mix))
 
 local word, color = tinted(mix, "3.6 mL · 0.20 mol of liquid water.")
-assert(word == "water", "the SUBSTANCE is what carries the colour, not the amount")
-assert(color == "#AAAAAA", "and it is water's own colour: " .. tostring(color))
+assert(word == "water", "the SUBSTANCE is what carries the color, not the amount")
+assert(color == "#AAAAAA", "and it is water's own color: " .. tostring(color))
 
 -- ---------------------------------------------------------------
 -- SIX: A PUDDLE IS A LOOK AT THE DECK.
@@ -252,7 +252,7 @@ assert(puddle ~= nil, "the spill carries its puddle line: " .. dump(spill))
 assert(puddle:find("^A puddle: ") ~= nil, "which is that there is a puddle: " .. dump(spill))
 assert(puddle:find(" of liquid water%.$") ~= nil, "of liquid water: " .. dump(spill))
 local pw, pc = tinted(spill, puddle)
-assert(pw == "water" and pc == "#AAAAAA", "in water's colour, as through glass")
+assert(pw == "water" and pc == "#AAAAAA", "in water's color, as through glass")
 
 -- A dry tile a stride away says nothing at all, which is the negative
 -- that makes the positive mean something.

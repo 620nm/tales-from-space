@@ -17,12 +17,12 @@
 
 local FILM_L = 3.32 -- 2*sqrt(sigma/rho g)*sin(theta/2), water on painted deck
 
--- 60 L of water, which is 3330.6 mol: 55.51 mol is a litre of it, and
--- sixty of those over a square metre of deck is six centimetres deep --
+-- 60 L of water, which is 3330.6 mol: 55.51 mol is a liter of it, and
+-- sixty of those over a square meter of deck is six centimeters deep --
 -- eighteen films, so there is excess to move for as long as it takes to
 -- level five tiles. The two air rows ride along because a `total` blend
 -- IS the tile's whole contents: water on its own would open the
--- corridor airless. They are ordinary 21/79 at 20 C over a cubic metre
+-- corridor airless. They are ordinary 21/79 at 20 C over a cubic meter
 -- (41.573 mol = 101.325 kPa), the arithmetic
 -- content/blends/breathable_air.luau spells out.
 local CORRIDOR = [==[(
@@ -55,7 +55,7 @@ t.world(CORRIDOR, 0)
 local p = t.join()
 t.tick()
 
-local function litres(x)
+local function liters(x)
     local standing = t.room_liquid(x, 1)
     return (standing and standing.water) or 0
 end
@@ -70,7 +70,7 @@ end
 -- never names the depth: what the law promises is a level, and the
 -- level a corridor settles at is arithmetic on what was poured.
 local function level(a, b, why)
-    local ha, hb = litres(a), litres(b)
+    local ha, hb = liters(a), liters(b)
     local deeper = math.max(ha, hb)
     assert(deeper > 1.0, ("%s: (%d,1) and (%d,1) are both dry"):format(why, a, b))
     assert(
@@ -85,7 +85,7 @@ end
 
 local POURED = water_everywhere()
 assert(math.abs(POURED - 3330.6) < 1e-6, ("the blend is what was painted: %.4f mol"):format(POURED))
-assert(litres(1) > 59.9, ("and it is standing on one tile: %.4f L"):format(litres(1)))
+assert(liters(1) > 59.9, ("and it is standing on one tile: %.4f L"):format(liters(1)))
 
 -- ---------------------------------------------------------------
 -- IT SPREADS FROM WHERE IT FELL.
@@ -95,10 +95,10 @@ assert(litres(1) > 59.9, ("and it is standing on one tile: %.4f L"):format(litre
 -- A puddle crosses tiles; it does not appear in a room.
 -- ---------------------------------------------------------------
 t.run_seconds(1)
-assert(litres(1) > litres(2), ("the source is deeper: %.4f vs %.4f"):format(litres(1), litres(2)))
+assert(liters(1) > liters(2), ("the source is deeper: %.4f vs %.4f"):format(liters(1), liters(2)))
 assert(
-    litres(2) > litres(3),
-    ("and the frontier shallower still: %.4f vs %.4f"):format(litres(2), litres(3))
+    liters(2) > liters(3),
+    ("and the frontier shallower still: %.4f vs %.4f"):format(liters(2), liters(3))
 )
 dry(4, "the shut leaf has not been crossed")
 
@@ -111,13 +111,13 @@ dry(4, "the shut leaf has not been crossed")
 -- the fifth is behind it.
 -- ---------------------------------------------------------------
 t.run_seconds(4)
-level(1, 2, "the corridor levelled")
-level(2, 3, "the corridor levelled")
-assert(litres(1) > 3.0 * FILM_L, ("and it is deep water: %.4f L"):format(litres(1)))
+level(1, 2, "the corridor leveled")
+level(2, 3, "the corridor leveled")
+assert(liters(1) > 3.0 * FILM_L, ("and it is deep water: %.4f L"):format(liters(1)))
 dry(4, "a shut door is a sill")
 dry(5, "and nothing got past it")
 
--- Every mole is still on the books. Some of the puddle is vapour by
+-- Every mole is still on the books. Some of the puddle is vapor by
 -- now -- a wet deck dries into the room over it (tests/spill_test.luau)
 -- -- so the reading that has to hold is the whole of the water, not the
 -- part of it that is still liquid.
@@ -125,15 +125,15 @@ assert(
     math.abs(water_everywhere() - POURED) < 1e-6,
     ("nothing was made or lost: %.6f vs %.6f mol"):format(water_everywhere(), POURED)
 )
-assert(litres(1) + litres(2) + litres(3) < 60.1, "and no tile invented any")
+assert(liters(1) + liters(2) + liters(3) < 60.1, "and no tile invented any")
 
 -- ---------------------------------------------------------------
 -- OPEN IT, AND THE SAME WATER GOES THROUGH.
 --
 -- A crowbar on a dark leaf: seconds of prying, and then it stays
 -- open. Ten seconds later the flood has found the two tiles it
--- could not reach and all five stand at one depth -- twelve litres
--- apiece, because sixty litres over five tiles is what levelling MEANS.
+-- could not reach and all five stand at one depth -- twelve liters
+-- apiece, because sixty liters over five tiles is what leveling MEANS.
 -- ---------------------------------------------------------------
 t.click(p, 2, 1, t.target_at(p, 2, 1, "crowbar"))
 t.tick()
@@ -148,11 +148,11 @@ t.run_seconds(4)
 assert(assert(t.door_at(4, 1)).open, "pried open")
 
 t.run_seconds(10)
-level(1, 2, "the whole corridor levelled")
-level(2, 3, "the whole corridor levelled")
-level(3, 4, "the whole corridor levelled")
-level(4, 5, "the whole corridor levelled")
-assert(litres(5) > FILM_L, ("the far end is a puddle, not a film: %.4f L"):format(litres(5)))
+level(1, 2, "the whole corridor leveled")
+level(2, 3, "the whole corridor leveled")
+level(3, 4, "the whole corridor leveled")
+level(4, 5, "the whole corridor leveled")
+assert(liters(5) > FILM_L, ("the far end is a puddle, not a film: %.4f L"):format(liters(5)))
 assert(
     math.abs(water_everywhere() - POURED) < 1e-6,
     ("and still every mole: %.6f vs %.6f mol"):format(water_everywhere(), POURED)
@@ -161,7 +161,7 @@ assert(
 -- ---------------------------------------------------------------
 -- UNDER THE FILM THERE IS NO EXCESS.
 --
--- The other end of the same law. Three litres over a square metre of
+-- The other end of the same law. Three liters over a square meter of
 -- deck is 3.0 mm, and water on painted steel stops thinning at 3.3 mm,
 -- so a puddle that size is ALREADY the film: it has no excess, no link
 -- can take any of it, and two hundred ticks later it is exactly where
@@ -169,9 +169,9 @@ assert(
 -- above moved a tile in twenty.
 --
 -- The beaker tipped beside it is the same claim in a player's hands.
--- 0.60 mol of water is 10.8 mL -- a hundredth of a millimetre, three
+-- 0.60 mol of water is 10.8 mL -- a hundredth of a millimeter, three
 -- hundred films thinner -- and what takes it off the deck is not a
--- neighbouring tile but the air over it (tests/spill_test.luau).
+-- neighboring tile but the air over it (tests/spill_test.luau).
 -- ---------------------------------------------------------------
 t.world(
     [==[(
@@ -209,19 +209,19 @@ t.tick()
 t.click(q, 4, 1) -- and tip it onto the deck beside us
 t.tick()
 
-local painted = litres(1)
+local painted = liters(1)
 assert(
     painted > 2.95 and painted < FILM_L,
-    ("three litres is under the film: %.4f L"):format(painted)
+    ("three liters is under the film: %.4f L"):format(painted)
 )
-local tipped = litres(4)
+local tipped = liters(4)
 assert(tipped > 0.010 and tipped < 0.011, ("and 10.8 mL is on the deck: %.6f L"):format(tipped))
 
 local WATER_START = water_everywhere()
 t.run_seconds(10)
 
-assert(litres(1) > 2.9, ("the film stayed where it was painted: %.4f L"):format(litres(1)))
-dry(2, "and its neighbour was never wet")
+assert(liters(1) > 2.9, ("the film stayed where it was painted: %.4f L"):format(liters(1)))
+dry(2, "and its neighbor was never wet")
 dry(3, "nor the tile past that")
 dry(5, "nor the far side of the tipped beaker")
 assert(
@@ -231,5 +231,5 @@ assert(
 
 -- What left the deck went up, not sideways: the air over the tile the
 -- beaker was tipped onto is carrying it.
-local vapour = assert(t.room_gas(4, 1)).water
-assert(vapour ~= nil and vapour > 1e-3, "the tipped beaker dried into the room")
+local vapor = assert(t.room_gas(4, 1)).water
+assert(vapor ~= nil and vapor > 1e-3, "the tipped beaker dried into the room")

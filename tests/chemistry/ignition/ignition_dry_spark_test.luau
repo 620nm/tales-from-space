@@ -7,7 +7,7 @@ local ignition_room = require("@helpers/ignition_room")
 -- a second). The lib judges the tile at that instant and declines, so
 -- no latch is written, no fire is recorded, the player is not told
 -- "The flame catches in the air.", and the room gains no heat. A latch
--- left behind here would light the first vapour that ever drifted in.
+-- left behind here would light the first vapor that ever drifted in.
 local IGNITE_MESSAGE = "The flame catches in the air."
 
 local p = ignition_room.build({

@@ -211,7 +211,7 @@ t.tick()
 local fouled = room_kpa()
 assert(fouled > 120.0, "the room is well over its floor: " .. fouled .. " kPa")
 
--- Thirty-six minutes. The grille moves 5 litres a second whatever the room
+-- Thirty-six minutes. The grille moves 5 liters a second whatever the room
 -- holds, so a room of 3 m3 cells drains at 1/3 the pace of the same room
 -- at 1 m3 cells: 720 s there is 3 x 720 s = 2160 s here, and holding is
 -- 3 x 240 s.
@@ -518,7 +518,7 @@ t.tick()
 local co2_0 = room_kpa("co2")
 assert(co2_0 > 20.0, "well over the floor to start with: " .. co2_0 .. " kPa of it")
 
--- Four minutes on 1 m3 cells; the grille's litres per second clear a 3 m3
+-- Four minutes on 1 m3 cells; the grille's liters per second clear a 3 m3
 -- cell at a third of the pace, so the same 240 s is 240 x CELL_VOLUME_M3.
 t.run_seconds(240 * DRAIN_SCALE)
 local co2_1 = room_kpa("co2")

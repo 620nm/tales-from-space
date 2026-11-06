@@ -9,8 +9,8 @@ local NONE_REPORT = "No pathogens detected."
 
 -- Keep the default breath masks on everyone. The only inoculations in this
 -- proof are the explicit culture draws and syringe injections below.
-local THEATRE = [==[(
-    name: "rhinovirus theatre",
+local THEATER = [==[(
+    name: "rhinovirus theater",
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -41,7 +41,7 @@ local THEATRE = [==[(
     ],
 )]==]
 
-t.world(THEATRE, SEED)
+t.world(THEATER, SEED)
 local surgeon = t.join("assistant")
 local patient = t.join("medic")
 local scanner = t.join("security")

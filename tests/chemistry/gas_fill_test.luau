@@ -191,7 +191,7 @@ end
 --
 -- The order of the bench run is CHARGE FIRST. A bottle that has just
 -- taken a mole of ammonia is standing at hundreds of atmospheres of
--- its own vapour under its own condensation heat, and no canister on
+-- its own vapor under its own condensation heat, and no canister on
 -- this deck can push gas into that -- so the oxygen goes in while the
 -- glass is empty and cold, which is also the order a chemist would
 -- work out in about ten seconds.
@@ -430,7 +430,7 @@ unload()
 --
 -- A mole of ammonia, which the dispenser hands over as gas at 300 K
 -- (a source chooses no phase, D11) and the bottle condenses under its
--- own vapour pressure the moment the lid is on. That condensation
+-- own vapor pressure the moment the lid is on. That condensation
 -- heat is why the glass arrives at the element hot rather than cold,
 -- and why the dial below is a CEILING the chamber pulls it down to.
 local sweet, sweet_o2 = bake(4, 3, 2, "ammonia", 1.0, 530, 600)

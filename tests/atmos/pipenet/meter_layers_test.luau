@@ -166,7 +166,7 @@ local function pick(field: string, label: string): string
             return ui_controls.text(toggle.option)
         end
     end
-    error("no " .. field .. " button labelled " .. label)
+    error("no " .. field .. " button labeled " .. label)
 end
 
 local function set(field: string, label: string): ()

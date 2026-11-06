@@ -166,7 +166,7 @@ assert(
     "and nothing ships switched on"
 )
 
--- Dialled over water's boiling point, because the dial it opens at is
+-- Dialed over water's boiling point, because the dial it opens at is
 -- Bay's warm-room number and this spec is about steam.
 ui_controls.set(p, "temperature", 400)
 ui_controls.toggle(p, "power")

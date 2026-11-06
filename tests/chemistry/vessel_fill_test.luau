@@ -143,7 +143,7 @@ assert(
 -- TWO: A BEAKER BOILED DRY ENDS UP SHOWING NOTHING.
 -- ---------------------------------------------------------------
 -- Contents leaving with no gesture behind it at all: the chamber holds
--- the glass over water's boil, the vapour crosses the mouth into the
+-- the glass over water's boil, the vapor crosses the mouth into the
 -- room (sim/holder/vent.rs), and what is left goes down asymptotically.
 -- The picture has to follow it all the way to bare -- a beaker stuck on
 -- its lowest rung forever is a beaker that reads as still having

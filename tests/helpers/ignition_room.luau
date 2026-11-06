@@ -11,7 +11,7 @@ local ignition_room = {}
 -- A tile's worth of Earth air (3 m3 at 101.325 kPa, 293.15 K).
 ignition_room.AIR_O2 = 26.191311343596351
 ignition_room.AIR_N2 = 98.52921886400532
--- Two litres of ethanol: 789 g/L over 46.07 g/mol.
+-- Two liters of ethanol: 789 g/L over 46.07 g/mol.
 ignition_room.POOL_MOL = 34.25
 -- Under the lib's half-mole oxygen floor a tile no longer burns.
 ignition_room.OXYGEN_FLOOR_MOL = 0.5

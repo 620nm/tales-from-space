@@ -22,9 +22,9 @@ local APC = { x = 6, y = 3 }
 local function room(gravity: string): number
     local pools = {}
     for _, tile in ipairs(RING) do
-        table.insert(pools, { x = tile.x, y = tile.y, litres = 2 })
+        table.insert(pools, { x = tile.x, y = tile.y, liters = 2 })
     end
-    table.insert(pools, { x = BEYOND.x, y = BEYOND.y, litres = 2 })
+    table.insert(pools, { x = BEYOND.x, y = BEYOND.y, liters = 2 })
     return bench.world({
         environment = gravity,
         rows = {
@@ -61,7 +61,7 @@ local function room_air(id: string): number
     return total
 end
 
--- Two litres a tile, under the film: a passive mouth could not touch them.
+-- Two liters a tile, under the film: a passive mouth could not touch them.
 for _, service in ipairs({ 1, 5, 9 }) do
     local p = room(bench.ONE_G)
     local gas_before = assert(network_matter.gas(3, 3))
@@ -100,10 +100,10 @@ for _, service in ipairs({ 1, 5, 9 }) do
 end
 
 -- With `kit` the pump is still a fitting at (1, 1) and a wrench lies underfoot.
-local function strip(gravity: string, litres: number, kit: boolean?): number
+local function strip(gravity: string, liters: number, kit: boolean?): number
     local pools = {}
     for x = 1, 4 do
-        table.insert(pools, { x = x, y = 1, litres = litres })
+        table.insert(pools, { x = x, y = 1, liters = liters })
     end
     local pump = ', (1, 1, "sump_pump", "pumping", {"pipe": "north"})'
     return bench.world({
@@ -124,7 +124,7 @@ local function strip(gravity: string, litres: number, kit: boolean?): number
     })
 end
 
--- Three hundred litres and a port with a length: 256.5 L fills the line.
+-- Three hundred liters and a port with a length: 256.5 L fills the line.
 local p = strip(bench.ONE_G, 75)
 t.run_seconds(40)
 local left = 0

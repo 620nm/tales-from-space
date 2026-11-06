@@ -20,7 +20,7 @@ local network_matter = require("@helpers/network_matter")
 -- kept its arithmetic) and the chlorine MOLECULE beside it, under two
 -- ids a word apart, only one of which was a gas,
 -- and a canister commissioned full of the wrong one held matter that
--- could not boil, could not condense and had no colour. There is one
+-- could not boil, could not condense and had no color. There is one
 -- id per molecule now: the pair does not exist, so neither does the
 -- bay that caught it.
 --
@@ -81,7 +81,7 @@ t.world(
                 (1, 1, "canister", { "blend": "hot_chlorine", "open": true }),
                 (4, 1, "connector_port"),
                 // Valve SHUT, because the wrench is the coupling: a fastened
-                // bottle equalises with its run with no valve in the story
+                // bottle equalizes with its run with no valve in the story
                 // (tg's connector reconciliation), and OPENING the valve on a
                 // ported bottle vents the DECK -- tg's own trap, pinned below.
                 (4, 1, "canister", { "blend": "hot_chlorine" }),
@@ -118,7 +118,7 @@ assert(assert(t.room_pressure(1, 1)) > 1.0, "which reads on a gauge too")
 -- ---- the bottle on a port ----
 --
 -- Correct plumbing, and the confounder worth pinning: a fastened
--- bottle is part of the RUN -- its charge equalises into the main with
+-- bottle is part of the RUN -- its charge equalizes into the main with
 -- the valve never touched. A deck that stays clean here is the machine
 -- working; the valve's own trap gets its pin at the end of the file.
 assert(in_pipe(5, 1, "chlorine") > 0.0, "the port carried it into the main")

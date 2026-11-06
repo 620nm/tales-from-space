@@ -32,8 +32,8 @@ local network_channels = require("@helpers/network_channels")
 --     A room on batteries dims without anybody wiring a light to a
 --     panel.
 --
--- The flag carries no colour, deliberately: a station on its cells is
--- not an emergency anybody needs colour-coding, it is a station with
+-- The flag carries no color, deliberately: a station on its cells is
+-- not an emergency anybody needs color-coding, it is a station with
 -- the lights turned down, which is what a building running off
 -- batteries looks like.
 
@@ -159,7 +159,7 @@ near = assert(t.light_at(5, 2))
 far = assert(t.light_at(10, 2))
 assert(near.lit and near.emits, "the fitting on the reserve is still burning")
 assert(math.abs(near.power - 0.5) < 1e-6, "turned down: " .. near.power)
-assert(near.color == TUBE, "still the colour of its own tube: " .. near.color)
+assert(near.color == TUBE, "still the color of its own tube: " .. near.color)
 assert(math.abs(near.range - 6.0) < 1e-6, "reach is untouched: a dim room is not a smaller one")
 assert(far.lit and far.emits, "the fitting on the dark layer runs off its own cell")
 assert(far.color == "#FF3232", "in tg's emergency red: " .. far.color)
@@ -190,4 +190,4 @@ near = assert(t.light_at(5, 2))
 assert(math.abs(near.power - 1.0) < 1e-6, "the fitting is back up: " .. near.power)
 assert(near.color == TUBE, "the fitting kept the tube it always had")
 far = assert(t.light_at(10, 2))
-assert(far.emits and far.color == TUBE, "and the far one is back on the mains in its own colour")
+assert(far.emits and far.color == TUBE, "and the far one is back on the mains in its own color")

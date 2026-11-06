@@ -9,14 +9,14 @@
 --   decay_heat x moles -- the room's whole book is readable
 --   (`t.room_energy` for the air, `t.deck` for the deck under it), so
 --   the assertion is on JOULES, with the hull's radiation the only
---   leak. The fill is THIN on purpose: UF6's vapour pressure over its
+--   leak. The fill is THIN on purpose: UF6's vapor pressure over its
 --     own solid is ~11.5 kPa at deck temperature, so anything past
---   ~4.7 mol in a cubic metre frosts out the moment the deck drinks
+--   ~4.7 mol in a cubic meter frosts out the moment the deck drinks
 --   the paint's heat -- and the frost case is room two's job.
 --
 --   TWO, a room painted with the same substance at deck temperature
 --   rests as a SOLID (a few moles a tile stand in the air as its
---   vapour pressure; nothing melts at one atmosphere) and still gains
+--   vapor pressure; nothing melts at one atmosphere) and still gains
 --   energy at the same rate, because decay emits in every phase.
 --
 -- The temperature half of each claim is the same joules spread over
@@ -25,7 +25,7 @@
 -- is summed over the phase split as it stands). The air stands a small
 -- constant lag over the deck once the settle has run, so both warm
 -- together at that rate; the slack on temperature is wide because the
--- lag and the radiation are only bounded, not modelled.
+-- lag and the radiation are only bounded, not modeled.
 
 local function near(a: number?, b: number?, slack: number, what: string)
     assert(a ~= nil and b ~= nil, what .. ": both readings are present")
@@ -39,7 +39,7 @@ local CV_GAS = 130.0
 local CV_SOLID = 166.0
 -- Fills are densities (mol per m3, the blends' `per_m3`); a 3 m3 cell holds
 -- three times them. 3 mol/m3 is 7.3 kPa at deck temperature, under the
--- 11.5 kPa vapour pressure.
+-- 11.5 kPa vapor pressure.
 local atmos_cell = require("@helpers/atmos_cell")
 local GAS_FILL_PER_M3 = 3.0
 local SOLID_FILL_PER_M3 = 30.0
@@ -71,7 +71,7 @@ t.world(
         // Hot UF6 gas, thin enough to STAY gas: at 350 K the fill is
         // far under the sublimation line, and once the deck has drunk
         // the paint's heat the room rests at deck temperature with
-        // p = 7.3 kPa against a vapour pressure of ~11.5 kPa
+        // p = 7.3 kPa against a vapor pressure of ~11.5 kPa
         // (substances/uf6.luau: triple 337.2 K at 151.7 kPa).
         "hot_hex": (
             rows: [("uf6", 3.0)],
@@ -79,7 +79,7 @@ t.world(
             amount: per_m3,
         ),
         // The same substance at the deck's own temperature: under the
-        // triple point, so it rests as a SOLID and only its vapour
+        // triple point, so it rests as a SOLID and only its vapor
         // pressure's worth stands in the air. Painting at deck
         // temperature keeps the deck from being a second heat source
         // in the reading.
@@ -117,10 +117,10 @@ local function gas_moles(room: { { number } })
     end)
 end
 
-local function liquid_litres(room: { { number } })
+local function liquid_liters(room: { { number } })
     return room_sum(room, function(x, y)
-        local litres = t.room_liquid(x, y)
-        return (litres and litres.uf6) or 0.0
+        local liters = t.room_liquid(x, y)
+        return (liters and liters.uf6) or 0.0
     end)
 end
 
@@ -160,7 +160,7 @@ t.run_seconds(SETTLE_S)
 
 -- ...and in the cold room the fill has had its chance to boil and did
 -- not take it: below the triple point UF6 rests as a SOLID, with only
--- its vapour pressure's worth in the air and no liquid anywhere.
+-- its vapor pressure's worth in the air and no liquid anywhere.
 local gas_b = gas_moles(ROOM_B)
 assert(
     gas_b < 0.25 * fill_b,
@@ -170,7 +170,7 @@ assert(
         .. fill_b
         .. " mol in the air"
 )
-near(liquid_litres(ROOM_B), 0.0, 1e-12, "and nothing melted: there is no liquid at one atmosphere")
+near(liquid_liters(ROOM_B), 0.0, 1e-12, "and nothing melted: there is no liquid at one atmosphere")
 
 local book_a0 = room_book(ROOM_A)
 local book_b0 = room_book(ROOM_B)

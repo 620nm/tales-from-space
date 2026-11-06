@@ -8,7 +8,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 -- `/datum/gas/carbon_dioxide` in the air and a
 -- `/datum/reagent/carbondioxide` in a beaker and nothing at all in
 -- between, because tg's phase model is a boiling point and CO2 has no
--- boiling point: its solid's vapour pressure clears one atmosphere at
+-- boiling point: its solid's vapor pressure clears one atmosphere at
 -- 194.7 K, thirty kelvin BELOW the 216.55 K triple point, so a block of
 -- it on a warm deck goes straight to gas and never puddles. A `boil`
 -- spelling is refused for that reason (substances/co2.luau) and the
@@ -33,7 +33,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 -- P(T) = p_a * exp(k * (1/T - 1/T_a)), k = -L/R.
 -- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
 -- plant standing in the room: his lungs are a driven vessel that holds
--- several litres of the air inside itself and turns what it takes in
+-- several liters of the air inside itself and turns what it takes in
 -- into something else (docs/BIOLOGY.md, `sim/holder/bellows.rs`). That
 -- is a source and a sink, and the books below are the ATMOSPHERICS
 -- engine's -- so the crew are switched off as scaffolding, the same
@@ -48,7 +48,7 @@ local function line_kpa(latent: number, temp_k: number)
     return TRIPLE_PA * math.exp((-latent / R) * (1.0 / temp_k - 1.0 / TRIPLE_K)) / 1000.0
 end
 
-local function vapour_kpa(temp_k: number)
+local function vapor_kpa(temp_k: number)
     return line_kpa(16200.0, temp_k)
 end
 
@@ -198,7 +198,7 @@ end
 -- ---------------------------------------------------------------
 -- ONE: NINETY ATMOSPHERES, AND THE CRITICAL ISOTHERM.
 --
--- A canister charged past CO2's own vapour pressure condenses, and
+-- A canister charged past CO2's own vapor pressure condenses, and
 -- condensing at fixed energy pays the latent heat straight back into
 -- the vessel -- so it warms itself until it reaches the one
 -- temperature above which no pressure whatsoever will condense it, and
@@ -230,7 +230,7 @@ assert(charged_co2 > 7000.0, "and the books know about all of it: " .. charged_c
 -- is the critical isotherm, so what it is carrying is a gas -- there
 -- is no condensation above 304.1 K however hard the valve pressed.
 -- Put it in the chamber at station temperature and the same moles
--- become a liquid under their own vapour pressure, which is 5.4 MPa
+-- become a liquid under their own vapor pressure, which is 5.4 MPa
 -- and is why nobody carries this in a beaker.
 -- ---------------------------------------------------------------
 t.click(p, 2, 3, jar)
@@ -247,9 +247,9 @@ condition(293.15, 300)
 assert(liquid(jar) > 0.05, "at station temperature it is a LIQUID: " .. liquid(jar) .. " mol")
 near(
     assert(t.holder_kpa(jar)),
-    vapour_kpa(assert(t.holder_k(jar))),
-    0.01 * vapour_kpa(assert(t.holder_k(jar))),
-    "standing at its own vapour pressure"
+    vapor_kpa(assert(t.holder_k(jar))),
+    0.01 * vapor_kpa(assert(t.holder_k(jar))),
+    "standing at its own vapor pressure"
 )
 near(solid(jar), 0.0, 1e-12, "and no solid, because 293 K is well over the triple point")
 undock()
@@ -257,10 +257,10 @@ undock()
 -- ---------------------------------------------------------------
 -- THREE: TIP IT OUT, AND IT FLASHES.
 --
--- A tip takes the CONDENSED phases and leaves the vapour behind
+-- A tip takes the CONDENSED phases and leaves the vapor behind
 -- (items/bottle.luau), so what lands on the deck is liquid carbon
 -- dioxide at one atmosphere -- a hundred and ten kelvin over the
--- temperature its own vapour line puts it at, and a hundred and
+-- temperature its own vapor line puts it at, and a hundred and
 -- fifteen kilopascals under the pressure it needs to stay a liquid at
 -- all. It does not puddle. It is gas before anybody looks down, and
 -- the tile it landed on paid the latent heat.
@@ -279,7 +279,7 @@ assert(
     "which cost the deck it landed on: " .. floor_k .. " -> " .. assert(t.room_temperature(1, 2))
 )
 -- The bottle's gauge falls, and the reason is geometry rather than
--- cold: the same vapour now has the whole shell to be spread through
+-- cold: the same vapor now has the whole shell to be spread through
 -- instead of the sliver over the liquid. Its TEMPERATURE does not
 -- move at all -- a parcel leaves carrying its own energy, always
 -- (`Mixture::draw`, lunatic-matter/src/mixture.rs) -- which is why the
@@ -294,7 +294,7 @@ assert(
 --
 -- Below 216.55 K the liquid does not exist -- the melting line is
 -- vertical and pressure-independent (D7), and the only two phases left
--- are solid and its own vapour. So the chamber at 180 K makes DRY ICE,
+-- are solid and its own vapor. So the chamber at 180 K makes DRY ICE,
 -- and the gauge falls from fifty-four atmospheres to a third of one,
 -- because what a solid holds over itself is the SUBLIMATION line and
 -- that line is much lower. Thirty kilopascals is the whole of the
@@ -338,7 +338,7 @@ local carbon_0 = room_co2()
 t.click(p, 1, 3)
 t.run_ticks(4)
 -- Four ticks in, what is on the deck is still ICE. Sublimation has
--- begun -- the tile's own vapour is carried off as soon as the raw
+-- begun -- the tile's own vapor is carried off as soon as the raw
 -- imbalance across a link is worth chasing (lunatic
 -- docs/MATTER-WORLD.md §3 step 4), so the jar starts losing mass at
 -- once instead of stalling under its own gas -- but a few per cent of
@@ -361,10 +361,10 @@ assert(
 -- THE GAP is read while the ice is still sublimating. The control tile
 -- two squares away is the other end of it: the sky is inert and nothing
 -- else in the room is running, so a tile a degree colder than its
--- neighbour is the ice and nothing more. It is read early because the
+-- neighbor is the ice and nothing more. It is read early because the
 -- room does not keep the gap: once the patch of air has gone quiet it
 -- averages to one temperature (lunatic docs/matter-world/groups.md,
--- "breakdown", five quiet cycles), which is tg's own behaviour and
+-- "breakdown", five quiet cycles), which is tg's own behavior and
 -- happens a few seconds in.
 t.run_seconds(3)
 local gap_far = assert(t.room_temperature(4, 3))

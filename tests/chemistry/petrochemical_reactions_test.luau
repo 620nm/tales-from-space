@@ -155,7 +155,7 @@ t.drop(p)
 t.tick()
 local parked_resin = assert(t.target_at(p, 3, 2, "beaker"), "the resin batch is parked")
 
--- Wax is the alternate route. Sulphuric acid selects it, and it also
+-- Wax is the alternate route. Sulfuric acid selects it, and it also
 -- remains available after the batch. This small batch is later poured
 -- into the resin vessel for the toner composite.
 -- Move around the heater and retrieve the second beaker.
@@ -176,7 +176,7 @@ panel(heater, 4, 1)
 heat(385, 120)
 near(amount(wax_vessel, "wax"), LEG, 1e-4, "naphtha makes wax in its warmer window")
 near(amount(wax_vessel, "naphtha"), 0.0, 1e-5, "wax consumes its naphtha feed")
-near(amount(wax_vessel, "sulfuric_acid"), LEG, 1e-5, "sulphuric acid is retained")
+near(amount(wax_vessel, "sulfuric_acid"), LEG, 1e-5, "sulfuric acid is retained")
 
 -- Pour the wax batch into the parked resin batch.
 eject()

@@ -1,6 +1,6 @@
 local ignition_room = require("@helpers/ignition_room")
 
--- SELF-IGNITION: ethanol vapour with air does not light by itself.
+-- SELF-IGNITION: ethanol vapor with air does not light by itself.
 --
 -- The burn rule runs only where the `alight` column is set, and only a
 -- source (`lib/ignition.luau`) sets it. Two sealed single-tile rooms

@@ -1,6 +1,6 @@
 local ui_controls = require("@helpers/ui_controls")
 
--- Who may name a colour, and what an uncoloured decal carries.
+-- Who may name a color, and what an uncolored decal carries.
 --
 -- The pack declares `decal_colors.free = { map = true, play = false }`
 -- (content/compositions.luau), which is one ruling in two halves: a
@@ -11,7 +11,7 @@ local ui_controls = require("@helpers/ui_controls")
 local word = ui_controls.word
 
 -- ---------------------------------------------------------------
--- One plated strip, authored with the three kinds of colour a decal
+-- One plated strip, authored with the three kinds of color a decal
 -- row can carry: a palette paint, a raw #RRGGBB, and none at all.
 -- ---------------------------------------------------------------
 t.world(
@@ -52,25 +52,25 @@ assert(palette.paint == "blue" and palette.color == nil, "a paint id stays an id
 -- ---- and a map may spell one out ----
 --
 -- `free.map = true` is the whole reason this row loads at all. The
--- record keeps it as the raw colour it was authored as, with no paint
+-- record keeps it as the raw color it was authored as, with no paint
 -- id to pretend it came off the shelf.
 local free = t.decals_at(2, 1)[1]
-assert(free.color == "#AABBCC", "the map named a colour of its own: " .. tostring(free.color))
+assert(free.color == "#AABBCC", "the map named a color of its own: " .. tostring(free.color))
 assert(free.paint == nil, "and it is not a palette entry")
 
--- Two colours are two decals, never one run, so neither tile borrows
+-- Two colors are two decals, never one run, so neither tile borrows
 -- the other's seam: both draw their own box.
 assert(table.concat(palette.sprites, "+") == "decal_trim_box", "the blue tile stands alone")
 assert(table.concat(free.sprites, "+") == "decal_trim_box", "and so does the hand-mixed one")
 
--- ---- an uncoloured decal carries no colour at all ----
+-- ---- an uncolored decal carries no color at all ----
 --
 -- tg's warning stripes are painted art: yellow on black in their own
 -- pixels (`decal_colors` never reaches them), so the roster declares
 -- them `colored = false` and a placement carries neither key.
 local stripes = t.decals_at(3, 1)[1]
 assert(stripes.decal == "hazard_line", "the stripes loaded")
-assert(stripes.paint == nil and stripes.color == nil, "and carry tg's own colours instead")
+assert(stripes.paint == nil and stripes.color == nil, "and carry tg's own colors instead")
 
 -- A mark is aimed rather than shaped: the map's cardinal bit comes back
 -- as the letter the scripting surface speaks.
@@ -80,10 +80,10 @@ assert(table.concat(arrow.sprites, "+") == "decal_mark_arrow_e", "and picks the 
 
 -- ---- the other half: a crewman has no such freedom ----
 --
--- `free.play = false`, so a raw colour reaching `sim.place_decal` is
+-- `free.play = false`, so a raw color reaching `sim.place_decal` is
 -- refused where the placement compiles. Nothing in this pack can put
 -- one there: the painter's Paint dial is the palette and only the
--- palette, with no custom entry and no colour wheel beside it, which is
+-- palette, with no custom entry and no color wheel beside it, which is
 -- tg's `set_painting_tool_color` (decal_painter.dm:135-138) deliberately
 -- not ported. The engine's own refusal is covered by the engine's
 -- `crates/lunatic-server/src/sim/decal_mutation/tests.rs` and
@@ -101,5 +101,5 @@ for _, tog in ipairs(ui_controls.rows(ui_controls.state(p).toggles)) do
 end
 assert(#swatches == 12, "twelve buttons on the paint dial: " .. #swatches)
 for _, name in ipairs(swatches) do
-    assert(name:sub(1, 1) ~= "#", "every one of them is a palette id, not a colour: " .. name)
+    assert(name:sub(1, 1) ~= "#", "every one of them is a palette id, not a color: " .. name)
 end

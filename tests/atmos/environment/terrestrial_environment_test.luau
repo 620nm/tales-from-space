@@ -74,6 +74,6 @@ local shown = composition.seen_sprites(builder, 2, 1).substrates[1]
 assert(shown == "ice_floor-0", "the cleared tile shows the generated ice floor, got " .. tostring(shown))
 local ice_face = t.seen_ground(builder, 2, 1)
 assert(#ice_face == 1 and ice_face[1].look == "ice_shell", "and the ice sheet face over it")
-assert(ice_face[1].tint == "#D4EFF7", "in ice's own colour, got " .. ice_face[1].tint) -- content/substances/water.luau
+assert(ice_face[1].tint == "#D4EFF7", "in ice's own color, got " .. ice_face[1].tint) -- content/substances/water.luau
 assert(t.set_composition(2, 1, "plating"))
 assert(composition.matches(2, 1, { "station_base" }), "a deck can be laid again over the generated ground")

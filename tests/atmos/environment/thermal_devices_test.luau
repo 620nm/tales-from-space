@@ -498,7 +498,7 @@ near(assert(network_matter.temperature(5, 1)), dead_cold, 0.5, "in either direct
 -- A PLATE HEAT EXCHANGER IS HALF A MACHINE.
 --
 -- One plate does nothing at all. Two of them face to face across a tile
--- boundary equalise the runs behind them completely -- every tick, no
+-- boundary equalize the runs behind them completely -- every tick, no
 -- dial, no power, no switch. The two bodies of gas never mix, which is
 -- what lets a plasma loop be cooled against a nitrogen one.
 --
@@ -568,10 +568,10 @@ near(lone_hot_0, hot_side_0, 1.0, "and the lone plate's run is heated the same")
 
 t.run_seconds(10)
 
--- ---- the pair: complete equalisation, and quickly ----
+-- ---- the pair: complete equalization, and quickly ----
 local settled_a = assert(network_matter.temperature(1, 1))
 local settled_b = assert(network_matter.temperature(6, 1))
-near(settled_a, settled_b, 0.5, "two facing plates equalise the runs behind them")
+near(settled_a, settled_b, 0.5, "two facing plates equalize the runs behind them")
 assert(
     settled_a < hot_side_0 - 20.0,
     "the hot side came down: " .. hot_side_0 .. " -> " .. settled_a

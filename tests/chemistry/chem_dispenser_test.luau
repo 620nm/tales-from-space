@@ -16,7 +16,7 @@ local NOZZLE_K = 300.0
 -- in one press, and no longer a statement about the beaker.
 local DIAL_MAX = 1.25
 -- What the BEAKER holds, which is geometry and nothing else
--- (docs/MATTER.md 5): fifty millilitres of glass over water's
+-- (docs/MATTER.md 5): fifty milliliters of glass over water's
 -- 18.015 mL to the mole.
 local BRIM = 50e-6 / 18.015e-6
 -- The dial over the press, off machines/chem_dispenser.luau: one tg
@@ -194,11 +194,11 @@ t.run_ticks(2)
 near(assert(t.contents(beaker)).water, PRESS, 1e-9, "one press is tg's 30 u")
 -- A tenth of a kelvin of slack: what lands is settled on the spot
 -- (sim/owner.rs, `deposit_into`), so the first thing the water does is
--- evaporate into thirty-six millilitres of empty glass and carry a
+-- evaporate into thirty-six milliliters of empty glass and carry a
 -- little latent heat with it.
 near(assert(t.holder_k(beaker)), NOZZLE_K, 0.1, "arriving at the nozzle's own temperature")
--- The panel counts the GLASS, in litres: 0.75 mol of water is 13.5 mL
--- of a fifty millilitre beaker (docs/MATTER.md 5). Capacity is
+-- The panel counts the GLASS, in liters: 0.75 mol of water is 13.5 mL
+-- of a fifty milliliter beaker (docs/MATTER.md 5). Capacity is
 -- geometry, so what a crewman reads is the level against the shell.
 local glass = assert(block(ui_controls.state(p), "dock.contents"))
 near(
@@ -216,7 +216,7 @@ near(ui_controls.number(glass.volume_l), 0.05, 1e-9, "against the size of the gl
 -- one a pour already follows: take what fits and leave the rest.
 -- ---------------------------------------------------------------
 -- Three more presses of 30 u is 3.0 mol asked for and 54 mL of water
--- wanted, which is four millilitres more glass than there is.
+-- wanted, which is four milliliters more glass than there is.
 for _ = 1, 3 do
     ui_controls.toggle(p, "dispense", "water")
     t.run_ticks(2)
@@ -258,7 +258,7 @@ for _, r in ipairs(rows) do
 end
 -- Every mole in the glass has a row behind it, and the rows come to a
 -- hair MORE than the glass holds: an open beaker breathes its own
--- vapour into the room (sim/holder/vent.rs), so what evaporated away
+-- vapor into the room (sim/holder/vent.rs), so what evaporated away
 -- is the difference and nothing else is.
 assert(minted >= total(beaker) - 1e-9, "nothing is in the beaker that was not minted: " .. minted)
 near(minted, total(beaker), 1e-4, "every mole in the beaker has a row behind it")
@@ -345,7 +345,7 @@ ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
 -- A tenth of a millimole of slack: the vessel settles as it fills
 -- (sim/owner.rs, `deposit_into`), so a whisker of what landed is
--- already vapour on its way to the room.
+-- already vapor on its way to the room.
 near(total(beaker), 0.25, 1e-3, "and the press is what the dial says")
 near(assert(t.holder_k(beaker)), NOZZLE_K, 0.3, "still off the same nozzle")
 
@@ -411,7 +411,7 @@ assert(turns == 3, "three turns of the dial are three rows: " .. turns)
 local reading = t.vessel(beaker)
 assert(reading ~= nil, "the beaker reads")
 near(assert(reading.contents.water.liquid), 0.25, 1e-3, "a press of water is a liquid")
-assert((reading.contents.water.gas or 0) < 1e-3, "with only its own vapour over it")
+assert((reading.contents.water.gas or 0) < 1e-3, "with only its own vapor over it")
 near(reading.temp_k, NOZZLE_K, 0.3, "at the nozzle's temperature")
 
 -- ...and chlorine is the other half. At 300 K it is a GAS, and a gas
@@ -435,7 +435,7 @@ assert(
 --
 -- A lid is the whole difference. Chlorine minted into a sealed vessel
 -- has nowhere to escape to, so what was refused over a beaker lands
--- here and stays: a quarter of a mole in fifty millilitres, pressing
+-- here and stays: a quarter of a mole in fifty milliliters, pressing
 -- on the cork.
 --
 -- What it does NEXT is the sweep's, not the nozzle's, and it is the
@@ -512,7 +512,7 @@ near(
     bottled.pressure_kpa,
     chlorine_line_kpa(bottled.temp_k),
     20.0,
-    "the gauge is that temperature's own vapour pressure"
+    "the gauge is that temperature's own vapor pressure"
 )
 assert(t.ledger_has("Minted", "bottle"), "and the mint is on the record")
 
@@ -524,7 +524,7 @@ assert(t.ledger_has("Minted", "bottle"), "and the mint is on the record")
 -- So the bottle a chemist puts down is a bottle that cools, and every
 -- kelvin it loses walks the gauge back down the same line: five
 -- minutes on the deck and 150 atmospheres has become 8, which is the
--- vapour pressure of liquid chlorine at room temperature and the
+-- vapor pressure of liquid chlorine at room temperature and the
 -- number the shelf is really offering.
 -- ---------------------------------------------------------------
 ui_controls.toggle(p, "eject")

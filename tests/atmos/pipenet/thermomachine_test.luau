@@ -123,8 +123,8 @@ near(
 -- tg computes both ends in `RefreshParts` from the tiers of what is
 -- inside (thermomachine.dm:95-96): 73.15 K and 573.15 K on the tier-1
 -- lasers this pack's board asks for. The panel publishes exactly the
--- pair the server clamps to, so no setting can be dialled that the
--- machine will not honour.
+-- pair the server clamps to, so no setting can be dialed that the
+-- machine will not honor.
 -- ---------------------------------------------------------------
 t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
 t.tick()

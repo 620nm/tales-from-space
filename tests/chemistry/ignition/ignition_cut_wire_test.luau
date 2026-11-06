@@ -39,7 +39,7 @@ local p = ignition_room.build({
 })
 
 t.run_seconds(30)
-assert(ignition_room.ethanol_gas(CUT, 1) >= 0.5, "the cut tile is wreathed in vapour")
+assert(ignition_room.ethanol_gas(CUT, 1) >= 0.5, "the cut tile is wreathed in vapor")
 assert(t.network_exposed(CUT, 1, "power"), "the run lies open to the cutters")
 assert(#t.ledger_rows("IgnitionAt") == 0 and #ignition_room.latch_rows() == 0, "the spill sits unlit until cut")
 

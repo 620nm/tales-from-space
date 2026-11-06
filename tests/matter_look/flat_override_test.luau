@@ -9,7 +9,7 @@ local matter_look = require("@helpers/matter_look")
 
 t.set_breathing(false)
 
--- Millilitres as moles: ash is 100 g/mol at 2.2 g/mL, salt 58.44 g/mol at
+-- Milliliters as moles: ash is 100 g/mol at 2.2 g/mL, salt 58.44 g/mol at
 -- 2.17 g/mL (content/substances).
 local function ash(ml: number): string
     return string.format('("ash", %.4f)', ml * 2.2 / 100.0)

@@ -79,7 +79,7 @@ assert(bare.lines[1] == look.lines[1], "prose the variant did not override is th
 
 -- 2. THE BASE'S GESTURES ARE ITS GESTURES.
 --
--- `vessel.attach` bound one behaviour, to `beaker`. Picking the variant
+-- `vessel.attach` bound one behavior, to `beaker`. Picking the variant
 -- up and clicking the empty beaker with it is the pour that handler
 -- implements: if a variant did not route to its base, this click would
 -- reach nothing at all.

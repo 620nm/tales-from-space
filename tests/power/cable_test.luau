@@ -4,7 +4,7 @@ local network_channels = require("@helpers/network_channels")
 --
 -- tg has three power lines and they are the real thing: connection is
 -- gated on the layer bitflag alone (cable.dm:121), so three cables can
--- share a tile and be three separate circuits. The colours -- red,
+-- share a tile and be three separate circuits. The colors -- red,
 -- yellow, blue -- are the NAMES of those layers, not a second
 -- mechanism; tg's own defines call them the "Red/Yellow/Blue Power
 -- Line" (__DEFINES/power.dm:5,8,11).
@@ -93,7 +93,7 @@ assert(said(p, "You set the coil to the red power line."), "blue -> red")
 t.click(p, 2, 1, nil, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(2, 1, "power") == "l1,l2", "two lines share the tile: " .. network_channels.at(2, 1, "power"))
-assert(network_channels.at(1, 1, "power") == "l2", "and the neighbours are untouched")
+assert(network_channels.at(1, 1, "power") == "l2", "and the neighbors are untouched")
 
 -- ---------------------------------------------------------------
 -- Sharing a tile is not sharing a circuit. This is the whole point

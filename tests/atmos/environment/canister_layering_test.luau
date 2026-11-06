@@ -93,11 +93,11 @@ assert(
     "the fastened vessel draws over its port: " .. drawn(p, 3, 1)
 )
 assert(network_channels.at(3, 1, "pipe") == "", "tiling invented no raw pipe under the socket")
-assert(network_matter.pressure(2, 1) ~= nil, "the neighbouring run remains connected")
+assert(network_matter.pressure(2, 1) ~= nil, "the neighboring run remains connected")
 
 -- The stack order, pair by pair: fixture < item < large_object.
 -- Untargeted examine is the order oracle: it names the picture
--- under the tile centre, so it names whatever the stack puts on top.
+-- under the tile center, so it names whatever the stack puts on top.
 local ORDER_MAP = [==[
 (
     name: "canister layering order",

@@ -37,7 +37,7 @@ step("south")
 at(36, 37, "the cliff at y = 38 stops a walk")
 local face = t.seen_ground(p, 36, 38)
 assert(#face == 1 and face[1].look == "cliff_shell", "and draws the step's cliff face")
-assert(face[1].tint == SILICA, "in quartz's colour, got " .. face[1].tint)
+assert(face[1].tint == SILICA, "in quartz's color, got " .. face[1].tint)
 
 -- The refused walk became a climb: two seconds later the body is on top.
 t.run_seconds(2.5)

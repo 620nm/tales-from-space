@@ -99,7 +99,7 @@ assert(assert(network_matter.pressure(2, 2)) > 90.0, "and it has charged the run
 assert(assert(t.room_pressure(2, 2)) > 90.0, "so the room is breathable from the start")
 
 -- The bottle IS the network while it is fastened (tg's connector
--- reconciliation, portables_connector.dm:48-52): it equalises with the
+-- reconciliation, portables_connector.dm:48-52): it equalizes with the
 -- run once and then a settled station stops moving gas. The regulator
 -- is the VENT and its one-atmosphere setpoint -- the line behind it is
 -- simply the reserve, standing at whatever the bottle brought.
@@ -146,7 +146,7 @@ t.run_seconds(10 / atmos_cell.CELL_VOLUME_M3)
 assert(t.is_breached(2, 1), "the fault opened the room")
 local emptied = assert(t.room_pressure(2, 2))
 -- It does not reach hard vacuum: the vent is feeding it the whole
--- time, off a line the bottle equalised to forty atmospheres, and what
+-- time, off a line the bottle equalized to forty atmospheres, and what
 -- the line sends into the room goes straight out the hole. The
 -- standoff sits well below breathable and well above vacuum -- about
 -- 25 kPa on this tile, beside the vent, from the first second on
@@ -352,7 +352,7 @@ t.run_seconds(60)
 local later = assert(t.room_pressure(2, 3))
 assert(
     assert(later) < assert(sealed) + 5.0,
-    "an empty canister repressurises nothing: " .. assert(sealed) .. " -> " .. later
+    "an empty canister repressurizes nothing: " .. assert(sealed) .. " -> " .. later
 )
 
 -- ---------------------------------------------------------------
@@ -528,7 +528,7 @@ assert(
 lit(bottle, "and in the very tick it comes off, it still reads")
 
 -- Read the gauge the moment it is off. The run it left holds a full
--- forty-atmosphere charge now (the bottle equalised with it while
+-- forty-atmosphere charge now (the bottle equalized with it while
 -- fastened), so give the hole longer to swallow it.
 local off = assert(t.canister_pressure(2, 1))
 t.run_seconds(30)

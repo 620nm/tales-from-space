@@ -111,7 +111,7 @@ end
 -- What is actually POURABLE: the condensed phases only, which is what
 -- the packager divides and what a pill can carry. `t.contents` collapses
 -- every phase together, and over an open beaker of water the difference
--- is real -- a few micromoles standing as vapour in the headspace.
+-- is real -- a few micromoles standing as vapor in the headspace.
 local function condensed(handle)
     local v = t.vessel(handle)
     assert(v ~= nil, "that is a vessel")
@@ -199,9 +199,9 @@ assert(#t.ledger_rows("DoAfterStarted") > 0, "it parked as a do_after")
 t.run_ticks(clock.deadline_ticks(3) + 2) -- tg's three seconds, plus two observation ticks
 assert(said(medic, "You inject"), "the needle goes in")
 -- A stroke pushes the CONDENSED phases, so what stays behind is the
--- vapour that saturated the barrel's own headspace while it was full --
+-- vapor that saturated the barrel's own headspace while it was full --
 -- micromoles of water, and the honest answer rather than a rounding.
-near(total(syringe), 0, 1e-5, "the barrel is empty but for its own vapour")
+near(total(syringe), 0, 1e-5, "the barrel is empty but for its own vapor")
 -- The bloodstream got the whole stroke. It is measured with slack
 -- rather than to the mole because a body BURNS what is in it: libital
 -- declares `metabolism_rate = 0.003` and the metabolism has run since
@@ -310,7 +310,7 @@ near(
 
 -- ---------------------------------------------------------------
 -- THE OTHER REFUSAL: a barrel with no room left in it. Capacity is
--- geometry (D2), so "full" is fifteen millilitres of solution and never
+-- geometry (D2), so "full" is fifteen milliliters of solution and never
 -- a count of moles -- two strokes of the mix this bench is making fill
 -- it, and the plunger will not go back a third time.
 -- ---------------------------------------------------------------

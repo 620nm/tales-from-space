@@ -338,7 +338,7 @@ t.world(
                 "########",
             ],
             items: [(4, 2, "wrench")],
-            // The pump replaces the centre length; taking it up leaves a real
+            // The pump replaces the center length; taking it up leaves a real
             // gap until an engineer lays a replacement.
             networks: [
                 (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
@@ -410,7 +410,7 @@ t.run_ticks(1)
 assert(t.structure_at(3, 1) ~= nil, "one tick in, it is still bolted down")
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "and two seconds in, it is up")
-assert(network_channels.at(3, 1, "pipe") == "", "and no hidden centre length reappeared")
+assert(network_channels.at(3, 1, "pipe") == "", "and no hidden center length reappeared")
 near(
     assert(network_matter.pressure(1, 1)),
     assert(network_matter.pressure(5, 1)),

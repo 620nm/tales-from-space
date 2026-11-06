@@ -238,7 +238,7 @@ assert(#t.ledger_rows("link_locked") == 1, "and the lock is on the record either
 -- and the one thing in range is the PANEL feeding the bench -- a hub
 -- in its own right the moment it carries a card.
 --
--- It is LISTED, and GREYED: the wire already hung this box under that
+-- It is LISTED, and GRAYED: the wire already hung this box under that
 -- panel, so taking it would close a loop, and what the forest's SHAPE
 -- refuses is drawn carrying its reason rather than hidden
 -- (../lunatic/docs/devices/joining.md). A box whose one candidate is
@@ -254,11 +254,11 @@ assert(
 local why = ui_controls.unavailable(candidates[1])
 assert(
     why == "link.unavailable.would_cycle",
-    "greyed, because it already feeds this box: " .. tostring(why)
+    "grayed, because it already feeds this box: " .. tostring(why)
 )
 assert(#ui_controls.pressable(panel, "link_join") == 0, "and no press on this list would land")
 
--- ...AND THE ROW IS INERT. A client that ignores the greying finds a
+-- ...AND THE ROW IS INERT. A client that ignores the graying finds a
 -- node that is really there and carries no gesture at all, and the
 -- forest does not move for it. There is no pressable candidate on this
 -- bench to control against, so the probes are the record and the

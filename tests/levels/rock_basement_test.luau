@@ -8,7 +8,7 @@
 local composition = require("@helpers/composition")
 
 -- Rock wears `rock-<junction>` (tg `smoothrocks-<junction>`, minerals.dm:10-12,21). The
--- junction packs the rock cardinal neighbours (N=1 S=2 E=4 W=8; the map edge is none),
+-- junction packs the rock cardinal neighbors (N=1 S=2 E=4 W=8; the map edge is none),
 -- plus a corner bit (NE=16 SE=32 SW=64 NW=128) only when both cardinals beside it are
 -- set and the diagonal is rock too (the engine's
 -- crates/lunatic-content/src/structures/junction_bits.rs). On the map below
@@ -18,7 +18,7 @@ local composition = require("@helpers/composition")
 --   (0,2): N+S = 3 (west is the map edge)                  = 3
 --   (0,1): N+S+E = 7, NE (1,0) 16 (SE (1,2) is open)       = 23
 --   (1,3): S+E+W = 14, SE (2,4) 32, SW (0,4) 64            = 110
--- Digging (1,1) drops that bit from its neighbours: (2,1) keeps N+E and NE = 21;
+-- Digging (1,1) drops that bit from its neighbors: (2,1) keeps N+E and NE = 21;
 -- (0,1) keeps N+S = 3. Painting (4,2) adds one: (4,1) gains S and SE = 191
 -- (15+16+32+128); (4,3) gains N and NE = 127 (15+16+32+64); (4,2) itself has
 -- N+S+E = 7, NE 16, SE 32 = 55.
@@ -90,7 +90,7 @@ assert(#near.components == 1 and near.components[1] == "rock-157", "the adjacent
 assert(#near.substrates == 0, "rock hides the substrate under it, got " .. tostring(near.substrates[1]))
 assert(#t.seen_composition(p, 1, 0, BASEMENT) == 0, "the rock behind the near rock is not disclosed")
 
--- 3b. Each rock joins the rock around it: different neighbours, different junction.
+-- 3b. Each rock joins the rock around it: different neighbors, different junction.
 assert(rock_at(p, 2, 1) == "rock-157", "rock above-right joins N, E, W and both upper corners")
 assert(rock_at(p, 0, 2) == "rock-3", "rock at the map edge joins only N and S")
 assert(rock_at(p, 0, 1) == "rock-23", "rock above the edge joins N, S, E and the NE corner only")

@@ -71,7 +71,7 @@ local function pick(p: number, field: string, label: string): string
             return ui_controls.text(tog.option)
         end
     end
-    error("no " .. field .. " button labelled " .. label)
+    error("no " .. field .. " button labeled " .. label)
 end
 
 -- ---------------------------------------------------------------
@@ -148,7 +148,7 @@ for _, tog in ipairs(ui_controls.rows(ui.toggles)) do
         end
     end
 end
-assert(captions[MODE] == "Mode" and captions[RECIPE] == "Fitting", "every dial is labelled")
+assert(captions[MODE] == "Mode" and captions[RECIPE] == "Fitting", "every dial is labeled")
 assert(captions[LAYER] == "Piping layer" and captions[PAINT] == "Paint", "all four of them")
 assert(options[LAYER] == 5, "five piping layers, tg's PIPING_LAYER_MIN..MAX")
 assert(options[PAINT] == 13, "tg's twelve paints plus TfS white")
@@ -158,7 +158,7 @@ assert(
         and manual_presentation.group == "Binary Devices",
     "recipes carry content-authored atlas icons and tg-style groups"
 )
-assert(green_swatch == "#50BE5F", "paint choices carry their real swatch colour")
+assert(green_swatch == "#50BE5F", "paint choices carry their real swatch color")
 
 -- Out of the crate it is set the way tg ships one: plain pipe, the
 -- distribution layer, green (RPD.dm:51,61).
@@ -236,7 +236,7 @@ t.click(p, 2, 1, nil, -14, 14)
 work(p)
 assert(network_channels.at(2, 1, "pipe") == "l2,l3,l4", "and a third: " .. network_channels.at(2, 1, "pipe"))
 
--- Each one came out the colour the dial was on, which is the record an
+-- Each one came out the color the dial was on, which is the record an
 -- investigator reads (paint is topology here, not decoration).
 local placed = t.ledger_rows("network_placed")
 assert(#placed == 3, "three lengths, three placement rows: " .. #placed)
@@ -545,7 +545,7 @@ end
 
 -- ---------------------------------------------------------------
 -- UNARY DEVICES. Connector, scrubber and injector each have one mouth
--- aimed at an adjacent run. Their own tile is the machine centre: it
+-- aimed at an adjacent run. Their own tile is the machine center: it
 -- neither needs nor permits a raw length on the same layer.
 -- ---------------------------------------------------------------
 t.world(
@@ -594,7 +594,7 @@ set(u, RECIPE, pick(u, RECIPE, "Connector"))
 t.click(u, 2, 1, nil, -14, 14)
 work(u)
 assert(assert(t.structure_at(2, 1)).id == "connector_port", "a connector builds beside its run")
-assert(network_channels.at(2, 1, "pipe") == "", "the connector has no raw centre length")
+assert(network_channels.at(2, 1, "pipe") == "", "the connector has no raw center length")
 
 walk(u, "east")
 walk(u, "east") -- (4,2)
@@ -613,7 +613,7 @@ assert(
     assert(t.structure_at(6, 1)).id == "air_injector",
     "an injector needs no underlying raw pipe"
 )
-assert(network_channels.at(6, 1, "pipe") == "", "the injector centre is raw-pipe-free")
+assert(network_channels.at(6, 1, "pipe") == "", "the injector center is raw-pipe-free")
 
 -- The reverse direction is refused without consuming the run. `dial`
 -- is the main each device is asked for, because the dial travels with
@@ -635,7 +635,7 @@ for _, case in ipairs({
     local _ = t.messages(u)
     t.click(u, case.x, 3, nil, -14, 14)
     work(u)
-    assert(t.structure_at(case.x, 3) == nil, case.recipe .. " did not cover its centre run")
+    assert(t.structure_at(case.x, 3) == nil, case.recipe .. " did not cover its center run")
     assert(network_channels.at(case.x, 3, "pipe") == "l" .. case.dial, case.recipe .. " left the raw run intact")
     assert(said(u, "Something is already under the floor here."), case.recipe .. " names occupancy")
 end
@@ -643,7 +643,7 @@ end
 -- ...and the same dial reaches EVERY fitting on the shelf rather than
 -- only the gauge. tg programs the pipe item it is about to wrench down
 -- and every `/obj/item/pipe` carries a `piping_layer`, so a wheel
--- dialled to the waste main stands on the waste main -- and the
+-- dialed to the waste main stands on the waste main -- and the
 -- distribution run under it is somebody else's plumbing, exactly as the
 -- refusal above says it is not when the two agree.
 set(u, LAYER, pick(u, LAYER, "2"))
@@ -654,6 +654,6 @@ work(u)
 local crossing = t.structure_at(2, 3)
 assert(
     crossing ~= nil and crossing.id == "manual_valve",
-    "a wheel dialled to layer 2 stands over a layer-3 run"
+    "a wheel dialed to layer 2 stands over a layer-3 run"
 )
 assert(network_channels.at(2, 3, "pipe") == "l3", "and the run it crosses is untouched: " .. tostring(network_channels.at(2, 3, "pipe")))

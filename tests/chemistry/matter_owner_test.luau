@@ -100,11 +100,11 @@ close(ui_controls.number(drank[1].moles), 0.05, "and the row names the mouthful"
 -- The far end nothing but a spill could name before. `sim.cell(x, y)` is
 -- a body of matter like any other, so "tip it out" is the one transfer
 -- with a tile on the end of it.
-local function vapour(key: string): number
+local function vapor(key: string): number
     local gases = t.room_gas(2, 2)
     return (gases and gases[key]) or 0
 end
-local gas_before = vapour("water")
+local gas_before = vapor("water")
 
 t.click(p, 2, 2)
 t.tick()
@@ -118,14 +118,14 @@ assert(spill_tile[1] == 2 and spill_tile[2] == 2, "and the tile it landed on")
 
 -- Nothing gasified on the way down: what a transfer deposits in a cell
 -- arrives in the phase it left in.
-close(vapour("water"), gas_before, "the air over the tile is unchanged")
+close(vapor("water"), gas_before, "the air over the tile is unchanged")
 
 -- ...and then it behaves like matter, because it IS matter: the water
 -- in the puddle evaporates into the room until the air above it is
 -- saturated (docs/MATTER.md section 5). A deposit that had gone into
 -- some second system beside the air could not do this.
 t.run_seconds(120)
-local dried = vapour("water")
+local dried = vapor("water")
 assert(dried > gas_before, "the puddle is drying into the room: " .. dried .. " mol")
 
 -- ---- and the refusals are still native --------------------------------

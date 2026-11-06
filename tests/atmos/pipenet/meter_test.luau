@@ -213,7 +213,7 @@ assert(
     "and nothing on it to turn"
 )
 
--- What is in the run, itemised: one block under the LINE heading —
+-- What is in the run, itemized: one block under the LINE heading —
 -- the composition tg's chat line cannot give (docs/tgui/matter-block.md).
 local line = ui_controls.rows(panel.matter or {})[1]
 assert(

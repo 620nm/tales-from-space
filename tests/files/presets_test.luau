@@ -8,7 +8,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- its atmos block different (filter.dm:224-241, mixer.dm's `/airmix`).
 -- They exist because a department's plumbing is not something anybody
 -- tunes at roundstart -- a waste loop is a CHAIN of filters, and a
--- station whose air mixer had to be dialled in by hand before anyone
+-- station whose air mixer had to be dialed in by hand before anyone
 -- could breathe would be a station shipping mis-configured.
 --
 -- Two of them have never been exercised: the air mixer and the carbon

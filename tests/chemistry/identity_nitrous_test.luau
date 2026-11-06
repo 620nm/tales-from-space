@@ -9,7 +9,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- oxide twice: `/datum/gas/nitrous_oxide` lives in the air and is what
 -- an atmos scrubber, a canister and a crewman's lungs deal with, and
 -- `/datum/reagent/nitrous_oxide` lives in a beaker and is what
--- chemistry makes -- and the two never meet. A chemist who synthesised
+-- chemistry makes -- and the two never meet. A chemist who synthesized
 -- a bottle of the reagent could not put it in a canister, could not
 -- point a scrubber at it, and could not gas a room with it; a mapper
 -- who filled a chamber with the gas could not hand a drop of it to the
@@ -172,8 +172,8 @@ local BENCH_MADE = assert(made.gas, "the bench made nitrous gas")
 assert(assert(t.vessel(jar)).contents.ammonia ~= nil, "out of the liquid ammonia the recipe names")
 
 -- ...and the VESSEL WINDOW names it. `t.vessel` is `ctx.vessel` off
--- the same backend, which is what the chem panel itemises for anybody
--- standing at the bench, and the key it itemises under is the registry
+-- the same backend, which is what the chem panel itemizes for anybody
+-- standing at the bench, and the key it itemizes under is the registry
 -- id -- so there is no second nitrous oxide for a window to have to
 -- choose between.
 assert(assert(t.vessel(jar)).contents.n2o.gas == BENCH_MADE, "keyed as `n2o` and nothing else")
@@ -263,11 +263,11 @@ t.world(
     ],
     blends: {
         // The tank-row fixture's recipe, to the digit: a tank of it at
-        // 23 MPa, spread over a canister's two cubic metres.
+        // 23 MPa, spread over a canister's two cubic meters.
         "n2o_23000kpa": (rows: [("n2o", 9436.868804259688)], temperature_k: 293.15, amount: per_m3),
         // ...and the chamber a mapper fills on purpose
         // (substances/n2o.luau). One atmosphere of it and nothing
-        // else: 101.325 kPa over a cubic metre at T20C is 41.57 mol.
+        // else: 101.325 kPa over a cubic meter at T20C is 41.57 mol.
         "sleeping_chamber": (rows: [("n2o", 41.57)], temperature_k: 293.15, amount: per_m3),
     },
 
@@ -307,7 +307,7 @@ end
 
 -- ...and the third place a mole of this can be: INSIDE SOMEBODY. Lungs
 -- are a driven vessel (docs/BIOLOGY.md, `sim/holder/bellows.rs`) --
--- several litres of the room, held, and cycled a stroke at a time --
+-- several liters of the room, held, and cycled a stroke at a time --
 -- so a crewman standing in a chamber that is being scrubbed is
 -- carrying a share of what left the air. The books below weigh him,
 -- because "not lost" has to mean not lost anywhere.
@@ -322,7 +322,7 @@ local function lungs(key: string)
     return n
 end
 
--- SURFACE 1 -- THE CANISTER. The gauge and the itemised contents are
+-- SURFACE 1 -- THE CANISTER. The gauge and the itemized contents are
 -- the same reading a beaker gives, because a canister IS a beaker with
 -- a thicker wall (docs/CHEMISTRY.md 1).
 local bottle = assert(t.vessel(can), "the vessel has a reading")
@@ -401,7 +401,7 @@ assert(
 -- `absorb_breath`).
 --
 -- The scrubber stays SWITCHED OFF for this: a machine drawing two
--- hundred litres a second out of one tile is a wind, and a spec about
+-- hundred liters a second out of one tile is a wind, and a spec about
 -- breathing should not be a spec about being blown across a room.
 assert(t.worn(diver).mask == "breath_mask", "the shift starts with apparatus on")
 t.click(diver, 4, 2, t.target_at(diver, 4, 2, "oxygen_tank"))

@@ -94,7 +94,7 @@ pass()
 local lamp = assert(t.light_at(5, 2))
 assert(lamp.lit and lamp.emits, "the fitting is burning")
 local TUBE = lamp.color
-assert(TUBE ~= EMERGENCY_RED, "in its own tube's colour: " .. TUBE)
+assert(TUBE ~= EMERGENCY_RED, "in its own tube's color: " .. TUBE)
 near(lamp.range, 6.0, 1e-6, "at its full reach")
 near(lamp.power, 1.0, 1e-6, "and its full power")
 local cell = assert(t.store_at(5, 2))

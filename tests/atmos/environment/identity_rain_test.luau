@@ -11,7 +11,7 @@
 --
 -- The claim composes with humidity_test.luau rather than repeating it.
 -- That file proves the other half -- a beaker boiled dry in a warm room
--- leaves the room DAMP instead of raining instantly, because vapour
+-- leaves the room DAMP instead of raining instantly, because vapor
 -- condenses only past its own dew point. This one proves the rain
 -- still happens when it should, out of a source no vessel was
 -- involved in, and that the two gases the same fire made behave
@@ -51,7 +51,7 @@ t.world(
         ),
     ],
     blends: {
-        // fire_watch_test.luau's own mixture: fuelled, oxidised, and
+        // fire_watch_test.luau's own mixture: fueled, oxidized, and
         // already over the ignition window, so the chamber catches on
         // its own within a pass or two. Nothing in this file lights it.
         // Painted at fire_watch's own density, 10.0 and 14.0 mol/m3.
@@ -105,7 +105,7 @@ assert(warmth() > 400.0, "in a chamber far too hot to rain in: " .. warmth() .. 
 
 -- ...and while it is that hot the water STAYS a gas. This is the half
 -- humidity_test.luau owns, asserted here for the other source: a room
--- over the dew point holds its vapour, and the old one-way ratchet
+-- over the dew point holds its vapor, and the old one-way ratchet
 -- would have rained it onto the deck within a pass whatever the
 -- temperature was.
 t.run_seconds(30)
@@ -115,8 +115,8 @@ assert(room("water") > 1.0, "the hot chamber is still holding it: " .. room("wat
 -- TWO: IT COOLS, AND IT RAINS.
 --
 -- The fire is out of fuel and the hull is radiating into an empty sky.
--- Water's vapour line at 290 K puts its dew point at under two
--- kilopascals, and there are moles of it in twelve cubic metres (four
+-- Water's vapor line at 290 K puts its dew point at under two
+-- kilopascals, and there are moles of it in twelve cubic meters (four
 -- 3 m3 cells), so the chamber stays far past saturation until it is
 -- anywhere near cold.
 -- ---------------------------------------------------------------

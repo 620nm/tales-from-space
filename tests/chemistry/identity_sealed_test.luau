@@ -12,7 +12,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- sawed. There is no fight now -- the boil branch reads the pressure
 -- the liquid actually bears (its own, under a lid: `BoilAgainst::Own`,
 -- docs/MATTER.md) and the saturation branch reads the same line -- so
--- a bottle warming under a lid climbs its own vapour curve and stays
+-- a bottle warming under a lid climbs its own vapor curve and stays
 -- on it.
 --
 -- Twenty sweeps, sampled on the sweep's own cadence, and the assertion
@@ -36,7 +36,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- relaxed.
 -- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
 -- plant standing in the room: his lungs are a driven vessel that holds
--- several litres of the air inside itself and turns what it takes in
+-- several liters of the air inside itself and turns what it takes in
 -- into something else (docs/BIOLOGY.md, `sim/holder/bellows.rs`). That
 -- is a source and a sink, and the books below are the ATMOSPHERICS
 -- engine's -- so the crew are switched off as scaffolding, the same
@@ -51,7 +51,7 @@ local ONE_ATM_PA = 101325.0
 local WATER_TB = 373.15
 local WATER_K = -40660.0 / 8.314462618
 
-local function vapour_kpa(temp_k: number)
+local function vapor_kpa(temp_k: number)
     return ONE_ATM_PA * math.exp(WATER_K * (1.0 / temp_k - 1.0 / WATER_TB)) / 1000.0
 end
 
@@ -157,7 +157,7 @@ assert(
 -- TWO: ON THE ELEMENT, AND TWENTY SWEEPS OF THE GAUGE.
 --
 -- 450 K rather than something dramatic: the bottle is unrated glass,
--- and water's own vapour pressure at 450 K is about nine and a half
+-- and water's own vapor pressure at 450 K is about nine and a half
 -- atmospheres -- a pressure vessel rather than a bomb, and the whole
 -- of what a lid buys.
 -- ---------------------------------------------------------------
@@ -200,18 +200,18 @@ assert(climbed >= 15, "and it was climbing, not flat: " .. climbed .. " sweeps o
 -- Both phases are still in there, which is what makes the reading a
 -- SATURATION pressure rather than an ideal-gas one.
 assert(liquid_in(jar, "water") > 0.5, "most of it is still liquid")
-assert(gas_in(jar, "water") > 0.0, "with its own vapour over it")
+assert(gas_in(jar, "water") > 0.0, "with its own vapor over it")
 
 -- ...and the gauge is ON the curve the substance file authored. Two
 -- per cent of slack, and what it is for is the last of the approach:
 -- the element closes a fixed share of the gap every pass, so the
--- bottle is always a shade under the dial and the vapour a shade
+-- bottle is always a shade under the dial and the vapor a shade
 -- behind the bottle.
 local warmth = assert(t.holder_k(jar))
-local want = vapour_kpa(warmth)
+local want = vapor_kpa(warmth)
 assert(
     math.abs(assert(t.holder_kpa(jar)) - want) < 0.02 * want,
-    "the gauge is water's own vapour pressure at "
+    "the gauge is water's own vapor pressure at "
         .. warmth
         .. " K: "
         .. assert(t.holder_kpa(jar))

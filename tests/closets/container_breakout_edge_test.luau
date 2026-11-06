@@ -3,7 +3,7 @@
 -- re-push after an interrupted escape, a lock and a weld together, a holder
 -- destroyed or an occupant dropped mid-wait, two occupants and a freezer.
 -- Not reachable from a player's seat: the `latch_unconfirmed`, `open_refused`
--- and post-wait `incapacitated` lapses, and a task cancelled with no Luau.
+-- and post-wait `incapacitated` lapses, and a task canceled with no Luau.
 local clock = require("@helpers/clock")
 local bench = require("@helpers/container_bench")
 
@@ -142,7 +142,7 @@ do
     assert(tile_has_body(HOLDER_X, HOLDER_Y, occupant), "the occupant is dumped on the tile")
     run_until(started + bench.breakout_ticks() + 3)
     assert(#t.ledger_rows(BROKEN_OUT) == 0, "no break-out is recorded")
-    assert(#t.ledger_rows(LAPSED) == 0, "the cancelled escape lapses nothing")
+    assert(#t.ledger_rows(LAPSED) == 0, "the canceled escape lapses nothing")
     assert(#t.ledger_rows("DoAfterInterrupted") == interruptions + 1, "and nothing more is interrupted")
     assert(heard_count(occupant, OWN_LINE) == 0, "the occupant hears no break-out line")
     assert(#t.script_errors() == 0, "the destroyed holder raises no script error")

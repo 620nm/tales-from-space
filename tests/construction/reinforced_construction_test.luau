@@ -8,7 +8,7 @@ local composition = require("@helpers/composition")
 -- a reinforced floor to lift (`:41-42`). Plasteel struts a girder and
 -- then plates it into hull (girders.dm:59-63, reinf_walls.dm:16), and
 -- the way back down is tg's seven-rung `d_state` ladder
--- (reinf_walls.dm:50-191) — modelled here as one cut on the WALL and
+-- (reinf_walls.dm:50-191) — modeled here as one cut on the WALL and
 -- six rungs on the frame it leaves standing, because a turf entry
 -- cannot carry assembly states.
 

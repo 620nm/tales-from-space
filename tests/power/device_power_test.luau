@@ -71,7 +71,7 @@ local function total(x, y)
 end
 
 -- Every gas on every one of a machine's mouths, in moles: the reading
--- an engineer would take with an analyser at each port in turn, and the
+-- an engineer would take with an analyzer at each port in turn, and the
 -- only thing that can tell a stopped trinary from a running one.
 local function books(ports: { { number } }): { { [string]: number } }
     local snap: { { [string]: number } } = {}
@@ -365,7 +365,7 @@ end
 -- needs before it can be caught doing anything is not a setpoint but a
 -- GRADIENT: both its mains open the shift commissioned at one
 -- atmosphere, and a gate between two mains of the same molar density
--- has nothing to let down however it is dialled.
+-- has nothing to let down however it is dialed.
 --
 -- A length of main laid during the shift is that gradient. A run
 -- somebody lays by hand starts EMPTY (fittings_test.luau), so bolting

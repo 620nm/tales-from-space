@@ -1,4 +1,4 @@
--- The gravity battery's test room: eight parts around a centre tile
+-- The gravity battery's test room: eight parts around a center tile
 -- (5, 4) in an 11x9 room, a player, and the hand-juggling the assembly
 -- specs share.
 local bench = {}
@@ -18,7 +18,7 @@ type Position = {
     dir: string,
 }
 
--- An emitter faces the centre; a ring's facing names its corner arc.
+-- An emitter faces the center; a ring's facing names its corner arc.
 local POSITIONS: { Position } = {
     { key = "n", id = "grav_emitter", x = 5, y = 3, dir = "south" },
     { key = "e", id = "grav_emitter", x = 6, y = 4, dir = "west" },

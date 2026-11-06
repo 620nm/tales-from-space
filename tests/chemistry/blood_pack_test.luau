@@ -1,4 +1,4 @@
--- Blood packs are two-litre sealed vessels, with their blood type carried
+-- Blood packs are two-liter sealed vessels, with their blood type carried
 -- by the vessel rather than inferred from the item name.
 local MAP = [==[(
     name: "blood pack bench",
@@ -258,7 +258,7 @@ end
 local p = start_round(MAP)
 local base = assert(t.target_at(p, 4, 1, "blood_pack"))
 local base_reading = assert(t.vessel(base))
-assert(math.abs(base_reading.volume_l - 2.0) < 1e-12, "the base blood pack is two litres")
+assert(math.abs(base_reading.volume_l - 2.0) < 1e-12, "the base blood pack is two liters")
 assert(base_reading.sealed, "the base blood pack starts sealed")
 assert(total(read_vessel(base)) == 0, "the base blood pack starts empty")
 assert(blood_type(base) == nil, "the base blood pack starts untyped")

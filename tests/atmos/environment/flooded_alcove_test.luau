@@ -5,8 +5,8 @@ local atmos_cell = require("@helpers/atmos_cell")
 --
 -- A map paints a tile with a Matter Blend and the tile opens the shift
 -- holding it (docs/map-properties/blends.md). Nothing says a blend has
--- to be a gas, so this one is water: a litre of it thinning back into
--- the alcove and fifty litres standing at the airlock door.
+-- to be a gas, so this one is water: a liter of it thinning back into
+-- the alcove and fifty liters standing at the airlock door.
 --
 -- What a crewman can actually tell is the LOOK at the deck, which is
 -- the only place the ladder of puddle pictures is player-visible: a
@@ -41,14 +41,14 @@ local function look_at(xy)
 end
 
 -- ---------------------------------------------------------------
--- Fifty litres at the door, and a litre three tiles back. The line
+-- Fifty liters at the door, and a liter three tiles back. The line
 -- names the phase, because a puddle and a lump of ice on the same
 -- deck are two different things to step in -- and it leads with the
 -- volume, because a depth is what a crewman is deciding about.
 -- ---------------------------------------------------------------
 assert(
     look_at(DEEP) == "Standard station tiling, laid over the deck plating.\nA puddle: 50.00 L · 2775.50 mol of liquid water.",
-    "the deep end reads as fifty litres: " .. look_at(DEEP)
+    "the deep end reads as fifty liters: " .. look_at(DEEP)
 )
 assert(
     look_at(SHALLOW) == "Standard station tiling, laid over the deck plating.\nA puddle: 1.00 L · 55.51 mol of liquid water.",
@@ -66,7 +66,7 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- And the water is REAL, not a decal: fifty litres out of a 3 m3 cell
+-- And the water is REAL, not a decal: fifty liters out of a 3 m3 cell
 -- is 1.7% of the volume the air has (5% at 1 m3), so the air over the deep
 -- end reads about 1.7 kPa higher than over a dry one -- a third of the
 -- 1 m3 rise, so the floor is 1.0 / CELL_VOLUME_M3 kPa. A picture would not
@@ -82,7 +82,7 @@ assert(
 -- ---------------------------------------------------------------
 -- THE SILL IS WHAT HOLDS IT.
 --
--- A liquid levels now (docs/matter-world/flow.md): five centimetres of
+-- A liquid levels now (docs/matter-world/flow.md): five centimeters of
 -- standing water is fifteen times the film water stops thinning at, so
 -- the only reason this pool is still a pool half a minute into the
 -- shift is that it has nowhere to go. The deep pair is a compartment --
@@ -91,15 +91,15 @@ assert(
 -- closed door seals its cell's links exactly as the wall beside it
 -- does, for water as for air.
 --
--- The litre tiles in the alcove need no sill: a litre over a square
--- metre is a millimetre deep, under the film, and a puddle under the
+-- The liter tiles in the alcove need no sill: a liter over a square
+-- meter is a millimeter deep, under the film, and a puddle under the
 -- film has no excess for a link to take.
 -- ---------------------------------------------------------------
 t.run_seconds(30)
 local still = look_at(DEEP)
-local litres = tonumber(string.match(still, "A puddle: ([%d%.]+) L"))
-assert(litres ~= nil, "the pool is still a pool: " .. still)
-assert(litres > 50.0 * 0.99, "and still fifty litres of one: " .. still)
+local liters = tonumber(string.match(still, "A puddle: ([%d%.]+) L"))
+assert(liters ~= nil, "the pool is still a pool: " .. still)
+assert(liters > 50.0 * 0.99, "and still fifty liters of one: " .. still)
 assert(
     look_at(DRY) == "Standard station tiling, laid over the deck plating.",
     "and it never reached the tile beside it"
@@ -114,7 +114,7 @@ assert(
 -- is being watched is water through a doorway, not the autoclose
 -- timer.
 --
--- A hundred litres then finds every tile of the corridor it can reach.
+-- A hundred liters then finds every tile of the corridor it can reach.
 -- The claim is the COLLAPSE of the picture the shift opened with: a
 -- fifty-to-one difference between the deep end and the alcove becomes a
 -- difference of a few percent, and the tile that was dry is standing in
@@ -162,7 +162,7 @@ assert(
 )
 
 -- And the alcove came up to meet it. Not to the same number: each link
--- stops when its flux falls under the millilitre quantum, and a chain
+-- stops when its flux falls under the milliliter quantum, and a chain
 -- of two dozen of them leaves a shallow gradient behind
 -- (docs/matter-world/flow.md, "The residual"). Fifty to one is what
 -- collapsed.

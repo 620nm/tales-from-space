@@ -4,15 +4,15 @@ local atmos_cell = require("@helpers/atmos_cell")
 local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
--- The pipe painter, and what a stripe of the wrong colour costs.
+-- The pipe painter, and what a stripe of the wrong color costs.
 --
 -- tg's `is_connectable` refuses two pipe ends whose paint disagrees
--- unless one of them is omni grey
+-- unless one of them is omni gray
 -- (code/modules/atmospherics/machinery/atmosmachinery.dm:335-354). That
--- makes a paint job plumbing rather than labelling: a technician can cut
+-- makes a paint job plumbing rather than labeling: a technician can cut
 -- a live distribution main with a brush, and the line still looks whole.
 --
--- So this spec does not assert that a colour was written down. It
+-- So this spec does not assert that a color was written down. It
 -- asserts that the gas stopped arriving.
 
 local function said(p, line)
@@ -137,14 +137,14 @@ assert(t.hands(p).held == "pipe_painter", "painter in hand")
 --
 -- The vent at the far end tops the open-space tile beside it back to its
 -- line every pass (lunatic sim/atmos_machines/vent.rs, `metered`), and that
--- tile holds CELL_VOLUME_M3 cubic metres, so the bottle drains that many
+-- tile holds CELL_VOLUME_M3 cubic meters, so the bottle drains that many
 -- times as fast as over a 1 m3 cell (231 against 77 kPa/s, measured). Every
 -- wait the bottle has to outlast is divided by it; the waits that fill or
 -- watch a severed half are not.
 local DRAIN_S = 10 / atmos_cell.CELL_VOLUME_M3
 t.run_seconds(DRAIN_S)
 
--- ---- one colour, one net ----
+-- ---- one color, one net ----
 --
 -- Six lengths in one blue line are ONE body of gas, so both ends read
 -- the same number to the last decimal: they are literally the same
@@ -161,7 +161,7 @@ assert(spent > 100.0, "the canister feeds the line: " .. spent .. " kPa spent")
 
 -- ---- the dial ----
 --
--- tg picks the colour off a list prompt; we have no list, so the dial
+-- tg picks the color off a list prompt; we have no list, so the dial
 -- cycles on the in-hand key the way a length of pipe's layer does.
 -- Omni, green, blue, then red — tg's own roster order.
 local _ = t.messages(p)
@@ -203,7 +203,7 @@ assert(network_matter.pressure(2, 1) == assert(network_matter.pressure(7, 1)), "
 -- ---- **the headline**: a brush cuts the main ----
 t.click(p, 5, 1)
 t.run_ticks(2)
-assert(said(p, "You paint the pipe red."), "one length changes colour")
+assert(said(p, "You paint the pipe red."), "one length changes color")
 assert(heard(p, "click"), "and the room hears it happen")
 
 local rows = t.ledger_rows("network_painted")
@@ -212,7 +212,7 @@ local painted_target = ui_controls.record(rows[1].target)
 local at = ui_controls.record(painted_target.tile)
 assert(at.x == 5 and at.y == 1, "which tile")
 assert(painted_target.instance == t.network_instance(5, 1, "pipe", "l3"), "which retained pipe")
-assert(rows[1].paint == "red", "and which authored colour, so the record can say")
+assert(rows[1].paint == "red", "and which authored color, so the record can say")
 
 -- The line is intact. Nothing was cut, nothing was welded, the deck is
 -- exactly as it was — and the two ends of it are now two networks.
