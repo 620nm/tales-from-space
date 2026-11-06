@@ -51,7 +51,7 @@ local function build(rotations: number, want_sprite: string, drained: { number }
     t.tick()
     local fitting = assert(t.target_at(q, 2, 2, "volume_pump_fitting"))
     for _ = 1, rotations do
-        t.rotate(q, 2, 2, fitting, true)
+        t.use_item(q, fitting, "alt_secondary")
     end
     t.click(q, 1, 1, t.target_at(q, 1, 1, "wrench"))
     t.run_ticks(2)

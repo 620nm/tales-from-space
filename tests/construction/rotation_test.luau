@@ -1,8 +1,8 @@
 local network_matter = require("@helpers/network_matter")
 local network_channels = require("@helpers/network_channels")
 
--- Loose atmos fittings rotate in place: Alt+left is clockwise and
--- Alt+right is counter-clockwise in the browser; this spec enters the
+-- Loose atmos fittings rotate in place: Alt+right is clockwise and
+-- Alt+left counter-clockwise (lib/turning.luau); this spec enters the
 -- same server commands directly and proves the direction survives the
 -- fitting-to-machine construction round trip.
 t.world(
@@ -40,12 +40,12 @@ t.tick()
 local fitting = t.target_at(p, 2, 2, "connector_port_fitting")
 assert(fitting ~= nil, "the streamed loose fitting is targetable")
 
--- The browser Alt gesture turns clockwise: three turns reach east.
+-- Alt+right turns clockwise: three turns reach east.
 for _ = 1, 3 do
-    t.rotate(p, 2, 2, fitting, true)
+    t.use_item(p, fitting, "alt_secondary")
 end
-t.rotate(p, 2, 2, fitting, true)
-t.rotate(p, 2, 2, fitting, true)
+t.use_item(p, fitting, "alt_secondary")
+t.use_item(p, fitting, "alt_secondary")
 assert(#t.ledger_rows("Rotated") == 5, "every accepted quarter-turn is recorded")
 
 t.click(p, 1, 2, t.target_at(p, 1, 2, "wrench"))
@@ -70,10 +70,10 @@ t.run_seconds(2.5)
 port = t.structure_at(2, 2)
 assert(port ~= nil and port.sprite == "connector_port_w", "the returned fitting kept west")
 
--- Anchoring is the boundary: the same explicit claim cannot turn live
--- network topology behind the server's back.
+-- Anchoring is the boundary: the standing port declares no turn gesture,
+-- so the same claim cannot turn live network topology behind the server's back.
 local anchored = t.target_at(p, 2, 2, "connector_port")
-t.rotate(p, 2, 2, assert(anchored), true)
+t.use_item(p, assert(anchored), "alt_secondary")
 t.tick()
 port = t.structure_at(2, 2)
 assert(assert(port).sprite == "connector_port_w", "an anchored fixture refuses rotation")
@@ -121,7 +121,7 @@ t.tick()
 local valve_fitting = t.target_at(q, 3, 2, "manual_valve_fitting")
 assert(valve_fitting ~= nil, "the valve fitting is targetable")
 for _ = 1, 3 do
-    t.rotate(q, 3, 2, valve_fitting, true)
+    t.use_item(q, valve_fitting, "alt_secondary")
 end -- south -> east
 
 t.click(q, 4, 3, t.target_at(q, 4, 3, "wrench"))

@@ -32,7 +32,6 @@ return {
             west = "grav_supermagnet_ring_west",
         },
     },
-    rotates = {},
     hint_flags = { grav_smes.ASSEMBLY_READY },
     actions = { grav_smes.weld_row() },
     transitions = {

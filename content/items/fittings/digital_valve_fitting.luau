@@ -1,4 +1,5 @@
 local physical_profiles = require("@lib/physical_profiles")
+local turning = require("@lib/turning")
 -- A digital valve, in your hands.
 --
 -- tg's `/obj/item/pipe/binary` pointed at
@@ -6,7 +7,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- manual valve's, a different picture, and a different machine at the
 -- far end of the wrench -- which is the whole of the difference between
 -- the two in tg as well.
-return {
+local content = {
     id = "digital_valve_fitting",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
@@ -25,4 +26,17 @@ return {
     -- (__DEFINES/atmospherics/atmos_piping.dm:80).
     modes = 5,
     mode = 2,
+    -- Alt+click turns it: tg gives every pipe item `simple_rotation`
+    -- (code/game/machinery/pipe/construction.dm:169).
+    gestures = turning.GESTURES,
+    actions = turning.rows(),
 }
+
+if sim ~= nil then
+    turning.attach(
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id }),
+        { route = "self" }
+    )
+end
+
+return content

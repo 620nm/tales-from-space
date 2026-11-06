@@ -180,8 +180,8 @@ assert(fitting ~= nil, "the loose fitting is targetable")
 
 -- South turns to west turns to north: two quarter-turns onto the axis
 -- with no pipe on it at all.
-t.rotate(q, 2, 2, fitting, true)
-t.rotate(q, 2, 2, fitting, true)
+t.use_item(q, fitting, "alt_secondary")
+t.use_item(q, fitting, "alt_secondary")
 
 t.click(q, 2, 3, t.target_at(q, 2, 3, "wrench"))
 t.run_ticks(2)

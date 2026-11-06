@@ -1,10 +1,11 @@
 local physical_profiles = require("@lib/physical_profiles")
+local turning = require("@lib/turning")
 -- A passive gate, in your hands.
 --
 -- tg's `/obj/item/pipe/directional` pointed at `.../binary/passive_gate`
 -- (passive_gate.dm:17), picture from its `pipe_state`,
 -- `"passivegate"` (passive_gate.dm:18).
-return {
+local content = {
     id = "passive_gate_fitting",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
@@ -23,4 +24,17 @@ return {
     -- (__DEFINES/atmospherics/atmos_piping.dm:80).
     modes = 5,
     mode = 2,
+    -- Alt+click turns it: tg gives every pipe item `simple_rotation`
+    -- (code/game/machinery/pipe/construction.dm:169).
+    gestures = turning.GESTURES,
+    actions = turning.rows(),
 }
+
+if sim ~= nil then
+    turning.attach(
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id }),
+        { route = "self" }
+    )
+end
+
+return content

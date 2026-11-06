@@ -1,13 +1,16 @@
 local bench = require("@helpers/grav_bench")
 
 -- Alt+click turns an emitter in both states; a ring never turns, set or
--- packed, because its corner comes from the emitters beside it. Each
--- accepted quarter-turn is a ledger row; a refused one writes none.
+-- packed, because its corner comes from the emitters beside it, and a
+-- loose crate declares no turn at all. Each accepted quarter-turn is a
+-- ledger row; a refused one writes none.
 
-bench.world(
-    '(5, 4, "player_spawn"), ' .. bench.part_rows({ ne = { packed = true }, w = { state = "displaced" } }),
-    ""
-)
+local overrides: { [string]: bench.Override } = {
+    ne = { packed = true },
+    w = { state = "displaced" },
+    sw = { absent = true },
+}
+bench.world('(5, 4, "player_spawn"), (4, 5, "crate"), ' .. bench.part_rows(overrides), "")
 local p = t.join()
 t.tick()
 
@@ -16,13 +19,14 @@ local function sprite(x: number, y: number): string
 end
 
 local function turn(x: number, y: number, id: string, clockwise: boolean)
-    t.rotate(p, x, y, assert(t.target_at(p, x, y, id)), clockwise)
+    local gesture = if clockwise then "alt_secondary" else "alt_primary"
+    t.use_item(p, assert(t.target_at(p, x, y, id)), gesture)
     t.tick()
 end
 
 -- A bolted-down emitter turns through the declared facings, wearing its
--- anchored picture. The pointer turns clockwise only, so four quarter-turns
--- step through every anchored picture and bring it home.
+-- anchored picture. Four clockwise quarter-turns (Alt+right) step through
+-- every anchored picture and bring it home.
 local anchored_order = {
     "grav_emitter_anchored_south",
     "grav_emitter_anchored_west",
@@ -39,6 +43,9 @@ assert(sprite(5, 3) == "grav_emitter_anchored_south", "and round again: " .. spr
 assert(sprite(4, 4) == "grav_emitter_east", "the loose west emitter points east: " .. sprite(4, 4))
 turn(4, 4, "grav_emitter", true)
 assert(sprite(4, 4) == "grav_emitter_south", "clockwise from east is south: " .. sprite(4, 4))
+-- Alt+click turns it back counter-clockwise (tg rotate_left, rotation.dm:52-54).
+turn(4, 4, "grav_emitter", false)
+assert(sprite(4, 4) == "grav_emitter_east", "counter-clockwise back to east: " .. sprite(4, 4))
 
 -- A set ring wears its arc and stays there.
 assert(
@@ -51,4 +58,9 @@ assert(sprite(4, 3) == "grav_supermagnet_ring_north", "a set ring does not turn:
 -- Nor does a packed one.
 turn(6, 3, "grav_supermagnet", true)
 assert(sprite(6, 3) == "grav_supermagnet_loose", "the cart shows no facing: " .. sprite(6, 3))
-assert(#t.ledger_rows("Rotated") == 5, "a refused turn writes no row")
+assert(#t.ledger_rows("Rotated") == 6, "a refused turn writes no row")
+
+-- A loose crate is movable but has no facing to turn: Alt+right on it
+-- reaches no handler and records nothing.
+turn(4, 5, "crate", true)
+assert(#t.ledger_rows("Rotated") == 6, "a loose crate does not turn")

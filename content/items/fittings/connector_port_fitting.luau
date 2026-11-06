@@ -1,4 +1,5 @@
 local physical_profiles = require("@lib/physical_profiles")
+local turning = require("@lib/turning")
 -- The connector port fitting: a socket in your hands rather than in the
 -- deck.
 --
@@ -22,7 +23,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- No handlers, no tool class, no stack: this file is a NOUN. What a wrench
 -- does to it is the connector port's business, and it is written down
 -- in structures/connector_port.luau where the target is the expert.
-return {
+local content = {
     id = "connector_port_fitting",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
@@ -34,4 +35,17 @@ return {
     -- family (construction.dm:19) -- one length of pipe over the
     -- shoulder, whichever fitting it is going to become.
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
+    -- Alt+click turns it: tg gives every pipe item `simple_rotation`
+    -- (code/game/machinery/pipe/construction.dm:169).
+    gestures = turning.GESTURES,
+    actions = turning.rows(),
 }
+
+if sim ~= nil then
+    turning.attach(
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id }),
+        { route = "self" }
+    )
+end
+
+return content

@@ -1,10 +1,14 @@
 -- One of the four emitters of the gravity battery, before it is welded in.
 --
 -- Facing is the way the nozzle points; the weld wants it pointing at the
--- centre. It turns with Alt+click loose or bolted down. No recipe makes
--- one: a map places it, like the heavy parts of tg's machinery.
+-- centre. It turns with Alt+click (lib/turning.luau), as tg's emitter
+-- does (`simple_rotation`, code/modules/power/singularity/emitter.dm:79);
+-- pack divergence: it turns bolted down too, where tg's refuses
+-- (code/datums/elements/rotation.dm:95). No recipe makes one: a map
+-- places it, like the heavy parts of tg's machinery.
 local anchorable = require("@lib/anchorable")
 local grav_smes = require("@lib/power/grav_smes")
+local turning = require("@lib/turning")
 
 local FACINGS = { "north", "east", "south", "west" }
 
@@ -67,7 +71,8 @@ return {
     facings = FACINGS,
     facing_sprites = { displaced = displaced_pictures, anchored = anchored_pictures },
     loose = { "displaced" },
-    rotates = { "displaced", "anchored" },
+    gestures = turning.GESTURES,
+    interaction_labels = turning.labels(),
     hint_flags = { grav_smes.ASSEMBLY_READY },
     actions = { grav_smes.weld_row() },
     transitions = {

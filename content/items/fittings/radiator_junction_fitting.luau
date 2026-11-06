@@ -1,10 +1,11 @@
 local physical_profiles = require("@lib/physical_profiles")
+local turning = require("@lib/turning")
 -- A junction, in your hands.
 --
 -- tg draws every `/obj/item/pipe` from its machine's own `pipe_state`
 -- in `pipe_item.dmi` (construction.dm:17,216) -- `"junction"` here
 -- (heat_exchange/junction.dm:16).
-return {
+local content = {
     id = "radiator_junction_fitting",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
@@ -20,4 +21,17 @@ return {
     -- distribution run, PIPING_LAYER_DEFAULT.
     modes = 5,
     mode = 2,
+    -- Alt+click turns it: tg gives every pipe item `simple_rotation`
+    -- (code/game/machinery/pipe/construction.dm:169).
+    gestures = turning.GESTURES,
+    actions = turning.rows(),
 }
+
+if sim ~= nil then
+    turning.attach(
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id }),
+        { route = "self" }
+    )
+end
+
+return content

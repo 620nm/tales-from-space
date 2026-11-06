@@ -42,7 +42,7 @@ end
 
 local function turn(x: number, y: number, id: string, quarter_turns: number)
     for _ = 1, quarter_turns do
-        t.rotate(p, x, y, assert(t.target_at(p, x, y, id)), true)
+        t.use_item(p, assert(t.target_at(p, x, y, id)), "alt_secondary")
     end
 end
 

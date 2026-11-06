@@ -9,8 +9,8 @@ local gas_turbine_wrench = require("@lib/power/gas_turbine_wrench")
 -- Built on a machine frame from its board; its rotor part is the one
 -- socket and goes in at the frame, where tg fits it through the open
 -- hatch afterwards (turbine.dm:249-274). A wrench turns it with the panel
--- open (lib/power/gas_turbine_wrench.luau); `rotates` is that turn's
--- permission, which the engine's Rotate gesture shares.
+-- open (lib/power/gas_turbine_wrench.luau), and only a wrench: it declares
+-- no Alt+click turn, as tg's sections have none (_machinery.dm:1069-1077).
 return {
     id = "core_rotor",
     visual_layer = "fixture",
@@ -45,7 +45,6 @@ return {
     scripted_states = gas_turbine.SCRIPTED_STATES,
     facings = gas_turbine.FACINGS,
     facing_sprites = gas_turbine.facing_sprites("core_rotor"),
-    rotates = { "open" },
     parts = { slots = { "rotor" } },
     -- What a map may place: a rotor already turning, its first run started
     -- once its line links at stand-up (the engine's
