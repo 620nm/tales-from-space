@@ -432,7 +432,7 @@ end
 function gas_turbine.examine_lines(ev: ExamineLinesPayload): { lines: { ExamineLineRow } }
     local lines = table.clone(ev.lines)
     if ev.subject.vars[gas_turbine.LINKED] ~= true then
-        table.insert(lines, { key = "turbine_unlinked", text = sim.msg(UNLINKED, {}) })
+        table.insert(lines, { key = "turbine_unlinked", message = sim.msg(UNLINKED, {}) })
     end
     return { lines = lines }
 end
