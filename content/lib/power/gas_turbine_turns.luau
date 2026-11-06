@@ -88,14 +88,13 @@ local function shout(rotor: Handle, key: string, values: Placeholders): ()
 end
 
 -- The damage alarm (turbine.dm:661-662): the rotor speaks on the
--- engineering channel and sounds its alert. The line repeats the catalog's
--- `damage_alarm` wording, as `sim.radio.say` takes text, not a message.
+-- engineering channel, its `damage_alarm` line, and sounds its alert.
 local function alarm(rotor: Handle, integrity: number): ()
     local percent = string.format("%.2f", integrity)
     sim.radio.say({
         speaker = rotor,
         channel = ALARM_CHANNEL,
-        text = "Turbine warning: the rotor is overheating. Integrity is at " .. percent .. "%.",
+        text = sim.msg(record_lib.MESSAGE .. "damage_alarm", { integrity = percent }),
     })
     sim.sound.play({ sound = ALARM_SOUND, at = rotor.tile })
 end
