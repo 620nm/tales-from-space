@@ -2,7 +2,7 @@ local matter_look = require("@helpers/matter_look")
 
 -- A tile without gravity draws the look's weightless ladder.
 --
--- The same litre of water and the same canister of chlorine are painted into
+-- The same liter of water and the same canister of chlorine are painted into
 -- two otherwise identical rooms, one under gravity and one weightless. Under
 -- gravity the water is the joined puddle shell; weightless it is the
 -- pack's floating pictures, which never join. The chlorine look declares no
@@ -30,7 +30,7 @@ end
 
 local grounded = room(9.80665)
 local water = matter_look.parts(grounded, WATER_TILE, 3, "puddle")
-assert(#water > 0, "a litre of water draws under gravity")
+assert(#water > 0, "a liter of water draws under gravity")
 local shells = 0
 for _, part in ipairs(water) do
     assert(not part.weightless, "gravity draws the ordinary ladder, rung " .. part.rung)
@@ -43,7 +43,7 @@ assert_gas_ordinary(grounded, "under gravity")
 
 local floating = room(0)
 local drifting = matter_look.parts(floating, WATER_TILE, 3, "puddle")
-assert(#drifting > 0, "the same litre still draws without gravity")
+assert(#drifting > 0, "the same liter still draws without gravity")
 for _, part in ipairs(drifting) do
     assert(part.weightless, "no gravity draws the weightless ladder, rung " .. part.rung)
     assert(part.sprite ~= nil and part.blocks == nil and part.joins == nil, "and its rungs are loose pictures")

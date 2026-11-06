@@ -2,7 +2,7 @@ local network_matter = require("@helpers/network_matter")
 -- Two legs of a station's air plant, composed on one small fixture.
 -- Supply: stores -> mixer -> supply main -> vent -> ward. Capture:
 -- ward -> scrubber -> layer-2 waste main -> layer adapter -> CO2
--- filter -> the tank labelled for it. The filter's remainder dead-ends,
+-- filter -> the tank labeled for it. The filter's remainder dead-ends,
 -- so nothing returns to storage; chamber injectors, a filter row and
 -- isolation valves are other specs' (docs/ATMOS.md).
 --
@@ -85,7 +85,7 @@ assert(
 
 -- ---------------------------------------------------------------
 -- TWO: A FOULED WARD COMES CLEAN, AND THE CARBON DIOXIDE ENDS UP IN
--- THE TANK LABELLED FOR IT.
+-- THE TANK LABELED FOR IT.
 --
 -- Scrubber -> layer-2 waste main -> layer adapter -> layer-3 filter
 -- intake -> side outlet -> tank. The gas is put on the scrubber's own
@@ -130,7 +130,7 @@ assert(
 -- ---------------------------------------------------------------
 local before_breach = assert(t.room_pressure(WARD.x, WARD.y))
 local stores_before = stores()
-assert(before_breach > 90.0, "the ward is pressurised: " .. before_breach)
+assert(before_breach > 90.0, "the ward is pressurized: " .. before_breach)
 for _, tile in ipairs(BREACH) do
     assert(t.set_composition(tile.x, tile.y, "bare"))
 end

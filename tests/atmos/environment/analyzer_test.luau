@@ -80,13 +80,13 @@ t.world(
     ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
-        // A litre of naphtha on the deck between the two runs, with the
+        // A liter of naphtha on the deck between the two runs, with the
         // room's own air riding along so the tile is wet rather than
         // airless: 112.22 g/mol over 0.75 g/mL is 149.63 mL a mole, so
-        // 6.6833 mol is the litre. Naphtha rather than water because this
+        // 6.6833 mol is the liter. Naphtha rather than water because this
         // room is sealed and shared -- a volatile would fog every tile
         // in it and every share below would be a share of the fog. The air
-        // is CELL-SIZED, because the litre makes this blend a total: the
+        // is CELL-SIZED, because the liter makes this blend a total: the
         // standard 8.730437114532117 o2 and 32.84307295466844 n2 per m3
         // times one cell (atmos_cell.cell_moles, 3 m3 on this pack).
         "naphtha_1l": (rows: [("naphtha", 6.6833006594189985), ("o2", %.17g), ("n2", %.17g)], temperature_k: 293.15, amount: total),
@@ -122,7 +122,7 @@ assert(
 -- One room cell is 3 m3 of station (`simulation.tile`, content/capabilities.luau).
 assert(
     has(air, "Volume: " .. tostring(atmos_cell.CELL_VOLUME_M3 * 1000) .. " L"),
-    "a tile of room is three thousand litres"
+    "a tile of room is three thousand liters"
 )
 assert(
     has(air, "Temperature: 20 °C (293.15 K)"),
@@ -145,7 +145,7 @@ t.run_ticks(2)
 local pipe = t.messages(p)
 assert(has(pipe, "Results of analysis of the layer 3 pipe."), "the run touched, by name")
 assert(not has(pipe, "Results of analysis of the air."), "and nothing that was not touched")
-assert(not has(pipe, "Results of analysis of the layer 1 pipe."), "not even its neighbour")
+assert(not has(pipe, "Results of analysis of the layer 1 pipe."), "not even its neighbor")
 assert(
     has(pipe, "Pressure: " .. r2(assert(network_matter.pressure(2, 1))) .. " kPa"),
     "and the number an engineer would read off a meter there"
@@ -181,10 +181,10 @@ assert(
 -- mixtures are unrelated systems and a puddle belongs to neither. One
 -- reading here answers for all three states, so the click that reads
 -- the air over a tile reads what is standing on it too, in the
--- millilitres a vessel is authored in. Cross-checked against the same
+-- milliliters a vessel is authored in. Cross-checked against the same
 -- reading the spec API takes, like every other number here.
 local ml = assert(t.room_liquid(2, 1)).naphtha * 1000
-assert(has(ground, "Liquid: " .. r2(ml) .. " mL"), "a litre of naphtha on the deck: " .. r2(ml))
+assert(has(ground, "Liquid: " .. r2(ml) .. " mL"), "a liter of naphtha on the deck: " .. r2(ml))
 assert(
     has(ground, "Naphtha: " .. r2(ml) .. " mL (100 %)"),
     "and it is the whole of what is standing there"
@@ -210,7 +210,7 @@ assert(
     "at the pressure its own gauge lamps are a coarse picture of"
 )
 -- tg's canister is 2000 L.
-assert(has(can, "Volume: 2000 L"), "and it is a two thousand litre bottle")
+assert(has(can, "Volume: 2000 L"), "and it is a two thousand liter bottle")
 
 -- ---- an empty run ----
 --

@@ -20,8 +20,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- -- so gassing a room meant HEATING a beaker until the recipe fired,
 -- and a scrubber could never be pointed at what a chemist made. There
 -- is no door now. `chlorine` IS Cl2; the dispenser hands it over as
--- the liquid a pressurised bottle holds, because that is what Cl2 is
--- under 6.6 atmospheres of its own vapour at room temperature; and a
+-- the liquid a pressurized bottle holds, because that is what Cl2 is
+-- under 6.6 atmospheres of its own vapor at room temperature; and a
 -- tile at 293 K is a hundred kelvin over its boiling point, so what
 -- lands on the deck is gas before anybody looks down. A phase is
 -- something a substance REACHES.
@@ -186,7 +186,7 @@ assert(
 )
 assert(
     inside.pressure_kpa > 400.0,
-    "under several atmospheres of its own vapour: " .. inside.pressure_kpa .. " kPa"
+    "under several atmospheres of its own vapor: " .. inside.pressure_kpa .. " kPa"
 )
 
 -- The examine pane names it out of the registry (sim/examine.rs,
@@ -221,7 +221,7 @@ near(
     assert(t.contents(jar)).chlorine or 0.0,
     PRESS - loose,
     1e-6,
-    "and what is left in the bottle is the saturated vapour it kept"
+    "and what is left in the bottle is the saturated vapor it kept"
 )
 
 -- ---------------------------------------------------------------

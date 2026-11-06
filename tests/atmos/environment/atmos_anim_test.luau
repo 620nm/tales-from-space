@@ -98,7 +98,7 @@ assert(
 )
 
 -- Click it. The wheel starts moving IMMEDIATELY -- before anything has
--- happened to the gas, which is the half of tg's behaviour that makes an
+-- happened to the gas, which is the half of tg's behavior that makes an
 -- atmospherics valve feel like a commitment rather than a toggle.
 t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
 t.run_ticks(1)
@@ -129,7 +129,7 @@ local rest = assert(t.structure_at(3, 1))
 assert(rest.state == "open")
 assert(
     rest.sprite == "valve_open_ew",
-    "and settles on the position it travelled to: " .. tostring(rest.sprite)
+    "and settles on the position it traveled to: " .. tostring(rest.sprite)
 )
 
 -- ---------------------------------------------------------------

@@ -6,7 +6,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- opens tg's window, dispenses on act('vend') as a player-attributed
 -- action. None of that is re-proved here. What is here is the thing
 -- that made this machine worth adding: every product on it is a toy
--- with behaviour, and a shelf is only worth having if what it hands you
+-- with behavior, and a shelf is only worth having if what it hands you
 -- WORKS when it lands on the floor. So this deals a card out of a deck
 -- the machine minted, and empties a bag the machine minted, on the
 -- theory that a vend which produced a hollow object would pass every

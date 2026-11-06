@@ -568,7 +568,7 @@ assert(
 -- It stops ON level, which is tg's rule read carefully: half the
 -- pressure gap across two EQUAL 200 L ports is exactly the amount that
 -- levels them, so tg's gate lands on level in one pass too. Here the
--- two sides are whole pipenets of different sizes and the levelling
+-- two sides are whole pipenets of different sizes and the leveling
 -- amount is what the arithmetic is written in (see release.rs).
 near(settled_out, level, 1.0, "the two mains came level")
 near(settled_in, level, 1.0, "from both sides at once")
@@ -720,5 +720,5 @@ assert(
 )
 assert(
     t.ledger_has("MachineSetpoint", "target", "Player"),
-    "re-dialling a relief valve is an attributed act"
+    "re-dialing a relief valve is an attributed act"
 )

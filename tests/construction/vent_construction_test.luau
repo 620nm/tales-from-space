@@ -16,7 +16,7 @@ local network_channels = require("@helpers/network_channels")
 -- The refusals matter as much as the successes, and they are the
 -- scrubber's own (room_devices_test.luau, rpd_test.luau): a unary
 -- component IS the length on its tile, so it neither needs nor permits
--- raw pipe under its centre, and it reaches the run beside it through
+-- raw pipe under its center, and it reaches the run beside it through
 -- one mouth.
 
 local ui_controls = require("@helpers/ui_controls")
@@ -69,7 +69,7 @@ local function pick(p: number, label: string): string
             return tog.option
         end
     end
-    error("no fitting button labelled " .. label)
+    error("no fitting button labeled " .. label)
 end
 
 local function arm(p, label)
@@ -180,7 +180,7 @@ assert(t.structure_at(3, 1) == nil, "and nothing stands where the vent will go")
 
 -- ---- the refusal comes first ----
 --
--- A vent owns its centre length on its own layer, so the one place it
+-- A vent owns its center length on its own layer, so the one place it
 -- may NOT go is on top of the main it is meant to draw from. Same
 -- sentence, same words, as the scrubber and the connector get.
 arm(p, "Air Vent")
@@ -188,7 +188,7 @@ walk(p, "east") -- (4, 2), under the main
 local _ = t.messages(p)
 t.click(p, 4, 1, nil, -14, 14)
 work()
-assert(t.structure_at(4, 1) == nil, "a vent did not cover its centre run")
+assert(t.structure_at(4, 1) == nil, "a vent did not cover its center run")
 assert(network_channels.at(4, 1, "pipe") == "l3", "and the raw run is intact")
 assert(said(p, "Something is already under the floor here."), "the refusal names the occupancy")
 
@@ -323,7 +323,7 @@ t.run_seconds(2.5)
 local hole = t.structure_at(3, 1)
 assert(hole ~= nil and hole.id == "passive_vent", "the fitting became the machine")
 assert(t.count_items("passive_vent_fitting") == 0, "and the fitting is spent")
-assert(network_channels.at(3, 1, "pipe") == "", "the passive vent owns its centre, like every unary")
+assert(network_channels.at(3, 1, "pipe") == "", "the passive vent owns its center, like every unary")
 
 -- It reaches the main beside it through one mouth, and it is a hole
 -- both ways: over-pressure the tile it stands on and the surplus goes

@@ -245,4 +245,4 @@ assert(
     word(readout(t.ui(p), "throttles.output").value) == "throttles.line.breaker_open",
     "and the lamp says so"
 )
-assert(t.ledger_has("MachineSetpoint"), "re-dialling a throttle is on the record")
+assert(t.ledger_has("MachineSetpoint"), "re-dialing a throttle is on the record")

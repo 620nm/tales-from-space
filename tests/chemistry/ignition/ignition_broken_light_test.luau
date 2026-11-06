@@ -2,7 +2,7 @@ local ignition_room = require("@helpers/ignition_room")
 
 -- A SMASHED TUBE SPARKS ONLY IF IT WAS ON (tg light.dm:690-702).
 --
--- The same ceiling fitting in a room full of ethanol vapour, twice: with
+-- The same ceiling fitting in a room full of ethanol vapor, twice: with
 -- no power in the room and its own cell run flat, then fed by an APC and
 -- generator. A toolbox swing shatters either (fixtures/light.luau). The dead fitting
 -- breaks in silence and leaves the room unlit; the burning one throws a
@@ -48,7 +48,7 @@ local function room(powered: boolean): number
 end
 
 local function smash(p: number)
-    assert(ignition_room.ethanol_gas(LIGHT.x, LIGHT.y) >= 0.05, "vapour hangs under the fitting")
+    assert(ignition_room.ethanol_gas(LIGHT.x, LIGHT.y) >= 0.05, "vapor hangs under the fitting")
     assert(#t.ledger_rows("IgnitionAt") == 0, "the room is unlit")
     t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "toolbox")))
     t.tick()

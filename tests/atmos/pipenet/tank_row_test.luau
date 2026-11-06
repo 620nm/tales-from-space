@@ -32,7 +32,7 @@ local composition = require("@helpers/composition")
 -- so the sweep is adiabatic), and the mixture warms until it reaches
 -- the CRITICAL temperature, where there is no longer any distinction
 -- to condense across and the sweep stops. That is where this tank
--- sits: 304.1 K, a few hundred litres of liquid under 23.5 MPa of
+-- sits: 304.1 K, a few hundred liters of liquid under 23.5 MPa of
 -- supercritical gas. It is what a real 2 500 L bottle of CO2 does, and
 -- it is the one reading in this room that is not the number the mapper
 -- typed.

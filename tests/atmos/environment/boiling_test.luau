@@ -3,10 +3,10 @@ local ui_controls = require("@helpers/ui_controls")
 -- Boil a beaker dry: what leaves the glass ends up in the room.
 --
 -- The chamber holds the vessel over water's boil, the phase step turns
--- the water to vapour inside the beaker (docs/CHEMISTRY.md), and the
--- beaker is OPEN -- so the vapour goes where an open vessel's gas phase
+-- the water to vapor inside the beaker (docs/CHEMISTRY.md), and the
+-- beaker is OPEN -- so the vapor goes where an open vessel's gas phase
 -- goes now, which is the air over the tile it is standing in
--- (sim/holder/vent.rs). Before that pass existed the vapour stayed
+-- (sim/holder/vent.rs). Before that pass existed the vapor stayed
 -- in the glass forever, counting against the fill and seen by nobody.
 --
 -- Nothing here is staged: the water came out of a button and the only
@@ -120,19 +120,19 @@ t.run_ticks(2)
 ui_controls.toggle(p, "power")
 
 -- The chamber has to get there before anything can leave, so watch for
--- the vapour rather than guessing the tick it appears on: the crossing
+-- the vapor rather than guessing the tick it appears on: the crossing
 -- is a gas for as long as the room stays hot enough to hold it.
-local saw_vapour = false
+local saw_vapor = false
 local saw_two_phases = false
 for _ = 1, 400 do
     t.run_ticks(5)
     if room_gas("water") > 0.0 then
-        saw_vapour = true
+        saw_vapor = true
     end
     -- INSIDE THE GLASS, on the way out. `t.vessel` splits the water by
     -- phase, so a sample taken while the chamber is over the boil
     -- catches the beaker holding both at once: liquid still standing in
-    -- the bottom and vapour in the headspace over it. That is the step
+    -- the bottom and vapor in the headspace over it. That is the step
     -- the room's gain is made of -- water does not teleport from a
     -- beaker to a room, it boils into the space above itself and the
     -- open vessel breathes that space out (sim/holder/vent.rs).
@@ -157,7 +157,7 @@ for _ = 1, 400 do
     end
 end
 
-assert(saw_vapour, "the water crossed into the room as a gas")
+assert(saw_vapor, "the water crossed into the room as a gas")
 assert(saw_two_phases, "and it was gas in the glass before it was gas in the room")
 -- Nearly dry rather than exactly dry, and the arithmetic says why: the
 -- phase step moves a share of what is left each time, so the last drops

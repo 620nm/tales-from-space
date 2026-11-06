@@ -23,7 +23,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- docs/LUAU-API.md 7.1).
 
 local ARENA = [==[(
-    name: "theatre",
+    name: "theater",
     legend: { ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     levels: [
         (

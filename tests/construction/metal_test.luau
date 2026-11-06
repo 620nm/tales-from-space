@@ -34,7 +34,7 @@ t.tick()
 t.click(p, 2, 1, t.target_at(p, 2, 1, "metal")) -- pick up the sheets
 t.run_ticks(2)
 
-ui_controls.build(p, "metal", "girder", 2, 2) -- raise a girder on the neighbouring floor
+ui_controls.build(p, "metal", "girder", 2, 2) -- raise a girder on the neighboring floor
 t.run_seconds(4.5)
 assert(t.ledger_has("StructureStep", "girder", "built"), "the girder rose")
 

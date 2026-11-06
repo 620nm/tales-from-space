@@ -328,7 +328,7 @@ assert(network_matter.pressure(12, 3) ~= nil, "and the vent has a run to draw on
 t.run_seconds(60)
 local west_end = assert(t.room_pressure(2, 1))
 local east_end = assert(t.room_pressure(12, 3))
-assert(east_end > 40.0, "the line repressurised the closet: " .. east_end)
+assert(east_end > 40.0, "the line repressurized the closet: " .. east_end)
 assert(west_end < 100.0, "and it came out of the hall, not from nowhere: " .. west_end)
 assert(
     math.abs(west_end - east_end) < 20.0,
@@ -351,7 +351,7 @@ assert(composition.matches(11, 3, { "station_base", "wall" }))
 -- The proof is gas, not topology. A mapped run is handed over
 -- commissioned; a run a player builds during the shift starts empty.
 -- Lay a fresh length straight through a charged main on a DIFFERENT
--- layer: if the two joined, the new one would come up pressurised.
+-- layer: if the two joined, the new one would come up pressurized.
 -- ---------------------------------------------------------------
 t.world(
     [==[(
@@ -434,7 +434,7 @@ assert(network_channels.at(1, 1, "pipe") == "l3", "and the rest of the main is u
 -- where BOTH lengths reach toward each other -- tg's
 -- connection_check -- so these two never meet. One of them has a
 -- passive vent over it; the other has nothing. Open the room to space
--- and the vented main empties into the vacuum while its neighbour, one
+-- and the vented main empties into the vacuum while its neighbor, one
 -- tile away on the same layer, stays exactly as charged as it started.
 -- ---------------------------------------------------------------
 t.world(
@@ -482,13 +482,13 @@ assert(t.is_breached(1, 1), "the room is open to space")
 t.run_seconds(40)
 
 local vented = assert(network_matter.pressure(3, 2))
-local neighbour = assert(network_matter.pressure(4, 2))
+local neighbor = assert(network_matter.pressure(4, 2))
 assert(vented < 25.0, "the vented main emptied: " .. vented)
 assert(
-    neighbour > 90.0,
-    "and its parallel neighbour, one tile away on the same layer, never "
+    neighbor > 90.0,
+    "and its parallel neighbor, one tile away on the same layer, never "
         .. "lost a mole: "
-        .. neighbour
+        .. neighbor
 )
 
 -- The control. The identical map with NO facings authored is the old
@@ -538,7 +538,7 @@ assert(
 
 -- ---------------------------------------------------------------
 -- A loose length follows the same occupancy rule as the RPD. Every
--- atmos component owns its centre on its own layer; a component on
+-- atmos component owns its center on its own layer; a component on
 -- another layer is still a valid crossing.
 -- ---------------------------------------------------------------
 t.world(

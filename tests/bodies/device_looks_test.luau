@@ -204,7 +204,7 @@ assert(
 -- own number (content/tuning.luau, engine default 85) and the specs run
 -- against the engine's, so this is the machine crossing a line rather
 -- than anybody moving one.
--- The grille draws a fixed litres per second out of a 3 m3 cell, so the
+-- The grille draws a fixed liters per second out of a 3 m3 cell, so the
 -- air at it falls to the line at a third of the pace it did on 1 m3 cells:
 -- the 240 s guard is 240 x CELL_VOLUME_M3.
 local guard = 0

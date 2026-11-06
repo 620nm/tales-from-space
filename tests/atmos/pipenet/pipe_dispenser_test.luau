@@ -149,7 +149,7 @@ assert(t.count_items("id_captain") == 0, "no dispenser can be talked into mintin
 -- deleted and nothing is refunded, because the machine never had stock
 -- to return it to.
 --
--- The tile has to be cleared first, and that is not a test artefact —
+-- The tile has to be cleared first, and that is not a test artifact —
 -- a dispenser drops its stock at its own feet, so a click on that tile
 -- names the pile before it names the machine, exactly as it would in
 -- tg. You pick your fittings up and then the machine is clickable.

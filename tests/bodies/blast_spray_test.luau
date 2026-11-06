@@ -95,7 +95,7 @@ for _, decal in ipairs(t.decals_at(2, 1)) do
     end
 end
 assert(mark ~= nil, "a blood mark on the victim's tile")
-assert(mark.paint == "blood", "in the wound paint, not a crew colour")
+assert(mark.paint == "blood", "in the wound paint, not a crew color")
 assert(mark.facing == "e", ("aimed east, got %s"):format(tostring(mark.facing)))
 
 -- Past the window: pellets only, no burn, and every strike landed
@@ -115,7 +115,7 @@ local function downrange(who: number, x: number, y: number, tag: string): ()
         end
     end
     assert(worn ~= nil, ("%s wears a blood mark"):format(tag))
-    assert(worn.paint == "blood", "in the wound paint, not a crew colour")
+    assert(worn.paint == "blood", "in the wound paint, not a crew color")
     assert(worn.facing == "n", ("%s wears it un-aimed, got %s"):format(tag, tostring(worn.facing)))
 end
 downrange(diag, 3, 2, "two tiles out")

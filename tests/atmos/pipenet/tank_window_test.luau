@@ -132,7 +132,7 @@ assert(
 assert(ui_controls.number(contents.temperature_k) > 200.0, "a temperature")
 assert(
     math.abs(ui_controls.number(contents.volume_l) - 70.0) < 0.001,
-    "and tg's TANK_STANDARD_VOLUME, in litres: " .. tostring(ui_controls.number(contents.volume_l))
+    "and tg's TANK_STANDARD_VOLUME, in liters: " .. tostring(ui_controls.number(contents.volume_l))
 )
 assert(contents.sealed == true, "a bottle has a lid")
 assert(readout(ui, "holder.supply") == nil, "an ordinary bottle is not inexhaustible")

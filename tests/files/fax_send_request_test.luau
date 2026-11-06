@@ -93,7 +93,7 @@ laptop.unlock(crew)
 t.run_ticks(2)
 
 -- The first row A PRESS CAN TAKE, each time round. This selector reads
--- no label, so it is the one place a candidate listed greyed -- drawn,
+-- no label, so it is the one place a candidate listed grayed -- drawn,
 -- inert, carrying the reason the forest's shape refuses it
 -- (../lunatic/docs/devices/joining.md) -- would be picked over and over
 -- and never joined.

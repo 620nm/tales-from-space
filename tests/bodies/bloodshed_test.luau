@@ -88,7 +88,7 @@ for x = 1, 3 do
     end
 end
 assert(mark ~= nil, "a blood mark on the deck")
-assert(mark.paint == "blood", "in the wound paint, not a crew colour")
+assert(mark.paint == "blood", "in the wound paint, not a crew color")
 
 -- The bleeder bleeds: 0.0125 mol/s (tg's 0.5 u/s) while stacks remain,
 -- and the harmony handler regrows less than that, so the volume is under full.

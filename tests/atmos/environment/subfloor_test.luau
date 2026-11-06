@@ -89,7 +89,7 @@ local function set_down_clear()
 end
 
 assert(composition.matches(2, 1, { "station_base" }), "one tile is open")
-assert(composition.matches(2, 2, { "station_base", "floor_tiles" }), "and its neighbour is tiled over")
+assert(composition.matches(2, 2, { "station_base", "floor_tiles" }), "and its neighbor is tiled over")
 assert(network_channels.at(2, 2, "pipe") == "l3", "the run passes under the tiled one")
 assert(network_channels.at(2, 2, "power") == "l1", "and so does the cable")
 
@@ -256,7 +256,7 @@ assert(composition.matches(1, 1, { "station_base", "floor_tiles" }), "a tile cli
 assert(network_channels.at(1, 1, "pipe") == "l3", "covering does not consume the raw pipe")
 
 -- A binary machine is the length of pipe, and a unary connector is its
--- own centre plus a directional stub. Both are equally coverable when
+-- own center plus a directional stub. Both are equally coverable when
 -- the structure sprite itself was the exact target.
 t.click(c, 2, 1, t.target_at(c, 2, 1, "manual_valve"))
 t.run_seconds(2)
@@ -267,7 +267,7 @@ t.click(c, 3, 1, t.target_at(c, 3, 1, "connector_port"))
 t.run_seconds(2)
 assert(composition.matches(3, 1, { "station_base", "floor_tiles" }), "a floor tile covers a connector")
 assert(assert(t.structure_at(3, 1)).id == "connector_port", "the connector remains under the tile")
-assert(network_channels.at(3, 1, "pipe") == "", "the unary connector still replaces its centre length")
+assert(network_channels.at(3, 1, "pipe") == "", "the unary connector still replaces its center length")
 
 -- The above cases clicked the plumbing art itself. A canister stacked over
 -- its connector has transparent pixels around the bottle; those pixels name
@@ -312,7 +312,7 @@ local d = t.join()
 t.tick()
 assert(t.target_at(d, 2, 1, "connector_port") ~= nil, "a real port starts under the canister")
 assert(assert(t.canister_pressure(2, 1)) > 4000.0, "the canister starts fastened and full")
-assert(assert(network_matter.pressure(1, 1)) > 90.0, "its port has charged the neighbouring run")
+assert(assert(network_matter.pressure(1, 1)) > 90.0, "its port has charged the neighboring run")
 t.click(d, 2, 2, t.target_at(d, 2, 2, "floor_tile"))
 t.run_ticks(2)
 
@@ -332,7 +332,7 @@ assert(composition.matches(2, 1, { "station_base", "floor_tiles" }), "a ground p
 assert(assert(t.structure_at(2, 1)).id == "canister", "the canister remains above the tile")
 assert(t.canister_pressure(2, 1) ~= nil, "it remains anchored to its socket")
 assert(network_channels.at(2, 1, "pipe") == "", "the connector did not become a hidden raw length")
-assert(assert(network_matter.pressure(1, 1)) > 90.0, "the port remains plumbed to its neighbouring run")
+assert(assert(network_matter.pressure(1, 1)) > 90.0, "the port remains plumbed to its neighboring run")
 
 -- ---------------------------------------------------------------
 -- Floor panels control each network independently. A map can leave
@@ -381,7 +381,7 @@ t.tick()
 assert(composition.matches(2, 1, { "station_base", "floor_tiles" }), "the panel is a finished floor")
 assert(t.network_exposed(2, 1, "power"), "and its deck is open anyway")
 assert(t.network_exposed(2, 1, "pipe"), "to both runs")
-assert(composition.matches(3, 1, { "station_base", "floor_tiles" }), "its neighbour has a closed floor panel")
+assert(composition.matches(3, 1, { "station_base", "floor_tiles" }), "its neighbor has a closed floor panel")
 assert(not t.network_exposed(3, 1, "power"), "with its wiring boxed in")
 assert(not t.network_exposed(3, 1, "pipe"), "and its plumbing too")
 

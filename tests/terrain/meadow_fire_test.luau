@@ -134,7 +134,7 @@ for _, plant in ipairs(plants) do
 end
 
 -- Nothing left to burn: the tending task drops every latch, the moss
--- last, as its thin remainder smoulders out.
+-- last, as its thin remainder smolders out.
 local out = ignition_room.run_until(120, 1, function()
     return ignition_room.count(ignition_room.latched_tiles()) == 0
 end)

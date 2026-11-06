@@ -162,7 +162,7 @@ end
 -- ONE: THERMITE IS TWO THINGS OR IT IS NOTHING.
 --
 -- tg: 1 aluminium + 1 iron + 1 oxygen -> 3 thermite
--- (recipes/pyrotechnics.dm:214-217). The oxidiser here is iron OXIDE
+-- (recipes/pyrotechnics.dm:214-217). The oxidizer here is iron OXIDE
 -- rather than iron and loose oxygen, which is what real thermite has
 -- always taken and what a beaker can actually hold, so the ratio is
 -- the reaction everybody has seen: 2 Al + Fe2O3
@@ -200,7 +200,7 @@ near(amount(a, "thermite"), 0.0, 1e-12, "still half a recipe, still nothing")
 near(amount(slop, "thermite"), 0.0, 1e-12, "a lone leg is inert wherever it is standing")
 
 -- ---------------------------------------------------------------
--- TWO: ...AND THE OXIDISER IS THE OTHER ONE.
+-- TWO: ...AND THE OXIDIZER IS THE OTHER ONE.
 --
 -- The same beaker, with the leg it was missing pressed into it. The
 -- clamp that refused above is the clamp that decides the extent here:

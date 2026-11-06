@@ -9,7 +9,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- A filter is the machine that separates, so its whole correctness is a
 -- question a pressure cannot answer -- did the right gas come out of
 -- the right port -- and every assertion here is in MOLES, read the way
--- an analyser reads a line.
+-- an analyzer reads a line.
 --
 -- The T. A filter reaches three ways (behind the facing, the facing,
 -- and turn(dir, -90), trinary_devices.dm:43-51), so it wants a junction
@@ -187,7 +187,7 @@ near(
 -- Nothing selected out of the box, which is tg's empty `filter_type`.
 -- Water and chlorine are on it because both stand in a pipe as gas
 -- whenever the run is hot or thin enough; only a substance with no
--- modelled gas phase at all is left off, because its button could
+-- modeled gas phase at all is left off, because its button could
 -- never divert anything.
 local roster: { [string]: unknown } = {}
 for _, sw in ipairs(ui_controls.rows(ui.toggles)) do
@@ -293,7 +293,7 @@ local function selected(which: string): unknown
 end
 
 assert(ui_controls.find(p, "/toggle/filter/tabasco") == nil, "no invented gas choice")
-assert(ui_controls.find(p, "/toggle/filter/water") ~= nil, "water vapour is a gas choice")
+assert(ui_controls.find(p, "/toggle/filter/water") ~= nil, "water vapor is a gas choice")
 assert(ui_controls.find(p, "/toggle/power/o2") == nil, "power is a switch")
 t.tick()
 assert(selected("o2") == true, "an invented gas selects nothing")
@@ -422,7 +422,7 @@ local pre_side_o2 = gas(SIDE_X, SIDE_Y, "o2")
 local pre_main_n2 = gas(OUT_X, OUT_Y, "n2")
 
 -- The file's `filter = { "n2" }` reached the machine's roster, not just
--- its behaviour: the panel shows nitrogen already selected.
+-- its behavior: the panel shows nitrogen already selected.
 t.click(s, 3, 1, t.target_at(s, 3, 1, "filter.n2"))
 t.tick()
 for _, sw in ipairs(ui_controls.rows(ui_controls.state(s).toggles)) do

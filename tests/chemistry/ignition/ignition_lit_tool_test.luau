@@ -9,7 +9,7 @@ local ignition_room = require("@helpers/ignition_room")
 --    pointed at, before any tending, and says so.
 -- 2. THE TEND. A burner struck and set down in dry air at one end of a
 --    long room, with the spill at the other end, is never clicked at
---    anything. Vapour reaches its tile, the once-a-second tend finds it
+--    anything. Vapor reaches its tile, the once-a-second tend finds it
 --    and the room catches, the first latch being the burner's own tile.
 local IGNITE_MESSAGE = "The flame catches in the air."
 
@@ -24,7 +24,7 @@ do
         spills = { { x = 4, y = 1, ethanol_mol = ignition_room.POOL_MOL } },
     })
     t.run_seconds(30)
-    assert(ignition_room.ethanol_gas(4, 1) >= 0.5, "the target tile holds vapour")
+    assert(ignition_room.ethanol_gas(4, 1) >= 0.5, "the target tile holds vapor")
     t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "burner")))
     t.tick()
     assert(t.hands(p).held == "burner", "the burner is in hand")
@@ -60,7 +60,7 @@ do
         spills = { { x = 9, y = 1, ethanol_mol = ignition_room.POOL_MOL } },
     })
     local far_gas = ignition_room.ethanol_gas(1, 1)
-    assert(far_gas < ignition_room.FUEL_FLOOR_MOL, "no vapour has reached the burner's end yet: " .. far_gas)
+    assert(far_gas < ignition_room.FUEL_FLOOR_MOL, "no vapor has reached the burner's end yet: " .. far_gas)
     ignition_room.take_lit_burner(p, 2, 1)
     t.drop(p)
     t.tick()
@@ -69,7 +69,7 @@ do
     local lit_after = ignition_room.run_until(120, 1, function()
         return #t.ledger_rows("IgnitionAt") >= 1
     end)
-    assert(lit_after ~= nil, "vapour met the standing flame and the room caught, unclicked")
+    assert(lit_after ~= nil, "vapor met the standing flame and the room caught, unclicked")
     local first = ignition_room.latch_edges(true)[1]
     assert(first ~= nil, "a latch row exists")
     local tile = ignition_room.tile_of(first)

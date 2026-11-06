@@ -5,8 +5,8 @@ local ui_controls = require("@helpers/ui_controls")
 --
 -- Ash is the rule with both ends on this shelf: tg's `required_temp` of
 -- 480 through the documented bell mapping is 480 / 500 / 900 / 920
--- (reactions/ash.luau), so a chamber dialled to 400 does nothing at
--- all, one dialled to 700 runs it dry, and one dialled past 920 stops
+-- (reactions/ash.luau), so a chamber dialed to 400 does nothing at
+-- all, one dialed to 700 runs it dry, and one dialed past 920 stops
 -- again. Three answers from one knob, and the third is the one a
 -- chemist never guesses.
 --

@@ -8,11 +8,11 @@ local composition = require("@helpers/composition")
 -- head, the head is wrung out into whatever you point it at. What that
 -- buys is the claim below -- the water that leaves the tile ARRIVES in
 -- the mop, and the water that leaves the mop arrives in the beaker, and
--- the station is holding the same three litres at the end of it as at
+-- the station is holding the same three liters at the end of it as at
 -- the start.
 --
 -- The stroke is the HEAD, not a dose: what one pass lifts is what a
--- quarter-litre mop can hold, so a flood takes as many strokes as it
+-- quarter-liter mop can hold, so a flood takes as many strokes as it
 -- takes, each tg's second and a half (mop.dm:22).
 t.world(
     [==[(
@@ -37,7 +37,7 @@ t.world(
             ],
         ),
     ],
-    // Three litres standing on one tile: 55.51 mol of water is a litre
+    // Three liters standing on one tile: 55.51 mol of water is a liter
     // of it, and the two air rows ride along because a painted tile
     // holds what the blend says and nothing else -- a flooded deck is
     // not a decompressed one.
@@ -54,7 +54,7 @@ t.tick()
 local mop = assert(t.target_at(p, 1, 1, "mop"))
 local beaker = assert(t.target_at(p, 1, 1, "beaker_bluespace"))
 
--- A quarter of a litre is the head, which is the whole of what one
+-- A quarter of a liter is the head, which is the whole of what one
 -- stroke can lift.
 local HEAD_L = 0.25
 
@@ -91,7 +91,7 @@ end
 
 local water_at_the_start = t.matter_totals().substances.water
 
-assert(math.abs(puddle() - 3.0) < 0.01, ("three litres on the deck, got %g"):format(puddle()))
+assert(math.abs(puddle() - 3.0) < 0.01, ("three liters on the deck, got %g"):format(puddle()))
 t.click(p, 1, 1, t.target_at(p, 1, 1, "mop")) -- pick it up
 t.tick()
 assert(held(mop) == 0, "and a dry mop in hand")

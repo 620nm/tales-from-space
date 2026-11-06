@@ -4,7 +4,7 @@ local clock = require("@helpers/clock")
 local atmos_cell = require("@helpers/atmos_cell")
 local cycle = {}
 local FAULT = "The controller has stopped the airlock cycle."
--- The pump moves litres per second, so a chamber of 3 m3 cells takes three
+-- The pump moves liters per second, so a chamber of 3 m3 cells takes three
 -- times as long to pump down as a chamber of 1 m3 cells.
 local TIMEOUT_SECS = 32 * atmos_cell.CELL_VOLUME_M3
 

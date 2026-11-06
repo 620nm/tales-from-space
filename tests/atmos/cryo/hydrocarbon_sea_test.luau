@@ -38,7 +38,7 @@ local METHANE_ML = 0.7 * 16.043 / 0.42
 local ETHANE_ML = 0.3 * 30.069 / 0.65
 local METHANE_SHARE = METHANE_ML / (METHANE_ML + ETHANE_ML)
 
-local function litres(x: number, y: number, key: string): number
+local function liters(x: number, y: number, key: string): number
     local liquid = t.room_liquid(x, y)
     return if liquid then liquid[key] or 0 else 0
 end
@@ -47,8 +47,8 @@ local function sea_stands(when: string)
     for y = 0, 2 do
         for x = 3, 6 do
             local where = when .. " (" .. x .. ", " .. y .. ")"
-            local methane = litres(x, y, "methane")
-            local ethane = litres(x, y, "ethane")
+            local methane = liters(x, y, "methane")
+            local ethane = liters(x, y, "ethane")
             local depth = methane + ethane
             assert(math.abs(depth - DEPTH_L) < 1, "1.5 m deep " .. where .. ": " .. depth)
             local share = methane / (methane + ethane)
@@ -57,7 +57,7 @@ local function sea_stands(when: string)
             assert(math.abs(kelvin - SURFACE_K) < 0.1, "at 94 K " .. where .. ", got " .. kelvin)
         end
         for x = 0, 2 do
-            local wet = litres(x, y, "methane") + litres(x, y, "ethane")
+            local wet = liters(x, y, "methane") + liters(x, y, "ethane")
             assert(wet < 1e-3, "the shore stays dry " .. when .. " at x " .. x .. ": " .. wet)
         end
     end

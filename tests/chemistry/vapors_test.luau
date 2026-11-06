@@ -3,7 +3,7 @@ local network_matter = require("@helpers/network_matter")
 local composition = require("@helpers/composition")
 local atmos_cell = require("@helpers/atmos_cell")
 
--- Caustic vapours, end to end: press a button, tip the bottle out, and
+-- Caustic vapors, end to end: press a button, tip the bottle out, and
 -- the room fills with something that gets into people.
 --
 -- The whole chain in one spec, and every link is a thing a player does.
@@ -19,7 +19,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 -- 420 K reaction as the door between them, and the way to gas a room
 -- was to heat a beaker until the door opened. There is no door now:
 -- `chlorine` IS Cl2, the dispenser hands it over as the liquid a
--- pressurised bottle holds, and the way to gas a room is to open the
+-- pressurized bottle holds, and the way to gas a room is to open the
 -- bottle. A phase is something a substance REACHES, and the whole
 -- accident is one careless gesture rather than a recipe.
 --
@@ -140,12 +140,12 @@ assert(supply ~= nil and supply.tank ~= nil, "and the valve is open")
 -- A press of chlorine over an OPEN vessel is refused -- the machine
 -- says so and writes no row -- because what landed would leave through
 -- the same mouth before anybody looked up (D19). Into the bottle it
--- lands and condenses under its own vapour pressure, and what the
--- chemist is then carrying is a pressurised bottle of liquid chlorine.
+-- lands and condenses under its own vapor pressure, and what the
+-- chemist is then carrying is a pressurized bottle of liquid chlorine.
 --
 -- THREE BOTTLEFULS, and that is the calibration talking. A full press
 -- is 1.25 mol and about four fifths of it comes back out of the bottle
--- as liquid -- the saturated vapour over the top stays behind, because
+-- as liquid -- the saturated vapor over the top stays behind, because
 -- a tip takes the CONDENSED phases and nothing else. Three quarters of
 -- a mole loose in a three-tile closet is a fifth of a kilopascal,
 -- which is three oxy a breath against the five a good breath heals
@@ -309,7 +309,7 @@ ui_controls.toggle(diver, "filter", "chlorine")
 ui_controls.toggle(diver, "power")
 -- Five minutes. A scrubber only ever works the tile it stands on and
 -- the rest of the room refills that tile by ordinary diffusion between
--- passes, so this is one mouth against six neighbours -- which is why
+-- passes, so this is one mouth against six neighbors -- which is why
 -- the books are taken over the whole room and never over the machine's
 -- own tile.
 t.run_seconds(300)

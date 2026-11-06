@@ -330,7 +330,7 @@ near(
     1e-8
 )
 local full_reading = assert(t.vessel(low_blood_bag), "the filled draw bag has a vessel reading")
-assert(full_reading.headspace_l <= 0.001, "the draw bag is full at the one-millilitre cutoff")
+assert(full_reading.headspace_l <= 0.001, "the draw bag is full at the one-milliliter cutoff")
 local matter_rows_when_full = #t.ledger_rows("matter_moved")
 assert(matter_rows_when_full > moved_before_draw, "the low-blood drip made real transfers")
 t.run_seconds(4)
@@ -368,7 +368,7 @@ local stroke_moles = 5 * 2 * 0.025
 near(infusion_before - after_infusion, stroke_moles, "one full-rate infusion removes ten units")
 near((infusion_before - after_infusion) / 0.025, 10, "the infusion creates ten units of headroom")
 local headroom = assert(t.vessel(headroom_bag), "the partially used pack has a vessel reading")
-near(headroom.headspace_l, 0.1, "ten blood units occupy one tenth of a litre", 1e-6)
+near(headroom.headspace_l, 0.1, "ten blood units occupy one tenth of a liter", 1e-6)
 
 local before_limited_draw = blood_in(headroom_bag)
 local draw_before = moved_to("blood pack - O-")

@@ -112,5 +112,5 @@ assert(assert(t.room_temperature(2, 1)) < before_temperature, "the discharge coo
 assert(gas(2, 1, "plasma") > 0.01 and gas(2, 1, "o2") > 0.01, "target fuel remains")
 assert(gas(6, 1, "plasma") > 0.01 and gas(6, 1, "o2") > 0.01, "control fuel remains")
 assert(assert(t.room_temperature(6, 1)) > 373.15, "control fire remains hot")
-assert(control_plasma > 0.01 and control_o2 > 0.01, "the control baseline was fuelled")
+assert(control_plasma > 0.01 and control_o2 > 0.01, "the control baseline was fueled")
 assert(control_temperature > 373.15, "the control baseline was hot")

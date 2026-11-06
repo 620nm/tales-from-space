@@ -8,7 +8,7 @@ local ignition_room = require("@helpers/ignition_room")
 --
 -- * A fire over a standing pool draws the pool flame (`flame_pool`), an
 --   emissive `flame`-phase part beside the liquid part.
--- * The same fire on vapour alone draws the open flame (`flame_open`): the
+-- * The same fire on vapor alone draws the open flame (`flame_open`): the
 --   same phase and glow, the other look, on floor the pool never reached.
 -- * When the fire's supply ends, the flame part ends with it and the
 --   ledger writes `ExtinguishedAt`. The air is what runs out here; the
@@ -83,7 +83,7 @@ do
         assert(part.phase ~= "liquid", "the pool never reached the far tile")
     end
     local flames = flame_parts(p, FAR_X)
-    assert(#flames >= 1, "burning vapour draws a flame on the far tile")
+    assert(#flames >= 1, "burning vapor draws a flame on the far tile")
     for _, flame in ipairs(flames) do
         assert(flame.look == OPEN_LOOK, "with no pool it is the open flame, got " .. flame.look)
         assert(flame.emissive, "and it glows")

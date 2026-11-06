@@ -28,7 +28,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 
 -- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
 -- plant standing in the room: his lungs are a driven vessel that holds
--- several litres of the air inside itself and turns what it takes in
+-- several liters of the air inside itself and turns what it takes in
 -- into something else (docs/BIOLOGY.md, `sim/holder/bellows.rs`). That
 -- is a source and a sink, and the books below are the ATMOSPHERICS
 -- engine's -- so the crew are switched off as scaffolding, the same
@@ -78,7 +78,7 @@ end
 -- What has to come out is not "the east room went up a bit". It is one
 -- mole of CO2 on every tile of both rooms, because sixteen moles
 -- through sixteen cells is one mole each and the gap has no opinion
--- about which side of it a cell is on. The COMPOSITION equalises, not
+-- about which side of it a cell is on. The COMPOSITION equalizes, not
 -- merely the pressure -- a far room that came up to the same kPa on
 -- nitrogen alone would pass a gauge test and kill somebody.
 -- ---------------------------------------------------------------
@@ -182,7 +182,7 @@ local air_0 = sum_over(EVERY, total)
 near(assert(t.room_pressure(2, 2)), 101.325, 0.01, "the west room opens at one atmosphere")
 near(assert(t.room_pressure(6, 3)), 101.325, 0.01, "and so does the east one")
 
--- Sixteen moles a metre-cube, painted as cell_moles(16.0): the same kPa on a 3 m3 cell.
+-- Sixteen moles a meter-cube, painted as cell_moles(16.0): the same kPa on a 3 m3 cell.
 t.foul_room(2, 2, "co2", atmos_cell.cell_moles(16.0))
 t.tick()
 near(held(2, 2, "co2"), atmos_cell.cell_moles(16.0), 1e-9, "all of it is standing on one tile")
@@ -288,7 +288,7 @@ t.tick()
 local SEALED = { { 4, 1 }, { 5, 1 }, { 4, 2 }, { 5, 2 } }
 local FOULED = { { 1, 1 }, { 2, 1 }, { 1, 2 }, { 2, 2 } }
 
--- The neighbour's book, tile by tile, before anybody does anything.
+-- The neighbor's book, tile by tile, before anybody does anything.
 local opening = {}
 for n, tile in ipairs(SEALED) do
     opening[n] = {

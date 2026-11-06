@@ -103,7 +103,7 @@ step("metal", 9, "cased")
 bench.hold(p, "glass", NEAR)
 for y = 3, 5 do
     for x = 4, 6 do
-        -- The centre is the empty well, so a pointer finds nothing there.
+        -- The center is the empty well, so a pointer finds nothing there.
         if x ~= bench.CENTRE_X or y ~= bench.CENTRE_Y then
             local screen =
                 assert(row(x, y, "grav_smes", "Install Screen"), "every cell has the row")

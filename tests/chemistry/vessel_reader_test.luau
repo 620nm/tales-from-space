@@ -6,8 +6,8 @@
 -- known volume (docs/CHEMISTRY.md).
 --
 -- The reading is what a gauge and a pair of eyes could tell, in the
--- units an instrument prints: kPa and litres, never the sim's own
--- pascals and cubic metres. A crowbar is here to be told nothing about.
+-- units an instrument prints: kPa and liters, never the sim's own
+-- pascals and cubic meters. A crowbar is here to be told nothing about.
 
 t.world(
     [==[(
@@ -55,13 +55,13 @@ local function near(got: number?, want: number?, tol: number, what: string)
 end
 
 -- ---------------------------------------------------------------
--- The bottle on the shelf: seventy litres of oxygen at six
+-- The bottle on the shelf: seventy liters of oxygen at six
 -- atmospheres, and every one of those numbers readable.
 -- ---------------------------------------------------------------
 local tank = t.vessel(assert(t.target_at(p, 2, 1, "oxygen_tank")))
 assert(tank ~= nil, "a tank has an inside")
 near(tank.pressure_kpa, 6 * 101.325, 1.0, "the bottle reads its fill pressure")
-near(tank.volume_l, 70.0, 1e-9, "seventy litres of shell")
+near(tank.volume_l, 70.0, 1e-9, "seventy liters of shell")
 near(tank.headspace_l, 70.0, 1e-9, "all of it gas space -- nothing in it is wet")
 near(tank.temp_k, 293.15, 0.5, "filled at room temperature")
 assert(tank.moles > 0, "and it holds something: " .. tostring(tank.moles))
@@ -69,7 +69,7 @@ assert(tank.sealed, "a gas bottle is closed -- it has no mouth to breathe throug
 
 -- Contents are PHASE-RESOLVED, and a phase nothing is standing in is
 -- absent rather than zero. Oxygen in a bottle is gas and only gas.
-assert(tank.contents.o2 ~= nil, "the bottle itemises its oxygen")
+assert(tank.contents.o2 ~= nil, "the bottle itemizes its oxygen")
 assert(assert(tank.contents.o2.gas) > 0, "as gas: " .. tostring(tank.contents.o2.gas))
 assert(tank.contents.o2.liquid == nil, "none of it is liquid, so no liquid is reported")
 assert(tank.contents.o2.solid == nil, "and none of it is ice")
@@ -89,15 +89,15 @@ assert(
 assert(beaker.contents.water.solid == nil, "nothing in it is frozen")
 assert(
     beaker.headspace_l < beaker.volume_l,
-    ("what is in it takes room: %g of %g litres left"):format(beaker.headspace_l, beaker.volume_l)
+    ("what is in it takes room: %g of %g liters left"):format(beaker.headspace_l, beaker.volume_l)
 )
 assert(beaker.headspace_l > 0, "but never all of it -- a full glass still has a top")
 
--- The shell is the fifty millilitres the prototype authors and the
+-- The shell is the fifty milliliters the prototype authors and the
 -- headspace is what the liquid leaves: 0.20 mol of water is 3.60 mL and
 -- 0.15 mol of libital is 27.0 mL, so 19.4 of the 50 are still air. The
 -- glass does not grow to fit what is poured into it (docs/MATTER.md 5).
-near(beaker.volume_l, 0.05, 1e-9, "fifty millilitres of glass, as authored")
+near(beaker.volume_l, 0.05, 1e-9, "fifty milliliters of glass, as authored")
 near(
     beaker.headspace_l,
     0.05 - 0.0306,
@@ -106,12 +106,12 @@ near(
 )
 
 -- The empty beaker on the end of the bench is the other half of that
--- contract: fifty millilitres of authored glass, every drop of it free.
+-- contract: fifty milliliters of authored glass, every drop of it free.
 local empty = assert(t.vessel(assert(t.target_at(p, 5, 1, "beaker"))))
-near(empty.volume_l, 0.05, 1e-9, "fifty millilitres of glass, as authored")
+near(empty.volume_l, 0.05, 1e-9, "fifty milliliters of glass, as authored")
 near(empty.headspace_l, 0.05, 1e-9, "and nothing in the way of it")
 assert(empty.moles == 0, "it ships empty: " .. tostring(empty.moles))
-assert(next(empty.contents) == nil, "so there is nothing to itemise")
+assert(next(empty.contents) == nil, "so there is nothing to itemize")
 assert(empty.pressure_kpa == 0, "and nothing pressing on anything")
 
 -- The collapsed reading is still there and still agrees: `t.contents`
@@ -145,7 +145,7 @@ near(
 assert(canister.sealed, "a canister keeps its pressure")
 assert(
     assert(canister.contents.o2.gas) > 0 and assert(canister.contents.n2.gas) > 0,
-    "and it is premixed air, itemised"
+    "and it is premixed air, itemized"
 )
 
 -- ---------------------------------------------------------------

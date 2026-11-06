@@ -136,7 +136,7 @@ t.run_seconds(2.5)
 local valve = t.structure_at(3, 2)
 assert(valve ~= nil and valve.id == "manual_valve", "the rotated valve was fastened")
 assert(valve.sprite == "valve_shut_ew", "a non-stub device keeps the fitting's facing")
-assert(network_channels.at(3, 2, "pipe") == "", "the valve replaces its centre length")
+assert(network_channels.at(3, 2, "pipe") == "", "the valve replaces its center length")
 
 -- Open it, then vent the room. The passive vent is attached to the
 -- west run. East drains only if the valve's actual topology is EW;

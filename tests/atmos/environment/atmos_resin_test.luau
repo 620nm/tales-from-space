@@ -47,7 +47,7 @@ t.click(p, 1, 1, t.target_at(p, 1, 1, "atmos_resin_projector"))
 t.tick()
 assert(t.hands(p).held == "atmos_resin_projector", "the player picked the projector up")
 
--- Two atmos passes are enough for the hot, fuelled mixture to burn.
+-- Two atmos passes are enough for the hot, fueled mixture to burn.
 t.run_seconds(1)
 local ignitions = t.ledger_rows("IgnitionAt")
 assert(#ignitions == 1, ("the room caught fire once, got %d ignitions"):format(#ignitions))
@@ -83,7 +83,7 @@ assert(
 )
 
 -- This is suppression, not a fire that merely ran out of ingredients
--- or cooled below its gate. The room remains hot and fuelled after the
+-- or cooled below its gate. The room remains hot and fueled after the
 -- edge, yet the persistent column prevents a new ignition.
 local gas = assert(t.room_gas(1, 1))
 assert(gas.plasma > 0.01 and gas.o2 > 0.01, "the room still has both fire reactants")

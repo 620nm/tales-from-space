@@ -76,14 +76,14 @@ end
 -- ---------------------------------------------------------------
 -- ONE: A VARIANT IS A BOTTLE.
 --
--- The machine's script asks `item.base`, so a labelled preconfiguration
+-- The machine's script asks `item.base`, so a labeled preconfiguration
 -- it has never heard of routes into the bottle branch. It gets the
 -- machine's own refusal -- "only takes empties" -- which is the proof:
--- a thing the machine did not recognise as a bottle would have been an
+-- a thing the machine did not recognize as a bottle would have been an
 -- ordinary swing and said nothing at all.
 -- ---------------------------------------------------------------
 local bottle = assert(t.target_at(p, 2, 2, "bottle.iodine"))
-assert(bottle ~= nil, "the map placed the labelled bottle")
+assert(bottle ~= nil, "the map placed the labeled bottle")
 t.click(p, 2, 2, bottle) -- pick it up
 t.run_ticks(2)
 assert(t.hands(p).held == "bottle.iodine", "the bottle is in the working hand")

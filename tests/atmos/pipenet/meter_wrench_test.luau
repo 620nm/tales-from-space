@@ -37,7 +37,7 @@ local function entity_action(p: number, entity: SpecObservedTarget, id: string):
 end
 
 -- A lone layer-2 run, a lone layer-4 run, and a layer-1-over-5
--- crossing, each with a default-dialled fitting waiting on it.
+-- crossing, each with a default-dialed fitting waiting on it.
 t.world(
     [==[(
     name: "meter wrench",
@@ -87,7 +87,7 @@ assert(
 -- ---- a lone run takes whatever layer it is ----
 t.click(p, 2, 1, lone)
 t.run_seconds(2.5)
-assert(assert(t.structure_at(2, 1)).id == "meter", "the default-dialled meter fastens to layer 2")
+assert(assert(t.structure_at(2, 1)).id == "meter", "the default-dialed meter fastens to layer 2")
 t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "pipe", "l2")))
 t.run_seconds(2.5)
 assert(t.structure_at(2, 1) == nil, "its run coming up drops it")
@@ -127,7 +127,7 @@ t.click(p, 3, 2, assert(t.target_at(p, 3, 2, "wrench")))
 t.run_ticks(2)
 t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "pipe_meter")))
 t.run_seconds(2.5)
-assert(assert(t.structure_at(3, 1)).id == "meter", "a dialled-5 meter still fastens to lone layer 4")
+assert(assert(t.structure_at(3, 1)).id == "meter", "a dialed-5 meter still fastens to lone layer 4")
 t.click_network(p, 3, 1, assert(t.network_instance(3, 1, "pipe", "l4")))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "it bound the run beneath it, not the dial")

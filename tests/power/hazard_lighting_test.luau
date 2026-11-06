@@ -19,7 +19,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 --     that knows what a room amounts to.
 --
 --   * A LIGHT burns the worst flag standing and goes back to its own
---     tube's colour when the last one clears. It has never heard of
+--     tube's color when the last one clears. It has never heard of
 --     air.
 --
 -- NOBODY WIRED ANY OF THIS. The fan, the alarm and the fitting are all
@@ -158,7 +158,7 @@ assert(math.abs(lamp.power - 1.2) < 1e-6, "at the air's own power: " .. lamp.pow
 -- 3. CLEAR THE WORSE ONE AND FALL BACK, not to the tube. Oxygen into
 --    the room: the fan crosses a band, the alarm drops its address
 --    and takes its flag off -- and the fitting lands on the flag
---    still under it rather than on white. Dim, and its own colour.
+--    still under it rather than on white. Dim, and its own color.
 --
 --    This is the pair the fall-back is shown with because it is the
 --    reversible one: a room that has had plasma in it never rates
@@ -171,7 +171,7 @@ t.run_seconds(3)
 
 lamp = assert(t.light_at(1, 2))
 local TUBE = lamp.color
-assert(TUBE ~= UNBREATHABLE and TUBE ~= DEADLY, "the fitting is its own colour again: " .. TUBE)
+assert(TUBE ~= UNBREATHABLE and TUBE ~= DEADLY, "the fitting is its own color again: " .. TUBE)
 assert(math.abs(lamp.power - 0.5) < 1e-6, "and dim, on the flag underneath: " .. lamp.power)
 
 -- ---------------------------------------------------------------
@@ -190,7 +190,7 @@ t.run_seconds(3)
 t.run_seconds(3)
 
 lamp = assert(t.light_at(1, 2))
-assert(lamp.color == TUBE, "still its own colour: " .. lamp.color)
+assert(lamp.color == TUBE, "still its own color: " .. lamp.color)
 assert(math.abs(lamp.power - 1.0) < 1e-6, "and back at its own power: " .. lamp.power)
 
 -- ---------------------------------------------------------------

@@ -116,7 +116,7 @@ assert(standing.state == "anchored", "bolted down: " .. tostring(standing.state)
 -- ---------------------------------------------------------------
 -- The contents window. tg has no interface for this machine at all --
 -- it has a pane of glass with the gas visibly swirling behind it --
--- so this is that reading, itemised: one row per gas present, and no
+-- so this is that reading, itemized: one row per gas present, and no
 -- controls, because the ports are the valves.
 -- ---------------------------------------------------------------
 t.tick()
@@ -167,7 +167,7 @@ assert(
 local settled = assert(t.tank_pressure(3, 2))
 local pipe_kpa = assert(network_matter.pressure(5, 2))
 assert(settled < filled - 500.0, "the tank is what paid for it: " .. filled .. " -> " .. settled)
--- One body of gas, split by volume, means one PRESSURE. tg equalises
+-- One body of gas, split by volume, means one PRESSURE. tg equalizes
 -- completely in a pass and so does this; if the two ever disagreed the
 -- tank would be acting like a pump, which it is not.
 assert(

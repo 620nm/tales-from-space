@@ -3,13 +3,13 @@
 -- a spec has no reader for liquid in a pipe, and the world's water is booked.
 local liquid_bench = {}
 
--- Water on painted deck, litres on a square metre.
+-- Water on painted deck, liters on a square meter.
 liquid_bench.FILM_L = 3.317
 liquid_bench.ONE_G = "environment: (gravity_m_s2: Exact(9.80665)),"
 liquid_bench.ZERO_G = "environment: (kind: Exact(space), gravity_m_s2: Exact(0.0)),"
 
 export type Tile = { x: number, y: number }
-export type Pool = { x: number, y: number, litres: number }
+export type Pool = { x: number, y: number, liters: number }
 export type Cable = { x: number, y: number, channel: string }
 export type Bench = {
     environment: string,
@@ -73,7 +73,7 @@ function liquid_bench.world(bench: Bench): number
             string.format(
                 '"pool%d": (rows: [("water", %.3f), ("o2", 26.19), ("n2", 98.53)], temperature_k: 293.15, amount: total)',
                 index,
-                pool.litres * 55.51
+                pool.liters * 55.51
             )
         )
     end
@@ -94,7 +94,7 @@ function liquid_bench.world(bench: Bench): number
     return player
 end
 
--- Litres of water on one tile, 0 on a dry one.
+-- Liters of water on one tile, 0 on a dry one.
 function liquid_bench.standing(x: number, y: number): number
     local liquid = t.room_liquid(x, y)
     return (liquid and liquid.water) or 0

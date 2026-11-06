@@ -314,15 +314,15 @@ assert(joins[1].role == "hub", "and what the thing that joined is")
 -- gesture (../lunatic/docs/devices/joining.md) -- so the roster is
 -- read for the one address that must be gone rather than counted.
 --
--- GONE, not greyed. A candidate the forest's SHAPE refuses is listed
+-- GONE, not grayed. A candidate the forest's SHAPE refuses is listed
 -- with its reason, because telling a reader why their network will not
 -- take the box in front of them costs nothing. A device somebody else
 -- holds is the opposite: a row discloses its live name, sprite and
--- state, so a greyed roster of a rival's rack would hand a standing
+-- state, so a grayed roster of a rival's rack would hand a standing
 -- attacker the whole of it. This one is hidden, and stays hidden.
 assert(
     row_for(panel, "link_join", point) == nil,
-    "and it is on nobody's list any more -- not even greyed"
+    "and it is on nobody's list any more -- not even grayed"
 )
 
 -- The sentence again, now that there is something to count -- and it

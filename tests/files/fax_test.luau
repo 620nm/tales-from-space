@@ -231,7 +231,7 @@ end
 assert(recipient_paper_count == 1, "one fresh recipient sheet arrives at the deadline")
 
 -- Read the received sheet through the ordinary paper window. The native
--- monochrome transform changes the copied fragment colour while preserving
+-- monochrome transform changes the copied fragment color while preserving
 -- the bounded body and source presentation metadata.
 local output = assert(t.target_at(receiver, 12, 2, "paper"), "recipient output is readable")
 t.click(receiver, 12, 2, output)

@@ -226,7 +226,7 @@ near(
 )
 near(ui_controls.number(half.gauge), 50.0, 1e-9, "which for this vessel is half the sticker")
 
--- One row per substance present, NAMED -- the swirling colour, written
+-- One row per substance present, NAMED -- the swirling color, written
 -- down -- inside the state it is actually in.
 local half_gas = state(block(half, "holder.contents"), "gas")
 assert(half_gas, "a charged vessel holds a gas")

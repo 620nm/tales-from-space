@@ -1,14 +1,14 @@
 local bench = require("@helpers/liquid_bench")
 
 -- A wet length pulled up spills its share into the room, and the books close.
--- Forty litres down a drain into three lengths on open plating.
+-- Forty liters down a drain into three lengths on open plating.
 local p = bench.world({
     environment = bench.ONE_G,
     rows = { "#######", "#.#___#", "#######" },
     structures = '(5, 1, "player_spawn"), (1, 1, "floor_drain", {"pipe": "east"})',
     items = '(5, 1, "wrench")',
     run = { { x = 2, y = 1 }, { x = 3, y = 1 }, { x = 4, y = 1 } },
-    pools = { { x = 1, y = 1, litres = 40 } },
+    pools = { { x = 1, y = 1, liters = 40 } },
 })
 t.set_breathing(false)
 t.click(p, 5, 1, assert(t.target_at(p, 5, 1, "wrench")))

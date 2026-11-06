@@ -46,7 +46,7 @@ local matter_look = require("@helpers/matter_look")
 local ONE_ATMOSPHERE_KPA = 101.325
 local WARNING_HIGH_PRESSURE_KPA = 325 -- tg: code/__DEFINES/atmospherics/atmos_core.dm
 
-local function litres(x: number, y: number): number
+local function liters(x: number, y: number): number
     local liquid = t.room_liquid(x, y)
     return if liquid then liquid.water or 0 else 0
 end
@@ -55,15 +55,15 @@ local p = t.join()
 local health = t.health(p).health
 t.run_ticks(4)
 
-assert(math.abs(litres(5, 3) - 1500) < 1, "a sea tile stands 1.5 m deep, got " .. litres(5, 3) .. " L")
+assert(math.abs(liters(5, 3) - 1500) < 1, "a sea tile stands 1.5 m deep, got " .. liters(5, 3) .. " L")
 local open_water = assert(matter_look.find(p, 5, 3, "puddle", 6), "deep water draws the sea's rung")
 assert(open_water.rung == 6, "the top of the water ladder")
 assert(#matter_look.parts(p, 5, 3, "puddle") == 1, "and the sea is not also a puddle")
 
 t.run_seconds(120)
 
-assert(litres(3, 6) < 1, "the sea stays in its bed: the shore far from the spill is dry, got " .. litres(3, 6))
-assert(litres(3, 1) < 5, "the spill ran in and left a film, got " .. litres(3, 1) .. " L")
+assert(liters(3, 6) < 1, "the sea stays in its bed: the shore far from the spill is dry, got " .. liters(3, 6))
+assert(liters(3, 1) < 5, "the spill ran in and left a film, got " .. liters(3, 1) .. " L")
 
 local kpa = assert(t.room_pressure(6, 3))
 assert(
@@ -88,5 +88,5 @@ assert(ethanol() > 1, "the slick is still on the sea, got " .. ethanol() .. " L"
 t.run_seconds(960)
 assert(ethanol() < 0.1, "and washes out, got " .. ethanol() .. " L")
 for y = 0, 6 do
-    assert(math.abs(litres(4, y) - 1500) < 1, "the spill went with it, got " .. litres(4, y) .. " L")
+    assert(math.abs(liters(4, y) - 1500) < 1, "the spill went with it, got " .. liters(4, y) .. " L")
 end

@@ -208,12 +208,12 @@ local was_locked = at_box(function(panel)
     assert(#offered == 2, "both towers are on offer: " .. #offered)
     -- BOTH are rows a press takes. The panel feeding this island is
     -- eight tiles off, outside a wall box's five, so it is out of reach
-    -- rather than greyed -- what a box's own feeder looks like when it
+    -- rather than grayed -- what a box's own feeder looks like when it
     -- IS in reach is access_point_test.luau's
     -- (../lunatic/docs/devices/joining.md).
     assert(
         #ui_controls.pressable(panel, "link_join") == 2,
-        "and neither is greyed: nothing here is already above the box"
+        "and neither is grayed: nothing here is already above the box"
     )
     for _ = 1, 2 do
         local offer = ui_controls.pressable(laptop.ui(speaker), "link_join")[1]
@@ -305,7 +305,7 @@ at_box(function(panel)
     -- Offerable AND takeable: released, the tower fell back to the
     -- panel feeding the room, and what the wire sewed is exactly what
     -- an engineer may move (../lunatic/docs/devices/joining.md), so it
-    -- comes back as a control rather than a greyed row.
+    -- comes back as a control rather than a grayed row.
     local offer = ui_controls.pressable(panel, "link_join")[1]
     assert(offer ~= nil, "the released tower is offerable again")
     laptop.toggle(speaker, "link_join", ui_controls.text(offer.option))

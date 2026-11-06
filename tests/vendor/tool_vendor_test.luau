@@ -1,6 +1,6 @@
 local ui_controls = require("@helpers/ui_controls")
 
--- The tool vendor, beside the softdrinks machine: same behaviour, a
+-- The tool vendor, beside the softdrinks machine: same behavior, a
 -- different shelf. It proves the mechanism is generic — the engine
 -- has no word for either machine, so a second one costs two content
 -- files and nothing else.
