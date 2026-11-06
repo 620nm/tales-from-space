@@ -3,10 +3,10 @@
 -- Three sealed lab flasks of liquid hydrogen cyanide at room temperature,
 -- each in a world of its own so no flask's gas reaches another:
 --
--- * with a trace of ammonia it polymerises to tholin and runs hot
+-- * with a trace of ammonia it polymerizes to tholin and runs hot
 --   (content/reactions/organics/hcn_polymerization.luau);
 -- * with the same ammonia and a little sulfuric acid it keeps: the acid
---   blocks the rule, as stabilised HCN is kept in industry;
+--   blocks the rule, as stabilized HCN is kept in industry;
 -- * with nothing in it, it keeps too: the ammonia is the catalyst.
 local HCN_MOL = 0.5
 -- Over the rule's 0.025 mol gate for the catalyst and for the inhibitor.

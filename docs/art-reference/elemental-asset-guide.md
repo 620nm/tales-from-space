@@ -32,7 +32,7 @@ are cited as the engine's `docs/…`; upstream paths are tgstation at the revisi
   - **Static housing invariant**: `0` housing pixels may shift during operating loops; motion stays inside the working bay, fluid surface, or flame/arc overlay.
 - **Art Gate Tripwire ([`tools/test-bake-art.mjs`](../../tools/test-bake-art.mjs))**:
   - `no_sprite_is_a_bare_color_mask`: Any sprite with `>=40` opaque pixels where `>=85%` of pixels share one exact achromatic RGB value fails `sh tools/check.sh` unless exempted in `FLAT_BY_DESIGN = ["white", "space", "ghost", "wind_streak"]` or `FLAT_FAMILIES = ["decal_"]`.
-  - **Implication for greyscale runtime-tinted assets** (puddles, powders, crystals, smoke, foam): The greyscale source sprite **must preserve multi-step internal value shading** (highlights, midtones, dark edge/core) so that after `Luminance(...)` or runtime multiply tinting it still has depth and passes the gate.
+  - **Implication for grayscale runtime-tinted assets** (puddles, powders, crystals, smoke, foam): The grayscale source sprite **must preserve multi-step internal value shading** (highlights, midtones, dark edge/core) so that after `Luminance(...)` or runtime multiply tinting it still has depth and passes the gate.
 
 ### 1.2 Canonical Palette ([`docs/art-reference/palettes/tales-from-space.gpl`](../../docs/art-reference/palettes/tales-from-space.gpl))
 20 named sets (155 unique colors):

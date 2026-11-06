@@ -58,7 +58,7 @@
         // outside tg's own random roll (hair.dm:123, :137, :183). The
         // other two, `Boddicker` and `Buzzcut`, are left out here and
         // not there: the back of each is forty-one pixels of one flat
-        // grey, which the atlas lint reads as an unbaked greyscale
+        // gray, which the atlas lint reads as an unbaked grayscale
         // config and is right to (`no_sprite_is_a_bare_color_mask`).
         //
         // The head of the file, then, rather than a filter of it:

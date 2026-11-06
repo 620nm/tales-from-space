@@ -141,7 +141,7 @@ function decodePng(bytes, label) {
   if (!head) throw new Error(`${label} has no IHDR`);
   if (head.depth !== 8 || head.color !== 6 || head.interlace !== 0)
     throw new Error(
-      `${label} is depth ${head.depth} color type ${head.color} interlace `
+      `${label} is depth ${head.depth} color type ${head.colour} interlace `
       + `${head.interlace}; atlas pages are 8-bit RGBA, not interlaced`,
     );
   const { width, height } = head;
@@ -254,7 +254,7 @@ test("tinted_art_is_baked_gray", { skip }, () => {
 // is to take a color, plus sibling layers carrying the actual shape. A
 // real sprite has tonal variation; a mask does not. The rule fires only
 // where the flat color is also achromatic, which is what every unbaked
-// greyscale config looks like and what no drawn sprite does.
+// grayscale config looks like and what no drawn sprite does.
 test("no_sprite_is_a_bare_color_mask", { skip }, () => {
   // Deliberately flat: a synthetic fill quad, the void, the ghost
   // silhouette, and the wind streak -- white with its whole shape in the
@@ -283,7 +283,7 @@ test("no_sprite_is_a_bare_color_mask", { skip }, () => {
       let [color, dominant] = [0, 0];
       for (const [key, count] of histogram) if (count > dominant) [color, dominant] = [key, count];
       const channels = [(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff];
-      // Chromatic: drawn art, however flat. A greyscale config's silhouette
+      // Chromatic: drawn art, however flat. A grayscale config's silhouette
       // is gray by construction, so this cannot excuse one.
       if (Math.max(...channels) - Math.min(...channels) > 6) continue;
       const frac = dominant / area;
