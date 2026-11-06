@@ -130,9 +130,13 @@ assert(assert(t.item_at(1, 1, "burner")).state == "cold", "so the flame goes out
 assert(assert(t.item_at(1, 1, "burner")).sprite == "burner", "and the picture follows the flame")
 
 -- A dead burner heats nothing, which is tg's `get_temperature()`
--- returning `lit * heat` (items.dm:290-291).
+-- returning `lit * heat` (items.dm:290-291). Step back east first: the
+-- body standing on the dropped burner covers it, leaving nothing to click.
+t.move(p, "east")
+t.run_ticks(3)
 t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "burner")))
 t.tick()
+assert(t.hands(p).held == "burner", "the dead burner is back in hand")
 local cold = t.holder_k(beaker)
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "beaker.libital")))
 t.tick()
