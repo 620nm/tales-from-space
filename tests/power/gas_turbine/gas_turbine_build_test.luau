@@ -124,8 +124,14 @@ local _ = t.messages(p)
 use_on_site("inlet_compressor", 0.2)
 assert(site().state == "open", "the screwdriver opens the panel")
 assert(table.find(heard(), "You open the maintenance panel.") ~= nil, "and says so")
-t.use_item(p, assert(t.target_at(p, SITE_X, SITE_Y, "inlet_compressor")), "alt_primary")
-t.use_item(p, assert(t.target_at(p, SITE_X, SITE_Y, "inlet_compressor")), "alt_secondary")
+for _, gesture in ipairs({ "alt_primary", "alt_secondary" }) do
+    local section = assert(t.target_at(p, SITE_X, SITE_Y, "inlet_compressor"))
+    local offered, why = pcall(t.use_item, p, section, gesture)
+    assert(
+        not offered and string.find(tostring(why), "does not offer that gesture", 1, true) ~= nil,
+        "an open section offers no " .. gesture .. ": " .. tostring(why)
+    )
+end
 t.run_ticks(2)
 assert(site().sprite == "inlet_compressor_open_s", "Alt+click leaves an open section put")
 assert(#t.ledger_rows("Rotated") == 0, "and records no turn")

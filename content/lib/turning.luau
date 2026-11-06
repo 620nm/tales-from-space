@@ -29,8 +29,15 @@ function turning.labels(): { [string]: { label: string } }
     return { alt_primary = { label = ROTATE }, alt_secondary = { label = ROTATE } }
 end
 
+-- Whether the click is one of the two turning slots.
+function turning.is_turn(ev: InteractionUsePayload): boolean
+    return ev.gesture == "alt_primary" or ev.gesture == "alt_secondary"
+end
+
 -- Turns the pointed thing on either slot and declines every other click.
-local function turn(ev: InteractionUsePayload): boolean | { [string]: any }
+-- One replace runs per occurrence, so a behavior with its own
+-- `interaction.use` replacement calls this from it instead of `attach`.
+function turning.turn(ev: InteractionUsePayload): boolean | { [string]: any }
     local clockwise: boolean
     if ev.gesture == "alt_secondary" then
         clockwise = true
@@ -46,9 +53,10 @@ local function turn(ev: InteractionUsePayload): boolean | { [string]: any }
     return true
 end
 
--- Binds `turn`; `route` is `self` for an item and `interact` for a structure.
+-- Binds `turn` as the behavior's only replacement on `route`: `self` for
+-- an item, `interact` for a structure.
 function turning.attach(definition: Definition, opts: AttachOptions): ()
-    definition:handle("interaction.use", { kind = "replace", route = opts.route }, turn)
+    definition:handle("interaction.use", { kind = "replace", route = opts.route }, turning.turn)
 end
 
 return turning

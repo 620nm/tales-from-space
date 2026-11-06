@@ -60,7 +60,12 @@ turn(6, 3, "grav_supermagnet", true)
 assert(sprite(6, 3) == "grav_supermagnet_loose", "the cart shows no facing: " .. sprite(6, 3))
 assert(#t.ledger_rows("Rotated") == 6, "a refused turn writes no row")
 
--- A loose crate is movable but has no facing to turn: Alt+right on it
--- reaches no handler and records nothing.
-turn(4, 5, "crate", true)
+-- A loose crate is movable but has no facing to turn: it offers no Alt+right
+-- and records nothing.
+local offered, why = pcall(t.use_item, p, assert(t.target_at(p, 4, 5, "crate")), "alt_secondary")
+assert(
+    not offered and string.find(tostring(why), "does not offer that gesture", 1, true) ~= nil,
+    "a loose crate offers no turn: " .. tostring(why)
+)
+t.tick()
 assert(#t.ledger_rows("Rotated") == 6, "a loose crate does not turn")

@@ -73,7 +73,11 @@ assert(port ~= nil and port.sprite == "connector_port_w", "the returned fitting 
 -- Anchoring is the boundary: the standing port declares no turn gesture,
 -- so the same claim cannot turn live network topology behind the server's back.
 local anchored = t.target_at(p, 2, 2, "connector_port")
-t.use_item(p, assert(anchored), "alt_secondary")
+local offered, why = pcall(t.use_item, p, assert(anchored), "alt_secondary")
+assert(
+    not offered and string.find(tostring(why), "does not offer that gesture", 1, true) ~= nil,
+    "a standing port offers no turn: " .. tostring(why)
+)
 t.tick()
 port = t.structure_at(2, 2)
 assert(assert(port).sprite == "connector_port_w", "an anchored fixture refuses rotation")
