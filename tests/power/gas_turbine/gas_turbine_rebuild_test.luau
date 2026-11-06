@@ -1,7 +1,8 @@
--- A multitool's buffer names one rotor, not a tile: tg's buffer holds the
--- machine itself (multitool.dm:37, :131) and the console checks it is a
--- rotor (turbine_computer.dm:26). A rotor taken apart and built again on
--- the same tile is a different machine, so the old buffer no longer links
+-- A multitool's buffer is an entity ref to one rotor, not a tile: tg's
+-- buffer holds the machine itself (multitool.dm:37, :131) and the console
+-- checks it is a rotor (turbine_computer.dm:26). A rotor taken apart and
+-- built again on the same tile is a different entity, so the old ref
+-- resolves to nothing and no longer links
 -- a console to it; logging the new rotor does. A finished frame faces
 -- south (tg sets no dir, machine_frame.dm:458), so the line here runs
 -- south and the built rotor stands up onto it whole, linking silently
