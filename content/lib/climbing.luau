@@ -220,17 +220,17 @@ end
 -- tg's `climb_walkable` table top, but must climb up onto one. Only the
 -- climb's own crossing passes. A pulled body is towed up freely: a pull is
 -- an external move, which runs no `move.cross`.
-function climbing.on_cross_veto(ev: MoveCrossPayload): { cancelled: boolean }
+function climbing.on_cross_veto(ev: MoveCrossPayload): { canceled: boolean }
     if not rises_onto_ledge(ev.mover, ev.from, ev.to) then
-        return { cancelled = false }
+        return { canceled = false }
     end
-    return { cancelled = not committing_to(ev.mover, ev.to) }
+    return { canceled = not committing_to(ev.mover, ev.to) }
 end
 
 -- `move.cross.done`: a body's own walk refused at a ledge on its level
 -- starts its climb.
 function climbing.on_cross_done(ev: MoveCrossDonePayload): ()
-    if ev.outcome ~= "cancelled" or ev.pulled_by ~= nil then
+    if ev.outcome ~= "canceled" or ev.pulled_by ~= nil then
         return
     end
     if not rises_onto_ledge(ev.mover, ev.from, ev.to) then

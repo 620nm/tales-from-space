@@ -39,9 +39,9 @@ radio_relay.keyed_to = keyed_to
 -- count sets what that buys. `reads` is the separate question of
 -- whether this tower could make the word out; answering it false is not
 -- a refusal, it just sends the question up to the tree's top.
-function radio_relay.receive(ev: RadioReceivePayload): { cancelled: boolean } | { reads: boolean }
+function radio_relay.receive(ev: RadioReceivePayload): { canceled: boolean } | { reads: boolean }
     if ev.distance > radio.radius_for(ev.peers) then
-        return { cancelled = true }
+        return { canceled = true }
     end
     return { reads = keyed_to(ev.self, ev.channel) }
 end
@@ -50,13 +50,13 @@ end
 -- tower the words are read from: the first one on it keyed to the
 -- channel, in the engine's ascending-address order. None means the tree
 -- has no business with this line at all.
-function radio_relay.read(ev: RadioReadPayload): { reader: Handle } | { cancelled: boolean }
+function radio_relay.read(ev: RadioReadPayload): { reader: Handle } | { canceled: boolean }
     for _, row in ipairs(ev.relays) do
         if keyed_to(row.node, ev.channel) then
             return { reader = row.node }
         end
     end
-    return { cancelled = true }
+    return { canceled = true }
 end
 
 -- The hop that changes nothing -- unless the machine crossing it hosts
@@ -75,7 +75,7 @@ end
 -- re-sanitizes whatever this answers, so nothing here sanitizes.
 function radio_relay.carry(
     ev: RadioCarryPayload
-): { cancelled: boolean } | { text: string, channel: string }
+): { canceled: boolean } | { text: string, channel: string }
     local answer = program_slot.run(ev.self, "carry", {
         content = ev.text,
         channel = ev.channel,
@@ -87,7 +87,7 @@ function radio_relay.carry(
     end
     local fields = answer :: { [string]: unknown }
     if fields.pass == false then
-        return { cancelled = true }
+        return { canceled = true }
     end
     return {
         text = if type(fields.text) == "string" then fields.text else ev.text,
@@ -99,8 +99,8 @@ end
 -- and the channel here is the one the tree SETTLED on -- so a line
 -- moved onto another band goes back out only through towers keyed to
 -- that band.
-function radio_relay.send(ev: RadioSendPayload): { cancelled: boolean }
-    return { cancelled = not keyed_to(ev.self, ev.channel) }
+function radio_relay.send(ev: RadioSendPayload): { canceled: boolean }
+    return { canceled = not keyed_to(ev.self, ev.channel) }
 end
 
 return radio_relay

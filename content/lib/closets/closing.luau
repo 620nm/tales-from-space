@@ -128,7 +128,7 @@ function closing.veto(ev: ContainerClosingPayload)
 	if key ~= nil then
 		forget_entrant(ev.subject)
 	end
-	return { cancelled = key ~= nil }
+	return { canceled = key ~= nil }
 end
 
 -- Tg's `insertion_allowed` for a mob (`closets.dm:575-592`), over what a

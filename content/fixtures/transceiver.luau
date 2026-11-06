@@ -45,7 +45,7 @@ if sim ~= nil then
     end)
 
     -- All four stages. Each is a transform because each writes
-    -- something back -- `reads`, a reader, the words, `cancelled` --
+    -- something back -- `reads`, a reader, the words, `canceled` --
     -- and a station is where the decision is made, never where state is
     -- recorded (docs/luau-api/radio-relay.md).
     --
