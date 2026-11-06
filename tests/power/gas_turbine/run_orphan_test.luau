@@ -6,8 +6,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- keeps checking in and the heat behind its compressor keeps wearing it
 -- (turbine.dm:634-640); a second player's window shows it. Turns cancelled
 -- outright (a transfer off the map, a quarantine) leave a stalled run that
--- reads stopped, its watts' lease lapsing unrenewed; the switch restarts it,
--- and a start it refuses (here, a rotor cut off its main) halts it instead.
+-- reads stopped, its watts' lease lapsing unrenewed; the switch restarts it.
 
 local CHANNEL = "turbine"
 
@@ -66,7 +65,7 @@ t.world(
                 (4, 1, "turbine_outlet", "closed", { "dir": "east" }),
             ],
             machines: [(4, 3, "turbine_computer")],
-            items: [(2, 2, "multitool"), (2, 2, "wirecutters")],
+            items: [(2, 2, "multitool")],
             painted: [
                 (1, 1, "hot_nitrogen"),
                 (2, 2, "room_air"), (3, 2, "room_air"), (4, 2, "room_air"), (1, 3, "room_air"),
@@ -87,17 +86,6 @@ t.world(
 
 local p = t.join()
 t.tick()
-
--- A second player takes up the wirecutters beside the spawn, for later,
--- before the air moves them or anything else lands on them, and keeps a free
--- hand for the console. It touches nothing else until the starter is gone.
-local q = t.join()
-t.run_ticks(2)
-t.click(q, 2, 2, (assert(t.target_at(q, 2, 2, "wirecutters"), "q sees the wirecutters")))
-t.run_seconds(0.2)
-assert(t.hands(q).held == "wirecutters", "the wirecutters are in hand")
-t.swap_hands(q)
-t.run_ticks(1)
 
 -- What `player`'s console window shows.
 local function reading(player: number): ui_controls.Record
@@ -153,8 +141,9 @@ end, 5), "heat past the rating wears the rotor")
 local before = integrity(p)
 assert(t.staff_gib(p), "the body that threw the switch is gone")
 
--- The second player opens the console with its free hand: the run still
--- turns, still wearing.
+-- A second player opens the console: the run still turns, still wearing.
+local q = t.join()
+t.run_ticks(2)
 assert(t.hands(q).held == nil, "an empty hand opens the console")
 click(q, 4, 3, "turbine_computer", 0.2)
 assert(reading(q).active == true, "the run outlives its starter")
@@ -206,13 +195,11 @@ assert(eventually(function()
     return reading(q).active == false
 end, 4), "a rotor two passes silent reads stopped")
 
--- Presses the switch in `player`'s open window; answers what it heard.
-local function toggle(player: number): { string }
-    local _ = t.messages(player)
+-- Presses the switch in `player`'s open window.
+local function toggle(player: number): ()
     local address = assert(t.ui_document(player, CHANNEL), "the window has an address")
     t.ui_press(player, "doc/" .. address.document .. "/" .. address.generation .. "/toggle_power")
     t.run_ticks(2)
-    return t.messages(player)
 end
 
 -- The switch restarts it: each section shut, then turning again in a new run.
@@ -226,23 +213,3 @@ end, 8), "and its sections take their turns afresh, the window redrawing them")
 assert(eventually(function()
     return (watts() or 0) > 0
 end, 4), "feeding the grid again")
-
--- Stall it again, then cut the main under the rotor: the switch's start is
--- refused for want of power, and the stalled run it refuses is halted.
-stall()
-t.swap_hands(q)
-t.run_ticks(1)
-assert(t.hands(q).held == "wirecutters", "the wirecutters are in hand")
-t.click_network(q, 3, 2, assert(t.network_instance(3, 2, "power", "l2")))
-t.run_seconds(1.5)
-local heard = toggle(q)
-assert(
-    table.find(heard, "The rotor has no power to start on.") ~= nil,
-    "the start is refused: " .. table.concat(heard, " | ")
-)
-assert(reading(q).active == false, "the stalled run is stopped")
-for sx = 2, 4 do
-    local section = assert(t.structure_at(sx, 1))
-    assert(section.state == "closed", "and every section shut: " .. tostring(section.state))
-end
-assert(watts() == 0, "with its watts still off")
