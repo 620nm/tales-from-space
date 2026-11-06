@@ -225,7 +225,7 @@ if sim ~= nil then
             remember_viewer(machine, viewer)
         end
     end
-    local function update(machine: Handle, viewer: Handle): UiOpenRefusal?
+    local function update(machine: Handle, viewer: Handle): UiTargetRefusal?
         return ui.update({
             viewer = viewer,
             owner = machine,
