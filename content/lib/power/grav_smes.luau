@@ -104,7 +104,7 @@ end
 -- Nil past the map's edge, which a part drifting in open space can reach.
 local tile_beside = ignition.tile_beside
 
--- The centre a standing part implies: the tile it would stand beside.
+-- The center a standing part implies: the tile it would stand beside.
 local function implied_center(part: Handle): TileAddress?
     local tile = part.tile
     if tile == nil then

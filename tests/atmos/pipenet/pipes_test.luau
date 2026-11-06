@@ -486,7 +486,7 @@ local neighbor = assert(network_matter.pressure(4, 2))
 assert(vented < 25.0, "the vented main emptied: " .. vented)
 assert(
     neighbor > 90.0,
-    "and its parallel neighbour, one tile away on the same layer, never "
+    "and its parallel neighbor, one tile away on the same layer, never "
         .. "lost a mole: "
         .. neighbor
 )

@@ -5,7 +5,7 @@
 --
 -- * with a trace of ammonia it polymerises to tholin and runs hot
 --   (content/reactions/organics/hcn_polymerization.luau);
--- * with the same ammonia and a little sulphuric acid it keeps: the acid
+-- * with the same ammonia and a little sulfuric acid it keeps: the acid
 --   blocks the rule, as stabilised HCN is kept in industry;
 -- * with nothing in it, it keeps too: the ammonia is the catalyst.
 local HCN_MOL = 0.5

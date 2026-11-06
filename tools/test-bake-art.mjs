@@ -141,7 +141,7 @@ function decodePng(bytes, label) {
   if (!head) throw new Error(`${label} has no IHDR`);
   if (head.depth !== 8 || head.color !== 6 || head.interlace !== 0)
     throw new Error(
-      `${label} is depth ${head.depth} color type ${head.colour} interlace `
+      `${label} is depth ${head.depth} color type ${head.color} interlace `
       + `${head.interlace}; atlas pages are 8-bit RGBA, not interlaced`,
     );
   const { width, height } = head;
@@ -245,7 +245,7 @@ test("tinted_art_is_baked_gray", { skip }, () => {
       colored = pixels[i + 3] > 0
         && (pixels[i] !== pixels[i + 1] || pixels[i + 1] !== pixels[i + 2]);
     assert.ok(!colored,
-      `${name} is baked with colour in it; the tint belongs at draw time `
+      `${name} is baked with color in it; the tint belongs at draw time `
       + "(rebake: cargo run -p xtask -- bake-atlas --tg <checkout>)");
   }
 });
@@ -253,7 +253,7 @@ test("tinted_art_is_baked_gray", { skip }, () => {
 // Half of tg's art is a grayscale config: a flat silhouette whose only job
 // is to take a color, plus sibling layers carrying the actual shape. A
 // real sprite has tonal variation; a mask does not. The rule fires only
-// where the flat colour is also achromatic, which is what every unbaked
+// where the flat color is also achromatic, which is what every unbaked
 // greyscale config looks like and what no drawn sprite does.
 test("no_sprite_is_a_bare_color_mask", { skip }, () => {
   // Deliberately flat: a synthetic fill quad, the void, the ghost
@@ -284,7 +284,7 @@ test("no_sprite_is_a_bare_color_mask", { skip }, () => {
       for (const [key, count] of histogram) if (count > dominant) [color, dominant] = [key, count];
       const channels = [(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff];
       // Chromatic: drawn art, however flat. A greyscale config's silhouette
-      // is grey by construction, so this cannot excuse one.
+      // is gray by construction, so this cannot excuse one.
       if (Math.max(...channels) - Math.min(...channels) > 6) continue;
       const frac = dominant / area;
       assert.ok(frac < 0.85,

@@ -36,7 +36,7 @@
 --   salglu        water + salt + sugar
 --   multiver      ash + salt, at 400 K
 --   libital       phenol + saltpeter, at 700 K
---   aiuri         ammonia + sulphuric acid, under a lid, kept warm
+--   aiuri         ammonia + sulfuric acid, under a lid, kept warm
 --   epinephrine   phenol + acetone + diethylamine + chlorine
 --
 -- THE PERMANENT GASES ARE NOT ON IT. Oxygen, nitrogen, hydrogen and

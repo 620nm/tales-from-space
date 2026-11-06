@@ -11,7 +11,7 @@ export interface FileBuffer {
   sourceView?: boolean;
   sourceVisible?: boolean;
   pending?: SaveReceipt;
-  /** A cancelled native save whose acknowledgement can still reconcile the draft. */
+  /** A canceled native save whose acknowledgement can still reconcile the draft. */
   canceledSave?: SaveReceipt;
   continuation?: Command;
   /** A local workspace change waiting behind the same dirty guard. */

@@ -124,7 +124,7 @@ diethylamine) and tg's base element shelf:
 | salglu | water + salt + sugar | 0.0025 | 0.25 brute + 0.25 burn, on a 1-in-3 roll | — |
 | multiver | ash + salt, at 400 K | 0.0025 | 0.5 tox | 0.5 onto the lungs |
 | libital | phenol + saltpeter, at 700 K | 0.003 | 1.5 brute | — (lunatic-calibrated, half tg's 3) |
-| aiuri | ammonia + sulphuric acid, warm | 0.0025 | 2 burn | 0.25 onto the eyes |
+| aiuri | ammonia + sulfuric acid, warm | 0.0025 | 2 burn | 0.25 onto the eyes |
 | epinephrine | phenol + acetone + diethylamine + chlorine | 0.00125 | 0.5 of each of the four pools, **only past `crit`** | — |
 
 Multiver and aiuri are `/datum/substance/medicine/c2`, tg's medicine that
