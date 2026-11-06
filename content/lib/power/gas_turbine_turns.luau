@@ -149,7 +149,7 @@ end
 local function check(rotor: Handle, record: RunRecord): boolean
     local compressor, outlet = gas_turbine.ends(rotor)
     local whole = compressor ~= nil and outlet ~= nil and record_lib.linked(rotor)
-    if not whole or not sim.is_powered(rotor) then
+    if not whole then
         gas_turbine.connected(rotor)
         halt(rotor, record)
         return false

@@ -47,7 +47,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-t.click(p, 1, 2, t.target_at(p, 1, 2, "multitool"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "multitool")))
 t.run_ticks(2)
 assert(t.hands(p).held == "multitool", "the multitool in hand")
 
@@ -75,7 +75,7 @@ local cases = {
 for _, case in ipairs(cases) do
     walk_to(case.x)
     local _ = t.messages(p)
-    t.click(p, case.x, 1, t.target_at(p, case.x, 1, "core_rotor"))
+    t.click(p, case.x, 1, assert(t.target_at(p, case.x, 1, "core_rotor")))
     t.run_seconds(0.2)
     local heard = t.messages(p)
     assert(

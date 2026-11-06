@@ -62,7 +62,7 @@ end
 -- Each supply lies alone on its own tile, so none hides another.
 local function take(x: number, y: number, id: string)
     assert(t.hands(p).held == nil, "a free hand for " .. id)
-    t.click(p, x, y, t.target_at(p, x, y, id))
+    t.click(p, x, y, assert(t.target_at(p, x, y, id)))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
 end
@@ -80,7 +80,7 @@ end
 
 local function click(x: number, y: number, id: string, seconds: number)
     local _ = t.messages(p)
-    t.click(p, x, y, t.target_at(p, x, y, id))
+    t.click(p, x, y, assert(t.target_at(p, x, y, id)))
     t.run_seconds(seconds)
     heard = t.messages(p)
 end

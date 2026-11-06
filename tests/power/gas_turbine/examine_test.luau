@@ -35,7 +35,7 @@ local p = t.join()
 t.tick()
 
 local function pick(x: number, y: number, id: string)
-    t.click(p, x, y, t.target_at(p, x, y, id))
+    t.click(p, x, y, assert(t.target_at(p, x, y, id)))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
 end
@@ -49,7 +49,7 @@ local function take(id: string)
 end
 
 local function click(x: number, y: number, id: string)
-    t.click(p, x, y, t.target_at(p, x, y, id))
+    t.click(p, x, y, assert(t.target_at(p, x, y, id)))
     t.run_seconds(0.2)
 end
 

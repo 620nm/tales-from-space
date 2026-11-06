@@ -34,7 +34,7 @@ local STOP_MAX_RPM = 1000
 -- reach (lib/power/gas_turbine_turns.luau).
 local REFUSAL_RADIUS = 7
 
-local REFUSALS = { "not_linked", "running", "not_running", "unpowered", "wrecked", "too_fast" }
+local REFUSALS = { "not_linked", "running", "not_running", "wrecked", "too_fast" }
 
 type MessageRow = { key: string, placeholders: { string } }
 
@@ -102,7 +102,7 @@ local function refuse_start(
     return refuse(reason)
 end
 
--- The power switch on: the line linked and whole, the rotor fed and sound.
+-- The power switch on: the line linked and whole, the rotor sound.
 -- A stalled run counts as stopped, so the switch restarts it. Answers
 -- whether it started, else the refusal's key; `actor` hears nothing here.
 function gas_turbine_run.start(rotor: Handle, _actor: Handle?): (boolean, string?)
@@ -116,9 +116,6 @@ function gas_turbine_run.start(rotor: Handle, _actor: Handle?): (boolean, string
     end
     if record_lib.integrity(record.damage) <= 0 then
         return refuse_start(rotor, record, "wrecked")
-    end
-    if not sim.is_powered(rotor) then
-        return refuse_start(rotor, record, "unpowered")
     end
     local compressor, outlet = gas_turbine.ends(rotor)
     record.active = true

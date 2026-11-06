@@ -6,7 +6,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- keeps checking in and the heat behind its compressor keeps wearing it
 -- (turbine.dm:634-640); a second player's window shows it. Turns canceled
 -- outright (a transfer off the map, a quarantine) leave a stalled run that
--- reads stopped, its watts' lease lapsing unrenewed; the switch restarts it.
+-- reads stopped, its watts' lease lapsing unrenewed; the switch restarts it,
+-- and a start it refuses (here, a line missing its outlet) halts it instead.
 
 local CHANNEL = "turbine"
 
@@ -113,7 +114,7 @@ local function eventually(holds: () -> boolean, seconds: number): boolean
 end
 
 local function click(player: number, x: number, y: number, id: string, seconds: number): ()
-    t.click(player, x, y, t.target_at(player, x, y, id))
+    t.click(player, x, y, assert(t.target_at(player, x, y, id)))
     t.run_seconds(seconds)
 end
 
@@ -195,11 +196,13 @@ assert(eventually(function()
     return reading(q).active == false
 end, 4), "a rotor two passes silent reads stopped")
 
--- Presses the switch in `player`'s open window.
-local function toggle(player: number): ()
+-- Presses the switch in `player`'s open window; answers what it heard.
+local function toggle(player: number): { string }
+    local _ = t.messages(player)
     local address = assert(t.ui_document(player, CHANNEL), "the window has an address")
     t.ui_press(player, "doc/" .. address.document .. "/" .. address.generation .. "/toggle_power")
     t.run_ticks(2)
+    return t.messages(player)
 end
 
 -- The switch restarts it: each section shut, then turning again in a new run.
@@ -213,3 +216,21 @@ end, 8), "and its sections take their turns afresh, the window redrawing them")
 assert(eventually(function()
     return (watts() or 0) > 0
 end, 4), "feeding the grid again")
+
+-- Stall it again, then take the outlet away: the line is no longer whole,
+-- so the switch's start is refused and the stalled run it refuses is halted.
+stall()
+local outlet = assert(t.structure_at(4, 1), "the outlet stands")
+assert(t.destroy(outlet.entity) == nil, "the outlet is removed")
+assert(t.structure_at(4, 1) == nil, "and is gone from its tile")
+local heard = toggle(q)
+assert(
+    table.find(heard, "The turbine's line is not linked. Link the rotor with a multitool first.") ~= nil,
+    "the start is refused: " .. table.concat(heard, " | ")
+)
+assert(reading(q).active == false, "the stalled run is stopped")
+for sx = 2, 3 do
+    local section = assert(t.structure_at(sx, 1))
+    assert(section.state == "closed", "and every section left shut: " .. tostring(section.state))
+end
+assert(watts() == 0, "with its watts still off")

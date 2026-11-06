@@ -202,4 +202,4 @@ outright stop feeding within them. Heat wears it (`:634-662`) to an alarm on
 the engineering channel with tg's alert at 30 tiles, then a blast as big as
 the shaft is fast (`:646-659`). A shut rotor feeds 0 W. A run whose rotor
 misses two passes reads stopped; the switch restarts it, and a start it
-refuses halts it. `generator`/`solar`: 100/8 kW.
+refuses, its line broken or the rotor wrecked, halts it. `generator`/`solar`: 100/8 kW.

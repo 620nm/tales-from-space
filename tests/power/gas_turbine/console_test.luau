@@ -73,7 +73,7 @@ end
 
 local function open_console()
     assert(t.hands(p).held == nil, "an empty hand opens the console")
-    t.click(p, 5, 4, t.target_at(p, 5, 4, "turbine_computer"))
+    t.click(p, 5, 4, assert(t.target_at(p, 5, 4, "turbine_computer")))
     t.run_ticks(2)
 end
 
@@ -85,12 +85,12 @@ assert(not ui_controls.find(p, "/toggle_power", scope()), "with no switch to pre
 t.ui_close(p, CHANNEL)
 
 -- Log the rotor in the multitool, then link the console to it.
-t.click(p, 5, 3, t.target_at(p, 5, 3, "multitool"))
+t.click(p, 5, 3, assert(t.target_at(p, 5, 3, "multitool")))
 t.run_ticks(2)
 assert(t.hands(p).held == "multitool", "the multitool is in hand")
-t.click(p, 3, 3, t.target_at(p, 3, 3, "core_rotor"))
+t.click(p, 3, 3, assert(t.target_at(p, 3, 3, "core_rotor")))
 t.run_seconds(0.2)
-t.click(p, 5, 4, t.target_at(p, 5, 4, "turbine_computer"))
+t.click(p, 5, 4, assert(t.target_at(p, 5, 4, "turbine_computer")))
 t.run_seconds(0.5)
 t.swap_hands(p)
 t.run_ticks(1)

@@ -52,7 +52,7 @@ end
 -- which the build uses up whole.
 local function take(x: number, y: number, id: string)
     assert(t.hands(p).held == nil, "a free hand for " .. id)
-    t.click(p, x, y, t.target_at(p, x, y, id))
+    t.click(p, x, y, assert(t.target_at(p, x, y, id)))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
 end
@@ -64,7 +64,7 @@ local function swap()
 end
 
 local function use_on_site(id: string, seconds: number)
-    t.click(p, SITE_X, SITE_Y, t.target_at(p, SITE_X, SITE_Y, id))
+    t.click(p, SITE_X, SITE_Y, assert(t.target_at(p, SITE_X, SITE_Y, id)))
     t.run_seconds(seconds)
 end
 

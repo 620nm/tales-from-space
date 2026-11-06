@@ -279,7 +279,6 @@
   "lunatic/tfs:lib.gas_turbine_run.not_linked": "The turbine's line is not linked. Link the rotor with a multitool first.",
   "lunatic/tfs:lib.gas_turbine_run.running": "The turbine is already running.",
   "lunatic/tfs:lib.gas_turbine_run.not_running": "The turbine is not running.",
-  "lunatic/tfs:lib.gas_turbine_run.unpowered": "The rotor has no power to start on.",
   "lunatic/tfs:lib.gas_turbine_run.wrecked": "The rotor is wrecked and will not turn again.",
   "lunatic/tfs:lib.gas_turbine_run.too_fast": "The rotor is spinning too fast to stop safely. Let it slow down first.",
   "lunatic/tfs:lib.gas_turbine_run.failed": "The gas turbine tears itself apart!",

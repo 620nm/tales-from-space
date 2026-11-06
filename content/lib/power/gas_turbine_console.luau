@@ -146,7 +146,7 @@ end
 
 -- `interaction.act` on the console's window: tg's `toggle_power` and
 -- `regulate` (turbine_computer.dm:86-119). The run module refuses a start
--- on a broken or unpowered line and a stop above 1000 rpm.
+-- on a broken or wrecked line and a stop above 1000 rpm.
 function gas_turbine_console.act(ev: InteractionActPayload): boolean | { replaced: boolean }
     if ev.channel ~= CHANNEL then
         return { replaced = false }

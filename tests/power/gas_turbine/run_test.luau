@@ -124,7 +124,7 @@ end
 
 local function click(x: number, y: number, id: string, seconds: number): { string }
     local _ = t.messages(p)
-    t.click(p, x, y, t.target_at(p, x, y, id))
+    t.click(p, x, y, assert(t.target_at(p, x, y, id)))
     t.run_seconds(seconds)
     return t.messages(p)
 end
