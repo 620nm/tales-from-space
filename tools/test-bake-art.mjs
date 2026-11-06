@@ -141,7 +141,7 @@ function decodePng(bytes, label) {
   if (!head) throw new Error(`${label} has no IHDR`);
   if (head.depth !== 8 || head.color !== 6 || head.interlace !== 0)
     throw new Error(
-      `${label} is depth ${head.depth} color type ${head.colour} interlace `
+      `${label} is depth ${head.depth} color type ${head.color} interlace `
       + `${head.interlace}; atlas pages are 8-bit RGBA, not interlaced`,
     );
   const { width, height } = head;
