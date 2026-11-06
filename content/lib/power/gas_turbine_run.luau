@@ -142,12 +142,15 @@ function gas_turbine_run.start(rotor: Handle, _actor: Handle?): (boolean, string
 end
 
 -- `entity.initialize.done` on every section, after `gas_turbine`'s own
--- link: a rotor mapped running (`STARTS_RUNNING`) whose line this stand-up
--- completed starts its first run. A rotor that has run once never restarts
--- off the knob, so a section rebuilt later leaves the switch alone; a
--- refused start is said to the room round the rotor, which stays shut.
--- The start runs in a task on the rotor: an end section's own anchor
--- reaches only its 3x3, and the line's far end lies past it.
+-- link: a rotor mapped running (`STARTS_RUNNING`) starts its first run off
+-- its own stand-up, once its line links. A map's sections all stand before
+-- any initializes (the engine's docs/luau-api/lifecycle.md), so the rotor's
+-- own link sees the whole line. A rotor that has run once never restarts
+-- off the knob, so a later rebuild leaves the switch alone; a refused start
+-- is said to the room round the rotor, which stays shut. The start runs in
+-- a task the rotor's own initializer spawns: initialization may not dress
+-- the line, and a task keeps its spawner's anchor, the rotor's tile, whose
+-- 3x3 reaches both ends.
 local function mapped_start(rotor: Handle): ()
     if not rotor.alive or rotor.vars[gas_turbine.STARTS_RUNNING] ~= true then
         return
@@ -167,12 +170,11 @@ local function mapped_start(rotor: Handle): ()
 end
 
 function gas_turbine_run.on_section_initialized(ev: EntityInitializeDonePayload): ()
-    local section = ev.entity
-    if not section.alive then
+    local rotor = ev.entity
+    if not rotor.alive or (rotor.base or rotor.prototype) ~= gas_turbine.CORE then
         return
     end
-    local rotor = gas_turbine.core_of(section)
-    if rotor == nil or rotor.vars[gas_turbine.STARTS_RUNNING] ~= true then
+    if rotor.vars[gas_turbine.STARTS_RUNNING] ~= true then
         return
     end
     local record = record_lib.read(rotor)
