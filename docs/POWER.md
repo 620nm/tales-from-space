@@ -190,11 +190,12 @@ and logs the rotor for the console. An open panel unlinks the line.
 
 An empty hand opens the console's window (`lib/power/gas_turbine_console.luau`);
 its switch (`lib/power/gas_turbine_run.luau`) starts a linked, unwrecked rotor
-and refuses a stop above 1000 rpm (`turbine_computer.dm:94`). Each section is a
+and refuses a stop above 1000 rpm (`turbine_computer.dm:94`); a rotor mapped
+`running` starts its first run once its line links at boot. Each section is a
 sealed vessel of tg's 1000/3000/6000 L and, running, runs a task on its own
 tile, a tick apart in flow order, for tg's 2 s pass (`turbine.dm:625-685`,
 `lib/power/gas_turbine_turns.luau`): the compressor draws the tile behind, the
 outlet exhausts ahead and sets the rotor, a source (`output_w`) feeding the
 cable under it, to `rpm × 4.5` W. Heat wears it (`:634-662`) to an alarm, then
-the blast. A shut rotor feeds 0 W. A run whose rotor misses two passes reads
+a blast as big as the shaft is fast (`:646-659`). A shut rotor feeds 0 W. A run whose rotor misses two passes reads
 stopped; the switch restarts it. `generator`/`solar`: 100/8 kW.

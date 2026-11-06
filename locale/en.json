@@ -1,6 +1,7 @@
 {
   "lunatic/tfs:editor.laptop.open": "Lid open",
   "lunatic/tfs:editor.laptop.powered": "Powered on",
+  "lunatic/tfs:editor.core_rotor.running": "Starts running",
   "lunatic/tfs:ui.affordance.press": "Press button",
   "lunatic/tfs:action.pick_up": "Pick up",
   "lunatic/tfs:action.open": "Open",
@@ -253,7 +254,7 @@
   "lunatic/tfs:ui.affordance.open_panel": "Open panel",
   "lunatic/tfs:ui.affordance.close_panel": "Close panel",
   "lunatic/tfs:ui.affordance.deconstruct": "Deconstruct",
-  "lunatic/tfs:ui.affordance.link_parts": "Link/Log parts",
+  "lunatic/tfs:ui.affordance.link_parts": "Link turbine parts",
   "lunatic/tfs:ui.affordance.link_console": "Link turbine",
   "lunatic/tfs:lib.gas_turbine.panel_opened": "You open the maintenance panel.",
   "lunatic/tfs:lib.gas_turbine.panel_closed": "You close the maintenance panel.",

@@ -2,6 +2,7 @@ local blast = require("@lib/blast")
 local gas_turbine = require("@lib/power/gas_turbine")
 local record_lib = require("@lib/power/gas_turbine_record")
 local stages = require("@lib/power/gas_turbine_stages")
+local turbine_parts = require("@lib/power/turbine_parts")
 
 -- The gas turbine's pass, tg's `core_rotor/process` (turbine.dm:625-685),
 -- split over one task per section. Each is spawned from that section's own
@@ -39,6 +40,28 @@ local ALARM_MIN_SECONDS = 5
 -- alarm over the engineering channel (turbine.dm:661); this pack has no
 -- machine voice on a channel yet.
 local ALARM_RADIUS = 7
+-- The failure's blast grows with the shaft's speed (turbine.dm:646-659):
+-- each band answers below `below` times TURBINE_MAX_BASE_RPM (the tier-one
+-- rating, turbine_parts.max_rpm). tg sets off nothing at or past the last
+-- band's limit; here a rotor that fast takes the last band's blast instead.
+type BlastBand = { below: number, size: blast.BlastSize }
+local BLAST_BANDS: { BlastBand } = {
+    { below = 1, size = { devastation = 0, heavy = 1, light = 4 } },
+    { below = 2.5, size = { devastation = 0, heavy = 2, light = 6 } },
+    { below = 2.5 * 2.5, size = { devastation = 1, heavy = 3, light = 7 } },
+    { below = 2.5 * 2.5 * 2.5, size = { devastation = 2, heavy = 5, light = 7 } },
+}
+
+-- The failure's blast for a shaft turning at `rpm`.
+local function failure_blast(rpm: number): blast.BlastSize
+    local base = turbine_parts.max_rpm(1)
+    for _, band in ipairs(BLAST_BANDS) do
+        if rpm < band.below * base then
+            return band.size
+        end
+    end
+    return BLAST_BANDS[#BLAST_BANDS].size
+end
 
 -- Takes the rotor's watts off the grid; a source keeps its last setpoint.
 local function zero(rotor: Handle): ()
@@ -90,12 +113,13 @@ local function wear(rotor: Handle, record: RunRecord, intake_k: number, max_k: n
         shout(rotor, "damage_alarm", { integrity = string.format("%.2f", integrity) })
         return true
     end
-    -- tg's blast grows with the rpm (:646-659); this pack has one blast.
+    -- The speed the blast is sized by, read before `halt` stills the shaft.
+    local size = failure_blast(record.rpm)
     halt(rotor, record)
     zero(rotor)
     shout(rotor, "failed", {})
-    blast.apply(rotor.tile)
-    blast.cast(rotor.tile)
+    blast.apply(rotor.tile, size)
+    blast.cast(rotor.tile, size)
     return false
 end
 

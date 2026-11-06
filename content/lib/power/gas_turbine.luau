@@ -37,6 +37,9 @@ gas_turbine.FACINGS = { "south", "west", "north", "east" }
 gas_turbine.LINKED = "lunatic/tfs:turbine_linked"
 -- The rotor a console is linked to, as a buffer ref (tg `turbine_core`).
 gas_turbine.CONSOLE_LINK = "lunatic/tfs:turbine_core"
+-- The rotor's map knob: a placement that sets it starts the rotor's first
+-- run once its line links at stand-up (lib/power/gas_turbine_run.luau).
+gas_turbine.STARTS_RUNNING = "lunatic/tfs:turbine_starts_running"
 
 -- Every line is the pack's own sentence for one of tg's: the refusals for
 -- the balloons of turbine.dm:519-558, `linked` and `buffer_stored` for
@@ -143,8 +146,8 @@ function gas_turbine.section_transitions(prototype: string): { { [string]: any }
     }
 end
 
--- The multitool row on the core rotor: tg's "Link/Log parts" screentip
--- (turbine.dm:427-432), offered with the panel shut.
+-- The multitool row on the core rotor, the pack's words for tg's
+-- "Link/Log parts" screentip (turbine.dm:427-432), offered with the panel shut.
 function gas_turbine.link_parts_row(): { [string]: any }
     return {
         id = "link_parts",

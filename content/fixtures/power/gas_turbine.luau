@@ -3,7 +3,8 @@ local gas_turbine_run = require("@lib/power/gas_turbine_run")
 local gas_turbine_console = require("@lib/power/gas_turbine_console")
 
 -- The gas turbine's handlers (lib/power/gas_turbine.luau): every section
--- links the line it completes when it stands up and hears its own panel,
+-- links the line it completes when it stands up (starting a rotor mapped
+-- running) and hears its own panel,
 -- the core rotor answers the multitool that links the line, and the console
 -- answers the multitool carrying a rotor and opens its window to an empty
 -- hand (lib/power/gas_turbine_console.luau). A section set running takes its
@@ -22,12 +23,16 @@ if sim ~= nil then
         sim.define("message", row.key, { placeholders = row.placeholders })
     end
     sim.define("script_var", gas_turbine_run.RUN, { replicate = "server" })
+    sim.define("script_var", gas_turbine.STARTS_RUNNING, { replicate = "server" })
     for _, id in ipairs(gas_turbine.SECTIONS) do
         local behavior = sim.define("behavior", "lunatic/tfs:" .. id, { prototype = id })
         behavior:handle(
             "entity.initialize.done",
             { kind = "react" },
-            gas_turbine.on_section_initialized
+            function(ev: EntityInitializeDonePayload)
+                gas_turbine.on_section_initialized(ev)
+                gas_turbine_run.on_section_initialized(ev)
+            end
         )
         behavior:handle(
             "structure.changed",
