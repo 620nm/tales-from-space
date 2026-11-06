@@ -542,27 +542,33 @@ function controller.device(ev: LinkMessageDonePayload): ()
     for _, command in ipairs(commands :: { DeviceCommand }) do
         local obj = handles[command.mac]
         if command.op == "open" then
-            sim.door.open({ subject = obj, request_id = command.id })
-            device_queue.expect(obj, "door", command.op, command.id)
+            if sim.door.open({ subject = obj, request_id = command.id }) == nil then
+                device_queue.expect(obj, "door", command.op, command.id)
+            end
         elseif command.op == "close" then
-            sim.door.close({ subject = obj, request_id = command.id })
-            device_queue.expect(obj, "door", command.op, command.id)
+            if sim.door.close({ subject = obj, request_id = command.id }) == nil then
+                device_queue.expect(obj, "door", command.op, command.id)
+            end
         elseif command.op == "bolt" then
-            sim.latch.set({
+            local refused = sim.latch.set({
                 subject = obj,
                 request_id = command.id,
                 latch = "bolted",
                 on = command.bolted,
             })
-            device_queue.expect(obj, "latch", "bolted", command.id)
+            if refused == nil then
+                device_queue.expect(obj, "latch", "bolted", command.id)
+            end
         elseif command.op == "emergency" then
-            sim.latch.set({
+            local refused = sim.latch.set({
                 subject = obj,
                 request_id = command.id,
                 latch = "emergency",
                 on = command.emergency,
             })
-            device_queue.expect(obj, "latch", "emergency", command.id)
+            if refused == nil then
+                device_queue.expect(obj, "latch", "emergency", command.id)
+            end
         elseif command.op == "vent" then
             local args: AtmosConfigureCommand = { entity = obj, on = command.on }
             if command.on then

@@ -174,22 +174,23 @@ local total = vessel.moles
 -- purpose: the engine is growing a verb per gesture over the generic
 -- `sim.matter.transfer`, and when it lands each of these becomes that
 -- verb without a roster file noticing.
-local function do_pour(self: Handle, target: Handle, amount: number | "all")
+-- Each returns the command's refusal word, nil when accepted.
+local function do_pour(self: Handle, target: Handle, amount: number | "all"): MatterRefusal?
     -- A pour's overflow is the deck under the far vessel (docs/LUAU-API.md 8.2).
-    sim.matter.pour({ from = self, to = target, amount = amount })
+    return sim.matter.pour({ from = self, to = target, amount = amount })
 end
 
-local function do_sip(self: Handle, drinker: Handle, amount: number)
-    sim.matter.drink({ from = self, who = drinker, amount = amount })
+local function do_sip(self: Handle, drinker: Handle, amount: number): MatterRefusal?
+    return sim.matter.drink({ from = self, who = drinker, amount = amount })
 end
 
-local function do_spill(self: Handle)
+local function do_spill(self: Handle): MatterRefusal?
     -- No `at`: a spill names the tile the gesture is happening on.
-    sim.matter.spill({ from = self })
+    return sim.matter.spill({ from = self })
 end
 
-local function do_charge(self: Handle, source: Handle, amount: number)
-    sim.matter.fill({ from = source, to = self, amount = amount })
+local function do_charge(self: Handle, source: Handle, amount: number): MatterRefusal?
+    return sim.matter.fill({ from = source, to = self, amount = amount })
 end
 
 -- CHARGING OFF THE LINE, which is a pour with the ends swapped and a
@@ -252,7 +253,9 @@ local function charge(
         return true
     end
     local want = head_kpa * 1000.0 * (mine.headspace_l / 1000.0) / (R_J_PER_MOL_K * line.temp_k)
-    do_charge(self, source, math.min(want, STROKE_MOL))
+    if do_charge(self, source, math.min(want, STROKE_MOL)) ~= nil then
+        return true
+    end
     sim.sound.play({ sound = "spray", at = at })
     sim.message.send({
         recipient = user,
@@ -355,12 +358,15 @@ local function soak(
         sim.message.send({ recipient = user, message = said(if ground then lines.dry_ground else lines.dry) })
         return
     end
-    sim.matter.transfer({
+    local refused = sim.matter.transfer({
         from = at.matter,
         to = self,
         amount = "all",
         phases = if solid_free then { "solid", "liquid" } else { "liquid" },
     })
+    if refused ~= nil then
+        return
+    end
     local spoken = if ground then lines.soak_ground else lines.soak
     if deck.liquid < DREGS_MOL then
         spoken = lines.deposit
@@ -383,12 +389,15 @@ local function scoop(spec: Spec, self: Handle, user: Handle, at: TileAddress, de
         sim.message.send({ recipient = user, message = sim.msg(SOAK_FULL, { noun = spec.noun }) })
         return
     end
-    sim.matter.transfer({
+    local refused = sim.matter.transfer({
         from = at.matter,
         to = self,
         amount = math.random(SCOOP_UNITS_MIN, SCOOP_UNITS_MAX) * U,
         phases = { "liquid" },
     })
+    if refused ~= nil then
+        return
+    end
     sim.message.send({
         recipient = user,
         message = sim.msg(SCOOP, { noun = spec.noun, liquid = deck.deepest or "" }),
@@ -581,8 +590,9 @@ function vessel.attach(spec: Spec): Definition
                 if dregs(spec, self, user) then
                     return true
                 end
-                do_pour(self, clicked.entity, assert(pour_amount))
-                sim.message.send({ recipient = user, message = said(assert(pour_line)) })
+                if do_pour(self, clicked.entity, assert(pour_amount)) == nil then
+                    sim.message.send({ recipient = user, message = said(assert(pour_line)) })
+                end
                 return true
             end
 
@@ -591,9 +601,10 @@ function vessel.attach(spec: Spec): Definition
                 if dregs(spec, self, user) then
                     return true
                 end
-                sim.sound.play({ sound = "drink", at = at })
-                do_sip(self, user, spec.sip.units * U)
-                sim.message.send({ recipient = user, message = said(assert(sip_line)) })
+                if do_sip(self, user, spec.sip.units * U) == nil then
+                    sim.sound.play({ sound = "drink", at = at })
+                    sim.message.send({ recipient = user, message = said(assert(sip_line)) })
+                end
                 return true
             end
 
@@ -638,8 +649,9 @@ function vessel.attach(spec: Spec): Definition
             if dregs(spec, self, user) then
                 return true
             end
-            do_spill(self)
-            sim.message.send({ recipient = user, message = said(if ground then spill_ground_line else spill_line) })
+            if do_spill(self) == nil then
+                sim.message.send({ recipient = user, message = said(if ground then spill_ground_line else spill_line) })
+            end
             return true
         end
     )

@@ -122,9 +122,12 @@ function grav_smes_run.show_status(body: Handle, report: Report?): ()
     end
 end
 
--- Load and field off, the shutdown animation, then standby.
+-- Load and field off, the shutdown animation, then standby. Both
+-- commands name the same body, so one refusal answers for both.
 local function spin_down(body: Handle): ()
-    sim.flow.set_load({ subject = body, on = false })
+    if sim.flow.set_load({ subject = body, on = false }) ~= nil then
+        return
+    end
     sim.gravity_source.set({ subject = body, on = false })
     set_state(body, SHUTDOWN)
     sim.spawn_task(body, function()
@@ -146,7 +149,9 @@ function grav_smes_run.start(body: Handle, actor: Handle?): ()
         return
     end
     tell(actor, MESSAGE .. "starting")
-    sim.flow.set_load({ subject = body, on = true })
+    if sim.flow.set_load({ subject = body, on = true }) ~= nil then
+        return
+    end
     sim.gravity_source.set({ subject = body, on = true })
     set_state(body, STARTUP)
     sim.spawn_task(body, function()
@@ -217,8 +222,9 @@ function grav_smes_run.on_initialize(ev: EntityInitializeDonePayload): ()
         return
     end
     if base_of(body.state) == ACTIVE then
-        sim.flow.set_load({ subject = body, on = true })
-        sim.gravity_source.set({ subject = body, on = true })
+        if sim.flow.set_load({ subject = body, on = true }) == nil then
+            sim.gravity_source.set({ subject = body, on = true })
+        end
     end
     grav_smes_run.show_status(body, nil)
 end

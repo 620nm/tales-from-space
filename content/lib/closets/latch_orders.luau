@@ -40,16 +40,20 @@ local latch_order_count = 0
 function latch_orders.order_toggle(target: Handle, latch: string, on: boolean, feedback: LatchFeedback): ()
 	latch_order_count += 1
 	local request_id = "closet_latch_" .. latch_order_count
-	sim.latch.set({ subject = target, latch = latch, on = on, request_id = request_id })
-	pending_latch_orders[request_id] = { target = target, latch = latch, on = on, feedback = feedback }
+	local refused = sim.latch.set({ subject = target, latch = latch, on = on, request_id = request_id })
+	if refused == nil then
+		pending_latch_orders[request_id] = { target = target, latch = latch, on = on, feedback = feedback }
+	end
 end
 
--- Orders one latch switch of a bust-open and returns its request id.
+-- Orders one latch switch of a bust-open and returns its request id. A
+-- refused order fires no completion, so it is answered as failed at once.
 function latch_orders.order_breakout(holder: Handle, latch: string, on: boolean): string
 	latch_order_count += 1
 	local request_id = "closet_breakout_" .. latch_order_count
-	sim.latch.set({ subject = holder, latch = latch, on = on, request_id = request_id })
-	breakout_orders[request_id] = { holder = holder, latch = latch, on = on, answered = false, success = false }
+	local refused = sim.latch.set({ subject = holder, latch = latch, on = on, request_id = request_id })
+	breakout_orders[request_id] =
+		{ holder = holder, latch = latch, on = on, answered = refused ~= nil, success = false }
 	return request_id
 end
 

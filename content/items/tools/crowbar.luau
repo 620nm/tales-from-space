@@ -67,15 +67,17 @@ if sim ~= nil then
             if sim.do_after(user, sim.ticks(2.5), {}) == "ok" then
                 local d = sim.door.at(x, y)
                 if d ~= nil and not d.open and not d.powered and not d.latches.bolted then
-                    sim.door.open({
+                    local refused = sim.door.open({
                         subject = d.subject,
                         request_id = "lunatic/tfs:crowbar",
                         force = true,
                     })
-                    sim.message.send({
-                        recipient = user,
-                        message = sim.msg("lunatic/tfs:items.crowbar.the_door_gives_way", {}),
-                    })
+                    if refused == nil then
+                        sim.message.send({
+                            recipient = user,
+                            message = sim.msg("lunatic/tfs:items.crowbar.the_door_gives_way", {}),
+                        })
+                    end
                 end
             else
                 sim.message.send({

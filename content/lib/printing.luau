@@ -165,7 +165,8 @@ end
 -- task that runs `body`. The body is pcalled and the cleanup is unconditional:
 -- a raise would otherwise discard the buffered unlock, and a task ending never
 -- releases a slot lock on its own. `body` returns the reason it stopped early,
--- or nil. `ended` hears how the job ended.
+-- or nil. `ended` hears how the job ended. False when the slot lock is refused
+-- (another holds it): nothing starts.
 local function enqueue(
     machine: Handle,
     busy_key: string,
@@ -175,12 +176,14 @@ local function enqueue(
     deadline: number,
     body: (started: number) -> string?,
     ended: (reason: string?) -> ()
-)
+): boolean
     printing.recover(machine, busy_key, slot)
-    machine.vars[busy_key] = sim.seconds(deadline)
     if slot ~= nil then
-        sim.item_slot.lock({ entity = machine, slot = slot, locked = true })
+        if sim.item_slot.lock({ entity = machine, slot = slot, locked = true }) ~= nil then
+            return false
+        end
     end
+    machine.vars[busy_key] = sim.seconds(deadline)
     sim.spawn_task(machine, function()
         local ok, stop = pcall(body, started)
         if slot ~= nil then
@@ -200,6 +203,7 @@ local function enqueue(
             record_failure(machine, "notice", err)
         end
     end)
+    return true
 end
 
 local function land_pages(machine: Handle, job: PrintJob, started: number): string?
@@ -235,14 +239,14 @@ function printing.start(machine: Handle, job: PrintJob): PrintRefusal?
     end
     local started = job.began_tick or sim.tick()
     local deadline = started + job.pages * sim.ticks(job.seconds)
-    enqueue(machine, job.busy_key, job.slot, false, started, deadline, function()
+    local enqueued = enqueue(machine, job.busy_key, job.slot, false, started, deadline, function()
         return land_pages(machine, job, started)
     end, function(stop)
         if stop ~= nil and job.stopped ~= nil then
             job.stopped(machine, stop)
         end
     end)
-    return nil
+    return if enqueued then nil else "busy"
 end
 
 -- Accepts a scan at the current tick: the sheet leaves `job.seconds` later.
@@ -255,7 +259,7 @@ function printing.scan(machine: Handle, job: ScanJob): PrintRefusal?
     end
     local started = sim.tick()
     local deadline = started + sim.ticks(job.seconds)
-    enqueue(machine, job.busy_key, job.slot, true, started, deadline, function()
+    local enqueued = enqueue(machine, job.busy_key, job.slot, true, started, deadline, function()
         sleep_until(deadline)
         return if sim.is_powered(machine) then nil else "offline"
     end, function(stop)
@@ -267,7 +271,7 @@ function printing.scan(machine: Handle, job: ScanJob): PrintRefusal?
             job.stopped(machine, stop)
         end
     end)
-    return nil
+    return if enqueued then nil else "busy"
 end
 
 return printing

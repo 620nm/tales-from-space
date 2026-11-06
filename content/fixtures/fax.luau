@@ -204,8 +204,7 @@ if sim ~= nil then
         }
     end
     local function open(machine: Handle, viewer: Handle)
-        remember_viewer(machine, viewer)
-        ui.open({
+        local refused = ui.open({
             viewer = viewer,
             owner = machine,
             channel = "fax",
@@ -222,9 +221,12 @@ if sim ~= nil then
             },
             presentation_key = "writing/fax",
         })
+        if refused == nil then
+            remember_viewer(machine, viewer)
+        end
     end
-    local function update(machine: Handle, viewer: Handle)
-        ui.update({
+    local function update(machine: Handle, viewer: Handle): UiOpenRefusal?
+        return ui.update({
             viewer = viewer,
             owner = machine,
             channel = "fax",
@@ -244,8 +246,8 @@ if sim ~= nil then
     local function refresh(machine: Handle): ()
         local rows = viewers[tostring(machine)] or {}
         for key, viewer in pairs(rows) do
-            local ok = pcall(update, machine, viewer)
-            if not ok then
+            local ok, refused = pcall(update, machine, viewer)
+            if not ok or refused ~= nil then
                 rows[key] = nil
             end
         end
@@ -418,7 +420,8 @@ if sim ~= nil then
             local machine = viewer_machines[key]
             if machine ~= nil then
                 for viewer_key, viewer in pairs(rows) do
-                    if not pcall(update, machine, viewer) then
+                    local ok, refused = pcall(update, machine, viewer)
+                    if not ok or refused ~= nil then
                         rows[viewer_key] = nil
                     end
                 end
@@ -523,8 +526,9 @@ if sim ~= nil then
         if occupied(ev.subject) then
             return true
         end
-        sim.item_slot.insert({ subject = ev.subject, item = held, slot = "media" })
-        open(ev.subject, ev.actor)
+        if sim.item_slot.insert({ subject = ev.subject, item = held, slot = "media" }) == nil then
+            open(ev.subject, ev.actor)
+        end
         return true
     end)
 

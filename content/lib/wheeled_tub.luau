@@ -118,8 +118,9 @@ function wheeled_tub.attach(spec: Spec): Definition
                 say(user, "lunatic/tfs:lib.wheeled_tub.rolled_away", spec.noun)
                 return
             end
-            table.insert(dumps, { tub = tub, user = user })
-            sim.matter.spill({ from = tub, at = at })
+            if sim.matter.spill({ from = tub, at = at }) == nil then
+                table.insert(dumps, { tub = tub, user = user })
+            end
         end)
     end
 
@@ -171,8 +172,9 @@ function wheeled_tub.attach(spec: Spec): Definition
         end
         sim.sound.play({ sound = "slosh", at = ev.at })
         -- `pour`: what will not fit runs onto the deck under the tub.
-        table.insert(pours, user)
-        sim.matter.pour({ from = held, to = tub, amount = "all" })
+        if sim.matter.pour({ from = held, to = tub, amount = "all" }) == nil then
+            table.insert(pours, user)
+        end
         return true
     end)
 

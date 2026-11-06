@@ -251,7 +251,10 @@ function grav_smes.set_ring(ev: InteractionUsePayload): boolean
         if command == nil then
             return
         end
-        sim.structure.replace(command)
+        if sim.structure.replace(command) ~= nil then
+            send(actor, MESSAGE .. "ring_blocked")
+            return
+        end
         sim.sound.play({ sound = "ratchet", at = assert(cart.tile) })
         send(actor, MESSAGE .. "ring_done")
     end)
@@ -408,7 +411,10 @@ function grav_smes.weld(ev: InteractionUsePayload): boolean | { replaced: boolea
             send(actor, MESSAGE .. "blocked")
             return
         end
-        sim.structure.replace(fresh)
+        if sim.structure.replace(fresh) ~= nil then
+            send(actor, MESSAGE .. "blocked")
+            return
+        end
         sim.matter.extract({
             owner = torch,
             amount = WELD_FUEL_MOLES,

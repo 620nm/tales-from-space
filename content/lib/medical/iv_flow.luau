@@ -145,7 +145,7 @@ local function stroke(
     mode: Mode,
     rate: number,
     headspace_l: number
-): ()
+): boolean
     local amount = rate * STROKE_SECONDS * MOL_PER_UNIT
     local donor: number? = nil
     local receiver: number? = nil
@@ -158,10 +158,10 @@ local function stroke(
         local available = vessel.moles(connection.vessel)
         if available == nil then
             disconnect_if_current(connection)
-            return
+            return false
         end
         if available <= 0 then
-            return
+            return true
         end
         donor = blood_identity.type_of(connection.vessel)
         receiver = blood_identity.type_of(connection.patient)
@@ -177,7 +177,7 @@ local function stroke(
             or normal ~= normal
             or normal <= 0
         then
-            return
+            return true
         end
 
         if blood < normal * SAFE_BLOOD_FRACTION then
@@ -192,12 +192,17 @@ local function stroke(
     end
 
     if amount <= 0 then
-        return
+        return true
     end
 
-    sim.matter.transfer({ from = from, to = to, amount = amount, phases = phases })
+    -- A refused stroke queues no transfer.done: file no note, and disconnect.
+    if sim.matter.transfer({ from = from, to = to, amount = amount, phases = phases }) ~= nil then
+        disconnect_if_current(connection)
+        return false
+    end
     blood_identity.note_transfusion(ISSUER, connection.patient, donor, receiver)
     table.insert(pending, { connection = connection, context = context, mode = mode })
+    return true
 end
 
 local function run(connection: FlowConnection, context: FlowContext): ()
@@ -226,7 +231,9 @@ local function run(connection: FlowConnection, context: FlowContext): ()
         if rate ~= rate or rate <= 0 then
             continue
         end
-        stroke(connection, context, body, mode, rate, headspace)
+        if not stroke(connection, context, body, mode, rate, headspace) then
+            return
+        end
     end
 end
 
