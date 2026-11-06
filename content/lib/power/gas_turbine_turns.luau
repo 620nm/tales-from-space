@@ -1,4 +1,5 @@
 local blast = require("@lib/blast")
+local radio = require("@lib/radio")
 local gas_turbine = require("@lib/power/gas_turbine")
 local record_lib = require("@lib/power/gas_turbine_record")
 local stages = require("@lib/power/gas_turbine_stages")
@@ -36,10 +37,17 @@ local DAMAGE_SCALE = 0.5
 local ALARM_JUMP = 2
 -- The alarm's cooldown floor, seconds (turbine.dm:643).
 local ALARM_MIN_SECONDS = 5
--- Pack-tuned: how far the alarm and the failure are heard. tg sends the
--- alarm over the engineering channel (turbine.dm:661); this pack has no
--- machine voice on a channel yet.
-local ALARM_RADIUS = 7
+-- The alarm goes out on the engineering channel (turbine.dm:661).
+local ALARM_CHANNEL = radio.channels.engineering
+-- tg's engine_alert1, heard 30 tiles out at full volume (turbine.dm:662;
+-- content/sounds.luau).
+local ALARM_SOUND = "engine_alert1"
+-- Pack-tuned: how far the failure is heard; tg says nothing at a failure.
+local FAILURE_RADIUS = 7
+-- The rotor's watts are leased for this many passes and renewed every pass:
+-- turns cancelled outright (a quarantine, a transfer) stop renewing them,
+-- and the grid loses them unattended, a missed pass to spare.
+local OUTPUT_HOLD_PASSES = 3
 -- The failure's blast grows with the shaft's speed (turbine.dm:646-659):
 -- each band answers below `below` times TURBINE_MAX_BASE_RPM (the tier-one
 -- rating, turbine_parts.max_rpm). tg sets off nothing at or past the last
@@ -63,7 +71,7 @@ local function failure_blast(rpm: number): blast.BlastSize
     return BLAST_BANDS[#BLAST_BANDS].size
 end
 
--- Takes the rotor's watts off the grid; a source keeps its last setpoint.
+-- Takes the rotor's watts off the grid and ends their lease.
 local function zero(rotor: Handle): ()
     sim.flow.set_output({ subject = rotor, watts = 0 })
 end
@@ -74,9 +82,21 @@ type Placeholders = { [string]: UnsafeMarkup | boolean | number | string }
 local function shout(rotor: Handle, key: string, values: Placeholders): ()
     sim.message.broadcast({
         at = rotor.tile,
-        radius = ALARM_RADIUS,
+        radius = FAILURE_RADIUS,
         message = sim.msg(record_lib.MESSAGE .. key, values),
     })
+end
+
+-- The damage alarm (turbine.dm:661-662): the rotor speaks on the
+-- engineering channel, its `damage_alarm` line, and sounds its alert.
+local function alarm(rotor: Handle, integrity: number): ()
+    local percent = string.format("%.2f", integrity)
+    sim.radio.say({
+        speaker = rotor,
+        channel = ALARM_CHANNEL,
+        text = sim.msg(record_lib.MESSAGE .. "damage_alarm", { integrity = percent }),
+    })
+    sim.sound.play({ sound = ALARM_SOUND, at = rotor.tile })
 end
 
 -- Sleeps to the next pass's `phase` tick after `epoch`, so the three
@@ -110,13 +130,13 @@ local function wear(rotor: Handle, record: RunRecord, intake_k: number, max_k: n
     record.alarm_tick = now + sim.ticks(cooldown)
     local integrity = record_lib.integrity(damage)
     if integrity > 0 then
-        shout(rotor, "damage_alarm", { integrity = string.format("%.2f", integrity) })
+        alarm(rotor, integrity)
         return true
     end
     -- The speed the blast is sized by, read before `halt` stills the shaft.
+    -- The rotor shut takes its watts off (lib/power/gas_turbine_run.luau).
     local size = failure_blast(record.rpm)
     halt(rotor, record)
-    zero(rotor)
     shout(rotor, "failed", {})
     blast.apply(rotor.tile, size)
     blast.cast(rotor.tile, size)
@@ -124,14 +144,14 @@ local function wear(rotor: Handle, record: RunRecord, intake_k: number, max_k: n
 end
 
 -- Step 0 (turbine.dm:626-628) and the wear off the intake's heat, before
--- the compressor draws (:632-634); stamps the beat. False ends the loop.
+-- the compressor draws (:632-634); stamps the beat. False ends the loop;
+-- a halt shuts the rotor, whose change takes its watts off.
 local function check(rotor: Handle, record: RunRecord): boolean
     local compressor, outlet = gas_turbine.ends(rotor)
     local whole = compressor ~= nil and outlet ~= nil and record_lib.linked(rotor)
     if not whole or not sim.is_powered(rotor) then
         gas_turbine.connected(rotor)
         halt(rotor, record)
-        zero(rotor)
         return false
     end
     local inlet = record_lib.intake_air(compressor)
@@ -148,19 +168,20 @@ local function check(rotor: Handle, record: RunRecord): boolean
 end
 
 -- The rotor's turns: the check, then compressor to rotor and rotor to outlet
--- (turbine.dm:666-668). A run the switch ended takes its watts off here.
+-- (turbine.dm:666-668). A run the switch ended shut the rotor, whose
+-- change took its watts off.
 local function rotor_loop(rotor: Handle, run: number, epoch: number): ()
     while true do
         sleep_to(epoch, CHECK_PHASE)
         if not current(rotor, run) then
-            break
+            return
         end
         if not check(rotor, read(rotor)) then
             return
         end
         sleep_to(epoch, ROTOR_PHASE)
         if not current(rotor, run) then
-            break
+            return
         end
         local compressor, outlet = gas_turbine.ends(rotor)
         local held = if compressor ~= nil and outlet ~= nil
@@ -176,7 +197,7 @@ local function rotor_loop(rotor: Handle, run: number, epoch: number): ()
         end
         sleep_to(epoch, TURBINE_PHASE)
         if not current(rotor, run) then
-            break
+            return
         end
         held = if compressor ~= nil and outlet ~= nil and compressor.alive and outlet.alive
             then stages.read(compressor, rotor, outlet)
@@ -187,9 +208,6 @@ local function rotor_loop(rotor: Handle, run: number, epoch: number): ()
             record.turbine_work = stages.transfer(rotor, held.rotor, outlet, held.outlet, remove, 1)
             save(rotor, record)
         end
-    end
-    if rotor.alive and read(rotor).run == run then
-        zero(rotor)
     end
 end
 
@@ -215,7 +233,8 @@ end
 
 -- The outlet's turn: the exhaust onto the tile ahead (`expel_gases`,
 -- turbine.dm:363-379), then the shaft's rpm and the grid's watts
--- (:672-685). Nothing ejected is no rpm and no power (:673-676).
+-- (:672-685), leased for `OUTPUT_HOLD_PASSES`. Nothing ejected is no rpm
+-- and no power (:673-676).
 local function outlet_loop(outlet: Handle, rotor: Handle, run: number, epoch: number): ()
     while true do
         sleep_to(epoch, EXPEL_PHASE)
@@ -252,7 +271,11 @@ local function outlet_loop(outlet: Handle, rotor: Handle, run: number, epoch: nu
         record.rpm = rpm
         record.power_w = stages.watts(rpm)
         save(rotor, record)
-        sim.flow.set_output({ subject = rotor, watts = record.power_w })
+        sim.flow.set_output({
+            subject = rotor,
+            watts = record.power_w,
+            hold_s = OUTPUT_HOLD_PASSES * record_lib.PASS_SECONDS,
+        })
     end
 end
 

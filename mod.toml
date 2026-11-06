@@ -106,6 +106,9 @@ disl_host = true
 # the round (the engine's docs/rounds/lifecycle.md); the host approves it too.
 map_lifecycle = true
 entity_transfer = true
+# The gas turbine's damage alarm speaks on the engineering channel
+# (content/lib/power/gas_turbine_turns.luau; the engine's docs/luau-api/radio-relay.md).
+radio_transmit = true
 
 # This pack spells no sentence: every player-visible line it sends names
 # a catalog key, prototype `failure` lines included, and the engine

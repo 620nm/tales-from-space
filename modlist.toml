@@ -12,4 +12,5 @@ permissions = [
     "notify_private",
     "map_lifecycle",
     "entity_transfer",
+    "radio_transmit",
 ]

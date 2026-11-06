@@ -64,7 +64,8 @@ local function turning(record: record_lib.RunRecord): boolean
 end
 
 -- `structure.changed` on every section, anchored on its own tile: a section
--- set turning takes its turns in the run; a rotor shut takes its watts off;
+-- set turning takes its turns in the run; a rotor shut takes its watts off
+-- at once, not at its lease's end;
 -- a turning section the switch shut to restart a stall turns again.
 function gas_turbine_run.on_section_changed(ev: StructureChangedPayload): ()
     local section = ev.structure
@@ -88,8 +89,8 @@ function gas_turbine_run.on_section_changed(ev: StructureChangedPayload): ()
     end
 end
 
--- A refused start; a stalled run it refuses is halted, so its rotor shut
--- takes the stale watts off in its own change (`on_section_changed`).
+-- A refused start; a stalled run it refuses is halted, its sections shut.
+-- Its watts are already off: the turns that renewed their lease are gone.
 local function refuse_start(
     rotor: Handle,
     record: record_lib.RunRecord,

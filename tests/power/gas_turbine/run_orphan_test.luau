@@ -6,7 +6,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- keeps checking in and the heat behind its compressor keeps wearing it
 -- (turbine.dm:634-640); a second player's window shows it. Turns cancelled
 -- outright (a transfer off the map, a quarantine) leave a stalled run that
--- reads stopped; the switch shuts its rotor's stale watts off and restarts it.
+-- reads stopped, its watts' lease lapsing unrenewed; the switch restarts it,
+-- and a start it refuses (here, a rotor cut off its main) halts it instead.
 
 local CHANNEL = "turbine"
 
@@ -65,7 +66,7 @@ t.world(
                 (4, 1, "turbine_outlet", "closed", { "dir": "east" }),
             ],
             machines: [(4, 3, "turbine_computer")],
-            items: [(2, 2, "multitool")],
+            items: [(2, 2, "multitool"), (2, 2, "wirecutters")],
             painted: [
                 (1, 1, "hot_nitrogen"),
                 (2, 2, "room_air"), (3, 2, "room_air"), (4, 2, "room_air"), (1, 3, "room_air"),
@@ -151,13 +152,14 @@ assert(eventually(function()
     return integrity(q) < before - 0.3
 end, 8), "and its rotor still takes its turns")
 
--- The rotor's last `watts` setpoint: rows are written only on a change.
+-- The rotor's last watts on the record: rows are written only on a change,
+-- whether a turn set them or their lease lapsed.
 local function watts(): number?
     local last: number? = nil
-    for _, row in ipairs(t.ledger_rows("MachineSetpoint")) do
+    for _, row in ipairs(t.ledger_rows("source_output_set")) do
         local pos = row.pos
-        if row.field == "watts" and pos ~= nil and pos[1] == 3 and pos[2] == 1 then
-            last = ui_controls.number(row.value)
+        if pos ~= nil and pos[1] == 3 and pos[2] == 1 then
+            last = ui_controls.number(row.watts)
         end
     end
     return last
@@ -168,34 +170,76 @@ assert(t.set_composition(5, 1, "plating"), "the exhaust opens")
 assert(eventually(function()
     return ui_controls.number(reading(q).rpm) > 0
 end, 6), "hot gas through the stages spins the shaft")
-local spun = assert(watts(), "the spinning rotor set its watts")
-assert(spun > 0, "the spinning rotor feeds the grid")
+assert((watts() or 0) > 0, "the spinning rotor feeds the grid")
 
--- Every task the pack holds cancelled outright, as a quarantine or a
--- transfer off the map does (the engine's docs/luau-api/runtime.md): no
--- turn runs to take the watts off, so the rotor keeps feeding them.
-assert(t.cancel_mod_tasks("lunatic/tfs") >= 3, "the three sections' turns are cancelled")
-t.run_seconds(6)
-assert(watts() == spun, "a cancelled run keeps its last setpoint")
--- The window's own refresh went with the tasks; reopening it starts a new one.
-click(q, 4, 3, "turbine_computer", 0.2)
-assert(reading(q).active == false, "a rotor two passes silent reads stopped")
+-- Each section's turns cancelled outright, as a quarantine or a transfer
+-- off the map does (the engine's docs/luau-api/runtime.md). The watts were
+-- last leased at most one 2 s pass before, for three passes
+-- (lib/power/gas_turbine_turns.luau): they hold for 4 s and are gone by 6.
+local function stall(): ()
+    local held = assert(watts(), "the rotor has set its watts")
+    assert(held > 0, "and is feeding the grid")
+    local cancelled = 0
+    for x = 2, 4 do
+        cancelled += t.cancel_tasks(assert(t.structure_at(x, 1)).entity)
+    end
+    assert(cancelled >= 3, "the three sections' turns are cancelled: " .. cancelled)
+    t.run_seconds(3.6)
+    assert(watts() == held, "the lease holds the watts a pass or two")
+    assert(eventually(function()
+        return watts() == 0
+    end, 3), "then lapses, taking the watts off with no turn to do it")
+end
+stall()
+-- The window's own refresh is the console's, untouched by the cancel.
+assert(eventually(function()
+    return reading(q).active == false
+end, 4), "a rotor two passes silent reads stopped")
 
--- Presses the switch in `player`'s open window.
-local function toggle(player: number): ()
+-- Presses the switch in `player`'s open window; answers what it heard.
+local function toggle(player: number): { string }
+    local _ = t.messages(player)
     local address = assert(t.ui_document(player, CHANNEL), "the window has an address")
     t.ui_press(player, "doc/" .. address.document .. "/" .. address.generation .. "/toggle_power")
     t.run_ticks(2)
+    return t.messages(player)
 end
 
--- The switch restarts it: each section shut, the rotor's watts taken off,
--- then turning again in a new run.
+-- The switch restarts it: each section shut, then turning again in a new run.
 toggle(q)
-assert(watts() == 0, "the switch takes the stalled rotor's watts off")
-assert(reading(q).active == true, "and restarts the run")
+assert(reading(q).active == true, "the switch restarts the run")
 assert(assert(t.structure_at(3, 1)).state == "running", "the rotor turns again")
--- Read off the window's own refresh, never reopened: the dead one was replaced.
+-- Read off the window's own refresh, never reopened.
 assert(eventually(function()
     return ui_controls.number(reading(q).rpm) > 0
 end, 8), "and its sections take their turns afresh, the window redrawing them")
-assert((watts() or 0) > 0, "feeding the grid again")
+assert(eventually(function()
+    return (watts() or 0) > 0
+end, 4), "feeding the grid again")
+
+-- Stall it again, then cut the main under the rotor: the switch's start is
+-- refused for want of power, and the stalled run it refuses is halted.
+stall()
+local x, y = 2, 2
+for cx = 1, 7 do
+    for cy = 1, 4 do
+        if table.find(t.items_at(cx, cy), "wirecutters") ~= nil then
+            x, y = cx, cy
+        end
+    end
+end
+click(q, x, y, "wirecutters", 0.2)
+assert(t.hands(q).held == "wirecutters", "the wirecutters are in hand")
+t.click_network(q, 3, 2, assert(t.network_instance(3, 2, "power", "l2")))
+t.run_seconds(1.5)
+local heard = toggle(q)
+assert(
+    table.find(heard, "The rotor has no power to start on.") ~= nil,
+    "the start is refused: " .. table.concat(heard, " | ")
+)
+assert(reading(q).active == false, "the stalled run is stopped")
+for sx = 2, 4 do
+    local section = assert(t.structure_at(sx, 1))
+    assert(section.state == "closed", "and every section shut: " .. tostring(section.state))
+end
+assert(watts() == 0, "with its watts still off")

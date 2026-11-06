@@ -222,4 +222,6 @@
     ("smg_drop", "items/handling/gun/ballistics/smg/smg_drop1.ogg"),
     // tg code/game/machinery/iv_drip.dm:262-265.
     ("twobeep_high", "machines/beep/twobeep_high.ogg"),
+    // tg code/modules/power/turbine/turbine.dm:662, the turbine's damage alarm.
+    ("engine_alert1", "machines/engine_alert/engine_alert1.ogg"),
 ]

@@ -1,6 +1,7 @@
 -- Which engine announcements this pack keeps durable (the engine's
 -- docs/ledger/streams.md): one sealed log of every row per round, the
--- audit and replay record staff read (docs/STAFF.md). `kinds` are this pack's
+-- audit and replay record staff read (docs/STAFF.md), and a rolling one of
+-- source output writes. `kinds` are this pack's
 -- own rows (the engine's docs/luau-api/ledger.md).
 return {
     kinds = {
@@ -35,5 +36,9 @@ return {
     },
     streams = {
         audit = { scope = "round", select = { groups = { "all" } } },
+        -- The watts scripts set on sources and the leases that lapse
+        -- (`source_output_set`): a turbine renews its watts every pass, so
+        -- they roll apart from the record (lib/power/gas_turbine_turns.luau).
+        telemetry = { scope = "rolling", select = { kinds = { "source_output_set" } } },
     },
 }
