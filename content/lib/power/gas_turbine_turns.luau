@@ -231,6 +231,18 @@ local function compressor_loop(compressor: Handle, rotor: Handle, run: number, e
     end
 end
 
+-- Moves `moles` of the outlet's gas onto `tile`; false when refused, as
+-- nothing left the outlet to spin the shaft.
+local function expel(outlet: Handle, tile: TileAddress, moles: number): boolean
+    local refused = sim.matter.transfer({
+        from = outlet,
+        to = tile.matter,
+        amount = moles,
+        phases = { "gas" },
+    })
+    return refused == nil
+end
+
 -- The outlet's turn: the exhaust onto the tile ahead (`expel_gases`,
 -- turbine.dm:363-379), then the shaft's rpm and the grid's watts
 -- (:672-685), leased for `OUTPUT_HOLD_PASSES`. Nothing ejected is no rpm
@@ -249,13 +261,12 @@ local function outlet_loop(outlet: Handle, rotor: Handle, run: number, epoch: nu
             then stages.pump_moles(held, exhaust, held.pressure_kpa)
             else 0
         local rpm = 0
-        if held ~= nil and exhaust_tile ~= nil and ejected > 0 then
-            sim.matter.transfer({
-                from = outlet,
-                to = exhaust_tile.matter,
-                amount = ejected,
-                phases = { "gas" },
-            })
+        if
+            held ~= nil
+            and exhaust_tile ~= nil
+            and ejected > 0
+            and expel(outlet, exhaust_tile, ejected)
+        then
             local work = stages.ejected_work(
                 ejected,
                 held,
@@ -270,12 +281,16 @@ local function outlet_loop(outlet: Handle, rotor: Handle, run: number, epoch: nu
         end
         record.rpm = rpm
         record.power_w = stages.watts(rpm)
-        save(rotor, record)
-        sim.flow.set_output({
+        -- A refused output feeds nothing, so the record reads 0 W.
+        local refused = sim.flow.set_output({
             subject = rotor,
             watts = record.power_w,
             hold_s = OUTPUT_HOLD_PASSES * record_lib.PASS_SECONDS,
         })
+        if refused ~= nil then
+            record.power_w = 0
+        end
+        save(rotor, record)
     end
 end
 

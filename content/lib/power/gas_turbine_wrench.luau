@@ -31,7 +31,7 @@ function gas_turbine_wrench.turn_row(): { [string]: any }
 end
 
 -- A wrench on an open section turns it one declared facing clockwise; any
--- other click, or a shut panel, declines.
+-- other click, a shut panel or a refused turn declines.
 function gas_turbine_wrench.turn(ev: InteractionUsePayload): boolean | { replaced: boolean }
     local section, tool = ev.subject, ev.implement
     if tool == nil or not tool.alive or (tool.base or tool.prototype) ~= WRENCH then
@@ -40,7 +40,9 @@ function gas_turbine_wrench.turn(ev: InteractionUsePayload): boolean | { replace
     if section.state ~= OPEN then
         return { replaced = false }
     end
-    sim.facing.turn({ entity = section, clockwise = true })
+    if sim.facing.turn({ entity = section, clockwise = true }) ~= nil then
+        return { replaced = false }
+    end
     -- tg plays the wrench's `usesound` at volume 50; a roster sound carries
     -- no volume, so this one plays at the ratchet's own.
     sim.sound.play({ sound = "ratchet", at = ev.at })

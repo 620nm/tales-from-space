@@ -71,7 +71,7 @@ end
 -- `input`'s pressure times `intake`, heat `output` by the work, and answer
 -- the work less `remove`, capped by the heat the output holds above TCMB
 -- (:157-161). The parcel keeps its source's volume (`remove`,
--- gas_mixture.dm:206).
+-- gas_mixture.dm:206). A refused transfer heats nothing and does no work.
 function gas_turbine_stages.transfer(
     from: MatterOwner | Handle,
     input: MatterRead,
@@ -94,7 +94,10 @@ function gas_turbine_stages.transfer(
         )
         * WORK_CONVERSION
     work -= remove
-    sim.matter.transfer({ from = from, to = to, amount = moles, phases = { "gas" } })
+    local refused = sim.matter.transfer({ from = from, to = to, amount = moles, phases = { "gas" } })
+    if refused ~= nil then
+        return 0
+    end
     -- tg reads `output_mix` after the pump (:157-161); a handler's reads do
     -- not see its own writes, so the merge is figured: the parcel carries
     -- its source's heat capacity per mole and its temperature. Never zero
