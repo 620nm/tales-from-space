@@ -58,6 +58,8 @@ local REFUSALS = {
 }
 -- A running section's panel stays shut (`screwdriver_act`, turbine.dm:169-171).
 local STOP_FIRST = MESSAGE .. "stop_first"
+-- The rotor's examine hint while its line is not linked (turbine.dm:438-439).
+local UNLINKED = MESSAGE .. "unlinked"
 
 -- Every key this module sends, for the roster file to define.
 function gas_turbine.message_keys(): { string }
@@ -68,6 +70,7 @@ function gas_turbine.message_keys(): { string }
         MESSAGE .. "relinking",
         MESSAGE .. "console_linked",
         STOP_FIRST,
+        UNLINKED,
     }
     for _, refusal in ipairs(REFUSALS) do
         table.insert(keys, MESSAGE .. refusal)
@@ -423,19 +426,13 @@ function gas_turbine.link_console(ev: InteractionUsePayload): boolean | { replac
     return true
 end
 
--- The rotor's examine hint while its line is not linked (tg `examine`,
--- turbine.dm:438-439, which reads the remembered flag as this does).
--- `examine.lines` lines are finished prose: the anchor takes no key.
-local UNLINKED_LINE: ExamineLineRow = {
-    key = "turbine_unlinked",
-    text = "Its parts need to be linked with a multitool.",
-}
-
--- `examine.lines` on the core rotor: a read, never an effect.
+-- `examine.lines` on the core rotor: the unlinked hint, read from the
+-- remembered flag as tg's `examine` reads `all_parts_connected`. A read,
+-- never an effect.
 function gas_turbine.examine_lines(ev: ExamineLinesPayload): { lines: { ExamineLineRow } }
     local lines = table.clone(ev.lines)
     if ev.subject.vars[gas_turbine.LINKED] ~= true then
-        table.insert(lines, UNLINKED_LINE)
+        table.insert(lines, { key = "turbine_unlinked", text = sim.msg(UNLINKED, {}) })
     end
     return { lines = lines }
 end
