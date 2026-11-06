@@ -7,9 +7,9 @@ local ignition_room = require("@helpers/ignition_room")
 -- tile and a struck burner clicks it alight; the player then snuffs the
 -- burner so the room has no other source.
 --
--- * The neighbours light: the fire spreads tile to tile (lib spread).
--- * The far tile holds no vapour when the fire starts; it lights only
---   after the vapour arrives, and only behind its neighbour.
+-- * The neighbors light: the fire spreads tile to tile (lib spread).
+-- * The far tile holds no vapor when the fire starts; it lights only
+--   after the vapor arrives, and only behind its neighbor.
 -- * When the oxygen is gone the latch clears on every tile within three
 --   seconds. The fuel is still there.
 -- * Fresh air then brings back everything the rule asks for but the
@@ -27,13 +27,13 @@ local p = ignition_room.build({
 
 assert(
     ignition_room.ethanol_gas(4, 1) < ignition_room.FUEL_FLOOR_MOL,
-    "the far tile holds no vapour when the fire starts"
+    "the far tile holds no vapor when the fire starts"
 )
 ignition_room.take_lit_burner(p, 2, 1)
 ignition_room.touch(p, SPILL_X, 1)
 assert(#ignition_room.latch_edges(true) >= 1, "the click lit the spill tile")
 
--- Spread, and late vapour: all four tiles latch, the far one last.
+-- Spread, and late vapor: all four tiles latch, the far one last.
 local all_lit = ignition_room.run_until(180, 1, function()
     return ignition_room.count(ignition_room.latched_tiles()) == #ROW
 end)
@@ -46,7 +46,7 @@ for _, row in ipairs(ignition_room.latch_edges(true)) do
         order[tile_key] = (row :: any).seq
     end
 end
-assert(order["3:1"] < order["4:1"], "the far tile caught behind its neighbour")
+assert(order["3:1"] < order["4:1"], "the far tile caught behind its neighbor")
 
 -- The burner is the only other source; take it away.
 t.use_self(p)

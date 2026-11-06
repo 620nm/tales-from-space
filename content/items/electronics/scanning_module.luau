@@ -9,7 +9,7 @@ local stock_parts = require("@lib/stock_parts")
 -- states on icons/obj/devices/stock_parts.dmi.
 --
 -- NOTHING IN THIS PACK HAS A SCANNER SOCKET yet — the machines that
--- carry one in tg are the analysers, the cloner and the mech fabricator,
+-- carry one in tg are the analyzers, the cloner and the mech fabricator,
 -- and none of those exists here. It is on the roster for the reason the
 -- chem dispenser's shelf carries bromine and copper: the ladder is tg's,
 -- a rung waiting for its consumer costs one file, and the day a machine

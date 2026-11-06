@@ -166,7 +166,7 @@ repository's gitignored `target/`, never the engine's served root.
   published native edge, so `mod.toml` must keep `speech.relay` in
   `native_edges` or every registration fails at load
   (the engine's `docs/luau-api/radio-relay.md`).
-- Few specs: one per player-visible behaviour; extend an existing spec before
+- Few specs: one per player-visible behavior; extend an existing spec before
   adding a file; engine mechanism is the engine's fixture tests, not a spec.
 - Specs (`tests/*_test.luau`) assert what a PLAYER could cause, through
   `t` — the same SimCommand seam the Rust harness uses. No raw entity

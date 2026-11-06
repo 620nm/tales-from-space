@@ -48,7 +48,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 
 -- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
 -- plant standing in the room: his lungs are a driven vessel that holds
--- several litres of the air inside itself and turns what it takes in
+-- several liters of the air inside itself and turns what it takes in
 -- into something else (docs/BIOLOGY.md, `sim/holder/bellows.rs`). That
 -- is a source and a sink, and the books below are the ATMOSPHERICS
 -- engine's -- so the crew are switched off as scaffolding, the same
@@ -59,7 +59,7 @@ t.set_breathing(false)
 
 local T20C = 293.15
 local R_GAS = 8.314
--- One tile's volume in litres: a 3 m3 cell (tests/helpers/atmos_cell.luau).
+-- One tile's volume in liters: a 3 m3 cell (tests/helpers/atmos_cell.luau).
 local TILE_L = 1000.0 * atmos_cell.CELL_VOLUME_M3
 -- Stefan-Boltzmann, W/(m^2 K^4). Not a tg number: tg has no radiation.
 local SIGMA = 5.670374419e-8
@@ -361,7 +361,7 @@ near(
 local c_air_0 = n_room_0 * cv
 local c_deck = deck_capacity(ROOM)
 local deck_e0 = deck_energy(ROOM)
--- The deck is per floor tile and the air per cubic metre, so a tile
+-- The deck is per floor tile and the air per cubic meter, so a tile
 -- CELL_VOLUME_M3 tall holds that many times the air over the same deck: the
 -- 100x lead a 1 m3 cell has (174x measured) is 100 / CELL_VOLUME_M3 here
 -- (58x measured).
@@ -571,11 +571,11 @@ near(
 near(assert(t.deck(1, 1)).temperature, T20C, 1e-9, "and it opens at room temperature")
 local cell_radiated_0 = t.space_radiated()
 
--- 0.5 emissivity, two slab faces, one square metre a tile: the deck's
+-- 0.5 emissivity, two slab faces, one square meter a tile: the deck's
 -- own share, plus one whole wall's share for each of the four.
 local EPS = 0.5
 local cell_a = EPS * 2.0 + 4.0 * (EPS * 2.0)
-near(cell_a, 5.0, 1e-12, "five square metres of grey body faces the sky")
+near(cell_a, 5.0, 1e-12, "five square meters of gray body faces the sky")
 
 t.run_seconds(600)
 
@@ -693,7 +693,7 @@ assert(
 -- UNDER A STAR, THE SAME DECK WARMS.
 --
 -- Insolation is the other half of step 5d and it uses the same eA: a
--- grey body absorbs exactly the fraction it emits (Kirchhoff), and the
+-- gray body absorbs exactly the fraction it emits (Kirchhoff), and the
 -- sun reaches one face of a slab that radiates from two, which is the
 -- halving in `P_in = S*eA/2`. At 2700 W/m^2 -- a close solar orbit, the
 -- rarest roll on the station's roster -- that beats what a

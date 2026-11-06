@@ -35,7 +35,7 @@
 -- emptied".
 --
 -- What this file ships is what a placed one is: carbon dioxide always,
--- five litres a second, and whole air back down to a floor just under
+-- five liters a second, and whole air back down to a floor just under
 -- the vent's release line (docs/ATMOS.md §8). Zero on the floor is tg
 -- exactly -- a machine that only ever carries its named gases away.
 --
@@ -119,7 +119,7 @@ return {
         -- what tg's `scrub_purge` is for -- and naming it on a
         -- placement means "whole air, no floor" from the first tick.
         positions = { "off", "scrubbing", "siphoning" },
-        -- Five litres a second out of the crate, against tg's
+        -- Five liters a second out of the crate, against tg's
         -- `volume_rate = 200` (vent_scrubber.dm:26), which is the dial's
         -- CEILING here. A grille at 200 empties a small room's excess in
         -- one pass and outruns the main that feeds it; at five it keeps

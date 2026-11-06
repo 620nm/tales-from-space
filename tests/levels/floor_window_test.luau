@@ -124,8 +124,8 @@ assert(falls[1].via == "fall" and falls[1].levels == 1, "it fell one level throu
 hx, hy = t.pos(hole_body)
 assert(hx == 2 and hy == 1, "the faller landed under the hole, got (" .. hx .. ", " .. hy .. ")")
 
--- 4. Smoothing across the group. The west window has an east neighbour: bit
--- EAST = 1 << 2 = 4. The east window has a west neighbour: bit WEST = 1 << 3 = 8
+-- 4. Smoothing across the group. The west window has an east neighbor: bit
+-- EAST = 1 << 2 = 4. The east window has a west neighbor: bit WEST = 1 << 3 = 8
 -- (the engine's crates/lunatic-content/src/structures/junction_bits.rs). Walls to
 -- the north and south are no glass, so no other bit is set.
 local west = composition.seen_sprites(window_body, 6, 1)
@@ -160,7 +160,7 @@ assert(after.substrates[1] ~= nil, "and the ground under it still shows")
 -- onto it from station base stops there. Without it the glass would be
 -- weightless and the body would coast east to the wall. Nothing within one tile
 -- of (2, 2) braces a body (docs/TURFS.md "Gravity and handholds"); the basement
--- is blank, because dense terrain one level below a neighbour braces too.
+-- is blank, because dense terrain one level below a neighbor braces too.
 t.world(
     [==[(
     name: "glass in orbit",

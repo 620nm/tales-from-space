@@ -63,7 +63,7 @@ cannot be named, and the crew record does not show a player's type. The
 engine owns rider transport and meetings and reads no disease or donor word: a rider
 follows its carrier through draw, pour, split and injection, only vessels
 and bloodstreams keep it, and cells, tanks and canisters shed it. Rosters,
-medical behaviour, progression, immunity, forensics and presentation are
+medical behavior, progression, immunity, forensics and presentation are
 pack Luau. tg anchors: `blood.dm:400-410` (infection before compatibility),
 `carbon/life.dm:479-499`, `elements/blood_reagent.dm:172-235` (merge),
 `datums/dna/dna.dm:249-257`, `scanners/health_analyzer.dm:402-409`.

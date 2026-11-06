@@ -41,7 +41,7 @@ component though those tiles smooth nothing back.
 The power network declares three channels and the pipe network five. Their
 channel identities, preferences, kind connectivity, paints, and shape artwork
 are content data. Radiator pipe fits channels two through four and
-joins its own kind. Pipe paints preserve the existing same-colour and omni
+joins its own kind. Pipe paints preserve the existing same-color and omni
 connectivity rules. Maps and exports store authored network identities.
 
 Thermal profiles retain the existing capacities, conductivities, and
@@ -66,7 +66,7 @@ a gravity battery's field runs up and down through such holes to the decks they
 join (the engine's `docs/netcode/gravity.md`).
 
 In zero gravity, a conscious body can brace against a wall, lattice, catwalk, or
-anchored blocking object on its tile or any of its eight neighbours, on its own
+anchored blocking object on its tile or any of its eight neighbors, on its own
 level (`content/lib/brace.luau`, the mode's `move.brace`). It cannot push off an
 anchored object it is stepping into. A bare floor supplies no handhold, and a
 corpse, crit or sleeper grips nothing. Pushing off a movable blocking object
@@ -79,13 +79,13 @@ independent composition properties.
 `content/compositions.luau` declares eleven floor decals on a `decal` visual
 layer between the deck and everything lying on it. A trim decal names no shape:
 it names one sprite per seam piece, and the seam is derived from which
-neighbouring tiles hold the same decal in the same colour. A mark decal names
+neighboring tiles hold the same decal in the same color. A mark decal names
 one sprite per facing, or one sprite and no facing at all. Decals paint onto
 station base, floor tiles and reinforcement; gratings and walls are not decks.
 
 `content/lib/decal_paints.luau` owns the twelve paints and their order. Trim and
-tiling are greyscale art tinted at runtime and drawn at opacity 110; hazard
-stripes and painted marks carry their own colours and take no paint. The map and
+tiling are grayscale art tinted at runtime and drawn at opacity 110; hazard
+stripes and painted marks carry their own colors and take no paint. The map and
 the editor may name a raw `#RRGGBB`; an in-game tool may not.
 
 A decal belongs to the deck component under it and goes with it: prying the

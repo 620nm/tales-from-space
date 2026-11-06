@@ -9,12 +9,12 @@
 -- loop a closed circuit rather than a branch of the distribution main.
 -- This is the piece that opens it: two mouths, one net across itself,
 -- and the runs on either side stay the kinds they were. It is the
--- colour adapter's trick applied to the other half of a length's
+-- color adapter's trick applied to the other half of a length's
 -- identity, and it is the same engine primitive doing it.
 --
 -- EACH END TAKES ONE KIND, and `joins` is where that is said. The
 -- engine calls the mechanism a KIND ADAPTER, because that is what it
--- does: the colour adapter joins two paint jobs, this joins two kinds,
+-- does: the color adapter joins two paint jobs, this joins two kinds,
 -- and heat exchange is what THIS station happens to use it for. tg spells
 -- it as an override on `is_connectable` (junction.dm:30-33): the end at
 -- `REVERSE_DIR(dir)` is type-checked as ORDINARY pipe -- "we want a
@@ -25,8 +25,8 @@
 -- pipe kind; the second is this pack's own kind, named by the item that
 -- lays it.
 --
--- SO IT HAS FOUR FACINGS where the colour adapter has two axes. Turn a
--- colour adapter around and it does exactly what it did; turn this
+-- SO IT HAS FOUR FACINGS where the color adapter has two axes. Turn a
+-- color adapter around and it does exactly what it did; turn this
 -- around and the two runs it was welding come apart, because the end
 -- that takes radiator pipe is now pointing at the main. tg aims it
 -- and never normalises it, and neither does this.
@@ -38,7 +38,7 @@
 -- than a length, and a device holds gas without trading heat with the
 -- deck at all, which lands in the same place.
 --
--- Seventy litres, one length of ordinary pipe: tg gives a pipe
+-- Seventy liters, one length of ordinary pipe: tg gives a pipe
 -- `UNARY_PIPE_VOLUME * device_type` and this has two ends
 -- (pipes.dm:27-28).
 return {
@@ -63,7 +63,7 @@ return {
         network = "pipe",
         -- The engine's word for the mechanism, not for this fitting: an
         -- adapter whose two ends admit different KINDS, sibling of the
-        -- one whose ends admit different colours.
+        -- one whose ends admit different colors.
         device = "kind_adapter",
         -- Back mouth, then front. Back is behind the facing, which is
         -- tg's `REVERSE_DIR(dir)`: ordinary pipe. Front is the facing:

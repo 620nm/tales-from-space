@@ -6,9 +6,9 @@ What stands on, under and between a map's levels; decks and covers are
 Rock (tg `/turf/closed/mineral`) blocks movement, gas and sight, supports and
 seals, and hides what is under it. It sits over the map's substrate (by
 default the generated ground on a planet, open in space), which removing it shows. It wears tg's
-`smoothrocks` bitmask art (`minerals.dm:6-21`) and smooths with neighbouring
-rock; each `rock-<junction>` frame is the 40x40 cell's centre 32x32 window, so
-tg's 4 px overhang is lost, and the map edge is not a neighbour (no
+`smoothrocks` bitmask art (`minerals.dm:6-21`) and smooths with neighboring
+rock; each `rock-<junction>` frame is the 40x40 cell's center 32x32 window, so
+tg's 4 px overhang is lost, and the map edge is not a neighbor (no
 `SMOOTH_BORDER`). Mining it is not implemented.
 
 Rock floor (tg `/turf/open/misc/asteroid`, `asteroid.dm:5-14`) is a natural

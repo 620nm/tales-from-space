@@ -3,7 +3,7 @@
 -- mass, heat capacity and density are the shelf's D2 convention
 -- (docs/CHEMISTRY.md) — with one deliberate choice inside it.
 --
--- THE MASS IS LOAD-BEARING. A blood unit is a centilitre: 560 units
+-- THE MASS IS LOAD-BEARING. A blood unit is a centiliter: 560 units
 -- read 5.6 L (content/items/anatomy/human_chest.luau, mobs.dm:20). At
 -- density 1.0 that is 10 g a unit, and the unit bridge says a unit is
 -- 0.025 mol (the engine's docs/chemistry/tg-bridge.md) — so the mass
@@ -24,7 +24,7 @@
 -- (code/modules/reagents/chemistry/reagents/other_reagents.dm:4). The
 -- deck-pool red #AA1010 is the DECAL's, not this file's
 -- (code/__DEFINES/colors.dm:225): a beaker of blood and a pool of it
--- are two different tg colours and stay two here.
+-- are two different tg colors and stay two here.
 local content = {
     id = "blood",
     name = "blood",

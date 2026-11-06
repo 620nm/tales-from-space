@@ -54,7 +54,7 @@ HYDRO_LEGEND: dict[str, str] = {
     "W": "#FFFFFF",  # white-glint
 }
 
-# Strictly neutral greyscale (`R == G == B`) for `colorable: True`
+# Strictly neutral grayscale (`R == G == B`) for `colorable: True`
 TINT_LEGEND: dict[str, str] = {
     "a": "#1B1B1B",  # stripe-dark-1
     "b": "#1D1D1D",  # neutral-1-outline
@@ -825,7 +825,7 @@ def build_fire_campfire_roaring() -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
-# 5. `fire_campfire_tintable` — 8-Frame Neutral Greyscale Flame (8f @ 100ms)
+# 5. `fire_campfire_tintable` — 8-Frame Neutral Grayscale Flame (8f @ 100ms)
 # ---------------------------------------------------------------------------
 
 def build_fire_campfire_tintable() -> dict[str, Any]:
@@ -920,7 +920,7 @@ def build_fire_campfire_tintable() -> dict[str, Any]:
         "ase_relpath": "assets/originals/art/fx/fire/fire_campfire_tintable.aseprite",
         "tag": "idle",
         "description": (
-            "8-frame strictly neutral greyscale (`R==G==B`, 12 steps `#1B1B1B..#FFFFFF`) rolling flame "
+            "8-frame strictly neutral grayscale (`R==G==B`, 12 steps `#1B1B1B..#FFFFFF`) rolling flame "
             "with feathered outer glow and rounded ember cradle for metallic-salt sRGB multiply tinting."
         ),
         "physics_notes": (
@@ -1493,7 +1493,7 @@ def build_fire_gas_smooth_tintable() -> dict[str, Any]:
         "ase_relpath": "assets/originals/art/fx/fire/fire_gas_smooth_tintable.aseprite",
         "tag": "idle",
         "description": (
-            "5-block (`160x32`) 47-junction neutral greyscale (`R==G==B`) 8-frame rolling plasma/gas "
+            "5-block (`160x32`) 47-junction neutral grayscale (`R==G==B`) 8-frame rolling plasma/gas "
             "firestorm with continuous braided flame curtains and `opacity 92..138` feathered outer rim."
         ),
         "physics_notes": (

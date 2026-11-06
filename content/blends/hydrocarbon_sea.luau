@@ -6,7 +6,7 @@
 --   methane 16.043 g/mol / 0.42 g/mL = 38.198 mL/mol,
 --   ethane  30.069 g/mol / 0.65 g/mL = 46.260 mL/mol,
 --   mixture 0.7 * 38.198 + 0.3 * 46.260 = 40.617 mL/mol,
--- so a cubic metre holds 10^6 / 40.617 = 24 620 mol: methane 17 234, ethane
+-- so a cubic meter holds 10^6 / 40.617 = 24 620 mol: methane 17 234, ethane
 -- 7 386. The fill scales the rows to its depth, so this sets the proportion.
 --
 -- Both rows say `:liquid`: at 94 K methane rests liquid under one

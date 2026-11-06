@@ -11,13 +11,13 @@ local network_matter = require("@helpers/network_matter")
 -- gas out of a room and leaves the rest, so its correctness is a
 -- question about WHICH gas — exactly as the filter's was
 -- (filter_test.luau). Every scrubbing assertion below is therefore
--- in moles, read off `t.room_gas` and `network_matter.gas` the way an analyser
+-- in moles, read off `t.room_gas` and `network_matter.gas` the way an analyzer
 -- reads them, and the books are balanced across the room/net boundary
 -- rather than trusted to a direction.
 
 -- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
 -- plant standing in the room: his lungs are a driven vessel that holds
--- several litres of the air inside itself and turns what it takes in
+-- several liters of the air inside itself and turns what it takes in
 -- into something else (docs/BIOLOGY.md, `sim/holder/bellows.rs`). That
 -- is a source and a sink, and the books below are the ATMOSPHERICS
 -- engine's -- so the crew are switched off as scaffolding, the same
@@ -86,7 +86,7 @@ end
 -- for a while after anything violent happens to a room -- the gas
 -- spreads tile to tile at its own pace -- so anything asserted about a
 -- room filling or holding still is asserted on the conserved quantity
--- instead. Twelve tiles of one cubic metre at an atmosphere is about
+-- instead. Twelve tiles of one cubic meter at an atmosphere is about
 -- 499 moles, which is the line "past one atmosphere" means.
 local function room_air()
     return room_total("o2") + room_total("n2")
@@ -429,7 +429,7 @@ assert(labels["flow.room"] ~= nil, "and the other end is a ROOM, so it reads one
 
 -- ---- gently first, so the switch can be tested at all ----
 --
--- Left at tg's default fifty litres a second: enough to overfill a
+-- Left at tg's default fifty liters a second: enough to overfill a
 -- room, calm enough to stand next to while it does. (The dial goes to
 -- two hundred, and what THAT is like is the next paragraph.)
 ui_controls.toggle(q, "power")
@@ -464,7 +464,7 @@ near(room_air(), settled, 0.5, "a stopped injector injects nothing")
 
 -- ---- and now wide open ----
 --
--- Two hundred litres a second into an already overfull room, and the
+-- Two hundred liters a second into an already overfull room, and the
 -- engineer at the panel stays where they stand. A machine's own
 -- draught does not drag: bulk flow spreads the output over the room,
 -- and the wind on the engineer's tile peaks near 2e-3 Pa, far under

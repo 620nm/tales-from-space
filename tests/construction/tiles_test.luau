@@ -154,7 +154,7 @@ assert(has(t.messages(p), "The door gives way."), "the airlock opens")
 -- the floor-tile row, the one that also says `anchored`).
 --
 -- This number is this pack's own and is cited to the file that chose
--- it. tg has no analogue to copy: getting a floor over vacuum there is
+-- it. tg has no analog to copy: getting a floor over vacuum there is
 -- rods into a lattice and then a sheet on top (space.dm:212, :312),
 -- and neither step is timed at all.
 t.world(

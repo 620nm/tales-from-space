@@ -5,7 +5,7 @@
 --
 -- Sea ethane upgraded to naphtha, the shelf's C8H16 bookkeeping unit
 -- (docs/PETROCHEMISTRY.md owns the model). It folds dehydrogenation and
--- oligomerisation into one step, as reactions/naphtha.luau folds CO2
+-- oligomerization into one step, as reactions/naphtha.luau folds CO2
 -- hydrogenation, and leaves hydrogen behind. Atoms balance: C 8 = 8,
 -- H 24 = 16 + 8.
 --

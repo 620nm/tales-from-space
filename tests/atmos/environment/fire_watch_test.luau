@@ -50,7 +50,7 @@ end
 
 assert(#tallies("fires_lit") == 0, "nothing has burned yet")
 
--- Two atmos passes are enough for the hot, fuelled mixture to catch.
+-- Two atmos passes are enough for the hot, fueled mixture to catch.
 t.run_seconds(1)
 assert(#t.ledger_rows("IgnitionAt") == 1, "the room caught fire once")
 local lit = tallies("fires_lit")

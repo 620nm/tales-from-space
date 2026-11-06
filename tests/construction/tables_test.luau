@@ -52,16 +52,16 @@ t.join()
 t.tick()
 
 -- The picture is the whole assertion: a table wears the frame its
--- neighbours chose, and the numbers are tg's own bits -- east is 4,
+-- neighbors chose, and the numbers are tg's own bits -- east is 4,
 -- west is 8 (`icon_smoothing.dm`'s NORTH/SOUTH/EAST/WEST junctions).
 -- No corners appear anywhere below because a corner bit is only set
 -- where both cardinals beside it already were, and a single row has no
--- vertical neighbours at all.
+-- vertical neighbors at all.
 local west_end = assert(t.structure_at(1, 1))
 assert(west_end.id == "table", "a steel table stands at the west end")
 assert(
     west_end.sprite == "table-4",
-    "with one neighbour, to its east: " .. tostring(west_end.sprite)
+    "with one neighbor, to its east: " .. tostring(west_end.sprite)
 )
 
 -- The middle steel table has a table on either side -- and one of them
@@ -72,7 +72,7 @@ assert(
     "joined both ways, steel to reinforced: " .. tostring(middle.sprite)
 )
 
--- The reinforced table joins back, and its OTHER neighbour is wood,
+-- The reinforced table joins back, and its OTHER neighbor is wood,
 -- which it does not see at all.
 local reinforced = assert(t.structure_at(3, 1))
 assert(reinforced.id == "reinforced_table", "a reinforced table stands beside it")

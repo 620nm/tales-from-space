@@ -9,7 +9,7 @@ local ui_controls = require("@helpers/ui_controls")
 local SCUPPER = '(3, 1, "scupper", {"mount": "north", "pipe": "west"})'
 local FEED = '(1, 1, "floor_drain", {"pipe": "east"})'
 
--- Forty litres down the drain. Two ports and a length hold 470 L, and at
+-- Forty liters down the drain. Two ports and a length hold 470 L, and at
 -- 0.5 m of head the line levels with the outfall near 16 L, 20 on the tile.
 bench.world({
     environment = bench.ONE_G,

@@ -1,4 +1,4 @@
--- Wax production is the alternate naphtha finishing route. Sulphuric
+-- Wax production is the alternate naphtha finishing route. Sulfuric
 -- acid selects it, while polymer catalyst suppresses it if both process
 -- aids are in the beaker. That gate makes the recipe choice legible and
 -- prevents both products racing over the same feedstock.

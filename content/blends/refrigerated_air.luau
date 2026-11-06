@@ -18,7 +18,7 @@
 -- (code/__DEFINES/atmospherics/atmos_mapping_helpers.dm:19), the same
 -- chill left thin. This file follows the kitchen rule rather than either
 -- pair of numbers: the same 21/79 mixture as breathable air, at enough moles
--- per cubic metre to sit at one atmosphere while cold (`amount = "per_m3"`).
+-- per cubic meter to sit at one atmosphere while cold (`amount = "per_m3"`).
 -- tg's own 26/97 is 21.1/78.9, the same mixture to a rounding error.
 local R = 8.314
 local ONE_ATMOSPHERE_PA = 101325.0

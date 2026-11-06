@@ -125,7 +125,7 @@ for _, decal in ipairs(t.decals_at(4, 1)) do
     end
 end
 assert(mark ~= nil, "a blood mark on the victim's tile")
-assert(mark.paint == "blood", "in the wound paint, not a crew colour")
+assert(mark.paint == "blood", "in the wound paint, not a crew color")
 
 -- TWO: past the cadence, the next round lands (60, 22 left).
 t.run_seconds(0.4)

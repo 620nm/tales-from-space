@@ -32,11 +32,11 @@ are cited as the engine's `docs/…`; upstream paths are tgstation at the revisi
   - **Static housing invariant**: `0` housing pixels may shift during operating loops; motion stays inside the working bay, fluid surface, or flame/arc overlay.
 - **Art Gate Tripwire ([`tools/test-bake-art.mjs`](../../tools/test-bake-art.mjs))**:
   - `no_sprite_is_a_bare_color_mask`: Any sprite with `>=40` opaque pixels where `>=85%` of pixels share one exact achromatic RGB value fails `sh tools/check.sh` unless exempted in `FLAT_BY_DESIGN = ["white", "space", "ghost", "wind_streak"]` or `FLAT_FAMILIES = ["decal_"]`.
-  - **Implication for greyscale runtime-tinted assets** (puddles, powders, crystals, smoke, foam): The greyscale source sprite **must preserve multi-step internal value shading** (highlights, midtones, dark edge/core) so that after `Luminance(...)` or runtime multiply tinting it still has depth and passes the gate.
+  - **Implication for grayscale runtime-tinted assets** (puddles, powders, crystals, smoke, foam): The grayscale source sprite **must preserve multi-step internal value shading** (highlights, midtones, dark edge/core) so that after `Luminance(...)` or runtime multiply tinting it still has depth and passes the gate.
 
 ### 1.2 Canonical Palette ([`docs/art-reference/palettes/tales-from-space.gpl`](../../docs/art-reference/palettes/tales-from-space.gpl))
-20 named sets (155 unique colours):
-1. **Set 1 — Structure steel** (cool blue-grey walls/airlocks/girders, 8 steps): `#26262c` -> `#3c3f48` -> `#535864` -> `#6d7381` -> `#89919f` -> `#a8b0bd` -> `#c6cdd7` -> `#e1e7ea`
+20 named sets (155 unique colors):
+1. **Set 1 — Structure steel** (cool blue-gray walls/airlocks/girders, 8 steps): `#26262c` -> `#3c3f48` -> `#535864` -> `#6d7381` -> `#89919f` -> `#a8b0bd` -> `#c6cdd7` -> `#e1e7ea`
 2. **Set 2 — Machine steel** (navy-tinted bodies/frames, 8 steps): `#151824` -> `#262b3d` -> `#3b4158` -> `#535b76` -> `#6e7794` -> `#8e96b2` -> `#b1b7cc` -> `#d5d7e0`
 3. **Set 3 — Neutral steel** (achromatic tools/pipes/ducts/flooring, 8 steps): `#1d1d1d` -> `#313131` -> `#484848` -> `#616161` -> `#7c7c7c` -> `#999999` -> `#b8b8b8` -> `#d9d9d9`
 4. **Set 4 — Copper/brass** (`#3b1d11`, `#64331b`, `#955129`, `#c87d42`, `#f0b06e`) & **Dark rubber** (`#201d26`, `#35313e`, `#4f4a5a`)
@@ -70,7 +70,7 @@ From bottom (drawn first) to top (drawn last):
 - **DMI single/animated**: `Dmi("@sheet", "state", dir)`, `DmiAnim("@sheet", "state", dir)` (looping), `DmiAnimOnce("@sheet", "state", dir)` (one-shot), `DmiRewind("@sheet", "state", dir)` (ping-pong loop), `DmiFrame("@sheet", "state", dir, frame)`.
 - **DMI cropping & compositing**: `DmiWindow("@sheet", "state", dir, x, y, w, h)` (used to crop `32×32` out of `40×40` or `48×48` smoothed DMIs), `DmiBlend([Layer("@sheet", "state", dir, Over | Add | Multiply | Under), ...])`, `Overlay(base, top)`.
 - **Bitmask smoothing (47 canonical diagonal-aware states `0..255`)**: `Junctions("prefix", "dmi_state")` (for `32×32` DMIs with states `dmi_state-0..255`).
-- **Colour & orientation transforms**: `Luminance(inner)` (converts greyscale luminance to alpha-weighted white for runtime tinting), `Tinted(inner, "#RRGGBB" | (r,g,b))`, `Rotated(inner, quarter_turns_cw)`.
+- **Color & orientation transforms**: `Luminance(inner)` (converts grayscale luminance to alpha-weighted white for runtime tinting), `Tinted(inner, "#RRGGBB" | (r,g,b))`, `Rotated(inner, quarter_turns_cw)`.
 - **First-party Aseprite / PNG**: `Ase("@sheet", "tag")`, `AseAnim("@sheet", "tag")`, `AseAnimOnce("@sheet", "tag")`, `AseLayer("@sheet", "layer", "tag")`, `Png("path.png")`, `Slice(cols, rows, inner)`.
 
 ---
@@ -159,6 +159,6 @@ The elemental matter and fire sprites under `assets/originals/art/matter/` and
 - The roster cuts a strip with `Slice(5, 1, <row>)`. On an Aseprite original the inner
   row names a state and the baker reads the tag `<state>-s`: `Slice(5, 1, Anim("name",
   "idle", s))` reads the tag `idle-s`, and the canvas must be exactly 160×32.
-- Every colour is a swatch of `tales-from-space.gpl`. A `colorable` sprite is neutral
-  grey (R = G = B) so the runtime tint multiplies it; it still keeps several grey steps
-  so it is never a bare colour mask (`tools/test-bake-art.mjs`).
+- Every color is a swatch of `tales-from-space.gpl`. A `colorable` sprite is neutral
+  gray (R = G = B) so the runtime tint multiplies it; it still keeps several gray steps
+  so it is never a bare color mask (`tools/test-bake-art.mjs`).

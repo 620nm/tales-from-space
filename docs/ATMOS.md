@@ -22,7 +22,7 @@ Sources: `content/blends/canister_air.luau`,
 
 Every cell is 3 m³ (`simulation.tile`, `content/capabilities.luau`: 1 m × 1 m
 floor under a 3 m level). Blends are densities: `amount = "per_m3"` is moles
-per cubic metre of the holder, and a cell gets that times its volume.
+per cubic meter of the holder, and a cell gets that times its volume.
 
 Three blends are what tiles breathe. `breathable_air` is 21/79 at 20 C and
 one atmosphere — tg's `OPENTURF_DEFAULT_ATMOS`
@@ -34,7 +34,7 @@ same mixture at `COLD_ROOM_TEMP` (259.15 K,
 atmosphere by tg's kitchen rule (`KITCHEN_COLDROOM_ATMOS`,
 `atmos_mapping_helpers.dm:21`): painted, a walk-in; named by the
 `cold_outdoors` profile, the cold sky. `vacuum` is nothing at 2.7 K: a
-pumped-down room, which its neighbours flow into — space is a boundary
+pumped-down room, which its neighbors flow into — space is a boundary
 they drain through instead, and a wall holds no cell at all (the
 engine's `docs/atmos/blends.md`).
 
@@ -71,7 +71,7 @@ the rest of a machine's state.
 `content/blends/canister_air.luau` declares the pack's premixed canister
 charge once, rather than creating a gas-specific canister roster. Tg's
 90-atmosphere maximum and `filled = 0.5` give a 45-atmosphere 21/79 mixture
-at 293.15 K. `n = P/(R·T)` gives 1870.8 mol per cubic metre, split into
+at 293.15 K. `n = P/(R·T)` gives 1870.8 mol per cubic meter, split into
 392.87 mol `o2` and 1477.94 mol `n2` per m³. The blend is authored as a density
 with `amount = "per_m3"`, so the 2 m³ vessel holds 3741.6 mol and reads the
 same 4559.6 kPa.

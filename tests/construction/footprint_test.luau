@@ -7,7 +7,7 @@
 -- running disc. The walk-under cell mechanism is the engine's fixture
 -- test (no pack entry has a walk-under cell).
 --
--- The battery is anchored on its centre tile, so one at (5, 5) stands on
+-- The battery is anchored on its center tile, so one at (5, 5) stands on
 -- (4..6, 4..6); its south emitter cell is (5, 6).
 local bench = require("@helpers/grav_bench")
 
@@ -127,7 +127,7 @@ blocked("south", 5, 3, "the north emitter, a top row nobody walks under")
 -- ---------------------------------------------------------------
 -- Every cell says whose it is, and draws its own part of the picture.
 -- ---------------------------------------------------------------
--- The standby centre is the empty well the disc fills, so a pointer finds
+-- The standby center is the empty well the disc fills, so a pointer finds
 -- nothing there; a corner names the body it belongs to instead.
 local corner = assert(t.target_at(p, 6, 4, "grav_smes"), "a corner is a target")
 local top = t.seen(p, corner)
@@ -160,7 +160,7 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- A RUNNING battery: the same nine cells, and the disc on the centre
+-- A RUNNING battery: the same nine cells, and the disc on the center
 -- cell's stack alone.
 -- ---------------------------------------------------------------
 t.world(ROOM:gsub('"standby"', '"active"'), 7)

@@ -1,6 +1,6 @@
 local physical_profiles = require("@lib/physical_profiles")
 -- The box is native storage stocked with one thirty-use stick of each
--- colour. The sticks are ordinary items, so taking and returning them uses
+-- color. The sticks are ordinary items, so taking and returning them uses
 -- the same capacity and custody rules as every other container.
 -- tg crayons.dm:24-74, :628-634, :726-752.
 local content = {

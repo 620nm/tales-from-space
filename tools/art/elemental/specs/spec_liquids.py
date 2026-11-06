@@ -2,7 +2,7 @@
 """
 Elemental Matter — Liquids & Zero-G Pixel-Art Specification (19 assets, v2.1).
 
-All 19 liquid assets are `colorable: True` and strictly neutral greyscale (`R == G == B`)
+All 19 liquid assets are `colorable: True` and strictly neutral grayscale (`R == G == B`)
 from `tales-from-space.gpl`, authored for runtime sRGB multiply tinting across water,
 blood, crude oil, acid, fuel/cooking oil, and liquid metals.
 
@@ -24,7 +24,7 @@ from __future__ import annotations
 import math
 from typing import Any
 
-# Strictly neutral greyscale swatches (R == G == B, chroma == 0) in tales-from-space.gpl
+# Strictly neutral grayscale swatches (R == G == B, chroma == 0) in tales-from-space.gpl
 FULL_LEGEND: dict[str, str] = {
     "k": "#1B1B1B",  # 27  stripe-dark-1
     "d": "#1D1D1D",  # 29  neutral-1-outline

@@ -8,7 +8,7 @@
 --
 -- The `atmos` block is that sentence to the engine. `device = "valve"`
 -- means an OPEN one does not pump — it fuses (tg's
--- `custom_reconcilation`), so the two sides equalise by volume and a
+-- `custom_reconcilation`), so the two sides equalize by volume and a
 -- valve is a decision about topology rather than a machine that runs.
 -- Shutting it splits the gas back by what each side holds, to the mole.
 --

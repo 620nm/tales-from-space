@@ -18,7 +18,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- is no on_spawn), and a bag whose contents vary per instance is a
 -- worse thing to test than a bag whose contents are a fact. So the
 -- seventh slot is the d00, deterministically: it is the only one of
--- tg's eight whose faces this pack can draw AND whose behaviour is one
+-- tg's eight whose faces this pack can draw AND whose behavior is one
 -- line of arithmetic, and it is the d10's other half, which makes the
 -- bag a percentile set instead of six solids and a curio.
 --

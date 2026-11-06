@@ -3,7 +3,7 @@
 -- tg's `/obj/structure/rack` (code/game/objects/structures/tables_racks.dm:1330-1340).
 -- It differs from a table by one line: a table places a thing at the
 -- pixel clicked, and a rack calls `transfer_item_to_turf` with no offset
--- (:1388), so nothing on it sits where it was aimed. tg's rack centres
+-- (:1388), so nothing on it sits where it was aimed. tg's rack centers
 -- everything into one pile; `surface_slots` keeps that "the rack decides"
 -- and spreads things across the rack's two shelves, left to right,
 -- evenly once every slot holds something.

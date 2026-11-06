@@ -5,7 +5,7 @@
 -- The ratio is tg's, unchanged. THE DEPARTURE is one word: both sides
 -- name a PHASE. Ammonia is a gas at room temperature now that there is
 -- one id per molecule, and cleaner is made out of the liquid -- which
--- is what a sealed bottle holds under ammonia's own vapour pressure,
+-- is what a sealed bottle holds under ammonia's own vapor pressure,
 -- about 8.6 atm at 293 K. So this is the janitor's bottle rather than
 -- the janitor's beaker, and the ammonia in it either came off the
 -- dispenser under a lid or was synthesized there

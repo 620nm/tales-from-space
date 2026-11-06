@@ -1,5 +1,5 @@
 r"""
-Shared neutral-greyscale palette, grid/layer builders, lone-pixel pruners, 2D/3D polygon
+Shared neutral-grayscale palette, grid/layer builders, lone-pixel pruners, 2D/3D polygon
 and prism rasterizers, 5-block smooth-strip SDFs, and 4-connected basalt-plate helpers
 for Tales from Space — Solid Matter & Soil (`tools/art/elemental/specs/`).
 """
@@ -10,7 +10,7 @@ from collections.abc import Callable
 import math
 from typing import Any
 
-# Strictly neutral greyscale (`R == G == B`) swatches from `tales-from-space.gpl` ONLY.
+# Strictly neutral grayscale (`R == G == B`) swatches from `tales-from-space.gpl` ONLY.
 # Never use `#0A0A0D` (chroma = 3).
 GRAY: dict[str, str] = {
     "K": "#1B1B1B",  # 27  stripe-dark-1

@@ -7,11 +7,11 @@
 -- degrees) lies almost flat and stops at 0.29 mm. So the same bottle of
 -- spirit reaches further down a corridor and leaves less behind it,
 -- and that ORDERING is the claim. Not the ratio: what actually stops a
--- frontier is the film plus whatever the millilitre quantum freezes on
--- top of it, and that second term is worth more than a millimetre to
+-- frontier is the film plus whatever the milliliter quantum freezes on
+-- top of it, and that second term is worth more than a millimeter to
 -- either of them. The films differ elevenfold; the spills do not.
 --
--- Two identical twenty-tile corridors, twenty litres poured on the
+-- Two identical twenty-tile corridors, twenty liters poured on the
 -- first tile of each. No exact tile count is asserted -- the count is
 -- what the quantum leaves, and the spec that pins it is a spec that
 -- breaks when the epsilon moves.
@@ -47,7 +47,7 @@ local SETTLE = 1600 -- ticks, long past the surge and into the creep
 --   water   18.015 g/mol / 1.0   g/mL = 18.02 mL/mol -> 55.51 mol/L -> 1110.2 mol
 --   ethanol 46.07  g/mol / 0.789 g/mL = 58.39 mL/mol -> 17.13 mol/L ->  342.6 mol
 -- The air rows are the same 21/79 at 20 C in both corridors (41.573
--- mol over a cubic metre is 101.325 kPa), because a `total` blend is
+-- mol over a cubic meter is 101.325 kPa), because a `total` blend is
 -- the tile's whole contents and neither corridor may open airless.
 local function pour(key: string, moles: number)
     t.world(CORRIDOR:format(key, moles), 0)
@@ -115,7 +115,7 @@ assert(
 --
 -- The same claim from the other end: a liquid that stops thinning at a
 -- tenth of the depth keeps a tenth as much on the tile the bottle went
--- over. It is the same twenty litres, so what one end of the corridor
+-- over. It is the same twenty liters, so what one end of the corridor
 -- does not hold, the other end does.
 -- ---------------------------------------------------------------
 assert(

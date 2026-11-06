@@ -1,7 +1,7 @@
 local physical_profiles = require("@lib/physical_profiles")
 local item_actions = require("@lib/item_actions")
 
--- The blue bottle: seventy litres at six atmospheres, worn on the back
+-- The blue bottle: seventy liters at six atmospheres, worn on the back
 -- in place of a pack. This is the one you take outside -- twenty-odd
 -- times what the pocket bottle holds, which is the difference between
 -- getting to the breach and getting back from it.
@@ -59,13 +59,13 @@ local content = {
     -- until it is empty or gone (tanks.dm:342-345).
     --
     -- ONE tg SUBTLETY IS FOLDED IN RATHER THAN BUILT: tg's tank wears
-    -- `bomb = 10` armour (`/datum/armor/item_tank`, tanks.dm:68-71),
+    -- `bomb = 10` armor (`/datum/armor/item_tank`, tanks.dm:68-71),
     -- and `run_atom_armor` takes that 10% off every point of the BOMB
     -- damage this ladder deals -- so a tg tank effectively holds
-    -- 200/0.9 = 222 points of it. There is no armour system here and a
+    -- 200/0.9 = 222 points of it. There is no armor system here and a
     -- vessel does not want one, so the number stays 200 and a tank
     -- here gives up about a tenth sooner than tg's. Noted rather than
-    -- silently absorbed, because the day armour lands this is the
+    -- silently absorbed, because the day armor lands this is the
     -- comment that says the rating was never rescaled.
     failure = {
         integrity = 200,

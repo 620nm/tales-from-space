@@ -55,7 +55,7 @@
     // A side puddle at the east bend is isolated from the deep pair by
     // the shut sill and joins the corridor's spill only after it opens.
     // CELL-SIZED: a blend has one amount, and the water must be a total
-    // (litres), so each row's o2 and n2 are one 3 m3 cell's standard air,
+    // (liters), so each row's o2 and n2 are one 3 m3 cell's standard air,
     // 3 x (8.73 o2, 32.84 n2) mol. A change to simulation.tile changes
     // these two numbers; the water rows stay.
     blends: {

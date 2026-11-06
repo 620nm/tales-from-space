@@ -11,7 +11,7 @@ import * as S from "./strings";
 const GROUPS = ["", "shift", "ctrl", "alt", "shift_ctrl", "shift_alt", "ctrl_alt"];
 const BUTTONS = ["primary", "secondary", "middle"];
 /** Where each button sits on the glyph: the middle one is drawn between
- *  its neighbours, and ranks after them. */
+ *  its neighbors, and ranks after them. */
 const SQUARE = [0, 2, 1];
 
 export type Gesture = { id: string; keys: string[]; button: number; rank: number };

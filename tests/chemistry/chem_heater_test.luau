@@ -128,8 +128,8 @@ t.run_seconds(20)
 -- A third of a kelvin of slack, not a hundredth: the beaker is open,
 -- and evaporation into its own headspace carries a little latent heat
 -- away with it. The headspace is the real one now -- nineteen of the
--- glass's fifty millilitres (docs/MATTER.md 5) -- so there is more of
--- it to saturate and a little more heat goes with the vapour. It is
+-- glass's fifty milliliters (docs/MATTER.md 5) -- so there is more of
+-- it to saturate and a little more heat goes with the vapor. It is
 -- still under the deck coupling's half-kelvin deadband, which is why
 -- nothing pulls it back.
 near(assert(t.holder_k(beaker)), T20C, 0.3, "a chamber nobody switched on moves nothing")
@@ -179,7 +179,7 @@ assert(row(t.ui(p), "dock.temperature").tone == "off", "the panel says it is sti
 -- ...AND THE SAME MACHINE COMING BACK DOWN.
 --
 -- tg's chem heater is a heater by name and a THERMOSTAT by arithmetic:
--- the same line with a negative gap cools. Dialling under the beaker
+-- the same line with a negative gap cools. Dialing under the beaker
 -- is the whole test.
 -- ---------------------------------------------------------------
 ui_controls.set(p, "temperature", 310)
@@ -214,10 +214,10 @@ assert(
 -- coupling is for things lying on the deck (sim/holder/heat.rs), so
 -- carrying a hot beaker around costs it nothing THE ROOM could take.
 -- What it does still lose is its own latent heat: an open beaker is
--- evaporating into nineteen millilitres of its own headspace, faster
+-- evaporating into nineteen milliliters of its own headspace, faster
 -- the warmer it is, and twenty seconds of that is half a kelvin. Six
 -- tenths of slack keeps the claim -- no deck coupling in a hand --
--- while telling the truth about the vapour.
+-- while telling the truth about the vapor.
 t.run_seconds(20)
 near(
     assert(t.holder_k(beaker)),

@@ -143,11 +143,11 @@ local booted = {}
 -- is standing at it (network_test.luau) -- and accept every candidate a
 -- press can take. Answers how many it LISTED, which is not always the
 -- same number: a candidate the forest's shape refuses stands on the
--- list greyed and inert, so walking the rows by index would hammer that
+-- list grayed and inert, so walking the rows by index would hammer that
 -- one forever and never reach the tower
 -- (../lunatic/docs/devices/joining.md).
 --
--- `greyed` names the reason exactly one listed row must carry, for the
+-- `grayed` names the reason exactly one listed row must carry, for the
 -- benches where the panel feeding the box is in range of it.
 --
 -- An access point (`id` given) answers only a held laptop, which waits
@@ -182,7 +182,7 @@ local function join_all(p: number, x: number, y: number, id: string?, grayed: st
     local offered = #listed
     if grayed ~= nil then
         local takeable = #ui_controls.pressable(ui_controls.record(t.ui(p, channel)), "link_join")
-        assert(offered - takeable == 1, "one listed row is greyed: " .. (offered - takeable))
+        assert(offered - takeable == 1, "one listed row is grayed: " .. (offered - takeable))
         for _, row in ipairs(listed) do
             local why = ui_controls.unavailable(row)
             assert(why == nil or why == grayed, "grayed for the reason given: " .. tostring(why))
@@ -260,7 +260,7 @@ local function two_roots(near)
     -- island. A panel that carries a card is a hub in its own right
     -- and every device it powers is hardwired under it
     -- (../lunatic/docs/devices/joining.md), so it stands on the wall
-    -- box's list like anything else in range -- GREYED, because it is
+    -- box's list like anything else in range -- GRAYED, because it is
     -- already the box's parent and a press taking it would close a
     -- loop. The tower beside it is the one the box actually takes.
     speaker_to_boxes()
@@ -288,7 +288,7 @@ local function bridge()
     --
     -- Still four after the wall boxes did their joining, because a box
     -- never took the panel above it: that press was refused before the
-    -- ruling and is greyed after it, so both panels are exactly where
+    -- ruling and is grayed after it, so both panels are exactly where
     -- they were -- unheld, and hubs -- when the router asks.
     assert(join_all(speaker, 9, 1) == 4, "a root takes hubs, and there are four of them")
     walk(speaker, "west", 3)

@@ -1,5 +1,5 @@
 r"""
-Neutral-greyscale pixel-art generators and specs for Tales from Space Terrestrial
+Neutral-grayscale pixel-art generators and specs for Tales from Space Terrestrial
 12-frame 4-layer ocean/shoreline surf and broadband botanical decals (`OCEAN_NATURE_SPRITES`).
 """
 from __future__ import annotations

@@ -14,7 +14,7 @@
 -- copy when it offers the defaults.
 --
 -- The numbers are not typed out; they are the arithmetic spelled again.
--- `amount = "per_m3"` makes this a density: moles per cubic metre, which
+-- `amount = "per_m3"` makes this a density: moles per cubic meter, which
 -- is p/RT at one atmosphere and 293.15 K. A cell gets that times its own
 -- volume, so a 3 m3 room holds three times what a 1 m3 one does.
 --

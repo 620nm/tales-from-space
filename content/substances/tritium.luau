@@ -9,7 +9,7 @@
 --
 -- `visible` carries the threshold and NO tint, which is deliberate: a
 -- gas the room can see enough of to matter but that nothing has been
--- given a colour for is simply not drawn (the stream draws a gas that
+-- given a color for is simply not drawn (the stream draws a gas that
 -- is both visible and tinted, and nothing else). The day somebody wants
 -- to see it, one line here is the whole change.
 --

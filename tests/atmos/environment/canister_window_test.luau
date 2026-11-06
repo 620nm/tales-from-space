@@ -5,7 +5,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 -- generic settings panel, driven the way a player drives it.
 --
 -- canister_test.luau proves the PLUMBING (a bottle feeds a run, the
--- books balance, an empty canister repressurises nothing). This spec
+-- books balance, an empty canister repressurizes nothing). This spec
 -- is about the two knobs a crewman actually turns, and it asserts the
 -- only thing that finally matters about a UI: that clicking it moves
 -- gas, and that the ledger says who moved it.
@@ -15,7 +15,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 -- valve is pointed at the ROOM -- tg's `location.return_air()`
 -- fallback. That makes the regulator legible: at the default setpoint
 -- the room is already at target and nothing moves, so any gas that
--- flows later flowed because a player dialled it up.
+-- flows later flowed because a player dialed it up.
 
 t.world(
     [==[(
@@ -206,7 +206,7 @@ assert(
 -- ---------------------------------------------------------------
 assert(
     t.ledger_has("MachineSetpoint", "release", "Player"),
-    "re-dialling the regulator is an attributed act"
+    "re-dialing the regulator is an attributed act"
 )
 assert(t.ledger_has("MachineToggled", "valve", "Player"), "so is throwing the valve")
 

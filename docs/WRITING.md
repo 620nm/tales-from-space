@@ -56,7 +56,7 @@ slot, streams its text to the recipient's `fax.print` service, and ejects the
 sheet onto the sender's ground tile when the scan ends. The recipient's own
 queue prints one fresh monochrome sheet, spending its own paper and toner. The
 message carries the sender's start stamp in sim-clock seconds, so the sheet
-lands on both machines at the same deadline; a receiver honours a stamp only
+lands on both machines at the same deadline; a receiver honors a stamp only
 within a quarter second of transit and never from the future, so a peer's
 stamp shifts timing and nothing else. It never teleports a sheet. A known
 preflight failure starts no job. A blank sheet faxes as a blank page.

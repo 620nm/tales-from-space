@@ -19,7 +19,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- plan's other thresholds still apply".
 
 local ARENA = [==[(
-    name: "morgue theatre",
+    name: "morgue theater",
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),

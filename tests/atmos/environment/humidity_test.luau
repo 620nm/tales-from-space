@@ -5,13 +5,13 @@ local ui_controls = require("@helpers/ui_controls")
 --
 -- This is the smallest possible statement of what Effort G changed
 -- about matter. The old phase step was a one-way ratchet -- it boiled
--- above the boiling point and condensed ALL vapour below it -- so a
+-- above the boiling point and condensed ALL vapor below it -- so a
 -- kettle emptied into a room at station temperature made a puddle
 -- within a pass or two, every time, however little water there was and
 -- however much air there was to hold it. There was no such thing as
 -- damp air.
 --
--- Now vapour condenses only past its own dew point. A kilo of steam in
+-- Now vapor condenses only past its own dew point. A kilo of steam in
 -- a broom closet still rains; a beaker's worth in a room this size is
 -- nowhere near saturation and simply stays in the air, which is what
 -- damp air IS. Nothing here is a new system: it is the same phase step,

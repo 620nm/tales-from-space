@@ -1,5 +1,5 @@
 -- Neurosurgery (tg operation_organ_repair.dm:460-522). tg heals the
--- brain by 25 % of its max; here it is modelled as setting the damage to
+-- brain by 25 % of its max; here it is modeled as setting the damage to
 -- that fraction (docs/SURGERY.md 6.7). The brain socket needs the bone
 -- sawed, which it enforces on its own.
 return {

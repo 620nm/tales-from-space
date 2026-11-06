@@ -3,7 +3,7 @@
 -- a spec has no reader for liquid in a pipe, and the world's water is booked.
 local liquid_bench = {}
 
--- Water on painted deck, litres on a square metre.
+-- Water on painted deck, liters on a square meter.
 liquid_bench.FILM_L = 3.317
 liquid_bench.ONE_G = "environment: (gravity_m_s2: Exact(9.80665)),"
 liquid_bench.ZERO_G = "environment: (kind: Exact(space), gravity_m_s2: Exact(0.0)),"
@@ -94,7 +94,7 @@ function liquid_bench.world(bench: Bench): number
     return player
 end
 
--- Litres of water on one tile, 0 on a dry one.
+-- Liters of water on one tile, 0 on a dry one.
 function liquid_bench.standing(x: number, y: number): number
     local liquid = t.room_liquid(x, y)
     return (liquid and liquid.water) or 0

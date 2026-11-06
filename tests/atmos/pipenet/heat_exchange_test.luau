@@ -16,8 +16,8 @@ local ui_controls = require("@helpers/ui_controls")
 --     so a cooling loop is a closed circuit and not a branch of the
 --     distribution main -- and the junction is the one thing that opens
 --     it (heat_exchange/junction.dm);
---   * it takes no paint, because tg fixes its colour outright
---     (he_pipes.dm:15), the same rule the colour adapter keeps.
+--   * it takes no paint, because tg fixes its color outright
+--     (he_pipes.dm:15), the same rule the color adapter keeps.
 --
 -- WHAT A PLAYER CAUSES IS WHAT IS ASSERTED. That the joules a run pays
 -- are exactly the joules the room takes, and that the audit closes over
@@ -38,7 +38,7 @@ local RECIPE = "dial1"
 
 local DISTRO = "l3"
 local PIPE_M3 = 0.070
--- A colour adapter's mouth is tg's UNARY_PIPE_VOLUME, half of the 70 L
+-- A color adapter's mouth is tg's UNARY_PIPE_VOLUME, half of the 70 L
 -- length of pipe it is (pipes.dm:27-28); the junction is the same
 -- primitive and the same volume.
 local ADAPTER_PORT_M3 = 0.035
@@ -140,7 +140,7 @@ near(net_moles(4, 1, DISTRO), ordinary, 0.001, "and the one next to it is the sh
 
 -- ---- and it takes no paint, and says so ----
 --
--- tg fixes the colour at `#404040` with FIXED_COLOUR_PRIORITY
+-- tg fixes the color at `#404040` with FIXED_COLOUR_PRIORITY
 -- (he_pipes.dm:15). A painter that silently changed nothing would be
 -- the worst of both, so the refusal is spoken.
 t.click(p, 6, 1, t.target_at(p, 6, 1, "pipe_painter"))
@@ -157,7 +157,7 @@ near(net_moles(1, 1, DISTRO), exchange, 0.001, "the run is exactly as it was")
 
 -- The ordinary run beside it still takes paint like any other, which is
 -- what makes the refusal above about the KIND and not about the tile.
--- The painter's dial ships on omni, which is the colour a run already
+-- The painter's dial ships on omni, which is the color a run already
 -- wears, so it is stepped once first.
 t.use_self(p)
 t.run_ticks(2)

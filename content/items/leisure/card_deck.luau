@@ -304,7 +304,7 @@ if sim ~= nil then
         --
         -- A deal at bare deck keeps the scatter, and that is deliberate
         -- rather than an oversight: tg has no floor placement at all,
-        -- so cards on the deck are this pack's own flavour, and a
+        -- so cards on the deck are this pack's own flavor, and a
         -- card that fell out of a hand should look like one.
         sim.entity.spawn({
             definition = "card",
@@ -312,7 +312,7 @@ if sim ~= nil then
             initial = {
                 state = "down_" .. top,
                 -- Nil at bare deck: the click carried no pixel worth
-                -- honouring there, and an absent offset is the ordinary
+                -- honoring there, and an absent offset is the ordinary
                 -- scattered mint.
                 offset = target ~= nil and ev.click_offset or nil,
             },

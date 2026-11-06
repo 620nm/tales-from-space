@@ -42,7 +42,7 @@ function matter_look.parts(player: number, x: number, y: number, look: string): 
     return found
 end
 
--- Millilitres of water as a blend row: 55.51 mol a litre.
+-- Milliliters of water as a blend row: 55.51 mol a liter.
 function matter_look.water(ml: number): string
     return string.format('("water", %.4f)', ml * 0.05551)
 end

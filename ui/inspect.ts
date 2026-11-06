@@ -1,5 +1,5 @@
 // Looking at things: the receipt toasts down the left edge and the
-// window holding the whole record, whose runs wear the colours the
+// window holding the whole record, whose runs wear the colors the
 // server wrote them in. The hover card and the menu over a tile are the
 // overlay package's, in `overlay/main.tsx`.
 import type { UiNode } from "@lunatic/ui";
@@ -113,7 +113,7 @@ export function inspectionPanels(view: GameplayView): UiNode[] {
   return out;
 }
 
-/** One row per line, one text run per span, each in the colour sent. */
+/** One row per line, one text run per span, each in the color sent. */
 function examineLines(
   lines: { spans: { text: string; color?: string | null }[] }[],
   id: string,
@@ -129,7 +129,7 @@ function examineLines(
           type: "text" as const,
           text: span?.text ?? "",
           class: ["said"],
-          ...(paint ? { style: { color: paint } } : {}), // theme-lint: allow the span's own colour
+          ...(paint ? { style: { color: paint } } : {}), // theme-lint: allow the span's own color
         };
       }),
       { cls: ["line"], gap: 0 },

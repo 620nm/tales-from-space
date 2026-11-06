@@ -5,7 +5,7 @@
 --
 -- Ethane burning in oxygen, written per mole of ethane:
 -- C2H6 + 3.5 O2 -> 2 CO2 + 3 H2O. At 94 K ethane is a liquid with almost
--- no vapour over it, so a cold sea's ethane burns only once something
+-- no vapor over it, so a cold sea's ethane burns only once something
 -- else (its methane, reactions/organics/methane_fire.luau) has warmed
 -- the cell past ethane's flash point.
 --

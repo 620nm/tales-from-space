@@ -1,7 +1,7 @@
 local ui_controls = require("@helpers/ui_controls")
 
 -- Spilling: a beaker tipped out onto the deck empties, and what was in
--- it becomes matter standing in that tile — not vapour, and not a
+-- it becomes matter standing in that tile — not vapor, and not a
 -- second system bolted beside the air.
 t.world(
     [==[(
@@ -93,7 +93,7 @@ assert(#t.ledger_rows("spilled") == 1, "the empty beaker spilled nothing")
 -- puddle could only ever grow.
 --
 -- The libital beside it does not move, and that is the other half of
--- the claim: an unmodeled substance has no vapour pressure and no curve to
+-- the claim: an unmodeled substance has no vapor pressure and no curve to
 -- transition on, so it stays on the deck. Water dries; the drug it was
 -- carrying is still there when it has.
 -- ---------------------------------------------------------------

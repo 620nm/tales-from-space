@@ -11,7 +11,7 @@
 -- hot.
 --
 -- `visible` is tg's MOLES_GAS_VISIBLE = 0.25 and
--- FACTOR_GAS_VISIBLE_MAX = 20, read per cubic metre: a quarter mole per
+-- FACTOR_GAS_VISIBLE_MAX = 20, read per cubic meter: a quarter mole per
 -- m3 is the first thing you can see, and twenty times that is full
 -- opacity. The
 -- THRESHOLD is physics and the TINT is a decision about how to draw it,

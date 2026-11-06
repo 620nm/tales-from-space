@@ -141,7 +141,7 @@ function decodePng(bytes, label) {
   if (!head) throw new Error(`${label} has no IHDR`);
   if (head.depth !== 8 || head.color !== 6 || head.interlace !== 0)
     throw new Error(
-      `${label} is depth ${head.depth} colour type ${head.colour} interlace `
+      `${label} is depth ${head.depth} color type ${head.colour} interlace `
       + `${head.interlace}; atlas pages are 8-bit RGBA, not interlaced`,
     );
   const { width, height } = head;
@@ -234,7 +234,7 @@ test("stocked_paper_bin_contains_visible_paper", { skip }, () => {
   assert(lightPixels(full) > lightPixels(empty), "the stocked bin adds light paper above the basket");
 });
 
-// Greyscale means greyscale: the baked cable cell must carry NO colour of
+// Grayscale means grayscale: the baked cable cell must carry NO color of
 // its own, or the runtime multiply lands on top of a tint that is already
 // there and the wire is the wrong red.
 test("tinted_art_is_baked_gray", { skip }, () => {
@@ -245,23 +245,23 @@ test("tinted_art_is_baked_gray", { skip }, () => {
       colored = pixels[i + 3] > 0
         && (pixels[i] !== pixels[i + 1] || pixels[i + 1] !== pixels[i + 2]);
     assert.ok(!colored,
-      `${name} is baked with colour in it; the tint belongs at draw time `
+      `${name} is baked with color in it; the tint belongs at draw time `
       + "(rebake: cargo run -p xtask -- bake-atlas --tg <checkout>)");
   }
 });
 
-// Half of tg's art is a greyscale config: a flat silhouette whose only job
-// is to take a colour, plus sibling layers carrying the actual shape. A
+// Half of tg's art is a grayscale config: a flat silhouette whose only job
+// is to take a color, plus sibling layers carrying the actual shape. A
 // real sprite has tonal variation; a mask does not. The rule fires only
-// where the flat colour is also achromatic, which is what every unbaked
-// greyscale config looks like and what no drawn sprite does.
+// where the flat color is also achromatic, which is what every unbaked
+// grayscale config looks like and what no drawn sprite does.
 test("no_sprite_is_a_bare_color_mask", { skip }, () => {
   // Deliberately flat: a synthetic fill quad, the void, the ghost
   // silhouette, and the wind streak -- white with its whole shape in the
-  // ALPHA, because the gas overlay multiplies it by the gas colour.
+  // ALPHA, because the gas overlay multiplies it by the gas color.
   const FLAT_BY_DESIGN = ["white", "space", "ghost", "wind_streak"];
   // Name prefixes whose whole family is flat paint: the renderer
-  // multiplies each sprite by the colour its record carries.
+  // multiplies each sprite by the color its record carries.
   const FLAT_FAMILIES = ["decal_"];
   const { atlas } = bake();
   for (const name of atlas.index.keys()) {
@@ -283,13 +283,13 @@ test("no_sprite_is_a_bare_color_mask", { skip }, () => {
       let [color, dominant] = [0, 0];
       for (const [key, count] of histogram) if (count > dominant) [color, dominant] = [key, count];
       const channels = [(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff];
-      // Chromatic: drawn art, however flat. A greyscale config's silhouette
-      // is grey by construction, so this cannot excuse one.
+      // Chromatic: drawn art, however flat. A grayscale config's silhouette
+      // is gray by construction, so this cannot excuse one.
       if (Math.max(...channels) - Math.min(...channels) > 6) continue;
       const frac = dominant / area;
       assert.ok(frac < 0.85,
-        `${name} frame ${frame} is ${(frac * 100).toFixed(0)}% one colour over ${area}px — that is `
-        + "a greyscale MASK, not art. Check tg's code/datums/greyscale/json_configs for the sibling "
+        `${name} frame ${frame} is ${(frac * 100).toFixed(0)}% one color over ${area}px — that is `
+        + "a grayscale MASK, not art. Check tg's code/datums/greyscale/json_configs for the sibling "
         + "layers it needs, and bake them with DmiBlend.");
     }
   }

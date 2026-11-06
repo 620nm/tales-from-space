@@ -41,7 +41,7 @@ local p = t.join()
 t.tick()
 
 -- The default is 1e-8; a caller may ask for more. Only the draw figures
--- need it: a bottle standing open in a room trades a little vapour with
+-- need it: a bottle standing open in a room trades a little vapor with
 -- the air over it, and how much depends on how fast that air moves, so
 -- the parcel a draw lands on is exact to about a part in a million
 -- rather than to the last bit.

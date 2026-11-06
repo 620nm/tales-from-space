@@ -84,8 +84,8 @@ return {
         max_rate_lps = 200.0,
     },
     -- The round trip, exactly as the connector port's is: a fitting
-    -- goes down and a wrench stands the machine up as the centre
-    -- section between the neighbouring runs
+    -- goes down and a wrench stands the machine up as the center
+    -- section between the neighboring runs
     -- (docs/CONSTRUCTION.md, "Fittings, portables, and the round trip").
     build = {
         sound = "smash",

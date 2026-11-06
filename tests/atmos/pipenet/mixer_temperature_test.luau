@@ -206,7 +206,7 @@ near(
 ui_controls.set(p, "pressure", 200)
 ui_controls.toggle(p, "power")
 t.run_seconds(30)
--- Thirty seconds later the outlet is at the 200 kPa it was dialled to,
+-- Thirty seconds later the outlet is at the 200 kPa it was dialed to,
 -- so the machine has ARRIVED -- and a trinary is drawn by what the last
 -- pass saw it do rather than by its switch, so an arrived mixer is drawn
 -- idle (docs/ATMOS.md SS6; device_looks_test.luau owns the picture
@@ -221,7 +221,7 @@ assert(gave_side > 1.0, "and so did the hot side: " .. gave_side)
 -- DRAWING IS NOT CONDUCTION. Both intakes gave up moles and neither
 -- gave up a degree: tg's `remove()` copies the source's temperature
 -- onto the parcel and never writes it back (gas_mixture.dm:215). This
--- is the assertion a mixer that "equalised" its intakes would fail
+-- is the assertion a mixer that "equalized" its intakes would fail
 -- while still reading plausibly on every pressure gauge on the line.
 near(
     assert(network_matter.temperature(BACK_X, BACK_Y)),

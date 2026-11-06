@@ -52,7 +52,7 @@ end
 -- ---------------------------------------------------------------
 -- A SHUT VALVE IS A WALL.
 --
--- One distribution main, with a valve replacing its centre length
+-- One distribution main, with a valve replacing its center length
 -- middle of it. The run does NOT pass through the machine: the length
 -- under it belongs to no net, and the two sides are two networks that
 -- happen to be in a straight line.
@@ -135,7 +135,7 @@ t.tick()
 assert(assert(t.structure_at(3, 2)).id == "manual_valve", "the map stood a valve on the main")
 assert(assert(t.structure_at(3, 2)).state == "shut", "and it opens the shift shut")
 
--- Both atmos fixtures replace their centre lengths.
+-- Both atmos fixtures replace their center lengths.
 assert(network_channels.at(1, 2, "pipe") == "", "there is no hidden pipe under the vent")
 assert(network_channels.at(3, 2, "pipe") == "", "there is no hidden pipe under the valve")
 assert(network_matter.pressure(3, 2) == nil, "but no net claims it: a run does not pass through a machine")
@@ -169,7 +169,7 @@ assert(held > 0.0, "the books were readable to begin with")
 --
 -- tg's open valve does not pump. It fuses its two pipelines and lets
 -- them reconcile as one (`custom_reconcilation`, valve.dm:56-61), so
--- the pressures equalise by VOLUME and there is no per-tick machine
+-- the pressures equalize by VOLUME and there is no per-tick machine
 -- anywhere. Shutting it divides the gas back the same way — the very
 -- arithmetic a wrench through a charged line already used.
 --
@@ -504,7 +504,7 @@ assert(
 -- facing is the input and the port it FACES is the output
 -- (`get_node_connects`, binary_devices.dm:19-20). Stand one with its
 -- face to the charged main and its back to a slack one, switch it on,
--- and nothing crosses — where anything that merely EQUALISED would
+-- and nothing crosses — where anything that merely EQUALIZED would
 -- have emptied one into the other.
 -- ---------------------------------------------------------------
 t.world(

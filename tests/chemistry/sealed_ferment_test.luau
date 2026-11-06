@@ -51,7 +51,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- make 12.11 mmol of CO2, not ten equal helpings of the first -- a
 -- shade over the 12.106 that arithmetic on the fills alone gives,
 -- because water has a curve and a little of it stands in the headspace
--- as vapour, which makes the solution it left a little thinner and the
+-- as vapor, which makes the solution it left a little thinner and the
 -- sugar in it a little stronger.
 --
 -- The bottle is 50 mL of glass (`volume_ml`), leaving a headspace of
@@ -71,7 +71,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- and stays gas.
 -- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
 -- plant standing in the room: his lungs are a driven vessel that holds
--- several litres of the air inside itself and turns what it takes in
+-- several liters of the air inside itself and turns what it takes in
 -- into something else (docs/BIOLOGY.md, `sim/holder/bellows.rs`). That
 -- is a source and a sink, and the books below are the ATMOSPHERICS
 -- engine's -- so the crew are switched off as scaffolding, the same
@@ -203,7 +203,7 @@ local function brew_into(x, y, vessel)
     assert(t.hands(p).held == "beaker", "and it comes back out")
     t.click(p, x, y, vessel)
     t.tick()
-    -- ...all of it but the whisker of vapour standing over the liquid:
+    -- ...all of it but the whisker of vapor standing over the liquid:
     -- a pour moves the LIQUID phase, and the mixing beaker is open, so
     -- what its own surface has evaporated into its headspace stays
     -- behind (docs/MATTER.md 5).
@@ -219,14 +219,14 @@ brew_into(3, 1, bottle)
 
 local started = assert(t.vessel(bottle))
 assert(started.sealed, "a bottle has a stopper in it")
--- A tenth of a millimole of slack, for the vapour the mixing beaker
+-- A tenth of a millimole of slack, for the vapor the mixing beaker
 -- kept: a pour moves the liquid, and an open glass always has a little
 -- of itself standing over it as gas.
 near(started.moles, WATER + SUGAR, 2e-4, "a quarter of a mole of brew went in")
 near(started.contents.water.liquid, WATER, 2e-4, "nine units of water")
 near(started.contents.sugar.solid, SUGAR, 1e-9, "and one of sugar")
 near(started.temp_k, 300.0, 0.5, "at the nozzle's temperature, on the bell's plateau")
-near(started.volume_l, 0.05, 1e-9, "fifty millilitres of glass")
+near(started.volume_l, 0.05, 1e-9, "fifty milliliters of glass")
 near(started.headspace_l, 0.05 - 0.004053 - 0.005382, 1e-4, "and 40.6 mL of room over it")
 near(started.pressure_kpa, 0, 1e-9, "nothing pressing on the cork yet")
 assert(not says(t.examine(p, 3, 1, bottle), "strains"), "and nothing to say about a lid")
@@ -258,7 +258,7 @@ for step = 1, STEPS do
     last_co2, last_kpa, last_made = co2, reading.pressure_kpa, made
     -- Three steps buy the 0.00225 mol the warning costs, by the
     -- arithmetic at the top of this file. Before that the bottle is
-    -- merely pressurised; from there on the sentence is there and never
+    -- merely pressurized; from there on the sentence is there and never
     -- goes away while the sugar lasts.
     local straining = says(t.examine(p, 3, 1, bottle), "It strains against its lid.")
     if step < STRAIN_STEP then
@@ -280,7 +280,7 @@ near(last_co2, TEN_STEPS_CO2, 1e-6, "ten steps of fermentation, all of it kept")
 assert(last_kpa > 600.0, "a bottle under real pressure: " .. last_kpa)
 -- The brew is a brew, not just a gas source: what the sugar became is
 -- in there too, two of ethanol for every one of it. Counted over BOTH
--- phases, because ethanol has a real vapour curve (substances/
+-- phases, because ethanol has a real vapor curve (substances/
 -- ethanol.luau) and a trace of it is standing in the headspace with
 -- the CO2 -- which is also part of what the gauge is reading.
 local spirit = assert(t.vessel(bottle)).contents.ethanol
@@ -290,7 +290,7 @@ near(
     1e-9,
     "as much ethanol as carbon dioxide, which is the recipe"
 )
-assert(spirit.gas ~= nil and spirit.gas > 0, "and some of it is vapour: " .. tostring(spirit.gas))
+assert(spirit.gas ~= nil and spirit.gas > 0, "and some of it is vapor: " .. tostring(spirit.gas))
 
 -- ---------------------------------------------------------------
 -- TWO: THE SAME BREW, IN AN OPEN GLASS.
@@ -325,7 +325,7 @@ assert(
     "so it has nothing to say about a lid it does not have"
 )
 -- The same ten helpings the bottle made, to within the whisker of
--- vapour an open glass loses that a corked one keeps.
+-- vapor an open glass loses that a corked one keeps.
 -- Plus the sweep's register: carbon that reached the room arrives thin,
 -- spread over six tiles, and a room that goes quiet has whatever is left
 -- under the floor booked off it (lunatic docs/MATTER-WORLD.md §3 step 8).
@@ -362,7 +362,7 @@ assert(
 -- catch: both bottles so far stood on a deck at the plateau.
 --
 -- The positive control is the whole of section ONE. Same recipe off the
--- same taps into the same corked fifty millilitres, watched for the same
+-- same taps into the same corked fifty milliliters, watched for the same
 -- ten steps: down there the first step alone was worth FIRST_CO2 and
 -- ten were worth TEN_STEPS_CO2. Here ten steps are worth nothing, and
 -- "nothing" is measured against that first step.

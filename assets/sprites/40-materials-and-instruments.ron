@@ -1,5 +1,5 @@
 // Sheet goods, glass, and the atmospherics technician's instruments:
-// the painter, the RPD, the analyser and the meter's two halves.
+// the painter, the RPD, the analyzer and the meter's two halves.
 //
 // One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
 // this directory is baked, in FILE-NAME order and then entry order,
@@ -85,7 +85,7 @@
         ("held_rods_r_w", Dmi("@items_r", "rods", 3)),
         ("pipe", Dmi("@pipe_item", "simple", 0)),
         // The atmospherics technician's hand instruments. tg's painter
-        // is a relabelled label gun off the bureaucracy sheet
+        // is a relabeled label gun off the bureaucracy sheet
         // (pipe_painter.dm:5-6), drawn exactly as tg draws it.
         ("pipe_painter", Dmi("@bureaucracy", "labeler1", 0)),
         // The rapid pipe dispenser, off tg's tool sheet
@@ -100,7 +100,7 @@
         // it rests on: eight atlas cells for a device that spends the
         // shift in a pocket is not a trade worth making.
         ("analyzer", Dmi("@scanner", "analyzer", 0)),
-        // The pipe meter, in the three layers tg's greyscale config
+        // The pipe meter, in the three layers tg's grayscale config
         // composes it from (datums/greyscale/json_configs/meter.json):
         // an untinted housing, a needle the machine paints by
         // temperature, and a lit button panel that is untinted

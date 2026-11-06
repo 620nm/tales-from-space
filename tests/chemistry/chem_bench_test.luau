@@ -18,7 +18,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- open beaker is refused, because what landed would leave through the
 -- same mouth before the chemist looked up (D19). Pressed into a vessel
 -- with a stopper in it, the identical press lands and condenses under
--- its own vapour pressure -- and LIQUID chlorine is the reactant the
+-- its own vapor pressure -- and LIQUID chlorine is the reactant the
 -- recipe names.
 --
 -- So the order of gestures is the physics: chlorine into the bottle,
@@ -140,7 +140,7 @@ end
 -- ---------------------------------------------------------------
 -- ONE: HALF A PRESS OF CHLORINE, INTO SOMETHING WITH A LID.
 --
--- The press lands as gas -- 0.1 mol in fifty millilitres is fifty
+-- The press lands as gas -- 0.1 mol in fifty milliliters is fifty
 -- atmospheres -- and the bottle's own sweep condenses it back down to
 -- the eight its saturation line allows at this temperature. Condensing
 -- is ADIABATIC (`change_phase` moves moles and leaves `energy_j`
@@ -183,14 +183,14 @@ assert(
     "and most of it is liquid now: " .. tostring(cooled.contents.chlorine.liquid)
 )
 -- The gauge and the temperature are ONE statement: the gauge is
--- chlorine's own vapour pressure at the bottle's temperature, off the
+-- chlorine's own vapor pressure at the bottle's temperature, off the
 -- Clausius-Clapeyron line anchored at its 239.1 K boiling point
 -- (docs/MATTER.md 5).
 near(
     cooled.pressure_kpa,
     101.325 * math.exp((-20410.0 / 8.314) * (1.0 / cooled.temp_k - 1.0 / 239.1)),
     60.0,
-    "and the gauge is that temperature's own vapour pressure"
+    "and the gauge is that temperature's own vapor pressure"
 )
 
 -- ---------------------------------------------------------------
@@ -205,12 +205,12 @@ near(
 -- `chlorine:liquid`. The reaction is exothermic -- 7530 J per extent,
 -- against a mixture whose whole heat capacity is about ten joules per
 -- kelvin -- so the bottle warms itself as it works, and a warmer bottle
--- holds more of its chlorine as VAPOUR. The run therefore does not
+-- holds more of its chlorine as VAPOR. The run therefore does not
 -- stop when the chlorine is gone; it stops when the LIQUID is gone,
 -- with a saturated headspace of chlorine still in the bottle that no
 -- rule naming the liquid can reach. A tenth of a mole goes in and
 -- about a sixth of it is still there at the end, standing over the
--- salt as gas at exactly its own vapour pressure.
+-- salt as gas at exactly its own vapor pressure.
 --
 -- The bottle stays on the DECK for this, so the heat has somewhere to
 -- go -- and the deck is not a heat sink either: this room has a
@@ -261,12 +261,12 @@ assert(
     "which is standing over a bottle the exotherm warmed past the room: " .. done.temp_k
 )
 -- The gauge and the temperature are ONE statement again: a saturated
--- headspace reads its own vapour pressure and nothing else.
+-- headspace reads its own vapor pressure and nothing else.
 near(
     done.pressure_kpa,
     101.325 * math.exp((-20410.0 / 8.314) * (1.0 / done.temp_k - 1.0 / 239.1)),
     60.0,
-    "and the gauge is that temperature's own vapour pressure"
+    "and the gauge is that temperature's own vapor pressure"
 )
 
 -- ...and then it stays there, because nothing in the bottle can move.
@@ -290,7 +290,7 @@ t.click(p, 3, 2, assert(t.target_at(p, 3, 2, b)))
 t.tick()
 near(amount(b, "salt"), settled, 1e-9, "the salt went across")
 near(amount(b, "sodium"), SODIUM - settled, 1e-9, "and so did the leftover sodium")
-near(assert(t.holder_k(b)), assert(warmth), 1.0, "the heat travelled with the matter")
+near(assert(t.holder_k(b)), assert(warmth), 1.0, "the heat traveled with the matter")
 
 -- ---------------------------------------------------------------
 -- FOUR: AND SALT IN WATER IS SALT IN WATER.

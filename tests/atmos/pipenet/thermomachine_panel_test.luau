@@ -188,7 +188,7 @@ local caught_k = assert(network_matter.temperature(3, 1))
 local caught_j = assert(network_matter.energy(3, 1))
 assert(
     caught_k > 300.0 + 100.0,
-    "there is a real job in front of it: " .. caught_k .. " K, dialled to 300"
+    "there is a real job in front of it: " .. caught_k .. " K, dialed to 300"
 )
 
 t.outage()

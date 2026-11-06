@@ -7,7 +7,7 @@ local ui_controls = require("@helpers/ui_controls")
 --
 -- thermomachine_test.luau proves the machine: it heats, it cools, it
 -- arrests on the setpoint instead of running past it, and a switch or a
--- dead room circuit stops it dead -- every one of those scenarios dialled to a
+-- dead room circuit stops it dead -- every one of those scenarios dialed to a
 -- comfortable number in the middle of the range. This file is about the
 -- ENDS of that range and about changing one's mind, which are the two
 -- things a cold room is actually built by.
@@ -18,7 +18,7 @@ local ui_controls = require("@helpers/ui_controls")
 --   min = max(T0C - (170 + lasers*15), TCMB) =  73.15 K
 --   max = T20C + 140*lasers                  = 573.15 K
 --
--- Both are honoured in two places at once, and this file checks both at
+-- Both are honored in two places at once, and this file checks both at
 -- each stop: the PANEL publishes them (so no engineer can dial a number
 -- the machine will refuse) and `set_device_temperature` clamps to the
 -- same pair (so no client can send one either). A clamp that was only
@@ -178,7 +178,7 @@ near(
 -- ALL THE WAY DOWN, AND A STOP THAT IS A STOP.
 --
 -- The clamp above is only a readout until the machine is asked to
--- honour it. Switched on at a dial that was ASKED for -1000 K, the gas
+-- honor it. Switched on at a dial that was ASKED for -1000 K, the gas
 -- must come to rest at 73.15 and stay there: monotone the whole way
 -- down, never a kelvin under the floor, no drift afterwards either
 -- way. A machine that clamped its panel and not its arithmetic would
@@ -224,7 +224,7 @@ near(
 -- ---------------------------------------------------------------
 -- AND ALL THE WAY UP, OFF THE SAME DIAL.
 --
--- The hot stop, asked for the same way, and then honoured the same
+-- The hot stop, asked for the same way, and then honored the same
 -- way. This is the assertion that the machine is a THERMOSTAT rather
 -- than a refrigerator with a dial on it: the run it just froze to 73 K
 -- is driven to 573 K by the same hardware and the same arithmetic,
@@ -287,7 +287,7 @@ near(
 -- ---------------------------------------------------------------
 -- CHANGING ONE'S MIND IN THE MIDDLE OF THE JOB.
 --
--- The run above is two lengths of pipe: a third of a cubic metre of
+-- The run above is two lengths of pipe: a third of a cubic meter of
 -- gas against a 5000 J/K thermostat, which closes 95% of the gap every
 -- pass, so there is barely a middle to catch it in. A real cold room
 -- has a RESERVOIR behind its mouth, and this bench is that -- a 2500 L
@@ -392,7 +392,7 @@ near(
     ui_controls.number(ui_controls.rows(ui_controls.state(e).setpoints)[1].value),
     CEILING,
     1e-9,
-    "dialled to the top"
+    "dialed to the top"
 )
 near(ui_controls.number(ui_controls.state(e).gauge), 100.0, 1e-9, "and the needle says so")
 

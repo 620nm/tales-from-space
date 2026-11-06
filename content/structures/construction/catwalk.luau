@@ -16,7 +16,7 @@ return {
     },
     smooth = {
         group = "catwalk",
-        -- tg's floors recognise the catwalk's announced group
+        -- tg's floors recognize the catwalk's announced group
         -- (lattice.dm:124-125); ours announce nothing, so the flow list
         -- joins floor and base tiles by component instead.
         flow = { "station_base", "floor_tiles" },

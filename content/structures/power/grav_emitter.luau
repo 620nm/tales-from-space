@@ -1,7 +1,7 @@
 -- One of the four emitters of the gravity battery, before it is welded in.
 --
 -- Facing is the way the nozzle points; the weld wants it pointing at the
--- centre. It turns with Alt+click (lib/turning.luau), as tg's emitter
+-- center. It turns with Alt+click (lib/turning.luau), as tg's emitter
 -- does (`simple_rotation`, code/modules/power/singularity/emitter.dm:79);
 -- pack divergence: it turns bolted down too, where tg's refuses
 -- (code/datums/elements/rotation.dm:95). No recipe makes one: a map
@@ -52,7 +52,7 @@ return {
     category = "power",
     script = "grav_emitter",
     examine = {
-        flavor = "A squat pillar with a nozzle that must face the centre of the gravity battery.",
+        flavor = "A squat pillar with a nozzle that must face the center of the gravity battery.",
     },
     motion_response = {
         mass = 120.0,

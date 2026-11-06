@@ -15,7 +15,7 @@ canisters and the reaction chamber:
 | --- | --- | --- |
 | naphtha | 8 carbon dioxide + 24 hydrogen → 1 naphtha + 16 water | 450–470 K, sealed vessel |
 | polymer resin | naphtha, with polymer catalyst | 360–380 K |
-| wax | naphtha, with sulphuric acid | 370–400 K |
+| wax | naphtha, with sulfuric acid | 370–400 K |
 | toner | 4 polymer resin + carbon + wax | 320–340 K |
 
 The naphtha gas route folds reverse water-gas shift and Fischer–Tropsch
@@ -30,7 +30,7 @@ and polymer feedstock. It does not require a second separation machine.
 
 The resin route consumes one naphtha unit for one equal-mass polymer resin
 unit when at least 0.05 mol of polymer catalyst is present. The wax route
-uses sulphuric acid as its reusable catalyst at a slightly higher window.
+uses sulfuric acid as its reusable catalyst at a slightly higher window.
 If both catalysts are present, a blocked gate suppresses wax while polymer
 catalyst selects resin. The polymer route does not block residual synthesis
 catalyst, so a single vessel can go from gas synthesis to resin.

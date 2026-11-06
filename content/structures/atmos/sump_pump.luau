@@ -12,12 +12,12 @@
 --
 -- tg has no sump pump; these numbers are this pack's.
 --
--- TEN LITRES A SECOND out of the crate, twenty floor drains' worth, and
+-- TEN LITERS A SECOND out of the crate, twenty floor drains' worth, and
 -- fifty at the top of the dial: the pair of tiles behind the alcove's door
 -- hold 100 L, ten seconds at the stock setting.
 --
 -- `watts` 2000 is the bill at full dial on one tile. Lifting 50 kg/s through
--- three metres (one deck) at 9.81 m/s2 is 1471 W of water; at three quarters
+-- three meters (one deck) at 9.81 m/s2 is 1471 W of water; at three quarters
 -- efficiency that is 1960 W. The stock dial bills 400 W, under three vents.
 -- The whole ring at full dial is 18 kW, billed for as long as the pump is on,
 -- dry floor included. With no feed that flattens a 1 MJ panel in 55 s; against

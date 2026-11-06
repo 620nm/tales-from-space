@@ -20,7 +20,7 @@
 // `gravity-ring` holds the four corner arcs of `02_rings`, 32x32 each, tagged
 // by the facing that wears them: north is the north-west arc, then clockwise.
 //
-// DISC. 48x48, centred on the centre tile (`Anchored(.., Center)`); it
+// DISC. 48x48, centered on the center tile (`Anchored(.., Center)`); it
 // is not a cell of the 96x96 sheet.
 //
 // STATUS LED. `led_display` frames 27..30 of its `03_status_glyphs`
@@ -143,7 +143,7 @@
         ("grav_smes_shutdown_2_1", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "11_shutdown"), cols: 3, rows: 3, column: 1, row: 2)),
         ("grav_smes_shutdown_2_2", Cut(inner: AseAnimOnce("art/machines/gravity/gravity-battery.aseprite", "11_shutdown"), cols: 3, rows: 3, column: 2, row: 2)),
 
-        // The disc over the centre tile.
+        // The disc over the center tile.
         ("grav_disc_startup", Anchored(AseAnimOnce("art/machines/gravity/gravity-disc.aseprite", "01_startup"), Center)),
         ("grav_disc_active", Anchored(AseAnim("art/machines/gravity/gravity-disc.aseprite", "02_active"), Center)),
         ("grav_disc_shutdown", Anchored(AseAnimOnce("art/machines/gravity/gravity-disc.aseprite", "03_shutdown"), Center)),

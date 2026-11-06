@@ -18,10 +18,10 @@
 --
 -- WHERE A CHEMIST GETS IT. At 300 K and one atmosphere ammonia RESTS
 -- as a gas, so a press over an open beaker is refused and the same
--- press into a sealed bottle lands and condenses under its own vapour
+-- press into a sealed bottle lands and condenses under its own vapor
 -- pressure (about 8.6 atm at 293 K). Synthesis is the other way in:
 -- reactions/ammonia.luau runs nitrogen and hydrogen together in a
--- pressurised vessel.
+-- pressurized vessel.
 --
 -- WHAT IT DOES TO YOU, and where 12 000 comes from.
 --
@@ -59,7 +59,7 @@ local content = {
     inhale = 0.5,
     metabolism_rate = 0.01,
     -- Faintly yellow-green and thin: tg's MOLES_GAS_VISIBLE threshold
-    -- and FACTOR_GAS_VISIBLE_MAX, read per cubic metre, so a cell has to
+    -- and FACTOR_GAS_VISIBLE_MAX, read per cubic meter, so a cell has to
     -- hold a quarter of a mole per m3 to be visible.
     visible = { mol_per_m3 = 0.25, factor = 20, tint = "#DFE8C0", visual_layer = "gas_haze" },
     -- What it looks like through glass (tg: other_reagents.dm:1630).

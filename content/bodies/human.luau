@@ -1,7 +1,7 @@
 -- The human body plan (docs/BIOLOGY.md §1–§2, §4).
 --
 -- Everything a crewman IS: seven slots a blow can land on, nine sockets
--- organs fit in, five and a half litres of blood, and the eleven
+-- organs fit in, five and a half liters of blood, and the eleven
 -- capacities that decide what any of that lets them do. The engine
 -- names none of it — it knows roles, body scalars and the formula
 -- operators, and reads this file for the rest.
@@ -14,7 +14,7 @@ local content = {
     lying_visual_layer = "lying_mob",
     name = "human",
     -- The ONE identifying picture: what an examine icon draws, out of
-    -- any world context. The world view is a coloured layer stack the
+    -- any world context. The world view is a colored layer stack the
     -- `looks` block at the bottom of this table composes
     -- (docs/LOOKS.md §2), which is a different question with a
     -- different answer.
@@ -460,7 +460,7 @@ local content = {
 
     -- What a crewman LOOKS like: the layers a body is drawn out of and
     -- the rosters a spawn rolls over (docs/LOOKS.md). The engine picks
-    -- rows and multiplies colours; every word below is this file's.
+    -- rows and multiplies colors; every word below is this file's.
     --
     -- Ordering is load-bearing in two places, and nowhere else.
     -- `layers` below is the DRAW order, bottom-up — deliberately its
@@ -475,7 +475,7 @@ local content = {
     -- GLOB.skin_tones alphabetically at runtime for exactly that
     -- reason (mobs.dm:119).
     looks = {
-        -- One greyscale cell per part slot, multiplied by the skin
+        -- One grayscale cell per part slot, multiplied by the skin
         -- tone. A table is DIMORPHIC: tg builds the chest and the head
         -- as `"human_[body_zone]_[m|f]"` and the limbs without a
         -- suffix (_bodyparts.dm:1308-1310), so those two name a cell
@@ -574,12 +574,12 @@ local content = {
         },
 
         -- `random_eye_color()` (mobs.dm:38-55): weighted buckets. The
-        -- grey bucket is one weight of 20 spread over seven shades, so
+        -- gray bucket is one weight of 20 spread over seven shades, so
         -- it is seven rows of a seventh of it — the same distribution
         -- written the way a table can hold it.
         --
         -- NOT PORTED: the `albino` bucket (weight 1 of 92), which is a
-        -- colour tg GENERATES per roll from four hundred combinations
+        -- color tg GENERATES per roll from four hundred combinations
         -- (mobs.dm:53). A fixed table cannot hold a generator, and one
         -- representative hex would be a different number.
         eye_colors = {
@@ -597,9 +597,9 @@ local content = {
             { color = "#ffcc00", weight = 1 }, -- amber
         },
 
-        -- Two eye cells, so two eye colours are drawable
+        -- Two eye cells, so two eye colors are drawable
         -- (icons/mob/human/human_eyes.dmi, `_eyes.dm:305-377`). A roll
-        -- gives both the same colour; anything that sets them apart
+        -- gives both the same color; anything that sets them apart
         -- has somewhere to put the difference.
         eyes = { cells = { "eye_l", "eye_r" } },
 
@@ -608,7 +608,7 @@ local content = {
         -- `natural_spawn = FALSE` and are outside the roll tg's own
         -- randomiser makes (hair.dm:123, :137, :183); the other two,
         -- `Boddicker` and `Buzzcut`, bake north frames that are one
-        -- flat grey the atlas lint refuses
+        -- flat gray the atlas lint refuses
         -- (assets/sprites/47-human-looks.ron).
         --
         -- So this is the HEAD of the file, not a filter of it.

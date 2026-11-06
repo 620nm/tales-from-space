@@ -39,7 +39,7 @@ local content = {
             .. "is all in there at once.",
     },
     -- tg's `volume = 50` (pill.dm:11). A tablet reading fifty
-    -- millilitres is tg's own arithmetic rather than a coating anybody
+    -- milliliters is tg's own arithmetic rather than a coating anybody
     -- could measure, and it is the number that matters: the shell is
     -- the whole of what a vessel holds (docs/MATTER.md 5), so a smaller
     -- one would trim a chemist's dose at the extruder for no reason

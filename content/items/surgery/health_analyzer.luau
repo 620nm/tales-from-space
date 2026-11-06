@@ -3,7 +3,7 @@ local action_rules = require("@lib/action_rules")
 local blood_identity = require("@lib/blood_identity")
 local analyzer_pathogens = require("@lib/medical/analyzer_pathogens")
 
--- One centilitre of the pack's blood is 0.025 mol (substances/blood.luau:6-12).
+-- One centiliter of the pack's blood is 0.025 mol (substances/blood.luau:6-12).
 local BLOOD_MOLES_PER_CL = 0.025
 -- tg SAFE/OKAY thresholds: code/__DEFINES/mobs.dm:20-22, health_analyzer.dm:376-400.
 local LOW_BLOOD_FRACTION = 0.85

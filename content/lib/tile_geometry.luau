@@ -1,4 +1,4 @@
--- One tile's size, in metres: the `simulation.tile` this pack declares
+-- One tile's size, in meters: the `simulation.tile` this pack declares
 -- (capabilities.luau) and the one copy a script derives an area or a
 -- volume from, so a depth or a fill cannot drift from the cell.
 return {

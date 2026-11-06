@@ -310,7 +310,7 @@ end
 -- The task is spawned before the operation is listed, and the listing is
 -- dropped however the task ends. A Luau error is raised again after the
 -- cleanup, so it still surfaces as the script error. The body is the scope
--- so a destroyed holder interrupts the wait and resumes it; a task cancelled
+-- so a destroyed holder interrupts the wait and resumes it; a task canceled
 -- by its scope runs no Luau, and `find_breakout` sweeps that listing.
 local function begin_breakout(body: Handle, holder: Handle): ()
 	local total_ticks = sim.ticks(data.breakout_seconds)

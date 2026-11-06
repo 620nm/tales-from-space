@@ -83,12 +83,12 @@ exposure inherits.
 ## Decals in the editor
 
 The Decal brush paints one of the roster's decals onto a tile; the seam pieces
-are derived from the neighbours it now has, so a room is trimmed by painting the
+are derived from the neighbors it now has, so a room is trimmed by painting the
 room and never by choosing corners. The palette drawer offers the twelve paints
 of `content/lib/decal_paints.luau` in that file's `defaults` order, then the
-rest, and — because `decal_colors.free.map` is true — a free colour widget
+rest, and — because `decal_colors.free.map` is true — a free color widget
 beside them. An in-game painter has no such widget: `free.play` is false and a
-raw colour from a script effect is refused.
+raw color from a script effect is refused.
 
 Right-click or the erase modifier removes the decal under the cursor. A decal is
 pickable in the editor and not in play, which is the one place the two pictures

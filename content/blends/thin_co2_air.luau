@@ -8,7 +8,7 @@
 -- ice; at 610 Pa it is a gas well clear of the sublimation line, which
 -- the engine's one-atmosphere rest rule cannot know.
 --
--- `per_m3`: moles per cubic metre, p/RT, so a tile's cell holds it times
+-- `per_m3`: moles per cubic meter, p/RT, so a tile's cell holds it times
 -- its volume and reads 610 Pa.
 local R = 8.314
 local PRESSURE_PA = 610.0

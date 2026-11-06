@@ -102,4 +102,4 @@ t.run_seconds(60)
 
 assert(assert(t.room_pressure(3, 1)) > 1.0, "the sealed row fills the empty tile")
 local left, right = assert(t.room_pressure(2, 1)), assert(t.room_pressure(4, 1))
-near(left, right, 5.0, "and a sealed row equalises rather than venting")
+near(left, right, 5.0, "and a sealed row equalizes rather than venting")

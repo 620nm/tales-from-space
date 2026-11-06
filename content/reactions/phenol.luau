@@ -6,7 +6,7 @@
 -- one word: the chlorine leg names its LIQUID. There is one id per
 -- molecule (D3), `chlorine` is Cl2, and Cl2 boils at 239 K -- so the
 -- phase this recipe means exists in a sealed bottle under about eight
--- atmospheres of its own vapour and nowhere else. Press the chlorine
+-- atmospheres of its own vapor and nowhere else. Press the chlorine
 -- into a bottle, put the bottle on the deck until the condensation heat
 -- is gone, then pour the naphtha in and press the water: that is the first
 -- rung of the medicine trunk, and the stopper is not optional.

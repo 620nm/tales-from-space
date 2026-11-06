@@ -7,7 +7,7 @@
 -- three of them disagree about nothing here (fixtures/transceiver.luau,
 -- fixtures/access_point.luau, fixtures/network_router.luau).
 --
--- The division of labour: RANGE is receipt's, KEYS are the reader's and
+-- The division of labor: RANGE is receipt's, KEYS are the reader's and
 -- the mouth's. A tower takes in whatever it can hear whether or not it
 -- can make the word out, so a blank tower beside the speaker still puts
 -- the line on its tree and a keyed tower elsewhere on that tree reads

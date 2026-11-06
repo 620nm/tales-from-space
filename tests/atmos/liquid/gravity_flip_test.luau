@@ -2,7 +2,7 @@ local bench = require("@helpers/liquid_bench")
 local matter_look = require("@helpers/matter_look")
 local ui_controls = require("@helpers/ui_controls")
 
--- The same ten litres under a weightless sky: beads while the gravity
+-- The same ten liters under a weightless sky: beads while the gravity
 -- battery is down, a puddle that spreads while it runs. The books and the
 -- client's picture read the one state.
 local SMES = { x = 2, y = 2 }
@@ -45,11 +45,11 @@ assert(not drawn().weightless, "and is drawn as a puddle")
 -- thin edge goes on creeping outward for as long as the field runs.
 local beside = bench.standing(POOL.x + 1, POOL.y)
 t.run_seconds(1)
-assert(bench.standing(POOL.x + 1, POOL.y) > beside, "the water is still levelling")
+assert(bench.standing(POOL.x + 1, POOL.y) > beside, "the water is still leveling")
 
 press("stop")
 assert(drawn().weightless, "the field gone, what stands there floats again")
 beside = bench.standing(POOL.x + 1, POOL.y)
 t.run_seconds(5)
 local after = bench.standing(POOL.x + 1, POOL.y)
-assert(after <= beside, ("and levelling stops: %.6f L to %.6f"):format(beside, after))
+assert(after <= beside, ("and leveling stops: %.6f L to %.6f"):format(beside, after))

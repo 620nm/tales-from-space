@@ -11,7 +11,7 @@
 --
 -- AND THE OTHER DEPARTURE: it needs a lid. Chlorine is a gas at room
 -- temperature, so `chlorine:liquid` exists only where something holds
--- it under its own vapour pressure -- a sealed bottle, about 8 atm at
+-- it under its own vapor pressure -- a sealed bottle, about 8 atm at
 -- 300 K. Salt is the bench's introduction to that: press the sodium,
 -- press the chlorine, and the reason the vessel has a stopper in it is
 -- the whole first lesson.

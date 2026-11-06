@@ -5,11 +5,11 @@
 -- engine sees only ids and #RRGGBB values.
 --
 -- ALPHA IS NOT PER PAINT HERE. A decal declares ONE opacity for the
--- whole decal, so tg's two per-colour exceptions do not port: `bar` is
+-- whole decal, so tg's two per-color exceptions do not port: `bar` is
 -- alpha 130 (tilecoloring.dm:100-103) and `neutral` alpha 50 (:125-128)
 -- against everything else's 110. Both are carried at 110. For `bar`
 -- that is imperceptible; for `neutral` it is a real divergence -- tg's
--- neutral grey is a whisper and ours is a statement.
+-- neutral gray is a whisper and ours is a statement.
 local colors = {
     { id = "blue", hex = "#52B4E9" },        -- tilecoloring.dm:45-47
     { id = "dark_blue", hex = "#486091" },   -- :52-54
@@ -26,7 +26,7 @@ local colors = {
 }
 
 -- tg's holiday, rainbow and random tile subtypes (tilecoloring.dm:140-164)
--- are not here: they recolour themselves from a station trait at
+-- are not here: they recolor themselves from a station trait at
 -- Initialize, which is a mechanism and not a paint.
 return {
     colors = colors,

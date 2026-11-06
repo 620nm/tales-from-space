@@ -31,7 +31,7 @@ local rpd_shelf = require("@lib/rpd_shelf")
 --   explicit recipes, so there is no second direction dial here.
 -- * tg's multi-layer build, which lays the same run on several layers
 --   at once. One layer, one length: the dial names it.
--- * A colour on a DEVICE. Only the run under the deck carries one today
+-- * A color on a DEVICE. Only the run under the deck carries one today
 --   (pipes/paint.rs). The LAYER dial, by contrast, reaches everything
 --   this shelf dispenses: tg programs the fitting it is about to wrench
 --   down (RPD.dm:569) and every `/obj/item/pipe` carries a

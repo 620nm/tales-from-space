@@ -4,7 +4,7 @@
 -- of fifty-four faces in tg's order, how a face is spelled in the atlas,
 -- how many cards a comma-separated order holds, and how thick a deck of
 -- that many looks. Both files used to carry all four, character for
--- character, with a comment in each apologising for it and naming the
+-- character, with a comment in each apologizing for it and naming the
 -- shared-module seam that would fix it. This is that seam
 -- (docs/SCRIPTING.md 1.6), and these are its first callers.
 local cards = {}

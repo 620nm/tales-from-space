@@ -33,7 +33,7 @@ This pack's figures:
 | `cv` | Dulong–Petit, `3R ≈ 24.9` | elements without a measured figure: `radium`, `lithium` |
 | `cv` | measured, cited in the file | everything with real physics: `water` 75.3 liquid, `chlorine` 33.9, `iodine`/`ammonia`/`co2`/`uf6`/`methane`/`ethane`/`hcn` per phase; `o2`/`n2` keep tg's gas 20 beside cited condensed figures |
 | `molar_mass` | a plausible round number | same set as the flat `cv`, but `tholin` |
-| `molar_mass` | the (HCN)4 unit, 108.10 g/mol, so polymerisation balances | `tholin`, a polymer family rather than a molecule |
+| `molar_mass` | the (HCN)4 unit, 108.10 g/mol, so polymerization balances | `tholin`, a polymer family rather than a molecule |
 | `density` | `1.0` g/mL | anything whose real density nobody reads |
 
 The loader's own silence default is `75.0`, not `100.0`: the shelf
@@ -79,7 +79,7 @@ over. The whole argument lives in the file's own comment; the summary:
   126.2 K, so LOX and liquid air belong to a cold world or a cold loop,
   never to the bench; hydrogen and fluorine stay `gas_only`.
 - **On, because condensable.** Chlorine and ammonia are refused over an
-  open beaker and land in a sealed bottle as liquid under their own vapour
+  open beaker and land in a sealed bottle as liquid under their own vapor
   pressure (about 8 atm and 8.6 atm), which is a reactant a bench can use.
 - **Promoted off tg's upgrade tier.** Ammonia, ash, saltpeter. tg gates
   that half behind a servo above tier three (`chem_dispenser.dm:467-471`),
@@ -124,7 +124,7 @@ diethylamine) and tg's base element shelf:
 | salglu | water + salt + sugar | 0.0025 | 0.25 brute + 0.25 burn, on a 1-in-3 roll | — |
 | multiver | ash + salt, at 400 K | 0.0025 | 0.5 tox | 0.5 onto the lungs |
 | libital | phenol + saltpeter, at 700 K | 0.003 | 1.5 brute | — (lunatic-calibrated, half tg's 3) |
-| aiuri | ammonia + sulphuric acid, warm | 0.0025 | 2 burn | 0.25 onto the eyes |
+| aiuri | ammonia + sulfuric acid, warm | 0.0025 | 2 burn | 0.25 onto the eyes |
 | epinephrine | phenol + acetone + diethylamine + chlorine | 0.00125 | 0.5 of each of the four pools, **only past `crit`** | — |
 
 Multiver and aiuri are `/datum/substance/medicine/c2`, tg's medicine that
@@ -140,7 +140,7 @@ that moves it), and epinephrine's stun, stamina and `losebreath` half (no
 pool holds them).
 
 **The trunk is not a tree.** The schema is proven at every rung and the
-rest of tg's ~40–50 medical substances are data entry, as are its labelled
+rest of tg's ~40–50 medical substances are data entry, as are its labeled
 bottle variants and the beaker's large/gold/bluespace siblings. What the
 trunk does NOT have is a branch: no chem that converts one damage type into
 another, no addiction or overdose (no per-holder reaction state to hang a

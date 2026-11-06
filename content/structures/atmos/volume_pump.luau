@@ -4,7 +4,7 @@
 -- (components/binary_devices/volume_pump.dm), whose whole description
 -- is "a pump that moves gas by volume". The pump beside it works to
 -- a pressure and stops when it gets there; this one has no notion of
--- arriving. It moves `rate_lps` litres a second and keeps moving them,
+-- arriving. It moves `rate_lps` liters a second and keeps moving them,
 -- which is what you want when the job is "empty that canister into this
 -- line" and not "hold this line at an atmosphere".
 --
@@ -20,7 +20,7 @@
 -- somebody takes a MULTITOOL to it, which disables the limits and makes
 -- the machine leak a tenth of everything it moves into the room it is
 -- standing in (volume_pump.dm:97-101,162-170). That is the trade, and
--- it is a deliberate one: a line pressurised past what the kit is rated
+-- it is a deliberate one: a line pressurized past what the kit is rated
 -- for, paid for in the air an engineer is breathing. Somewhere with no
 -- room to leak into it jams and turns its own limiters back on.
 --

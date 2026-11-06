@@ -30,7 +30,7 @@ local ui_controls = require("@helpers/ui_controls")
 
 -- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
 -- plant standing in the room: his lungs are a driven vessel that holds
--- several litres of the air inside itself and turns what it takes in
+-- several liters of the air inside itself and turns what it takes in
 -- into something else (docs/BIOLOGY.md, `sim/holder/bellows.rs`). That
 -- is a source and a sink, and the books below are the ATMOSPHERICS
 -- engine's -- so the crew are switched off as scaffolding, the same
@@ -217,7 +217,7 @@ local function pick(field: string, label: string): string
             return ui_controls.text(toggle.option)
         end
     end
-    error("no " .. field .. " button labelled " .. label)
+    error("no " .. field .. " button labeled " .. label)
 end
 
 local function set(field: string, label: string): ()

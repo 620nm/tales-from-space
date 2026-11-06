@@ -44,7 +44,7 @@ local content = {
     -- tg's c2 rate, 0.5 x REAGENTS_METABOLISM, through this engine's
     -- own 0.005 mol per metabolism pass: 0.0025.
     metabolism_rate = 0.0025,
-    -- tg gives it no colour of its own, so it wears the reagent
+    -- tg gives it no color of its own, so it wears the reagent
     -- default (reagents.dm:32, COLOR_BLACK) -- which is also what its
     -- mix message says it looks like: a fine black powder.
     color = "#000000",

@@ -22,12 +22,12 @@
         ("transceiver_off", Dmi("@telecomms", "bus_off", 0)),
 
         // ---- the encryption keys ----
-        // tg draws its encryption keys pre-coloured on the map-icon
+        // tg draws its encryption keys pre-colored on the map-icon
         // sheet, one state per key type, named by the type path. The
         // blank key is the bare cell; the department issues are the
         // headset_* states whose stripes tg's crew already read as
         // engineering, medical, security and command. The Common issue
-        // borrows the service stripe -- a neutral colour no department
+        // borrows the service stripe -- a neutral color no department
         // here claims.
         ("encryption_key", Dmi("@cypherkeys", "/obj/item/encryptionkey", 0)),
         ("encryption_key_eng", Dmi("@cypherkeys", "/obj/item/encryptionkey/headset_eng", 0)),

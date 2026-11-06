@@ -38,7 +38,7 @@
 -- -- warm on a gauge fast, dangerous on the scale of a shift, never a
 -- bomb.
 --
--- `visible.tint` is a GAMEPLAY CALL: real UF6 gas is colourless and the
+-- `visible.tint` is a GAMEPLAY CALL: real UF6 gas is colorless and the
 -- solid is white. The faintest green-white is what a cloud of it wears
 -- so the hazard overlay can say "this room is not air" without hiding
 -- the floor (the water.luau steam argument, one saturation step over).

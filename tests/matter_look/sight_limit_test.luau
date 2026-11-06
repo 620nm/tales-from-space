@@ -4,8 +4,8 @@ local matter_look = require("@helpers/matter_look")
 --
 -- A hall with a short run of puddles near the player and a long one that
 -- runs out past the limit of sight. The short run ends in a real edge:
--- its neighbour is a dry tile the client was told about. The long run
--- reaches the last tile the client can see and its neighbour is one it
+-- its neighbor is a dry tile the client was told about. The long run
+-- reaches the last tile the client can see and its neighbor is one it
 -- was never told about, which reads as joined, so no edge is drawn
 -- where the water might simply go on. Past that tile the client knows
 -- nothing at all: the spec read returns no parts for it, and none for a
@@ -89,10 +89,10 @@ local short_joins = matter_look.edges(short_end)
 assert(not short_joins.e, "a dry tile in sight is an edge")
 assert(short_joins.w, "and the run behind it is joined")
 
--- No false edge: the neighbour past the limit of sight reads as joined.
+-- No false edge: the neighbor past the limit of sight reads as joined.
 local limit = assert(matter_look.find(p, last, 3, "puddle", 4), "the last visible tile draws the shell")
 local limit_joins = matter_look.edges(limit)
-assert(limit_joins.e, "an untold neighbour reads as joined, so no edge is drawn at the limit of sight")
+assert(limit_joins.e, "an untold neighbor reads as joined, so no edge is drawn at the limit of sight")
 assert(limit_joins.w, "and the run behind it is joined")
 assert(not limit_joins.n, "while a dry tile in sight is still an edge")
 

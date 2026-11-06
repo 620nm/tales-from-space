@@ -190,7 +190,7 @@ assert(
 -- tg keeps an internal gas mixture and cools it toward T0C-60 at 4°/s
 -- while the tray is in, equalizing with the room while it is out
 -- (morgue.dm:278-298). The pack holds a `heals = false` organ condition
--- instead (lib/closets/chamber_watch.luau), so the modelled thing is the
+-- instead (lib/closets/chamber_watch.luau), so the modeled thing is the
 -- preservation and not the temperature, and tg's open/shut half is kept.
 -- Measured on the BRAIN and not the heart: dying stops the heart by driving
 -- it to `max_health` (content/bodies/human.luau), so a corpse's heart has no

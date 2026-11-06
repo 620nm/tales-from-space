@@ -27,7 +27,7 @@
 -- deciseconds each way (:784-801). Two states, one welder, and the
 -- refusals compose themselves out of the state names.
 --
--- NOT PORTED: the armour table (:757-765) and the electrification the
+-- NOT PORTED: the armor table (:757-765) and the electrification the
 -- reinforced table gets when its tile is wired (`attempt_electrocution`,
 -- :819-830) -- one needs a damage model this pack has not got, the
 -- other needs a cable under a table to mean something.

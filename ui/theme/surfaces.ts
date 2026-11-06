@@ -64,7 +64,7 @@ export const surfaceRules: UiStyleRule[] = [
     width: "auto", minWidth: 72, height: 28, flexShrink: 0, fontFamily: "mono", fontSize: 11,
     color: ink, backgroundColor: field, border: edge(line), borderRadius: 2,
   }),
-  // The say line's underline is drawn inside its box, so focus recolours
+  // The say line's underline is drawn inside its box, so focus recolors
   // it without a border a state turns on.
   rule("composer-entry", {
     height: 28, minHeight: 28, flexGrow: 1, flexShrink: 1, fontSize: 12, color: ink,

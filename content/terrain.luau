@@ -8,13 +8,13 @@
 -- 0.7 is the art's `silicate_low` over its `silicate` (#82402A over
 -- #B85C3C in tools/art/terrestrial/schema_contract.py), so an edge pixel
 -- reads as the ledge the art drew. A profile with no `face_tint` takes
--- its material's own colour, so ice, basalt and soil read apart.
+-- its material's own color, so ice, basalt and soil read apart.
 --
 -- The liquid and ice profiles stand real matter in a bed (`fill`,
 -- `depth_m`): a bed of 1.5 m of a 3 m tile is safe under a body's pressure
 -- bands. A sea does not evaporate (`evaporation = 0`), or every tile of it
 -- would stay awake for good, and ignores a level difference under a
--- millimetre. A seabed shows sand under the liquid (`face_tint`).
+-- millimeter. A seabed shows sand under the liquid (`face_tint`).
 local SEABED = "#CBB68C"
 local HYDROCARBON_SEABED = "#8A7458"
 
@@ -40,7 +40,7 @@ return {
             rest_head_m = 0.001,
             ideal = { half_life_s = 120 },
         },
-        -- The sea's own shore: `deep_liquid` half a metre deep
+        -- The sea's own shore: `deep_liquid` half a meter deep
         -- (blends/sea_shallows.luau).
         {
             key = "shallows",
@@ -86,7 +86,7 @@ return {
         },
         -- A methane-ethane sea on ice (blends/hydrocarbon_sea.luau): the
         -- `deep_liquid` bed over the ice sheet's floor and face, stained
-        -- with tholin sediment (`face_tint`, a chosen colour). It walks back
+        -- with tholin sediment (`face_tint`, a chosen color). It walks back
         -- to its fill, so a spill on it washes out.
         {
             key = "hydrocarbon_sea",
@@ -113,8 +113,8 @@ return {
     -- Plants a map lays on a column's surface tile (`ground.cover`): real
     -- dry plant matter in the tile's cell beside the air, drawn by the
     -- substance's own look and burnt by reactions/{grass,moss}_fire.luau.
-    -- 300 g of grass a square metre, a temperate grassland's standing crop,
-    -- and 200 g of moss (chosen figures): about a litre a tile at grass's
+    -- 300 g of grass a square meter, a temperate grassland's standing crop,
+    -- and 200 g of moss (chosen figures): about a liter a tile at grass's
     -- 0.3 g/mL and moss's 0.2 (substances/plants/).
     covers = {
         {

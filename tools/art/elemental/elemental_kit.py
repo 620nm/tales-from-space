@@ -13,7 +13,7 @@ Each entry is a dict:
       "id": "gas_mist_smooth_gentle",
       "element": "gas" | "liquid" | "solid" | "fire",
       "kind": "single" | "smooth_strip",   # single = 32x32, smooth_strip = 160x32 (5x 32x32 blocks)
-      "colorable": True | False,           # True enforces neutral greyscale (chroma == 0)
+      "colorable": True | False,           # True enforces neutral grayscale (chroma == 0)
       "require_top_light": True | False,   # True enforces luma_top >= luma_bottom - 1.0
       "ase_relpath": "assets/originals/art/matter/gasses/gas_mist_smooth_gentle.aseprite",
       "tag": "idle",                       # state name; a smooth_strip is tagged "idle-s" (`bake_tag`)
@@ -367,7 +367,7 @@ def validate_spec(
                     r, g, b = int(hx_u[1:3], 16), int(hx_u[3:5], 16), int(hx_u[5:7], 16)
                     if not (r == g == b):
                         raise ValueError(
-                            f"{sid} f{f_idx}/{lname}: colorable=True requires neutral greyscale, got {hx_u}"
+                            f"{sid} f{f_idx}/{lname}: colorable=True requires neutral grayscale, got {hx_u}"
                         )
                 if hx_u not in used_hexes:
                     used_hexes.append(hx_u)
@@ -544,7 +544,7 @@ async def build_and_validate_sprite(
             ftel = analyze_rgba_image(fim)
             if not ftel["passes_bare_mask_gate"]:
                 raise ValueError(
-                    f"{sid} (frame {i + 1}): fails bare-colour-mask gate! "
+                    f"{sid} (frame {i + 1}): fails bare-color-mask gate! "
                     f"dominant_rgb_share={ftel['dominant_rgb_share']} >= 0.85 over {ftel['active_px']} px."
                 )
             if colorable and ftel["max_chroma"] > 0:
@@ -565,7 +565,7 @@ async def build_and_validate_sprite(
                 jtel = analyze_rgba_image(j_tile)
                 if not jtel["passes_bare_mask_gate"]:
                     raise ValueError(
-                        f"{sid} (f={f_i + 1}, j={j_val}): fails bare-colour-mask gate! "
+                        f"{sid} (f={f_i + 1}, j={j_val}): fails bare-color-mask gate! "
                         f"dominant_rgb_share={jtel['dominant_rgb_share']} >= 0.85 over {jtel['active_px']} px."
                     )
                 if colorable and jtel["max_chroma"] > 0:
@@ -599,16 +599,16 @@ async def build_and_validate_sprite(
         }
         if not j255_tel["passes_bare_mask_gate"]:
             raise ValueError(
-                f"{sid} (j=255 interior): fails bare-colour-mask gate! "
+                f"{sid} (j=255 interior): fails bare-color-mask gate! "
                 f"dominant_rgb_share={j255_tel['dominant_rgb_share']} >= 0.85 over {j255_tel['active_px']} px. "
-                f"Add multi-step greyscale shading!"
+                f"Add multi-step grayscale shading!"
             )
         atlas_data_uri = png_to_data_uri(atlas_47)
         strip_data_uri = png_to_data_uri(strip_sheet)
 
     if not telemetry["passes_bare_mask_gate"]:
         raise ValueError(
-            f"{sid}: fails bare-colour-mask gate! "
+            f"{sid}: fails bare-color-mask gate! "
             f"dominant_rgb_share={telemetry['dominant_rgb_share']} >= 0.85 over {telemetry['active_px']} px. "
             f"Add multi-step shading!"
         )
@@ -820,8 +820,8 @@ def _patch_pixel(layer: dict[str, Any], x: int, y: int, ch: str) -> None:
 def apply_seam_patches(sprites: list[dict[str, Any]]) -> None:
     """Set the pixels `specs/seam_patches.json` lists on top of the procedural spec.
 
-    A patch names one flattened pixel (frame, x, y) and its final colour and alpha. An
-    opaque patch recolours the topmost layer that draws the pixel; a partial-alpha patch
+    A patch names one flattened pixel (frame, x, y) and its final color and alpha. An
+    opaque patch recolors the topmost layer that draws the pixel; a partial-alpha patch
     moves it into the layer of that opacity and clears the others (tiers are disjoint).
     The same list is written into the sources, so a rebuild reproduces them.
     """

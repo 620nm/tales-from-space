@@ -42,7 +42,7 @@ return {
     name_label = "lunatic/tfs:entity.canister.name",
     name = "canister",
     sprite = "canister",
-    -- The shell is GREYSCALE art with a colour multiplied over it, the
+    -- The shell is GRAYSCALE art with a color multiplied over it, the
     -- way tg draws every canister (`greyscale_config`, canister.dm) --
     -- so one baked picture is every canister on the station and a
     -- placement may say which one it is. This is tg's own

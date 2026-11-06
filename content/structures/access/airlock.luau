@@ -93,7 +93,7 @@ return {
         -- of the door instead of the station livery's letterbox slot.
         -- tg's /obj/machinery/door/airlock/public
         -- (code/game/machinery/doors/airlock.dm:2274-2283), which is a
-        -- whole sheet and not a recolour, so the glazed set below reads
+        -- whole sheet and not a recolor, so the glazed set below reads
         -- ITS overlays -- panes are only in the right place on the
         -- frame they were drawn for.
         {

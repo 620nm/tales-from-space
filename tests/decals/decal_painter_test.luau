@@ -3,7 +3,7 @@ local ui_controls = require("@helpers/ui_controls")
 
 -- The decal painter and the decal eraser, and the one claim the whole
 -- feature makes: NOBODY DRAWS A CORNER. A player paints tiles; the
--- seam between them is derived from which neighbours now match, so the
+-- seam between them is derived from which neighbors now match, so the
 -- record on a tile never changes when the picture on it does.
 --
 -- That is why this spec asserts `sprites` and not just the record. The
@@ -52,7 +52,7 @@ local function pick(p: number, field: string, label: string): string
             return ui_controls.text(tog.option)
         end
     end
-    error("no " .. field .. " button labelled " .. label)
+    error("no " .. field .. " button labeled " .. label)
 end
 
 local function set(p: number, field: string, label: string)
@@ -127,7 +127,7 @@ assert(
 
 -- ---- the window ----
 --
--- tg picks decal, colour and direction out of a tgui window with a live
+-- tg picks decal, color and direction out of a tgui window with a live
 -- preview (decal_painter.dm:100-138). Ours is the generic dial panel,
 -- three rows of buttons, and the paint row carries its real swatches.
 t.use_self(p)
@@ -148,7 +148,7 @@ for _, tog in ipairs(ui_controls.rows(ui.toggles)) do
         end
     end
 end
-assert(captions[DECAL] == "Decal", "the decal dial is labelled")
+assert(captions[DECAL] == "Decal", "the decal dial is labeled")
 assert(captions[PAINT] == "Paint" and captions[FACING] == "Facing", "and so are the other two")
 assert(options[PAINT] == 12, "tg's twelve tile paints, and no thirteenth")
 assert(options[FACING] == 4, "four cardinal facings for the marks that take one")
@@ -166,7 +166,7 @@ walk(p, "south")
 
 -- ---- **the headline**: paint tiles, get a seam ----
 --
--- One painted square has no matching neighbour on any side, so all four
+-- One painted square has no matching neighbor on any side, so all four
 -- of its edges are closed and the whole thing is the box piece: a
 -- rectangle of trim round one tile.
 local _ = t.messages(p)
@@ -176,11 +176,11 @@ assert(said(p, "You spray a Trim line onto the deck."), "the painter says what i
 assert(heard(p, "paint_spray"), "and the room hears the nozzle")
 local first = only(3, 1)
 assert(first.decal == "trim" and first.paint == "blue", "a blue trim line, by its authored names")
-assert(first.color == nil, "a palette paint is not a raw colour")
+assert(first.color == nil, "a palette paint is not a raw color")
 assert(drawn(3, 1) == "decal_trim_box", "alone on its tile, a trim line draws its box")
 
 -- Paint the square to the east of it. NOTHING WAS DONE TO (3,1) -- and
--- (3,1) changes, because its east side now has a neighbour that
+-- (3,1) changes, because its east side now has a neighbor that
 -- matches. Three closed sides is a cap, keyed by the end opposite the
 -- open one, so the run reads as a line that continues east.
 composition.click_deck(p, 4, 1)
@@ -192,8 +192,8 @@ assert(drawn(4, 1) == "decal_trim_cap_e", "and the new tile opens west, back at 
 
 -- ---- repaint ----
 --
--- Placing the same decal again rewrites its colour rather than stacking
--- a second one. And because sameness compares the resolved colour, a
+-- Placing the same decal again rewrites its color rather than stacking
+-- a second one. And because sameness compares the resolved color, a
 -- red tile beside a blue one is not a run at all: both go back to
 -- drawing their own box.
 set(p, PAINT, "red")
@@ -202,7 +202,7 @@ t.run_ticks(2)
 local repainted = only(3, 1)
 assert(repainted.paint == "red", "the tile is red now")
 assert(repainted.instance ~= first.instance, "a repaint mints a fresh instance")
-assert(drawn(3, 1) == "decal_trim_box", "and two colours are two decals, not one run")
+assert(drawn(3, 1) == "decal_trim_box", "and two colors are two decals, not one run")
 assert(drawn(4, 1) == "decal_trim_box", "from both sides of the disagreement")
 
 -- ---- the ledger ----
@@ -211,7 +211,7 @@ assert(#placed == 3, "three acts, three rows: " .. #placed)
 local pin = ui_controls.array(placed[1].pos)
 assert(pin[1] == 3 and pin[2] == 1, "the first row is pinned to the tile it painted")
 assert(placed[1].decal == "trim" and placed[1].color == "blue", "and names what went down")
-assert(placed[3].color == "red", "and the repaint names the colour it became")
+assert(placed[3].color == "red", "and the repaint names the color it became")
 local target = ui_controls.record(placed[1].target)
 local at = ui_controls.record(target.tile)
 assert(at.x == 3 and at.y == 1, "the target names the same tile")
@@ -232,7 +232,7 @@ composition.click_deck(p, 3, 3)
 t.run_ticks(2)
 local arrow = only(3, 3)
 assert(arrow.facing == "e", "the facing dial aimed it")
-assert(arrow.paint == nil and arrow.color == nil, "tg's arrow carries its own colour")
+assert(arrow.paint == nil and arrow.color == nil, "tg's arrow carries its own color")
 assert(drawn(3, 3) == "decal_mark_arrow_e", "and a mark draws exactly one piece")
 
 -- ---- a decal is not a thing you can click ----
@@ -283,7 +283,7 @@ local removed = t.ledger_rows("decal_removed")
 assert(#removed == 1, "one act, one row: " .. #removed)
 local scrubbed = ui_controls.array(removed[1].pos)
 assert(scrubbed[1] == 3 and scrubbed[2] == 1, "pinned to the tile it cleaned")
-assert(drawn(4, 1) == "decal_trim_box", "and its neighbour is alone again")
+assert(drawn(4, 1) == "decal_trim_box", "and its neighbor is alone again")
 
 -- Nothing there is its own sentence, not silence.
 local _ = t.messages(p)

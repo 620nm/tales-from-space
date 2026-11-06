@@ -29,7 +29,7 @@ return {
     -- (code/game/objects/items/floppy_disk.dm:41-45).
     sprite = "floppy_disk",
     examine = {
-        flavor = "Nine centimetres of hard plastic around a disc of "
+        flavor = "Nine centimeters of hard plastic around a disc of "
             .. "something softer. The shutter slides back under a "
             .. "thumbnail, which is the last thing anybody should be "
             .. "doing to it.",
@@ -43,9 +43,9 @@ return {
     files = { capacity = 737280, files = 112 },
     -- What a machine with a drive calls this while a hand holds it.
     hint_tags = { "floppy" },
-    -- tg precolours the sleeves as skins of one disk
+    -- tg precolors the sleeves as skins of one disk
     -- (code/game/objects/items/floppy_disk.dm:6-39): the same medium in
-    -- a different colour of plastic. The keys are the sheet's cells
+    -- a different color of plastic. The keys are the sheet's cells
     -- (assets/sprites/74-files.ron).
     variants = {
         red = {

@@ -9,7 +9,7 @@
 // `c` playing every frame of the tag. The client picks each 16x16 quarter
 // of a tile from the block its two sides and corner select.
 //
-// Every sprite here is authored in neutral greyscale (`R == G == B`) from
+// Every sprite here is authored in neutral grayscale (`R == G == B`) from
 // `tales-from-space.gpl` for runtime multiply tinting, so no tint is
 // declared here.
 (
@@ -28,7 +28,7 @@
         ("prop_rough_outcrop_1", Ase("art/terrestrial/prop_rough_outcrop_1.aseprite", "idle")),
         ("prop_rough_outcrop_2", Ase("art/terrestrial/prop_rough_outcrop_2.aseprite", "idle")),
         // Alternative flat blocks for a look's `flats`: each keeps its
-        // strip's block-4 outer ring, so any one joins any neighbour.
+        // strip's block-4 outer ring, so any one joins any neighbor.
         ("terrain_silicate_rough_flat_1", Ase("art/terrestrial/terrain_silicate_rough_flat_1.aseprite", "idle")),
         ("terrain_silicate_rough_flat_2", Ase("art/terrestrial/terrain_silicate_rough_flat_2.aseprite", "idle")),
         ("terrain_silicate_rough_flat_3", Ase("art/terrestrial/terrain_silicate_rough_flat_3.aseprite", "idle")),

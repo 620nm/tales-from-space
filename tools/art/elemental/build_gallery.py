@@ -83,7 +83,7 @@ def reading_thresholds() -> dict[str, dict[str, float]]:
     """THE THRESHOLD SEAM: the amounts at which the gallery switches sprite and shell.
 
     Read from the pack's `content/matter_appearances.luau`, so the gallery previews what the
-    game draws: millilitres for liquids (the default liquid profile), moles per tile for gas
+    game draws: milliliters for liquids (the default liquid profile), moles per tile for gas
     (the `cloud` ladder, whose `at_factor` rungs multiply the reference gas's visibility
     density by the tile volume). The gallery reads these from `DATA.thresholds` only.
     """

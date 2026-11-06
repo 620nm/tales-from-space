@@ -1,7 +1,7 @@
 -- What the pipe dispenser DOES, as opposed to what it stocks
 -- (machines/pipe_dispenser.luau).
 --
--- Two behaviours, and the second is the one that makes it a dispenser
+-- Two behaviors, and the second is the one that makes it a dispenser
 -- rather than a vending machine: it takes fittings back.
 --
 -- tg's `item_interaction` (code/game/machinery/pipe/

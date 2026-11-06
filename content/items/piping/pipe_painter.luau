@@ -5,12 +5,12 @@ local pipe_paints = require("@lib/pipe_paints")
 -- The pipe painter: tg's `/obj/item/pipe_painter`
 -- (code/game/objects/items/devices/pipe_painter.dm).
 --
--- It is the atmospherics technician's labelling gun, and on this station
--- it is more than that, because colour is not a label here: two pipe
+-- It is the atmospherics technician's labeling gun, and on this station
+-- it is more than that, because color is not a label here: two pipe
 -- ends only join when their paint agrees or one of them is omni (tg's
 -- `is_connectable`, atmosmachinery.dm:335-354, ported in
 -- crates/lunatic-server/src/pipes/paint.rs). So a stripe of the wrong
--- colour across a distribution main CUTS it, and the line still looks
+-- color across a distribution main CUTS it, and the line still looks
 -- whole. Paint carefully.
 --
 -- The shared roster is also the RPD's dial and the map editor's
@@ -18,8 +18,8 @@ local pipe_paints = require("@lib/pipe_paints")
 -- TfS white paint cannot leave one of those three selectors behind.
 local COLORS = pipe_paints.colors
 
--- The kinds of length that carry a colour of their own and so take no
--- stripe, the way the colour adapter takes none: tg fixes
+-- The kinds of length that carry a color of their own and so take no
+-- stripe, the way the color adapter takes none: tg fixes
 -- radiator pipe at `#404040` in `Initialize`
 -- (heat_exchange/he_pipes.dm:15). The multi-deck adapter is unpainted
 -- too (`paintable = FALSE`, pipes/multiz.dm:17).
@@ -38,12 +38,12 @@ local content = {
     -- `paint_color = "grey"` (pipe_painter.dm:8), which is not a key in
     -- its own roster -- the entry is called "omni" -- so a painter out
     -- of the crate there paints `null` until somebody sets it. That is
-    -- a typo, not a design, and what it was reaching for is the grey
+    -- a typo, not a design, and what it was reaching for is the gray
     -- one: omni. So this opens on omni, which is also the setting that
     -- cannot accidentally divide a station.
     modes = #COLORS,
     mode = 0,
-    -- tg picks the colour from a `tgui_input_list` on attack_self. We
+    -- tg picks the color from a `tgui_input_list` on attack_self. We
     -- have no list prompt, so the dial cycles instead -- the same
     -- mechanism the length of pipe uses for its piping layer, and the
     -- same in-hand key.

@@ -83,7 +83,7 @@ local available = t.join("engineer")
 x, y = t.pos(available)
 assert(x == 2 and y == 1, "a zero-weight marker is never selected")
 
--- A 99:1 pair should visibly favour its high-weight point over a bounded
+-- A 99:1 pair should visibly favor its high-weight point over a bounded
 -- sample of late joins. The fixed seed makes this regression reproducible.
 local WEIGHTED = [==[(
     name: "weighted markers",

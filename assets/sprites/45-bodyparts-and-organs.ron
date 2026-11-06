@@ -13,13 +13,13 @@
         ("organs", "obj/medical/organs/organs.dmi"),
     ],
     sprites: [
-        // The limbs come off tg's GREYSCALE sheet, which is the sheet
+        // The limbs come off tg's GRAYSCALE sheet, which is the sheet
         // the whole-body picture is composited from
-        // (`body_dmi` in tfs/assets/sprites.ron). Greyscale art wants a
-        // colour, and `Tinted` gives it the same default skin the
+        // (`body_dmi` in tfs/assets/sprites.ron). Grayscale art wants a
+        // color, and `Tinted` gives it the same default skin the
         // composite multiplies by rather than baking one in — so the
         // day a plan carries its own skin tone (docs/COLOR.md), the
-        // pixels are already grey and ready for it.
+        // pixels are already gray and ready for it.
         ("part_head", Tinted(Dmi("@bodyparts", "human_head_m", 0), (232, 200, 168))),
         ("part_chest", Tinted(Dmi("@bodyparts", "human_chest_m", 0), (232, 200, 168))),
         ("part_l_arm", Tinted(Dmi("@bodyparts", "human_l_arm", 0), (232, 200, 168))),

@@ -18,7 +18,7 @@
 --     (docs/atmos/hazard-sensing.md); the fixture merely repeats it to
 --     whoever is listening.
 --   * a LIGHT FLAG -- a set or a clear of one named condition on the
---     lights that can hear it. It carries no colour and no brightness,
+--     lights that can hear it. It carries no color and no brightness,
 --     only the NAME of the condition, so what a flag looks like is
 --     decided once, below, and a retune reaches every fitting already
 --     burning it.
@@ -35,7 +35,7 @@ export type Hazard = { kind: string, level: HazardLevel, previous: HazardLevel }
 local netmsg = {}
 
 -- The `kind` word every payload leads with. A listener that does not
--- recognise the kind drops the message, which is what lets a third
+-- recognize the kind drops the message, which is what lets a third
 -- sentence be added later without auditing every handler.
 netmsg.LIGHT_FLAG = "light.flag" -- { kind, op = "set" | "clear", flag }
 netmsg.ATMOS_HAZARD = "atmos.hazard" -- { kind, level, previous }
@@ -43,7 +43,7 @@ netmsg.ATMOS_HAZARD = "atmos.hazard" -- { kind, level, previous }
 -- WHAT EACH CONDITION DOES TO A TUBE, and which one wins when two of
 -- them are standing at once.
 --
--- `color` nil means "leave the tube its own colour" -- a fitting under
+-- `color` nil means "leave the tube its own color" -- a fitting under
 -- a flag that only dims keeps the white or the tungsten somebody
 -- screwed into it. `power` is tg's `bulb_power` (light.dm:24-26), the
 -- unflagged fitting's own being the 1.0 its prototype declares
@@ -51,8 +51,8 @@ netmsg.ATMOS_HAZARD = "atmos.hazard" -- { kind, level, previous }
 -- warning you about the air should not also shrink to a puddle around
 -- each fixture, because then you cannot see the door.
 --
--- The colours are pack judgements. RED for air that kills, which is
--- the one alarm colour nobody has to be taught. BLUE for air that
+-- The colors are pack judgements. RED for air that kills, which is
+-- the one alarm color nobody has to be taught. BLUE for air that
 -- merely cannot be breathed, because a blue room reads as a different
 -- emergency from a fire and a crewman coming through the door should
 -- be able to tell which one they have walked into. NOTHING for a

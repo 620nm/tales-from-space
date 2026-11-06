@@ -1,7 +1,7 @@
 # Mop
 
 `content/items/tools/mop.luau`, on `content/lib/vessel.luau`'s `soak`. Each row
-is one tg behaviour, with its decision: **api** uses an existing pack API, **luau**
+is one tg behavior, with its decision: **api** uses an existing pack API, **luau**
 is new pack Luau, **adapted** keeps the job and changes the means, **omitted**
 gives its reason. No row needs an engine change.
 
@@ -10,7 +10,7 @@ tg paths: `mop.dm` is `code/game/objects/items/mop.dm`, `cleaner.dm` is
 
 ## The object
 
-| tg | Behaviour | Decision |
+| tg | Behavior | Decision |
 | --- | --- | --- |
 | `mop.dm:2-6` | Name, description, sprite | api: same words, `obj/service/janitor.dmi` art |
 | `mop.dm:6-9` | Custodial in-hands | api: `held_mop_l`, `held_mop_r` |
@@ -29,7 +29,7 @@ tg paths: `mop.dm` is `code/game/objects/items/mop.dm`, `cleaner.dm` is
 
 ## The stroke
 
-| tg | Behaviour | Decision |
+| tg | Behavior | Decision |
 | --- | --- | --- |
 | `mop.dm:40` | Cleaner component on tile click | luau: `soak` action on any tile without a wall or reinforcement, so natural ground counts |
 | `cleaner.dm:96` | One clean at a time per tool | luau: `stroking` list; a second click on a busy mop does nothing until the stroke ends, and an entry past its end is free |
@@ -64,7 +64,7 @@ generic primitive that would free ash lying on ice.
 
 ## Where the head goes
 
-| tg | Behaviour | Decision |
+| tg | Behavior | Decision |
 | --- | --- | --- |
 | `_cup.dm:636-644` | Bucket douses the mop, 5 u | adapted, reversed: mop click on any vessel wrings the head into it |
 | `janitor.dm:31-44` | Mop bucket douses the mop | adapted, reversed: secondary on a tub pours the head in |

@@ -1,8 +1,8 @@
-// What a crewman is DRAWN out of: the greyscale bodyparts, the eyes,
+// What a crewman is DRAWN out of: the grayscale bodyparts, the eyes,
 // and every hairstyle and beard `content/bodies/human.luau` rosters
-// (docs/LOOKS.md). Each cell is baked UNTINTED — the colour is the
+// (docs/LOOKS.md). Each cell is baked UNTINTED — the color is the
 // body's own, multiplied in at draw time out of its rolled look, which
-// is the whole reason tg ships this art greyscale.
+// is the whole reason tg ships this art grayscale.
 //
 // One family of `assets/sprites.ron`'s roster. Every .ron in this
 // directory is baked, in FILE-NAME order and then expansion order, so
@@ -45,7 +45,7 @@
             Directions("body_r_leg", "human_r_leg"),
         ]),
 
-        // Two eyes, two cells, two colours (`_eyes.dm:305-377`).
+        // Two eyes, two cells, two colors (`_eyes.dm:305-377`).
         (sheet: "eyes", sprites: [
             Directions("eye_l", "eyes_l"),
             Directions("eye_r", "eyes_r"),
@@ -58,7 +58,7 @@
         // outside tg's own random roll (hair.dm:123, :137, :183). The
         // other two, `Boddicker` and `Buzzcut`, are left out here and
         // not there: the back of each is forty-one pixels of one flat
-        // grey, which the atlas lint reads as an unbaked greyscale
+        // gray, which the atlas lint reads as an unbaked grayscale
         // config and is right to (`no_sprite_is_a_bare_color_mask`).
         //
         // The head of the file, then, rather than a filter of it:

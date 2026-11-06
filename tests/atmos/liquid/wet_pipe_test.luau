@@ -1,7 +1,7 @@
 local bench = require("@helpers/liquid_bench")
 
 -- A wet length pulled up spills its share into the room, and the books close.
--- Forty litres down a drain into three lengths on open plating.
+-- Forty liters down a drain into three lengths on open plating.
 local p = bench.world({
     environment = bench.ONE_G,
     rows = { "#######", "#.#___#", "#######" },

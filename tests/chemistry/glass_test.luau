@@ -4,7 +4,7 @@
 -- could make, from a tile they could stand on.
 --
 -- The room is deliberately 3x3 with the builder in the middle, so all
--- eight neighbours are within REACH and nobody has to walk.
+-- eight neighbors are within REACH and nobody has to walk.
 local ui_controls = require("@helpers/ui_controls")
 
 local ROOM = [==[(

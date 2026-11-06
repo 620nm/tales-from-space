@@ -2,10 +2,10 @@ local ui_controls = require("@helpers/ui_controls")
 
 -- Ice in a beaker, in a room at twenty degrees.
 --
--- The glass is the pack's ordinary fifty-millilitre beaker and the ice
+-- The glass is the pack's ordinary fifty-milliliter beaker and the ice
 -- is a Matter Blend the map names on the placement
 -- (content/blends/ice_block.luau). Two moles of water at 0.917 g/mL is
--- under forty millilitres, so it FITS -- a solid has a volume and a
+-- under forty milliliters, so it FITS -- a solid has a volume and a
 -- shell it does not fit in is a shell the charge would have to argue
 -- with.
 --
@@ -122,7 +122,7 @@ assert(thawing.temp_k > cold.temp_k, "because the room warmed it")
 -- ---------------------------------------------------------------
 -- One substance, two states, one amount. Melting is a phase moving,
 -- not matter appearing -- but the glass is OPEN, so a little of it
--- leaves as vapour and the books only balance if the room is on
+-- leaves as vapor and the books only balance if the room is on
 -- them. A settling sweep takes the last thousandths off tiles that
 -- were left holding less than the engine has an opinion about, and
 -- `t.nullified` is where those go: gas that fell under the floor,
@@ -150,7 +150,7 @@ near(
 --
 -- The block over a docked vessel carries the mass of every state and
 -- every row beside the volume (docs/tgui/matter-block.md), because a
--- lump is a thing you would pick up and millilitres are not what you
+-- lump is a thing you would pick up and milliliters are not what you
 -- would pick it up by. Water is 18.015 g a mole in any state it
 -- stands in, so each number here is its own moles times that -- a
 -- registry that had lost water's molar mass to the default would be

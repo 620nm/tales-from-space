@@ -9,8 +9,8 @@ local network_channels = require("@helpers/network_channels")
 -- Two rules keep a station's runs apart, and both are load-bearing.
 -- LAYERS: five piping layers cross every tile and never meet, which is
 -- what lets a supply main and a scrubber line share a corridor.
--- COLOUR: two pipe ends only join when their paint agrees (tg's
--- `is_connectable`), which is what makes a stripe of the wrong colour
+-- COLOR: two pipe ends only join when their paint agrees (tg's
+-- `is_connectable`), which is what makes a stripe of the wrong color
 -- across a main CUT it.
 --
 -- Each rule has exactly one machine that suspends it, and neither is a
@@ -38,7 +38,7 @@ local DISTRO = "l3"
 
 local PIPE_M3 = 0.070
 -- A manifold's mouth is a tenth of the 200 L its own file declares
--- (layermanifold.dm:11); a colour adapter's is tg's UNARY_PIPE_VOLUME,
+-- (layermanifold.dm:11); a color adapter's is tg's UNARY_PIPE_VOLUME,
 -- half of the 70 L length of pipe it is (pipes.dm:27-28).
 local MANIFOLD_PORT_M3 = 0.020
 local ADAPTER_PORT_M3 = 0.035
@@ -67,7 +67,7 @@ local function walk(p, dir)
 end
 
 -- How much gas is standing in the run under a tile. The reading an
--- analyser gives, and the one that can tell one net from two.
+-- analyzer gives, and the one that can tell one net from two.
 local function net_moles(x, y, layer)
     local gas = network_matter.gas(x, y, layer)
     assert(gas ~= nil, "there is a run under (" .. x .. ", " .. y .. ")")
@@ -133,7 +133,7 @@ assert(network_channels.at(2, 2, "pipe") == "l4", "and the tile below carries on
 
 -- ---- and it LOOKS like what it is joined to ----
 --
--- tg draws an adapter as a bare centre band with one half-tile of pipe
+-- tg draws an adapter as a bare center band with one half-tile of pipe
 -- per end per layer it actually found (`get_attached_image`,
 -- layermanifold.dm:59-82). This one bridges two layers, so it shows
 -- four arms: layer 2 and layer 4, west and east. Not ten, and not the
@@ -148,13 +148,13 @@ local expect = {
     "pipe_half_l4_4",
     "layer_adapter_ew",
 }
-assert(#drawn == #expect, "four arms and a centre band, and nothing else: " .. #drawn)
+assert(#drawn == #expect, "four arms and a center band, and nothing else: " .. #drawn)
 for i, name in ipairs(expect) do
     assert(drawn[i] == name, "layer " .. i .. " is " .. tostring(drawn[i]) .. ", wanted " .. name)
 end
 
 -- Nine lengths and four mouths -- two layers x two ends of the machine,
--- at a twentieth of a cubic metre apiece. Layers 1, 3 and 5 have no run
+-- at a twentieth of a cubic meter apiece. Layers 1, 3 and 5 have no run
 -- to reach, so those six mouths bind to nothing and pay in nothing.
 local FUSED_M3 = 9 * PIPE_M3 + 4 * MANIFOLD_PORT_M3
 
@@ -209,11 +209,11 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- A COLOUR ADAPTER JOINS TWO PAINT JOBS.
+-- A COLOR ADAPTER JOINS TWO PAINT JOBS.
 --
 -- Paint is plumbing here: `pipes/paint.rs` refuses to flood two ends
--- whose colours disagree, so a red main and a blue main lying end to
--- end on the same layer are two networks. tg's colour adapter carries
+-- whose colors disagree, so a red main and a blue main lying end to
+-- end on the same layer are two networks. tg's color adapter carries
 -- `PIPING_ALL_COLORS` (color_adapter.dm:10) and joins them anyway,
 -- without either run losing its own livery.
 --
@@ -255,7 +255,7 @@ t.world(
 local c = t.join()
 t.tick()
 
-assert(assert(t.structure_at(3, 1)).id == "color_adapter", "a colour adapter between them")
+assert(assert(t.structure_at(3, 1)).id == "color_adapter", "a color adapter between them")
 
 local ADAPTER_M3 = 5 * PIPE_M3 + 2 * ADAPTER_PORT_M3
 local paint_kpa = network_matter.pressure(1, 1)
@@ -291,7 +291,7 @@ assert(
 )
 near(net_moles(1, 1, DISTRO), joined, 0.001, "and the net is exactly as it was")
 
--- ---- take it out, and the colours part ----
+-- ---- take it out, and the colors part ----
 t.drop(c)
 t.run_ticks(2)
 for _ = 1, 3 do

@@ -69,7 +69,7 @@ end
 -- refresh task last woke.
 type Watch = { console: Handle, readers: { [string]: Handle }, beat: number }
 local watches: { [string]: Watch } = {}
--- A watch whose task missed this many refreshes was cancelled outright
+-- A watch whose task missed this many refreshes was canceled outright
 -- (the engine's docs/luau-api/runtime.md) and is started afresh.
 local STALE_REFRESHES = 2
 

@@ -5,14 +5,14 @@
 --
 -- tg's console watches one operating table and one patient
 -- (code/game/machinery/computer/operating_computer.dm:96-101, :162-247).
--- This one has no table to watch, so what it draws is the neighbourhood:
+-- This one has no table to watch, so what it draws is the neighborhood:
 -- two patients laid orthogonally beside it are on the panel, one laid on
 -- a corner is not.
 
 local ui_controls = require("@helpers/ui_controls")
 
 local ARENA = [==[(
-    name: "theatre",
+    name: "theater",
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -169,7 +169,7 @@ assert(
 )
 local blood = row(ui, "procedure.blood")
 assert(blood ~= nil, "and how much blood is left to lose")
--- IN LITRES, and bleeding in millilitres a second. tg counts blood in
+-- IN LITERS, and bleeding in milliliters a second. tg counts blood in
 -- bare units -- a number with no unit on it, which is only a scale if
 -- you already know it -- and a surgeon deciding whether to clamp is
 -- deciding about a volume.
@@ -180,7 +180,7 @@ local blood_value = ui_controls.record(blood.value)
 local volume = ui_controls.text(
     if blood_value.args then ui_controls.record(blood_value.args).volume else blood_value.text
 )
-assert(volume:match("^%d+%.%d%d L") ~= nil, "the blood row is in litres: " .. tostring(volume))
+assert(volume:match("^%d+%.%d%d L") ~= nil, "the blood row is in liters: " .. tostring(volume))
 -- Nothing is wrong with the head and nobody is aiming at it, so the head
 -- is not on the panel.
 assert(row(ui, "head") == nil, "a part with nothing wrong with it is not a row")
@@ -197,11 +197,11 @@ assert(mend ~= nil, "...or closed again")
 assert(word(mend.value) == "cautery", "with a cautery: " .. tostring(word(mend.value)))
 -- Not this one: clamping wants the skin RETRACTED, and it is only cut.
 assert(row(ui, "clamp the bleeders") == nil, "the state does not admit it yet")
--- And not this one either, for a different reason: cauterising your own
+-- And not this one either, for a different reason: cauterizing your own
 -- wound is `self_only`, and this chest belongs to somebody else. A
 -- catalog that offered it would be offering a click the click chain then
 -- refuses (content/operations/close_incision_self.luau).
-assert(row(ui, "cauterise your own wound") == nil, "a self-only step is nobody else's")
+assert(row(ui, "cauterize your own wound") == nil, "a self-only step is nobody else's")
 
 -- ---- the aim ----------------------------------------------------------
 -- One button per part slot of the SURGEON's own plan, and pressing one
@@ -213,7 +213,7 @@ for _, toggle in ipairs(ui_controls.rows(ui.toggles)) do
     end
 end
 assert(aimed ~= nil, "the panel offers the head as a target")
-assert(word(aimed.label) == "head", "labelled out of the plan: " .. tostring(word(aimed.label)))
+assert(word(aimed.label) == "head", "labeled out of the plan: " .. tostring(word(aimed.label)))
 
 ui_controls.toggle(surgeon, "zone", "head")
 t.run_ticks(2)

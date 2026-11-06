@@ -4,7 +4,7 @@ local ignition = require("@lib/ignition")
 -- and face, the wrench that sets a packed ring between two emitters, and the
 -- torch weld that fuses the parts into one 3x3 machine.
 --
--- Layout, centre C, north up:  ring emitter ring / emitter C emitter /
+-- Layout, center C, north up:  ring emitter ring / emitter C emitter /
 -- ring emitter ring. An emitter's facing is the way its nozzle points, so
 -- the north emitter faces south. A ring's facing names the corner arc it
 -- draws: north is the north-west arc, then clockwise.
@@ -104,7 +104,7 @@ end
 -- Nil past the map's edge, which a part drifting in open space can reach.
 local tile_beside = ignition.tile_beside
 
--- The centre a standing part implies: the tile it would stand beside.
+-- The center a standing part implies: the tile it would stand beside.
 local function implied_center(part: Handle): TileAddress?
     local tile = part.tile
     if tile == nil then
@@ -125,7 +125,7 @@ type Inspection = {
     refusal: string?,
 }
 
--- Walks the eight positions around the centre `part` implies and names the
+-- Walks the eight positions around the center `part` implies and names the
 -- first thing wrong, in the player's words.
 local function inspect(part: Handle): Inspection
     local result: Inspection = { center = implied_center(part), parts = {}, refusal = nil }
@@ -357,7 +357,7 @@ local function replacement(center: TileAddress): StructureReplaceSpawn
 end
 
 -- A lit welder on any anchored emitter or set ring: fuses the eight parts
--- standing around the implied centre into the machine.
+-- standing around the implied center into the machine.
 function grav_smes.weld(ev: InteractionUsePayload): boolean | { replaced: boolean }
     local part, actor, torch = ev.subject, ev.actor, ev.implement
     if torch == nil or not torch.alive or torch.prototype ~= WELDER then

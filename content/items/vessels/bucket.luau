@@ -29,7 +29,7 @@ local vessel_spec: vessel.Spec = {
     noun = "bucket",
     phases = { "liquid", "solid" },
     -- `amount_per_transfer_from_this = 20` (_cup.dm:598) at the same scale:
-    -- a third of a litre, 18.5 mol of water, 740 of the vessel's units.
+    -- a third of a liter, 18.5 mol of water, 740 of the vessel's units.
     pour = { units = 740 },
     sip = { units = 2 },
     spill = true,

@@ -1,7 +1,7 @@
 -- A lake is water standing in a bed with nothing behind it: a cut lets it
 -- out, and a sun boils it (the engine's docs/matter-world/beds.md).
 --
--- Column 0 is a metre of lake with a dry 2 m trench beside it, sand past that.
+-- Column 0 is a meter of lake with a dry 2 m trench beside it, sand past that.
 -- Columns 5-7 are a lake with no way out, under a sky set blazing below.
 t.world(
     [==[(

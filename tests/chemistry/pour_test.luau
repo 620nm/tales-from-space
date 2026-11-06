@@ -3,7 +3,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- Pouring: a beaker tipped into another vessel moves exactly what it
 -- says, in the proportions it was holding, and stops where the GLASS
 -- runs out. Capacity is geometry (docs/MATTER.md 5), so "the brim" is
--- millilitres of shell against millilitres of liquid and never a count
+-- milliliters of shell against milliliters of liquid and never a count
 -- of moles.
 --
 -- What happens to the share that would not fit is the POUR's, and it is
@@ -68,7 +68,7 @@ local function near(got: number, want: number, tol: number, what: string)
 end
 
 -- The brim is a VOLUME (docs/MATTER.md 5). Water is 18.015 mL to the
--- mole and libital 180, a beaker is fifty millilitres of glass, and
+-- mole and libital 180, a beaker is fifty milliliters of glass, and
 -- what a beaker.libital ships with -- 0.20 water and 0.15 libital --
 -- is 30.60 of those fifty. Everything the trims below come to is those
 -- four numbers and nothing else.
@@ -81,7 +81,7 @@ end
 local FIT = 0.25 * ((GLASS_ML - liters_of(0.20, 0.15)) / liters_of(0.25 * 4 / 7, 0.25 * 3 / 7))
 
 -- An empty beaker off the shelf is still a vessel: it holds nothing and
--- has fifty millilitres of room (volume_ml on the prototype).
+-- has fifty milliliters of room (volume_ml on the prototype).
 close(total(c), 0, "the bare beaker ships empty")
 
 -- Pick the first beaker up and pour it into the empty one.
@@ -108,7 +108,7 @@ t.click(p, 3, 1, c) -- pick the poured-into beaker back up
 t.tick()
 t.click(p, 2, 1, b)
 t.tick()
--- b was already thirty of its fifty millilitres full, so the gesture
+-- b was already thirty of its fifty milliliters full, so the gesture
 -- trims: what goes in is the share of the parcel the free volume has
 -- room for...
 near(total(b), 0.35 + FIT, 1e-4, "0.35 plus what the glass had room for")
@@ -122,7 +122,7 @@ near(ui_controls.number(over[1].moles), 0.25 - FIT, 1e-6, "the row names what wo
 local spill_at = ui_controls.array(over[1].at)
 assert(spill_at[1] == 2 and spill_at[2] == 1, "on the tile the far beaker stands on")
 
--- b is brim-full now: fifty millilitres of liquid in fifty millilitres
+-- b is brim-full now: fifty milliliters of liquid in fifty milliliters
 -- of glass. Pouring a whole beaker into it moves nothing at all — and
 -- nothing overflows either, because a pour that fits NOTHING is a
 -- refusal rather than a spill: everything drawn goes straight back.

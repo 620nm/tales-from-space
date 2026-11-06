@@ -1,5 +1,5 @@
 -- Sulfur: the yellow solid with the reputation. A dispenser button and
--- a leg tg spends on sulphuric acid and on the plant chems; nothing in
+-- a leg tg spends on sulfuric acid and on the plant chems; nothing in
 -- this pack's roster names it yet.
 --
 -- Real molar mass and the real molar heat capacity (S, 22.8

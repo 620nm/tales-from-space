@@ -1,4 +1,4 @@
-// The colour a voice wears over the station, ported from tgstation's
+// The color a voice wears over the station, ported from tgstation's
 // `colorize_string` (code/__HELPERS/colors.dm:118-153) so a speaker
 // keeps one pastel hue wherever they are heard. The band is tg's own
 // (code/__DEFINES/colors.dm:536-539); only the hash differs, because a
@@ -30,7 +30,7 @@ const hex = (value: number): string =>
 
 /**
  * A six-digit lowercase hex the style grammar accepts, hashed from a
- * speaker's name. tg darkens the same colour by 0.85/0.85 for italics
+ * speaker's name. tg darkens the same color by 0.85/0.85 for italics
  * only; nothing on this wire is italic, so only the plain one is ported.
  */
 export function voiceColor(name: string): string {

@@ -381,11 +381,11 @@
         ], 0)),
         ("id", Dmi("@card", "card_grey", 0)),
         ("crowbar", Dmi("@tools", "crowbar", 0)),
-        // tg's screwdriver is a COLOURED handle plus a steel shaft that
+        // tg's screwdriver is a COLORED handle plus a steel shaft that
         // must stay steel (greyscale/json_configs/screwdriver.json). We
         // baked only the handle mask, so the tool was a couple of tinted
-        // pixels. The colour is baked here rather than declared because
-        // one quad cannot carry two colours; COLOR_TOOL_RED is tg's.
+        // pixels. The color is baked here rather than declared because
+        // one quad cannot carry two colors; COLOR_TOOL_RED is tg's.
         ("screwdriver", DmiBlend(
             dmi: "@tools",
             layers: [(state: "screwdriver", blend: Over, takes_paint: true), (state: "screwdriver_screwybits", blend: Over, takes_paint: false)],
@@ -451,10 +451,10 @@
         ("light_off_n", Dmi("@lighting", "tube", 1)),
         ("light_off_e", Dmi("@lighting", "tube", 2)),
         ("light_off_w", Dmi("@lighting", "tube", 3)),
-        // `light_on*`'s overlay layer alone, greyed: opaque on exactly the
+        // `light_on*`'s overlay layer alone, grayed: opaque on exactly the
         // pixels where `light_on*` differs from `light_off*`, so stacked
         // over the matching `light_on*` it redraws that tube in whatever
-        // colour multiplies it. The tint is only the default a preview draws.
+        // color multiplies it. The tint is only the default a preview draws.
         ("light_glow", Tinted(Luminance(Dmi("@lighting_overlay", "tube", 0)), (243, 255, 250))),
         ("light_glow_s", Tinted(Luminance(Dmi("@lighting_overlay", "tube", 0)), (243, 255, 250))),
         ("light_glow_n", Tinted(Luminance(Dmi("@lighting_overlay", "tube", 1)), (243, 255, 250))),
@@ -503,8 +503,8 @@
             ("@box", "box"),
             ("@box", "lightmixed"),
         ], 0)),
-        // Same shape as the screwdriver: coloured grips, steel jaws
-        // (wirecutters.json). tg colours these COLOR_RED.
+        // Same shape as the screwdriver: colored grips, steel jaws
+        // (wirecutters.json). tg colors these COLOR_RED.
         ("wirecutters", DmiBlend(
             dmi: "@tools",
             layers: [(state: "cutters", blend: Over, takes_paint: true), (state: "cutters_cutty_thingy", blend: Over, takes_paint: false)],

@@ -3,7 +3,7 @@ local action_rules = require("@lib/action_rules")
 local vessel = require("@lib/vessel")
 local blood_identity = require("@lib/blood_identity")
 
--- The syringe: fifteen millilitres of glass with a needle on it, and
+-- The syringe: fifteen milliliters of glass with a needle on it, and
 -- the only thing on the station that reaches INTO somebody.
 -- tg: `/obj/item/reagent_containers/syringe`
 -- (code/modules/reagents/reagent_containers/syringes.dm:1-24,49-144).
@@ -58,7 +58,7 @@ local content = {
     inhand_sprite = { "held_syringe_l", "held_syringe_r" },
     examine = {
         flavor = "A glass barrel with a plunger and a very fine needle. "
-            .. "Fifteen millilitres, and every one of them goes somewhere "
+            .. "Fifteen milliliters, and every one of them goes somewhere "
             .. "that matters.",
     },
     -- tg's `volume = 15` (syringes.dm:12). The barrel is the shell and
@@ -80,7 +80,7 @@ local content = {
     -- sheet by ABSOLUTE units -- `"syringe[get_rounded_vol()]"` over
     -- the stops 0, 1, 5, 10, 15 (syringes.dm:172-176) -- and this
     -- engine's ladder is per cent of the shell, so tg's four pictures
-    -- land at 1/15, 5/15, 10/15 and 15/15 of fifteen millilitres.
+    -- land at 1/15, 5/15, 10/15 and 15/15 of fifteen milliliters.
     fill_sprites = {
         { 1, "syringe_fill_1" },
         { 33, "syringe_fill_5" },

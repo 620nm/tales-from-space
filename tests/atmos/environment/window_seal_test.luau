@@ -13,7 +13,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 -- list.
 --
 -- The contract now: an edge is sealed while EITHER of its tiles holds
--- air back (sim/geometry.rs reseal_tile), so no neighbour can open a
+-- air back (sim/geometry.rs reseal_tile), so no neighbor can open a
 -- window from the outside. Both spawn orders are built below, because
 -- the order was the whole bug.
 --
@@ -71,7 +71,7 @@ local function check(order)
 end
 
 -- ---------------------------------------------------------------
--- Windows first, neighbour after: the order that leaked.
+-- Windows first, neighbor after: the order that leaked.
 -- ---------------------------------------------------------------
 t.world(
     [==[(
@@ -116,7 +116,7 @@ t.world(
 check("windows-first")
 
 -- ---------------------------------------------------------------
--- Neighbour first, windows after: the order that happened to work,
+-- Neighbor first, windows after: the order that happened to work,
 -- kept so the contract is the pair and not one lucky listing.
 -- ---------------------------------------------------------------
 t.world(

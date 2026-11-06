@@ -19,7 +19,7 @@
 -- as a gas, so a press over an open beaker is refused -- what landed
 -- would leave through the same mouth before anybody looked up. Pressed
 -- into a sealed bottle the same press lands, condenses under its own
--- vapour pressure (about 8 atm at 300 K), and the bottle holds LIQUID
+-- vapor pressure (about 8 atm at 300 K), and the bottle holds LIQUID
 -- chlorine, which is the reactant salt is made out of.
 --
 -- WHAT IT DOES TO YOU, and where 16 000 comes from.
@@ -67,7 +67,7 @@ local content = {
     visible = { mol_per_m3 = 0.15, factor = 20, tint = "#C4D64A", visual_layer = "gas_haze" },
     -- A heavy leak banks up as a cloud, not a haze.
     appearance = { gas = "cloud" },
-    -- Through glass, the colour tg's reagent wears
+    -- Through glass, the color tg's reagent wears
     -- (tg: other_reagents.dm:1090).
     color = "#FFFB89",
     -- A thing the station is built to keep away from itself.

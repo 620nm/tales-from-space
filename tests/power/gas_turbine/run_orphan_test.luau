@@ -4,7 +4,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- section's turns are a task that body's chain started (the engine's
 -- docs/luau-api/runtime.md), and a gibbed body is no transfer, so the rotor
 -- keeps checking in and the heat behind its compressor keeps wearing it
--- (turbine.dm:634-640); a second player's window shows it. Turns cancelled
+-- (turbine.dm:634-640); a second player's window shows it. Turns canceled
 -- outright (a transfer off the map, a quarantine) leave a stalled run that
 -- reads stopped, its watts' lease lapsing unrenewed; the switch restarts it.
 
@@ -171,7 +171,7 @@ assert(eventually(function()
 end, 6), "hot gas through the stages spins the shaft")
 assert((watts() or 0) > 0, "the spinning rotor feeds the grid")
 
--- Each section's turns cancelled outright, as a quarantine or a transfer
+-- Each section's turns canceled outright, as a quarantine or a transfer
 -- off the map does (the engine's docs/luau-api/runtime.md). The watts were
 -- last leased at most one 2 s pass before, for three passes
 -- (lib/power/gas_turbine_turns.luau): they hold for 4 s and are gone by 6.

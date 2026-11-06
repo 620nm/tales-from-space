@@ -69,7 +69,7 @@ close(total(bottle), 0, "the bottle ships empty")
 close(total(tube), 0, "the tube ships empty")
 
 -- A beaker tipped into the dropper. The gesture says 10 u and the
--- dropper is five millilitres of glass, so it trims at the brim (tg's
+-- dropper is five milliliters of glass, so it trims at the brim (tg's
 -- `trans_to`, holder.dm:472/480) and what will not fit runs down the
 -- outside onto the deck — a POUR's overflow policy, which is the whole
 -- of the difference between `sim.matter.pour` and the generic
@@ -77,7 +77,7 @@ close(total(tube), 0, "the tube ships empty")
 --
 -- The brim is a VOLUME (docs/MATTER.md 5). A mole of the beaker's mix
 -- is four sevenths water at 18.015 mL and three sevenths libital at
--- 180 mL -- 87.43 mL to the mole -- so five millilitres is 0.05718 of
+-- 180 mL -- 87.43 mL to the mole -- so five milliliters is 0.05718 of
 -- one.
 t.click(p, 2, 1, beaker)
 t.tick()
@@ -87,7 +87,7 @@ t.move(p, "east")
 t.tick()
 t.click(p, 3, 1, dropper)
 t.tick()
--- Five millilitres of glass over 87.43 mL to the mole of that mix.
+-- Five milliliters of glass over 87.43 mL to the mole of that mix.
 local FIT = 5e-6 / ((4 / 7) * 18.015e-6 + (3 / 7) * 180e-6)
 close(total(dropper), FIT, "the dropper fills to its brim and no further")
 -- The beaker gave up the WHOLE gesture: what the dropper could not

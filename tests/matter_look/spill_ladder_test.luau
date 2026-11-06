@@ -2,8 +2,8 @@ local matter_look = require("@helpers/matter_look")
 
 -- The ladders in content/matter_appearances.luau, read off real spills.
 --
--- A tile here is a square metre under three metres of air, so a litre of
--- water is a millimetre deep and the film water stops thinning at is
+-- A tile here is a square meter under three meters of air, so a liter of
+-- water is a millimeter deep and the film water stops thinning at is
 -- 3.3 L. Water also dries at about 20 mL a second, which is why every
 -- liquid reading below is taken the tick after the spill. What a crewman
 -- should see:
@@ -31,15 +31,15 @@ local function top_water(p: number, x: number, y: number): number
     return matter_look.top_rung(p, x, y, "puddle")
 end
 
-assert(top_water(spill(water(4)), 5, 3) == 0, "four millilitres is under the first rung and is not drawn")
+assert(top_water(spill(water(4)), 5, 3) == 0, "four milliliters is under the first rung and is not drawn")
 assert(top_water(spill(water(8)), 5, 3) == 1, "a few drops are a splatter")
 assert(top_water(spill(water(50)), 5, 3) == 2, "a beaker is a splash")
 assert(top_water(spill(water(120)), 5, 3) == 3, "a large beaker is a spill")
-assert(top_water(spill(water(1000)), 5, 3) == 4, "a litre is a puddle")
-assert(top_water(spill(water(4000)), 5, 3) == 4, "an extinguisher's four litres is still a puddle")
+assert(top_water(spill(water(1000)), 5, 3) == 4, "a liter is a puddle")
+assert(top_water(spill(water(4000)), 5, 3) == 4, "an extinguisher's four liters is still a puddle")
 
 -- A flood: ten seconds on the middle tile holds about 5.6 L and its
--- neighbours the 3.4 L film.
+-- neighbors the 3.4 L film.
 local flood = spill(water(20000))
 t.run_seconds(10)
 assert(top_water(flood, 5, 3) == 5, "the middle of a flood is a pool")
@@ -69,4 +69,4 @@ local function ash(ml: number): string
 end
 
 assert(matter_look.top_rung(spill(ash(3)), 5, 3, "powder") == 1, "a pinch of ash is a few grains")
-assert(matter_look.top_rung(spill(ash(60)), 5, 3, "powder") == 2, "sixty millilitres is a sheet")
+assert(matter_look.top_rung(spill(ash(60)), 5, 3, "powder") == 2, "sixty milliliters is a sheet")

@@ -61,7 +61,7 @@ local function room_air(id: string): number
     return total
 end
 
--- Two litres a tile, under the film: a passive mouth could not touch them.
+-- Two liters a tile, under the film: a passive mouth could not touch them.
 for _, service in ipairs({ 1, 5, 9 }) do
     local p = room(bench.ONE_G)
     local gas_before = assert(network_matter.gas(3, 3))
@@ -124,7 +124,7 @@ local function strip(gravity: string, liters: number, kit: boolean?): number
     })
 end
 
--- Three hundred litres and a port with a length: 256.5 L fills the line.
+-- Three hundred liters and a port with a length: 256.5 L fills the line.
 local p = strip(bench.ONE_G, 75)
 t.run_seconds(40)
 local left = 0

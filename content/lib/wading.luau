@@ -11,7 +11,7 @@ local tile_geometry = require("@lib/tile_geometry")
 
 export type WadingBand = {
     key: string,
-    -- The least depth, in metres of liquid over the tile's floor.
+    -- The least depth, in meters of liquid over the tile's floor.
     min_depth_m: number,
     -- Seconds added to every step taken FROM a tile this deep.
     step_add_s: number,
@@ -50,7 +50,7 @@ wading.SWIM = {
     breath_capacity = "breathing",
 }
 
--- Millilitres of liquid that stand one metre deep over a tile's floor.
+-- Milliliters of liquid that stand one meter deep over a tile's floor.
 local ML_PER_M_DEPTH = tile_geometry.width_m * tile_geometry.depth_m * 1e6
 local LOSE_BREATH_PURPOSE = "wading.lose_breath"
 

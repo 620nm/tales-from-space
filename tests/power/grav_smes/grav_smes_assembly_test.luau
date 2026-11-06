@@ -1,6 +1,6 @@
 local bench = require("@helpers/grav_bench")
 
--- Building the gravity battery: eight anchored parts facing the centre,
+-- Building the gravity battery: eight anchored parts facing the center,
 -- one torch weld, clamps, a coil of cable, nine pipes, the casing, and a
 -- glass panel on the south cell. The pack chose every count (the machine
 -- has no tg twin); the steps work from any cell of the machine.
@@ -27,9 +27,9 @@ local function step(held: string, x: number, y: number, seconds: number, want: s
     assert(body.id == "grav_smes" and body.state == want, held .. " made it " .. state)
 end
 
--- Eight loose parts stand around an empty centre.
+-- Eight loose parts stand around an empty center.
 bench.assert_standing({ "n", "e", "s", "w", "nw", "ne", "se", "sw" })
-assert(t.structure_at(5, 4) == nil, "the centre is bare floor")
+assert(t.structure_at(5, 4) == nil, "the center is bare floor")
 
 -- A lit torch on an anchored emitter fuses the lot.
 bench.hold(p, "welder", NEAR)
@@ -37,7 +37,7 @@ t.use_self(p)
 t.run_ticks(2)
 t.click(p, 5, 5, t.target_at(p, 5, 5, "grav_emitter"))
 t.run_seconds(7)
-local welded = assert(t.structure_at(5, 4), "the weld left a machine on the centre")
+local welded = assert(t.structure_at(5, 4), "the weld left a machine on the center")
 assert(
     welded.id == "grav_smes" and welded.state == "welded",
     "one welded machine: " .. tostring(welded.state)

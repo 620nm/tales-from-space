@@ -42,12 +42,12 @@ assert(
 assert(look.skin_tone ~= nil and #look.skin_tone > 0, "a skin tone this file named")
 assert(look.hair ~= nil, "a hairstyle, `bald` included")
 assert(look.facial_hair ~= nil, "and a beard, `shaved` included")
-assert(look.hair_color:match("^#%x%x%x%x%x%x$") ~= nil, "colours are hexes: " .. look.hair_color)
+assert(look.hair_color:match("^#%x%x%x%x%x%x$") ~= nil, "colors are hexes: " .. look.hair_color)
 assert(
     look.facial_hair_color == look.hair_color,
-    "the beard takes the hair's colour, as tg's randomiser does"
+    "the beard takes the hair's color, as tg's randomizer does"
 )
-assert(look.eye_color == look.eye_color_right, "and one roll colours both eyes")
+assert(look.eye_color == look.eye_color_right, "and one roll colors both eyes")
 -- A body that is not `m` can only be shaved: every beard in the roster
 -- names `gender = "m"` because tg's base facial datum is MALE.
 if look.physique ~= "m" then
@@ -120,7 +120,7 @@ for index = 1, 6 do
 end
 
 assert(names[7] == "eye_l" and names[8] == "eye_r", "the two eyes sit over the body")
-assert(seen.layers[7].color == mine.eye_color, "left eye in the colour that was rolled")
+assert(seen.layers[7].color == mine.eye_color, "left eye in the color that was rolled")
 assert(seen.layers[8].color == mine.eye_color_right, "and the right in its own")
 
 -- A roster's "none" row emits no layer; verify the rolled traits rather
@@ -129,12 +129,12 @@ local next_layer = 9
 assert(mine.facial_hair ~= nil and mine.hair ~= nil, "this body declares both hair slots")
 if mine.facial_hair ~= "shaved" then
     assert(names[next_layer] == "facial_" .. mine.facial_hair, "the beard over the eyes")
-    assert(seen.layers[next_layer].color == mine.facial_hair_color, "the rolled beard colour")
+    assert(seen.layers[next_layer].color == mine.facial_hair_color, "the rolled beard color")
     next_layer += 1
 end
 if mine.hair ~= "bald" then
     assert(names[next_layer] == "hair_" .. mine.hair, "the hair on top of the body")
-    assert(seen.layers[next_layer].color == mine.hair_color, "the rolled hair colour")
+    assert(seen.layers[next_layer].color == mine.hair_color, "the rolled hair color")
     next_layer += 1
 end
 assert(names[next_layer] == "worn_uniform_gray", "the uniform over the body")

@@ -1,10 +1,10 @@
--- Sulphuric acid: H2SO4, tg's `/datum/reagent/toxin/acid`. A dispenser
+-- Sulfuric acid: H2SO4, tg's `/datum/reagent/toxin/acid`. A dispenser
 -- button and one of the two legs aiuri stands on
 -- (reactions/aiuri.luau).
 --
 -- THE NAME IS THE MOLECULE. tg files this under toxins and calls the
 -- datum `acid`, which is a category rather than a substance; there is
--- one id per molecule here (D3), and the molecule is sulphuric acid.
+-- one id per molecule here (D3), and the molecule is sulfuric acid.
 -- The spelling is the American one because the id is a key and the
 -- name beside it is what a player reads.
 --
@@ -13,14 +13,14 @@
 -- per D2 (docs/CHEMISTRY.md): concentrated acid boils at 610 K and
 -- decomposes doing it, which is chemistry this engine has no rule for.
 --
--- What it does NOT do here is corrode: tg's acid eats armour, melts
+-- What it does NOT do here is corrode: tg's acid eats armor, melts
 -- items and burns whoever it splashes, all of which is exposure
 -- gameplay this pack has no seam for yet. It is a substance leg until
 -- then, and saying so is better than half a mechanism.
 -- tg: /datum/reagent/toxin/acid (toxin_reagents.dm:1255).
 return {
     id = "sulfuric_acid",
-    name = "sulphuric acid",
+    name = "sulfuric acid",
     molar_mass = 98.08,
     cv = 138.9,
     phase = { unmodeled = "liquid" },

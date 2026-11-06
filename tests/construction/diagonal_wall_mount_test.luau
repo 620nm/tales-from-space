@@ -6,7 +6,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- and overhang follow the wallward direction, and visibility and examine
 -- still resolve on that tile. Touch follows the mounted face instead: a
 -- cardinal mount bars its wallward half-plane, while a diagonal mount
--- answers only its own tile and its two wallward neighbours.
+-- answers only its own tile and its two wallward neighbors.
 
 local function sequence_rows()
     local count = 0
@@ -159,7 +159,7 @@ for _, corner in ipairs(diagonal_corners) do
 end
 assert(sequence_rows() == before + #diagonal_corners, "each diagonal answers on its own tile")
 
--- The southwest face admits its own tile and its west and south neighbours,
+-- The southwest face admits its own tile and its west and south neighbors,
 -- and bars its north: one button bolted to a pillar corner, three stands,
 -- two answers and a silence. The press wants an empty hand, so the north
 -- tile is pressed twice: bare for the face gate itself, then holding the

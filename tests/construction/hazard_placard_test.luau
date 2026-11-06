@@ -9,7 +9,7 @@
 -- every wall of the station means nothing anywhere.
 --
 -- That negative is bought with the thresholds in the two files it is
--- about. Oxygen is an oxidiser only past 23.5% and nitrogen an
+-- about. Oxygen is an oxidizer only past 23.5% and nitrogen an
 -- asphyxiant only past 85%, and station air is 21/79 -- so it clears
 -- neither, by margins a mapper could not accidentally cross.
 --

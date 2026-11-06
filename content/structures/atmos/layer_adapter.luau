@@ -14,7 +14,7 @@
 -- (`find_all_connections`/`pipeline_expansion`,
 -- layermanifold.dm:90-114).
 --
--- So: ten runs, one body of gas, equalised instantly. Put one between a
+-- So: ten runs, one body of gas, equalized instantly. Put one between a
 -- five-layer trunk and a single-layer spur and you have joined the lot.
 -- Put one in by mistake and you have joined the lot, which is the same
 -- sentence and is why it wants placing deliberately.
@@ -42,7 +42,7 @@ return {
     dense = false,
     states = { "anchored" },
     facing_sprites = {
-        -- Two pictures for two axes, which is all a normalised facing
+        -- Two pictures for two axes, which is all a normalized facing
         -- can ask for.
         anchored = {
             north = "layer_adapter_ns",

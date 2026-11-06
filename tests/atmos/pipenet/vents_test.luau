@@ -17,7 +17,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 -- structures/vent.luau -- vent_panel_test.luau is where they get moved
 -- and where the sim is made to prove it reads them; this file is what
 -- the pack's own defaults do. A passive vent is a HOLE -- no setpoint, no
--- power, no direction -- and it equalises the run and the room by molar
+-- power, no direction -- and it equalizes the run and the room by molar
 -- density, whichever way that runs (tg's `internal.equalize(external)`).
 --
 -- Neither is switched, so nobody joins these worlds: every scenario
@@ -331,7 +331,7 @@ t.run_seconds(10)
 near(room_moles(ROOM), idle_room, 0.001, "a room at one atmosphere is not touched")
 near(pipe_moles(2, 1), idle_net, 0.001, "and neither is the run behind the vent")
 
--- Foul it well past the siphon line. Thirty moles a cubic metre (90 on
+-- Foul it well past the siphon line. Thirty moles a cubic meter (90 on
 -- each 3 m3 cell) is what a runaway would put in a corridor; `t.foul_room`
 -- is the same precondition setter environment specs use for a crew's exhaust.
 for x = 1, 7 do

@@ -53,7 +53,7 @@ return {
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.meter.name",
     name = "flow meter",
-    -- The housing, which is never tinted: tg's greyscale config paints
+    -- The housing, which is never tinted: tg's grayscale config paints
     -- only the needle (`color_ids: [1]` on the pressure layer).
     sprite = "meter_base",
     -- It sits on the line of the layer it reads, on BOTH axes, as tg's
@@ -105,7 +105,7 @@ return {
         channel = "l3",
         faces = faces,
         -- Drawn above the needle and never tinted, which is tg's own
-        -- split: `buttonsN` gets no `color_ids` in the greyscale config
+        -- split: `buttonsN` gets no `color_ids` in the grayscale config
         -- while the needle beneath it gets `[1]`.
         lamps = lamps,
         blank = "meter_off",

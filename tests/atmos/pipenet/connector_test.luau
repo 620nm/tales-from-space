@@ -55,7 +55,7 @@ local function pick(p: number, field: string, label: string): string
             return ui_controls.text(tog.option)
         end
     end
-    error("no " .. field .. " button labelled " .. label)
+    error("no " .. field .. " button labeled " .. label)
 end
 
 local function set(p, field, index)

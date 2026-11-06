@@ -11,7 +11,7 @@ export interface FileBuffer {
   sourceView?: boolean;
   sourceVisible?: boolean;
   pending?: SaveReceipt;
-  /** A cancelled native save whose acknowledgement can still reconcile the draft. */
+  /** A canceled native save whose acknowledgement can still reconcile the draft. */
   canceledSave?: SaveReceipt;
   continuation?: Command;
   /** A local workspace change waiting behind the same dirty guard. */
@@ -87,8 +87,8 @@ export function editorBuffer(id: string, doc: DocumentIdentity, state: Partial<M
     buffer.confirmed = undefined;
     buffer.confirmedLocal = undefined;
   }
-  // A cancelled save has no continuation to release. Its request may be
-  // hidden by a newer cancelled retry, so the accepted native snapshot is
+  // A canceled save has no continuation to release. Its request may be
+  // hidden by a newer canceled retry, so the accepted native snapshot is
   // the only receipt available for this bounded reconciliation marker.
   if (buffer.canceledSave && matchesNative(buffer.canceledSave)) {
     if (buffer.text === buffer.canceledSave.text) buffer.dirty = false;

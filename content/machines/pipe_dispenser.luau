@@ -16,7 +16,7 @@
 -- injector and the two vents cost this shelf.
 --
 -- WHAT TG HAS THAT THIS SHELF CANNOT SAY: tg's window carries a piping
--- layer, a paint colour and a per-recipe direction, because tg's
+-- layer, a paint color and a per-recipe direction, because tg's
 -- dispenser hands you a fitting already set. Ours hands you the fitting
 -- and the RPD is where the settings live (items/rpd.luau). tg's own
 -- flip toggle is likewise absent — a flipped trinary is a second

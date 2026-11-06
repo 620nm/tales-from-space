@@ -5,7 +5,7 @@
 // tg draws the hub from `structures.dmi` "cablerelay-on"
 // (power/multiz.dm:1-12) and the adapter from `multiz.dmi`
 // "adapter-<piping layer>" (pipes/multiz.dm:2-60). Both are one picture per
-// kind: a fixture does not bend with its neighbours, so every connection
+// kind: a fixture does not bend with its neighbors, so every connection
 // shape of the kind names the same sprite (`content/compositions.luau`).
 (
     sheets: [

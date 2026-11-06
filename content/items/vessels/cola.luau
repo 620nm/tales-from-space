@@ -21,7 +21,7 @@ local content = {
     -- tg's soda can holds 30 u (soda.dm:21), which is the DRINK; the
     -- can is a 330 mL can, which is the shell. Those were the same
     -- number here until capacity became geometry, and reading a dose
-    -- as a shell left a can with a millilitre of headspace over its own
+    -- as a shell left a can with a milliliter of headspace over its own
     -- syrup. The shell is the whole of what it holds, and 30 u of cola
     -- rattles around in one the way a real can does.
     volume_ml = 330,

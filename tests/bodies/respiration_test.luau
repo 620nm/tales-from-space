@@ -1,7 +1,7 @@
 -- BREATHING IS A PUMP, and the pump is an organ you can take out.
 --
 -- The lungs are a driven vessel (content/items/organ_lungs.luau): six
--- litres of shell, a stroke that sweeps 1.99 of them -- tg's
+-- liters of shell, a stroke that sweeps 1.99 of them -- tg's
 -- BREATH_VOLUME, atmos_mob_interaction.dm:10 -- and one conversion, all
 -- of the oxygen the stroke drew in for the same number of moles of
 -- carbon dioxide, which is tg's `breathe_gas_volume(breath, oxygen,
@@ -169,8 +169,8 @@ assert(ui_controls.number(t.health(spacer).oxy) > 0, "and the crewman is suffoca
 -- =====================================================================
 -- NO LUNGS, BEATING HEART: alive, and drowning.
 -- =====================================================================
-local THEATRE = [==[(
-    name: "theatre",
+local THEATER = [==[(
+    name: "theater",
     legend: { ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     levels: [
         (
@@ -188,7 +188,7 @@ local THEATRE = [==[(
     ],
 )]==]
 
-t.world(THEATRE, 0)
+t.world(THEATER, 0)
 local surgeon = t.join("assistant")
 local patient = t.join("medic")
 t.run_ticks(3)

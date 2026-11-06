@@ -21,7 +21,7 @@
 --     landing on the same pixel arithmetic (`pixel = base + click`).
 --
 -- The card's anchor is what makes that arithmetic visible: tg's single
--- card sits five 32nds left of centre (singlecard.dm:8), so a click at
+-- card sits five 32nds left of center (singlecard.dm:8), so a click at
 -- +9 puts a card at +4 and an implementation that forgot the anchor
 -- would say +9. Every expected number below is `click - 5`.
 --
@@ -87,7 +87,7 @@ assert(t.item_at(2, 1, "card_deck") == nil, "and is not lying on the table")
 -- ---- dealing at bare deck, which still scatters ----------------------
 -- Deliberate divergence, and it is flagged as one in items/card_deck.luau:
 -- tg has no floor placement at all, so cards on the deck are this
--- pack's own flavour and they should read as cards that fell out of a
+-- pack's own flavor and they should read as cards that fell out of a
 -- hand. The click below carries a pixel and the card ignores it.
 t.click(p, 1, 2, nil, 12, 12)
 t.run_ticks(2)

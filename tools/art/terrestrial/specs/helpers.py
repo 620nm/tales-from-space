@@ -385,7 +385,7 @@ def build_basalt_plate_32(
          crevice -> `t2/t3` tucked shadow recovery -> `t4` calm flat stone body).
     With `inner_seeds` it builds a flat variant: cells within `edge_keep` px of the tile
     edge are the plain tile's, so the variant's outer pixels match it and it joins any
-    neighbour the plain tile joins (`flat_variant_ring_mismatch` checks the result).
+    neighbor the plain tile joins (`flat_variant_ring_mismatch` checks the result).
     """
     t1_pocket, t2_crev, t3_slope, t4_body, t5_lip = ramp
 

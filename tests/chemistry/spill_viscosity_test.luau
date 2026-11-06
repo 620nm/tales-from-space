@@ -6,7 +6,7 @@ local clock = require("@helpers/clock")
 -- mobility * h^3 * head per second, and mobility is rho*g/(3*mu)
 -- (docs/matter-world/flow.md). Both terms are knobs a substance file
 -- authors, and this spec isolates them one at a time against the same
--- corridor, the same sixty litres and the same settled depth. What is
+-- corridor, the same sixty liters and the same settled depth. What is
 -- being asserted every time is a TIME, never a residue: where a spill
 -- STOPS is the film's business and tests/spill_wetting_test.luau's.
 --
@@ -17,12 +17,12 @@ local clock = require("@helpers/clock")
 --     the other half of the same fraction. Density.
 --
 -- The corridor is closed at both ends and six tiles long, and sixty
--- litres over six tiles is ten apiece -- far above every film here
+-- liters over six tiles is ten apiece -- far above every film here
 -- (water 3.3 mm, acid 1.75 mm, mercury 3.60 mm), so all three level to
 -- the same depth and only the clock separates them.
 
 local CORRIDOR = [==[(
-    name: "levelling corridor",
+    name: "leveling corridor",
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -52,13 +52,13 @@ local function held(key: string, x: number)
     return (standing and standing[key]) or 0
 end
 
--- Sixty litres of each, and the arithmetic is molar mass over liquid
+-- Sixty liters of each, and the arithmetic is molar mass over liquid
 -- density, one mole at a time:
 --   water   18.015 / 1.00  = 18.02 mL/mol -> 55.51 mol/L -> 3330.60 mol
 --   acid    98.08  / 1.83  = 53.60 mL/mol -> 18.66 mol/L -> 1119.49 mol
 --   mercury 200.59 / 13.53 = 14.83 mL/mol -> 67.45 mol/L -> 4047.04 mol
 -- The 21/79 air rows ride along in all three, because a `total` blend
--- is the tile's whole contents (41.573 mol over a cubic metre is
+-- is the tile's whole contents (41.573 mol over a cubic meter is
 -- 101.325 kPa) and no corridor here may open airless.
 local function run(key: string, moles: number)
     t.world(CORRIDOR:format(key, moles), 0)
@@ -73,7 +73,7 @@ local function run(key: string, moles: number)
 
     local poured = t.matter_totals().substances[key]
     assert(math.abs(poured - moles) < 1e-6, ("%s: the blend is what was painted"):format(key))
-    assert(held(key, 1) > 59.0, ("%s: sixty litres on one tile"):format(key))
+    assert(held(key, 1) > 59.0, ("%s: sixty liters on one tile"):format(key))
 
     local crossed, leveled = -1, -1
     for step = 1, PATIENCE do
@@ -97,9 +97,9 @@ local function run(key: string, moles: number)
     assert(crossed > 0, ("%s never reached the far end of the corridor"):format(key))
     assert(
         leveled > 0,
-        ("%s never levelled: %.4f L still on the source"):format(key, held(key, 1))
+        ("%s never leveled: %.4f L still on the source"):format(key, held(key, 1))
     )
-    -- Sixty litres over six tiles, wherever the clock got to.
+    -- Sixty liters over six tiles, wherever the clock got to.
     for x = 1, TILES do
         assert(
             math.abs(held(key, x) - 10.0) < 0.5,
@@ -118,7 +118,7 @@ local water_crossed, water_leveled = run("water", 3330.6)
 -- ---------------------------------------------------------------
 -- SYRUP TAKES LONGER. (viscosity: 24.0 against 1.002 mPa*s)
 --
--- The same spill, the same corridor, the same ten litres a tile at the
+-- The same spill, the same corridor, the same ten liters a tile at the
 -- end of it -- and strictly more ticks to get there, at both marks:
 -- the frontier reaching the far wall, and the whole corridor coming
 -- level. The engine's stability cap holds the first surge to the same

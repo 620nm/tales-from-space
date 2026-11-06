@@ -14,7 +14,7 @@ local function pocket(environment: string, liters: number)
     })
 end
 
--- Ten litres on the grating: 6.7 over the film at half a litre a second.
+-- Ten liters on the grating: 6.7 over the film at half a liter a second.
 pocket(bench.ONE_G, 10)
 t.run_seconds(30)
 local left = bench.standing(1, 1)
@@ -23,7 +23,7 @@ assert(
     ("the deck falls to its film, %.3f L left"):format(left)
 )
 
--- Three hundred litres overfill the line, and the rest stands on the deck.
+-- Three hundred liters overfill the line, and the rest stands on the deck.
 pocket(bench.ONE_G, 300)
 t.run_seconds(640)
 left = bench.standing(1, 1)

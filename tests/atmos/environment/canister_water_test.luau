@@ -4,17 +4,17 @@ local ui_controls = require("@helpers/ui_controls")
 --
 -- The bottle is the same noun every gas store on the station uses. It
 -- is a shell with a valve on it, and nothing about a shell says gas --
--- so a map that charges one with ten litres of water and ten
+-- so a map that charges one with ten liters of water and ten
 -- atmospheres of air gets exactly that, and not a refusal
 -- (content/blends/water_10l.luau, docs/map-properties/blends.md).
 --
 -- Four sentences, all of them things a crewman with the panel open
 -- could read:
---   * the charge is an AMOUNT: ten litres landed as ten litres of
+--   * the charge is an AMOUNT: ten liters landed as ten liters of
 --     liquid, and the shell is still the 2 000 L it always was
 --   * the liquid takes room away from the gas: headspace is the shell
 --     less the slug
---   * a SHUT bottle of water comes to sit at its own vapour pressure.
+--   * a SHUT bottle of water comes to sit at its own vapor pressure.
 --     The headspace saturates whether the valve is open or not, so a
 --     couple of kPa of steam stands over the slug and the slug pays
 --     the latent heat for it -- the bottle is a degree or two colder
@@ -22,7 +22,7 @@ local ui_controls = require("@helpers/ui_controls")
 --   * put AIR in over the water, wind the regulator up and throw the
 --     valve, and the bottle empties itself into the room -- of air. The
 --     slug is still there afterwards to a fraction of a percent, and
---     the only water that left went as vapour: a valve moves what fills
+--     the only water that left went as vapor: a valve moves what fills
 --     its container, and a liquid is not that (the engine marks the gap
 --     itself)
 
@@ -35,7 +35,7 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     blends: {
-        // Ten litres, as content/blends/water_10l.luau spells it:
+        // Ten liters, as content/blends/water_10l.luau spells it:
         // 10 000 mL at 1.0 g/mL over 18.015 g/mol -- and ten
         // atmospheres of ordinary 21/79 air standing over it. The air
         // is pV/RT over the HEADSPACE, which is the shell less the
@@ -83,14 +83,14 @@ assert(shut ~= nil, "a canister has an inside")
 
 -- ---------------------------------------------------------------
 -- What is in it, and how much room is left. A `total` charge is an
--- amount: ten litres is ten litres whatever the shell.
+-- amount: ten liters is ten liters whatever the shell.
 -- ---------------------------------------------------------------
 assert(shut.contents.water ~= nil, "the map put water in the bottle")
-near(shut.contents.water.liquid, CHARGE_MOL, 1e-6, "ten litres of water, as liquid")
+near(shut.contents.water.liquid, CHARGE_MOL, 1e-6, "ten liters of water, as liquid")
 assert(shut.contents.water.gas == nil, "and none of it arrived as steam")
 assert(shut.contents.o2 ~= nil and shut.contents.n2 ~= nil, "with air over it")
 near(shut.volume_l, SHELL_L, 1e-6, "the shell is still the canister's own")
-near(shut.headspace_l, SHELL_L - SLUG_L, 0.1, "the slug takes its ten litres out of the headspace")
+near(shut.headspace_l, SHELL_L - SLUG_L, 0.1, "the slug takes its ten liters out of the headspace")
 
 -- ---------------------------------------------------------------
 -- Leave it standing SHUT. The headspace does not stay dry: the
@@ -107,21 +107,21 @@ t.run_seconds(10)
 local settled = assert(t.vessel(can))
 local s = settled.contents.water
 assert(s ~= nil, "the water is still in there")
-assert(s.gas ~= nil and s.gas > 0.0, "a shut bottle of water stands over its own vapour")
+assert(s.gas ~= nil and s.gas > 0.0, "a shut bottle of water stands over its own vapor")
 
 -- Water's share of the headspace, said out loud: nRT/V over the room
 -- the air left it, which is the partial pressure a technician's
 -- analyzer would print beside the air's.
 local R = 8.314
 local water_kpa = s.gas * R * settled.temp_k / (settled.headspace_l / 1000.0) / 1000.0
-assert(water_kpa >= 1.0 and water_kpa <= 10.0, "vapour pressure, not a pressure: " .. water_kpa)
+assert(water_kpa >= 1.0 and water_kpa <= 10.0, "vapor pressure, not a pressure: " .. water_kpa)
 near(
     t.canister_pressure(2, 1),
     settled.pressure_kpa,
     1e-6,
     "the gauge on the bottle and the reading in the panel are one number"
 )
-assert(settled.temp_k < 293.15, "boiling off the vapour cost the slug its heat: " .. settled.temp_k)
+assert(settled.temp_k < 293.15, "boiling off the vapor cost the slug its heat: " .. settled.temp_k)
 near(
     (s.liquid or 0.0) + (s.gas or 0.0) + (s.solid or 0.0),
     CHARGE_MOL,
@@ -155,10 +155,10 @@ t.run_seconds(10)
 -- The air went. The water stayed. Nearly half the air in the
 -- bottle is in the room now and the room says so on its own gauge
 -- -- and the slug on the bottom lost a fifth of one percent of
--- itself, all of it as vapour riding out with the air.
+-- itself, all of it as vapor riding out with the air.
 --
 -- A valve releases what FILLS ITS CONTAINER. A liquid does not, so
--- ten litres of water cannot leave a canister however wide the
+-- ten liters of water cannot leave a canister however wide the
 -- valve is opened -- which is exactly the gap the engine marks for
 -- itself rather than pretending it is closed.
 -- ---------------------------------------------------------------
@@ -184,5 +184,5 @@ assert(
 assert(assert(w.liquid) > CHARGE_MOL * 0.99, "and the slug is still the slug: " .. w.liquid)
 assert(
     water_before - water_after < (w.gas or 0.0) * 2.0,
-    "what left it was vapour, and not much more than a headspace of that"
+    "what left it was vapor, and not much more than a headspace of that"
 )

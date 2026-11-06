@@ -16,7 +16,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- surgeon can cut is a corpse the console must be able to talk about.
 
 local ARENA = [==[(
-    name: "morgue theatre",
+    name: "morgue theater",
     legend: {
         ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -165,7 +165,7 @@ local first = row(console, "make an incision")
 assert(first ~= nil, "and the console says how to begin")
 assert(word(first.value) == "scalpel", "naming the tool: " .. tostring(word(first.value)))
 -- A part nothing is wrong with and nobody is aiming at is still not a
--- row: the panel is a readout, not a catalogue of everything possible.
+-- row: the panel is a readout, not a catalog of everything possible.
 assert(row(console, "left leg") == nil, "an unaimed, untouched part is not a row")
 
 t.move(surgeon, "east")

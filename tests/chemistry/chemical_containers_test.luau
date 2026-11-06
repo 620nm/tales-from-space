@@ -156,7 +156,7 @@ composition.click_deck(p, 6, 1)
 t.tick()
 assert(#t.sounds(p) == 0, "a cooldown refusal emits no launch sound")
 assert(#t.ledger_rows("MatterSprayed") == 1, "cooldown refuses a second launch")
--- Read the draw before the parcel has travelled: an open sprayer also
+-- Read the draw before the parcel has traveled: an open sprayer also
 -- breathes with the room once an atmos pass, and that trade is not
 -- what this line is about.
 near(assert(t.contents(spray)).water, 1.125, "one spray draws a 5 u parcel")

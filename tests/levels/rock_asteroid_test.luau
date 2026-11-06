@@ -70,7 +70,7 @@ assert(#t.seen_composition(p, 1, 0, BASEMENT) == 0, "the rock behind the near ro
 local edge = composition.seen_sprites(p, 0, 2, BASEMENT)
 assert(edge.components[1] == "rock-3", "rock at the map edge joins only N and S, got " .. tostring(edge.components[1]))
 
--- 3b. A rock's picture follows its neighbours; digging changes them (step 5).
+-- 3b. A rock's picture follows its neighbors; digging changes them (step 5).
 local east = composition.seen_sprites(p, 2, 1, BASEMENT)
 assert(east.components[1] == "rock-157", "the rock east of the future dig joins W, N, E and both upper corners")
 

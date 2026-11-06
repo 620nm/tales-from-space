@@ -71,7 +71,7 @@ local function ground_at(player: number, x: number, y: number): (SpecSeenMatterP
     return assert(body, "tile (" .. x .. ", " .. y .. ") draws a ground face"), underlays
 end
 
--- One ground part, in the material's own colour, and no matter beside it.
+-- One ground part, in the material's own color, and no matter beside it.
 local function face(player: number, x: number, y: number): SpecSeenMatterPart
     local found, underlays = ground_at(player, x, y)
     assert(#underlays == 0, "tile (" .. x .. ", " .. y .. ") draws no underlay, got " .. #underlays)
@@ -80,9 +80,9 @@ end
 
 local sand = face(p, 1, 1)
 assert(sand.look == "ground_shell" and sand.phase == "solid", "the face is the profile's solid look")
-assert(sand.tint == SAND, "a sand tile takes sand's colour, got " .. sand.tint)
+assert(sand.tint == SAND, "a sand tile takes sand's color, got " .. sand.tint)
 assert(sand.amount == 255 and sand.alpha == 1, "a ground row is always at the maximum")
-assert(face(p, 4, 1).tint == SOIL, "a soil tile takes soil's colour")
+assert(face(p, 4, 1).tint == SOIL, "a soil tile takes soil's color")
 assert(#t.seen_matter(p, 1, 1) == 0, "the face is no cell matter: seen_matter lists none")
 
 -- Two tiles of one ground join. The middle of the sand is one whole tile.
@@ -134,7 +134,7 @@ assert(#t.seen_ground(p, 4, 3) == 0, "a blank tile under a sky with no material 
 assert(t.set_composition(2, 1, "bare", 0, "open"), "a tile on sand can be opened")
 t.run_ticks(2)
 assert(#t.seen_ground(p, 2, 1) == 0, "an opened tile has no face")
-assert(#t.seen_ground(p, 1, 1) == 1, "its neighbours keep theirs")
+assert(#t.seen_ground(p, 1, 1) == 1, "its neighbors keep theirs")
 
 -- Hinted ground blends as named ground does (tests/maps/ground_blend.ron):
 -- sand hinted at x 0-1 beside the warm sky's soil, a wall at x 5 beside the

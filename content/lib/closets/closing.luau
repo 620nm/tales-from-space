@@ -10,7 +10,7 @@ local tray = require("@lib/closets/tray")
 local closing = {}
 
 -- The body a close in flight is meant to take in, per container, and who
--- closes it: only that actor's close honours the entry. The body may stand
+-- closes it: only that actor's close honors the entry. The body may stand
 -- beside the container (tg moves it onto the turf first, `closets.dm:1016-1018`);
 -- an entry older than `data.entrant_seconds` is stale and ignored.
 type PendingEntrant = { container: Handle, actor: Handle, body: Handle, tick: number }

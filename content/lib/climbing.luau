@@ -58,7 +58,7 @@ local function send(actor: Handle, key: string): ()
     end
 end
 
--- How high the ground stands on a tile over its level's floor, in metres:
+-- How high the ground stands on a tile over its level's floor, in meters:
 -- the engine's step height (the step's share times the pack's tile height,
 -- `lib/tile_geometry.luau`), else 0 (a full block is never walked onto).
 local function step_height_m(at: TileAddress): number

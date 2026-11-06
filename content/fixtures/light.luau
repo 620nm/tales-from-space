@@ -21,7 +21,7 @@ local netmsg = require("@lib/netmsg")
 -- (LIGHT_COLOR_DEFAULT "#f3fffa", code/__DEFINES/colors.dm:254; it is
 -- /obj/machinery/light's `bulb_colour`, light.dm:24-28). It lives here
 -- because the FITTING is what knows what went into it — the engine
--- ships no colour but white, and a tube is a game word.
+-- ships no color but white, and a tube is a game word.
 local TUBE_COLOR = "#F3FFFA"
 -- What a fitting burns off its own emergency cell: tg's low-power look,
 -- a quarter of the tube's reach in vivid red at three quarters of the
@@ -54,19 +54,19 @@ local content = {
     -- that item.
 }
 
--- THE FLAG STACK, and why it is a stack rather than a colour.
+-- THE FLAG STACK, and why it is a stack rather than a color.
 --
 -- A fitting is told about CONDITIONS, one at a time and by name -- the
 -- air is deadly, the air cannot be breathed, the panel is down to its
 -- cell -- and any number of them can stand at once. What it burns is
 -- the worst of them (lib/netmsg.luau), and what it goes back to when
--- the last one clears is the colour of the tube somebody screwed in.
+-- the last one clears is the color of the tube somebody screwed in.
 --
 -- So a fitting remembers three things and none of them is a picture:
 -- `base`, `base_power` and `base_range`, which are the tube it has in
 -- it; `flags`, one row per condition holding the set of ADDRESSES that
 -- raised it; and `source` and `level`, where it last heard it draws
--- from. Colours and brightnesses are looked up fresh every time,
+-- from. Colors and brightnesses are looked up fresh every time,
 -- which is what makes a retune in `lib/netmsg.luau` reach every
 -- fitting already burning one -- and what stops a light that has been
 -- red since before somebody's edit from staying a shade nothing names
@@ -141,7 +141,7 @@ end
 
 if sim ~= nil then
     -- The stack, on the fitting itself. `server` rather than `sight`:
-    -- nothing draws it, the colour it comes to is already on the wire
+    -- nothing draws it, the color it comes to is already on the wire
     -- as light, and the round record is where somebody asking why
     -- Medical was red goes looking.
     sim.define("script_var", "lunatic/tfs:light_flags", { replicate = "server" })

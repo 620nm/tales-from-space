@@ -35,7 +35,7 @@ return {
         --
         -- Blood is MOLES of the `blood` substance held in this part's own
         -- bloodstream, so a dose, a rider and a bleed all act on the same
-        -- mixture. A tg blood unit is a centilitre and 0.025 mol
+        -- mixture. A tg blood unit is a centiliter and 0.025 mol
         -- (docs/chemistry/tg-bridge.md): every figure below is the cited
         -- tg number x 0.025. Native code only leaks it (the plan's `reservoirs`); filling it back
         -- up and what running low costs are `lib/blood_harmony.luau`.
@@ -49,7 +49,7 @@ return {
         bloodstream = {
             -- The shell holds a little more than normal blood, so a dose
             -- fits beside it: 6 L = 0.006 m3 against 5.6 L of blood
-            -- (BLOOD_VOLUME_NORMAL 560 u read as centilitres,
+            -- (BLOOD_VOLUME_NORMAL 560 u read as centiliters,
             -- code/__DEFINES/mobs.dm:20).
             volume_m3 = 0.006,
             -- BODYTEMP_NORMAL (code/__DEFINES/atmospherics/

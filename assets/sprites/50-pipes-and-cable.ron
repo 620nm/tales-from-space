@@ -24,9 +24,9 @@
         // connection reads as a pipe that ENDS rather than a piece of
         // a longer one. Sixteen shapes cover every adjacency; five
         // layers cross without meeting. The client derives WHICH from
-        // its own neighbour scan, so the wire carries only topology.
-        // Art is greyscale on purpose (tg tints per pipe); unpainted
-        // grey is what a pipe dispenser hands you.
+        // its own neighbor scan, so the wire carries only topology.
+        // Art is grayscale on purpose (tg tints per pipe); unpainted
+        // gray is what a pipe dispenser hands you.
         ("pipe_l1_0", Ase("@pipes_bitmask", "48_1-s")),
         ("pipe_l1_1", Ase("@pipes_bitmask", "33_1-s")),
         ("pipe_l1_2", Ase("@pipes_bitmask", "18_1-s")),
@@ -114,7 +114,7 @@
         // one of these per mouth, per instance
         // (`/obj/machinery/atmospherics/components/update_icon()`,
         // components_base.dm:68-111): `intact_[node_dir]_[layer]` where
-        // that mouth actually found a neighbour, `exposed_[direction]_
+        // that mouth actually found a neighbor, `exposed_[direction]_
         // [layer]` where it reaches and found nothing. Which is why a tg
         // filter meets the run on both sides of it and a tg pump with one
         // end unplumbed shows a capped stub there -- neither of which a
@@ -129,8 +129,8 @@
         // ART rather than applied as a shift: tg's sheet ships each stub
         // pre-offset per layer, so `pipe_intact_l2_1` lines up with
         // `pipe_l2_*` exactly and a stub meets the run it points at with
-        // no seam. Greyscale for the same reason the run is -- the engine
-        // paints each stub with the colour of the run it reaches, tg's
+        // no seam. Grayscale for the same reason the run is -- the engine
+        // paints each stub with the color of the run it reaches, tg's
         // `pipe_appearance.color = node.pipe_color`.
         ("pipe_intact_l1_1", Ase("@pipe_underlays", "intact_1_1-s")),
         ("pipe_intact_l1_2", Ase("@pipe_underlays", "intact_2_1-s")),
@@ -177,8 +177,8 @@
         // (`layer_manifold_underlays.dmi`, drawn by
         // `get_attached_image`, layermanifold.dm:78-82) and the
         // difference is where the tube STOPS: a component's stub runs to
-        // the machine's body, which tg has shifted off centre by its
-        // piping layer, while this one runs to the tile centre, because
+        // the machine's body, which tg has shifted off center by its
+        // piping layer, while this one runs to the tile center, because
         // the body it meets is a band across the middle of the tile that
         // was never shifted anywhere. So half a tile of pipe, exactly, on
         // each of the five layers.
@@ -210,10 +210,10 @@
         // Cable art, tg's naming kept verbatim: l<layer>-<dirs>
         // with BYOND dir bits 1=N 2=S 4=E 8=W, sorted ascending, and
         // "noconnection" for a stub joined to nothing. The client
-        // derives WHICH of these to draw from its own neighbour scan,
+        // derives WHICH of these to draw from its own neighbor scan,
         // so the wire only ever carries the topology.
         //
-        // tg's art is white and tinted per cable; the colours are the
+        // tg's art is white and tinted per cable; the colors are the
         // vocabulary, not decoration -- red is the feeder you do not
         // cut, yellow is the branch you do (tg's CABLE_HEX_COLOR_RED
         // and _YELLOW). Baked in rather than tinted at draw time so

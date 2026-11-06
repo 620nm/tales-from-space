@@ -1,6 +1,6 @@
 -- A cliff is ground: a band of `half` steps (content/terrain.luau), blocks
 -- half a tile high laid by the map's solid overrides. It draws the stepped
--- face in its rock's colour, joined to the cliff beside it, and sight passes
+-- face in its rock's color, joined to the cliff beside it, and sight passes
 -- it as tg's open /turf/open/cliff (cliff.dm:5, no opacity). A body's walk
 -- up onto it is refused and becomes tg's 2 s climb (climbable.dm:13); along
 -- its top and down off it the body walks. A boulder (tg
@@ -60,12 +60,12 @@ local function said(): string
     return lines[#lines] or ""
 end
 
--- The face: the step's cliff look in basalt's colour, joined to cliff only.
+-- The face: the step's cliff look in basalt's color, joined to cliff only.
 local parts = t.seen_ground(p, 2, 2)
 assert(#parts == 1, "a cliff tile draws one ground part, got " .. #parts)
 local face = parts[1]
 assert(face.look == "cliff_shell", "the face is the cliff look, got " .. face.look)
-assert(face.tint == BASALT, "in basalt's colour, got " .. face.tint)
+assert(face.tint == BASALT, "in basalt's color, got " .. face.tint)
 local joins = assert(face.joins, "the face is a shell")
 assert(joins.n and joins.e, "it joins the cliff north and east")
 assert(not joins.s and not joins.w, "and not the sand south and west")

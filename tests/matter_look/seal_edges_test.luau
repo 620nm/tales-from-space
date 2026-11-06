@@ -2,8 +2,8 @@ local matter_look = require("@helpers/matter_look")
 
 -- Gas and liquid sit flush against anything that seals; solids stay soft.
 --
--- One tile holds all three at once: a litre of water, thirty moles of
--- chlorine and sixty millilitres of ash. A litre is a millimetre over a
+-- One tile holds all three at once: a liter of water, thirty moles of
+-- chlorine and sixty milliliters of ash. A liter is a millimeter over a
 -- tile and under the water's 3.3 mm film, so it stays where it fell and
 -- the picture is the only thing that moves. Its north is a glazed
 -- window, its south a wall, its east a shut airlock leaf and its west
@@ -51,7 +51,7 @@ t.tick()
 local X, Y = 3, 2
 
 -- Shut: the puddle fills against the window, the wall and the leaf.
-local puddle = assert(matter_look.find(p, X, Y, "puddle", 4), "a litre draws the puddle shell")
+local puddle = assert(matter_look.find(p, X, Y, "puddle", 4), "a liter draws the puddle shell")
 local joins, quadrants = matter_look.edges(puddle)
 assert(joins.n and joins.s and joins.e, "the window, the wall and the shut leaf all read as joined")
 assert(not joins.w, "the open deck to the west is a dry tile, so it is an edge")
@@ -67,7 +67,7 @@ for _, rung in ipairs({ 1, 2, 3 }) do
 end
 
 -- A pile of ash ignores the seals: a soft look is not a container.
-local ash = assert(matter_look.find(p, X, Y, "powder", 2), "sixty millilitres of ash draw the sheet")
+local ash = assert(matter_look.find(p, X, Y, "powder", 2), "sixty milliliters of ash draw the sheet")
 local ash_joins, ash_quadrants = matter_look.edges(ash)
 assert(
     not (ash_joins.n or ash_joins.s or ash_joins.e or ash_joins.w),

@@ -26,7 +26,7 @@
         // no content names it, the renderer looks it up once at boot
         // beside `white`, and a bake without it simply draws no
         // streaks. Deliberately soft and untinted white — it is
-        // multiplied by whatever colour the gas already is.
+        // multiplied by whatever color the gas already is.
         //
         // The FILE sorts under `fx/`; the NAME cannot, because a
         // logical name becomes a vending CSS class and the baker holds

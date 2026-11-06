@@ -212,7 +212,7 @@ assert(assert(t.vitals(diver)).tank == nil, "the readout goes dark within a tick
 -- SIX: THE BIG BOTTLE.
 --
 -- The one the station keeps by the airlock rather than in a pocket:
--- seventy litres at six atmospheres (tg tank_types.dm:26-38), which is
+-- seventy liters at six atmospheres (tg tank_types.dm:26-38), which is
 -- the same valve and twenty-odd times the air. Picked up off the deck
 -- and opened exactly like the small one, because a tank is a tank.
 -- ---------------------------------------------------------------

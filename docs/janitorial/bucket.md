@@ -5,13 +5,13 @@ Decisions read as in `docs/janitorial/mop.md`. No row needs an engine change.
 tg path: `_cup.dm` is
 `code/modules/reagents/reagent_containers/cups/_cup.dm`.
 
-| tg | Behaviour | Decision |
+| tg | Behavior | Decision |
 | --- | --- | --- |
 | `_cup.dm:586-594` | Name, description, sprites, in-hands | api: same words and art |
 | `_cup.dm:595` | Fill pictures at 50 and 90 percent | api: `fill_sprites` |
 | `_cup.dm:596` | Iron cost | omitted: items have no material cost here |
 | `_cup.dm:597` | Normal weight class | api: default size |
-| `_cup.dm:598` | Pours 20 u | adapted: a third of a litre, 740 vessel units |
+| `_cup.dm:598` | Pours 20 u | adapted: a third of a liter, 740 vessel units |
 | `_cup.dm:599` | Selectable transfer amounts | omitted: one vessel pour size here |
 | `_cup.dm:600` | Holds 70 u | adapted: 1167 mL, tg's ratio to the mop head |
 | `_cup.dm:183-184,189-190` | Refill and drink by click | api: `vessel` pour and sip |

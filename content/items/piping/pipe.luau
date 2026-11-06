@@ -15,7 +15,7 @@ local action_rules = require("@lib/action_rules")
 -- PIPING_LAYER_DEFAULT = 3 (__DEFINES/atmospherics/atmos_piping.dm:78-80),
 -- and two pipes on different layers do not connect
 -- (atmosmachinery.dm:350). They are bare numbers in tg -- there are no
--- named piping layers and no per-layer colours -- so they are bare
+-- named piping layers and no per-layer colors -- so they are bare
 -- numbers here. Layer 3 is the distribution run every dispenser hands
 -- you; the others exist so a second run can CROSS the first without
 -- joining it.

@@ -25,9 +25,9 @@
         ("file_md", Png("art/computer/files/file-md.png")),
         ("file_atmo", Png("art/computer/files/file-atmo.png")),
         ("file_pem", Png("art/computer/files/file-pem.png")),
-        // tg floppy_disk.dm:6-39 precolours the sleeves as skins,
+        // tg floppy_disk.dm:6-39 precolors the sleeves as skins,
         // datadisk0-7; the pack bakes each as its own cell for the
-        // colour variants of `content/items/floppy_disk.luau`. The same
+        // color variants of `content/items/floppy_disk.luau`. The same
         // sheet's datadisk12 is the orange shell of the stock disk.
         ("floppy_disk", Dmi("@floppy", "datadisk3", 0)),
         ("floppy_disk_red", Dmi("@floppy", "datadisk0", 0)),

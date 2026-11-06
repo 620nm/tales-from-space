@@ -94,7 +94,7 @@ type Bench = {
     island: Probe,
 }
 
--- The bay: a battery at its centre, and with `supplied` a generator whose
+-- The bay: a battery at its center, and with `supplied` a generator whose
 -- backbone runs under the west emitter's cell.
 local function build(supplied: boolean): Bench
     t.world(

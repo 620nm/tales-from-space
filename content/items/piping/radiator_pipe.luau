@@ -7,7 +7,7 @@ local action_rules = require("@lib/action_rules")
 -- tg's `/obj/machinery/atmospherics/pipe/heat_exchanging/simple`
 -- (heat_exchange/simple.dm, he_pipes.dm). Ordinary pipe is a sealed
 -- tube that trades nothing with the deck it is buried under. This is the
--- opposite piece of kit: thin-walled, matte grey, and every pass it
+-- opposite piece of kit: thin-walled, matte gray, and every pass it
 -- conducts with the air of the tile above it, once the two differ by
 -- more than the deadband. Both numbers live in `lib/thermal.luau`,
 -- which says where each came from and what moving it does. The
@@ -19,10 +19,10 @@ local action_rules = require("@lib/action_rules")
 -- layer and stay two networks, which is what the junction is for
 -- (structures/radiator_junction.luau).
 --
--- IT TAKES NO PAINT. tg fixes the colour at `#404040` outright
+-- IT TAKES NO PAINT. tg fixes the color at `#404040` outright
 -- (`add_atom_colour(..., FIXED_COLOUR_PRIORITY)`, he_pipes.dm:15), and a
--- thing with a colour of its own has no second colour to be -- the same
--- rule the colour adapter keeps. The painter says so.
+-- thing with a color of its own has no second color to be -- the same
+-- rule the color adapter keeps. The painter says so.
 --
 -- THREE LAYERS, not five: tg's sheets carry piping layers 2, 3 and 4 and
 -- no others (`he-simple.dmi`), so those are the ones this fits.

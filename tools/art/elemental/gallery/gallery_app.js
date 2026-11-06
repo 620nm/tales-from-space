@@ -202,7 +202,7 @@
   }
 
   // The engine's edge rule (docs/looks/matter.md section 5), over the 10x8 grid.
-  // A side joins when the neighbour holds the shell (`predFn`), when the neighbour is past
+  // A side joins when the neighbor holds the shell (`predFn`), when the neighbor is past
   // the grid (a tile the viewer was never told about, so no false edge), or, with `flush`
   // (gas and liquid), when the link seals. A diagonal also joins when, flush, it seals both
   // sides facing this tile or this tile seals both flanking sides. Solids and fire pass
@@ -315,7 +315,7 @@
 
     // 1g, the engine's stack (docs/looks/matter.md section 5): the highest picture rung the
     // amount reaches (splatter, splash, spill) draws first, then every shell rung it reaches
-    // draws over it, each joined to neighbours holding that rung. Liquid sits flush on seals.
+    // draws over it, each joined to neighbors holding that rung. Liquid sits flush on seals.
     const draws = [];
     if (v >= TH_LIQUID.spill_min) {
       const sid = pick2 === 0 ? "liquid_spill_1" : "liquid_spill_2";
@@ -395,7 +395,7 @@
     if (!g || g.moles < TH_GAS.mist_min) return [];
     const ag = g.agitation || "gentle";
     // Nested gas shells, the pack's `cloud` ladder: mist runs unbroken beneath smoke, which
-    // runs unbroken beneath cloud, each joined to neighbours holding that rung. Gas sits
+    // runs unbroken beneath cloud, each joined to neighbors holding that rung. Gas sits
     // flush on seals, so a plume fills against a bulkhead instead of rounding off.
     const rungs = [
       { min: TH_GAS.mist_min, family: "mist", role: "mist shell" },
@@ -847,7 +847,7 @@
       }
       depositSolid(5, 4, "shards_large", 0, "#D452FF", "Shattered Solid Plasma Crystal", "campfire");
       state.selectedX = 5; state.selectedY = 4;
-      logPhysics("Scenario [Plasma Cloud Deflagration]: Demonstrates neutral-greyscale `fire_gas_smooth_tintable` multiplied by `#EE78FF` over a 3-tier `#D95BFF` plasma cloud + shattered plasma crystal shards.");
+      logPhysics("Scenario [Plasma Cloud Deflagration]: Demonstrates neutral-grayscale `fire_gas_smooth_tintable` multiplied by `#EE78FF` over a 3-tier `#D95BFF` plasma cloud + shattered plasma crystal shards.");
     } else if (name === "spill_balance") {
       state.bgMode = "floor";
       state.grid[2][6].wall = true;
@@ -1155,7 +1155,7 @@
       const depthMm = (cell.liquid.volumeMl / 1000).toFixed(2);
       const [r, g, b] = parseHexRgb(cell.liquid.tint);
       addPhys("Liquid State", `${cell.liquid.name}: ${cell.liquid.volumeMl} mL (${depthMm} mm film on 1m² tile)`);
-      addPhys("sRGB Multiply", `tint (${r},${g},${b}) * greyscale #D9D9D9(217) -> (${((217*r+127)/255)|0}, ${((217*g+127)/255)|0}, ${((217*b+127)/255)|0})`);
+      addPhys("sRGB Multiply", `tint (${r},${g},${b}) * grayscale #D9D9D9(217) -> (${((217*r+127)/255)|0}, ${((217*g+127)/255)|0}, ${((217*b+127)/255)|0})`);
     }
     if (cell.solidBase || cell.solidTop) {
       const parts = [];

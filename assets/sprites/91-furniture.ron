@@ -8,7 +8,7 @@
 //
 // It sits beside 90-smooth-structures.ron rather than in it because the
 // distinction that file is named for is the whole distinction: a table
-// wears one of forty-seven frames chosen by its neighbours, and a table
+// wears one of forty-seven frames chosen by its neighbors, and a table
 // frame wears one picture chosen by nothing. tg draws it off the
 // general structures sheet for the same reason -- four legs standing on
 // their own are not part of a row (`/obj/structure/table_frame`,

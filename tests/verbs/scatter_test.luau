@@ -1,4 +1,4 @@
--- Things do not sit dead centre on their tile.
+-- Things do not sit dead center on their tile.
 --
 -- A station whose every object is stamped on the middle of its square
 -- reads as a spreadsheet. tg's fix is one pair of numbers per atom
@@ -62,7 +62,7 @@ t.tick()
 assert(t.hands(p).held == "crowbar", "the crowbar is in hand")
 
 -- Pry four tiles up and look at what lands. Four rather than one
--- because a single tile could be centred by luck: 3 of 49 offsets are,
+-- because a single tile could be centered by luck: 3 of 49 offsets are,
 -- so one tile proves nothing and four make it a 1-in-2900 fluke.
 local crooked, seen = 0, {}
 for x = 1, 4 do
@@ -131,7 +131,7 @@ assert(not wandered, "twelve drops never walk it past one drop's reach")
 
 -- ---- landed from a throw --------------------------------------------
 -- Wider again: tg throws at +/-8 (code/game/objects/items.dm:899-900).
--- A die thrown out of a hand starts centred, which is also the
+-- A die thrown out of a hand starts centered, which is also the
 -- condition tg guards the roll on.
 t.click(p, 5, 2, t.target_at(p, 5, 2, "d20"))
 t.tick()
@@ -148,7 +148,7 @@ within(landed.offset, 8, "a thrown die")
 -- answer is computed from the tile rather than from the picture.
 assert(
     landed.offset.x ~= 0 or landed.offset.y ~= 0,
-    "the thrown die really is off centre: " .. landed.offset.x .. "," .. landed.offset.y
+    "the thrown die really is off center: " .. landed.offset.x .. "," .. landed.offset.y
 )
 t.move(p, "east")
 t.run_ticks(5)

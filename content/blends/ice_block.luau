@@ -8,7 +8,7 @@
 -- silently make it a puddle (docs/map-properties/blends.md).
 --
 -- It is sized to FIT: two moles at water's solid density is under forty
--- millilitres, which a fifty-millilitre beaker has room for. Ice is
+-- milliliters, which a fifty-milliliter beaker has room for. Ice is
 -- matter with a volume, and a shell it does not fit in is a shell the
 -- deposit has to argue with.
 --

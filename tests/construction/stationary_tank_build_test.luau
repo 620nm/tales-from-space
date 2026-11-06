@@ -5,7 +5,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- tg's chain, adapted only in its material (tank.dm:560-697, plus the
 -- stack recipe at sheet_types.dm:297): four sheets stand a frame up,
 -- a wrench bolts it down, twelve more plate it, a torch seals it into
--- the vessel. Backwards: a torch cuts the vessel open, a crowbar prises
+-- the vessel. Backwards: a torch cuts the vessel open, a crowbar pries
 -- the plating off, a screwdriver takes the bare frame apart -- and each
 -- step hands back exactly what it cost. tg spends plasteel on the frame
 -- and any rigid material on the plating; this station has neither
@@ -139,7 +139,7 @@ local sealed = assert(t.tank_pressure(3, 2))
 assert(sealed < charged_start * 0.5, "a new vessel starts near enough empty: " .. sealed .. " kPa")
 assert(
     assert(t.tank_pressure(5, 2)) < charged_start,
-    "and every mole in it came out of the neighbour"
+    "and every mole in it came out of the neighbor"
 )
 
 -- ---------------------------------------------------------------

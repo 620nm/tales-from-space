@@ -7,23 +7,23 @@ local ui_controls = require("@helpers/ui_controls")
 -- what a still is. What it has instead is one line per substance and
 -- Raoult's law on the evaporating side of the phase step
 -- (docs/MATTER.md), and a still is what those two ARE when a boiler
--- and a vapour space stand next to each other.
+-- and a vapor space stand next to each other.
 --
 -- Two claims, and the second is the one that matters.
 --
 --   ONE, THE ONSET. An open vessel boils against the pressure it
 --   actually bears -- its tile's, not one atmosphere by assumption
 --   (D5, `BoilAgainst::Ambient`). So a beaker of ethanol on an element
---   dialled well over it does not climb to the dial: it stalls at
+--   dialed well over it does not climb to the dial: it stalls at
 --   ethanol's own boiling point, 351.5 K, which is the number
 --   substances/ethanol.luau authors and the temperature a still starts
 --   working at. Everything below that is a warm beaker.
 --
---   TWO, THE SEPARATION. The vapour over a half-and-half wash is NOT
+--   TWO, THE SEPARATION. The vapor over a half-and-half wash is NOT
 --   half and half. Raoult puts each component's partial pressure at
---   its own vapour pressure times its liquid mole fraction, and
+--   its own vapor pressure times its liquid mole fraction, and
 --   ethanol's line is far over water's at these temperatures -- so the
---   vapour that leaves is ethanol-rich and what stays behind gets
+--   vapor that leaves is ethanol-rich and what stays behind gets
 --   watery. That is the whole of what a still is, and this spec
 --   asserts it as two mole fractions moving apart.
 --
@@ -33,7 +33,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- bottle's own valve gesture (items/bottle.luau) pulls gas OUT of a
 -- fixture and INTO the bottle, never the other way -- and a spec may
 -- only assert what a player could cause (tfs/AGENTS.md). So the
--- receiver here is the vapour space itself: the closet the boiler
+-- receiver here is the vapor space itself: the closet the boiler
 -- stands in, read through `t.room_gas`, which reports the GAS phase
 -- and nothing else and is therefore exactly the take-off. A condenser
 -- to catch it is plumbing this station has not been given yet, and it
@@ -106,7 +106,7 @@ local BENCH = [==[(
 )]==]
 
 -- Twenty-one tiles of closet, and every one of them is where the
--- vapour can be. A still's take-off is a volume, so it is counted over
+-- vapor can be. A still's take-off is a volume, so it is counted over
 -- the whole of one.
 local ROOM = {}
 for x = 1, 7 do
@@ -195,10 +195,10 @@ end
 -- ---------------------------------------------------------------
 -- ONE: THE ONSET, AND WHY IT IS 351.5 K.
 --
--- The element is dialled to 380 K, which is twenty-eight kelvin over
+-- The element is dialed to 380 K, which is twenty-eight kelvin over
 -- ethanol's boiling point and seven over water's, so nothing about
 -- what follows is the DIAL running out of range. The beaker stalls
--- because it is boiling, and it stalls where its own vapour pressure
+-- because it is boiling, and it stalls where its own vapor pressure
 -- equals the pressure the closet is holding it under.
 -- ---------------------------------------------------------------
 bench()
@@ -250,7 +250,7 @@ assert(
 -- TWO: THE SEPARATION.
 --
 -- Half a mole each. Raoult on the evaporating side means the ethanol
--- and the water each push at their own vapour pressure times their own
+-- and the water each push at their own vapor pressure times their own
 -- share of the liquid, and at these temperatures ethanol's line is
 -- three or four times water's -- so the closet fills with something
 -- much stronger than what is in the beaker, and the beaker gets
@@ -297,7 +297,7 @@ for sample = 1, 4 do
     weakest_take = math.min(weakest_take, take)
 end
 -- The FIRST cut is the strong one, and it weakens: a still with no
--- condenser on it fills its own vapour space, and a closet that is
+-- condenser on it fills its own vapor space, and a closet that is
 -- already holding the spirit it took off has nowhere to put more of
 -- it. That is a still without a receiver rather than a still that
 -- stopped working -- the pot goes on getting weaker either way, which

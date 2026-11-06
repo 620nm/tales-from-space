@@ -41,8 +41,8 @@ local residue_kinds = {
             sprites = { "dirt_flat_0", "dirt_flat_1", "dirt_flat_2", "dirt_flat_3" },
         },
     },
-    -- A quarter mole of ash is eleven millilitres of it (100 g/mol at
-    -- 2.2 g/mL): over the powder profile's 1 mL tier, a visible grey
+    -- A quarter mole of ash is eleven milliliters of it (100 g/mol at
+    -- 2.2 g/mL): over the powder profile's 1 mL tier, a visible gray
     -- dusting, and far too little to matter thermally either way.
     ash_moles = 0.25,
     -- Residue at rest is room temperature. There is no fire here to

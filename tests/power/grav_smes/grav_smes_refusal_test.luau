@@ -2,7 +2,7 @@ local bench = require("@helpers/grav_bench")
 
 -- The weld says what is wrong, in words naming the position, and takes
 -- nothing apart while it refuses. One room, mended defect by defect from
--- the centre tile (the only tile that reaches every part): an unlit torch,
+-- the center tile (the only tile that reaches every part): an unlit torch,
 -- an emitter facing away, an unbolted emitter, a ring still packed, a ring
 -- set the wrong way round, and finally a ring that is simply not there.
 
@@ -52,8 +52,8 @@ weld_says("Light the welding tool first.")
 t.use_self(p)
 t.run_ticks(2)
 
--- Wrong facing: an emitter pointing away from the centre.
-weld_says("The east emitter must face the centre.")
+-- Wrong facing: an emitter pointing away from the center.
+weld_says("The east emitter must face the center.")
 turn(6, 4, "grav_emitter", 2)
 
 -- Unanchored emitter: wears its loose picture until bolted down.

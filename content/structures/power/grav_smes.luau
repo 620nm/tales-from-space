@@ -1,5 +1,5 @@
 -- The gravity battery: eight welded parts become one machine on a 3x3
--- footprint, anchored on its centre tile.
+-- footprint, anchored on its center tile.
 --
 -- Cells are row-major from the north-west, so footprint cell r * 3 + c + 1
 -- wears sprite `<stage>_<r>_<c>`; the south emitter cell is cell 8, which
@@ -13,8 +13,8 @@
 -- only refuse. The weld is a script (lib/power/grav_smes.luau).
 --
 -- RUNNING STATES are a script's (lib/power/grav_smes_run.luau) and
--- `scripted_states` hands them over: the disc over the centre tile rides
--- the centre cell's stack on a layer above standing things, and the
+-- `scripted_states` hands them over: the disc over the center tile rides
+-- the center cell's stack on a layer above standing things, and the
 -- south cell wears one status glyph per `<run state>_<status>` state.
 --
 -- POWER. One store, one bridge, four cable cells: the middle of each
@@ -93,7 +93,7 @@ for _, state in ipairs(states) do
     state_sprites[state] = stage_row(state)
 end
 
--- The animations: the disc joins the centre cell's stack.
+-- The animations: the disc joins the center cell's stack.
 for _, animation in ipairs({ "startup", "active", "shutdown" }) do
     table.insert(states, animation)
     local cells = stage_row(animation)
