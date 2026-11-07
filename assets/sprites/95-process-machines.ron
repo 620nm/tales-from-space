@@ -48,7 +48,7 @@
         // The UF6 radiation reflection chamber: a 32x48 cold-steel prism
         // anchored at its base (`Base`) whose lower 32x32 tile joins
         // Layer 3 East/West piping. `reflection_chamber` is the unlit
-        // cold-steel housing and internal copper heat-exchanger manifold;
+        // cold-steel housing and internal steel gas manifold;
         // the five pre-composited state tags (`subcritical`, `critical`,
         // `overheated`, `supercritical`, `open`) sit alongside 24
         // separated 32x48 recombination overlays (`core_*`, `pipe_*`,
