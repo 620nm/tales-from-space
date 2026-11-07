@@ -59,6 +59,7 @@ changing their identity:
 | `air_injector` | A powered `l3` endpoint that injects at 50 L/s by default, with no pressure setpoint or ceiling. |
 | `manual_valve` | An unpowered `l3` topology switch. Open joins the two runs; shut separates them. |
 | `layer_adapter` | The deliberate bridge between pipe layers. It has no pump, direction or power draw; joining it joins the connected layers. |
+| `reflection_chamber` | A 1,000 L, 4,500 kPa rated (`5,000 kPa` rupture limit) non-rotatable East/West reservoir on `l3` (`port_layout = "axis"`, `facings = { "east" }`) that heats held `uf6` nonlinearly (`25·n² + 150·n` W) and advances through `standby` / `subcritical` / `critical` / `overheated` / `supercritical` while its panel is shut. |
 | `stationary_tank` | A 2,500 L, 46,000 kPa reservoir on `l3` with four open mouths. The placement supplies its contents and starting pressure instead of a gas-specific prototype. |
 | `canister` | A portable 2,000 L vessel. It arrives empty and shut; a placement may charge it with a blend and open it, and an unfastened open vessel releases into its room. |
 | `dewar` | A portable 1,000 L liquid vessel rated to 2,500 kPa with a 1,200 kPa boil-off relief valve. Fastened to a connector port it equalizes liquid with the pipe run; loose and open it drains liquid at 0–50 L/s onto its tile, and open vessels can draw from or pour into it. |
@@ -122,6 +123,10 @@ are not a claim that one map assembles a station-scale department:
   lifts a thin ward to breathable and holds it; scrubber→waste main→layer
   adapter→CO2 filter puts fouled CO2 in its own tank and nowhere else; a
   breached ward is held off by the vent and refills once resealed.
+- `tests/atmos/process/reflection_chamber_test.luau` checks `reflection_chamber`
+  East/West `l3` coupling vs North/South and `l2` isolation, nonlinear `uf6`
+  self-heating and thermal state sprites, frame construction/panel gating, and
+  overpressure rupture.
 
 Not covered by any spec: a station-scale, multi-room plant staying stable; a
 filter→injector→sealed-chamber path (filters and injectors are each checked

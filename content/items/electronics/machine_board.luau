@@ -198,6 +198,17 @@ return {
                 },
             },
         },
+        reflection_chamber = {
+            name_label = "lunatic/tfs:entity.machine_board.reflection_chamber.name",
+            name = "machine board (reflection chamber)",
+            board = {
+                structure = "reflection_chamber",
+                parts = {
+                    cable_coil = 1,
+                    metal = 5,
+                },
+            },
+        },
         thermomachine = {
             name_label = "lunatic/tfs:entity.machine_board.thermomachine.name",
             name = "machine board (temperature control unit)",
