@@ -30,7 +30,7 @@ remaining libraries, then roster files in deterministic path order within
 each roster. Explicit imports may evaluate libraries earlier. Libraries
 are evaluated once per environment; runtime imports read cached tables.
 See the engine's `docs/luau-api/loading.md:30` and
-`crates/lunatic-server/src/script/loader.rs:424`.
+`crates/lunatic-script-host/src/loader.rs:304`.
 
 The trusted content sandbox exposes a whitelist, not the full Luau library:
 
@@ -48,11 +48,11 @@ The trusted content sandbox exposes a whitelist, not the full Luau library:
   durations are integer ticks, from 1 through 60 seconds' worth of ticks.
 
 Sandbox sources (paths relative to the engine checkout):
-`crates/lunatic-server/src/script/idl_generated.rs:19` (globals),
-`crates/lunatic-server/src/script/idl_generated.rs:435` (members),
-`crates/lunatic-server/src/script/luau_environment.rs:78` (projection/freeze),
-`crates/lunatic-server/src/script/luau_environment.rs:12` (random), and
-`crates/lunatic-server/src/script/luau_environment.rs:105` (task yields).
+`crates/lunatic-script-host/src/idl_generated.rs:18` (globals),
+`crates/lunatic-script-host/src/idl_generated.rs:612` (members),
+`crates/lunatic-script-host/src/luau_environment.rs:79` (projection/freeze),
+`crates/lunatic-script-host/src/luau_environment.rs:16` (random), and
+`crates/lunatic-script-host/src/luau_environment.rs:122` (task yields).
 
 Validate from the engine checkout with `LUNATIC_PACK` set to this pack's
 absolute path: `node tools/luau.mjs check "$LUNATIC_PACK"`.
