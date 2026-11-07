@@ -14,7 +14,7 @@ import { linkMeta, refusalDialog } from "./documents-device";
 import { documentAction } from "./document-action";
 import { labelText } from "./labels";
 import { tfs } from "./strings";
-import { bodyId, localGuard, retainOpenFileBuffers, pollContinuation, guard } from "./files-buffer";
+import { bodyId, currentBuffer, fileOption, localGuard, retainOpenFileBuffers, pollContinuation, guard } from "./files-buffer";
 import { bind, column, icon, nodeCount, panel, press, some, text } from "./view";
 
 /** The protocol's per-tree node budget (docs/pack-ui/components.md) and the
@@ -192,9 +192,11 @@ function workspaceTabs(
     return {
       ...tab,
       selected: tab.key === page,
-      event: bind(eventId, tab.key === page ? () => undefined : localGuard(id, () => {
-        selected.set(memory, tab.key as WorkspacePage);
-      })),
+      event: bind(eventId, tab.key === page ? () => undefined : (event) => {
+        const action = readerPageAction(id, doc, state, page, tab.key as WorkspacePage);
+        const guarded = localGuard(id, () => selected.set(memory, tab.key as WorkspacePage))(event);
+        return guarded ?? action;
+      }),
     };
   }), { cls: ["workspace-tabs"] });
   return {
@@ -209,6 +211,31 @@ function workspaceTabs(
       };
     }),
   };
+}
+
+function readerPageAction(
+  id: string,
+  doc: DocumentIdentity,
+  state: Partial<ModuleState>,
+  from: WorkspacePage,
+  to: WorkspacePage,
+) {
+  const open = state.open;
+  if (!open) return undefined;
+  const current = currentBuffer(id);
+  if (from === "files" && to !== "files" && current?.sourceView !== true) {
+    return documentAction(doc, "toggle", {
+      field: "file_reader_release",
+      option: fileOption(open),
+    });
+  }
+  if (from !== "files" && to === "files" && current?.sourceView !== true && !current?.dirty) {
+    return documentAction(doc, "toggle", {
+      field: "file_open",
+      option: fileOption(open),
+    });
+  }
+  return undefined;
 }
 
 /** Add a Files source submit only after its editor has mounted this tree. */

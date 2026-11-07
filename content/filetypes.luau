@@ -6,5 +6,6 @@ return {
         { extension = "disl", format = "source", creatable = true },
         { extension = "atmo", format = "text", creatable = true },
         { extension = "pem", format = "text", creatable = true },
+        { extension = "HC", format = "text", reader = "strange_disk", creatable = false },
     },
 }

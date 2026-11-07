@@ -1,0 +1,50 @@
+// A powered programming terminal and a real generated Strange Disk.
+// Two close spawn points let separate development-http peers test the
+// listener path without synthetic media or injected UI state.
+(
+    name: "strange disk browser review",
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
+    },
+    levels: [
+        (
+            rows: [
+                "######",
+                "#o...#",
+                "#a..g#",
+                "######",
+            ],
+            structures: [
+                (2, 1, "player_spawn"),
+                (2, 2, "player_spawn"),
+                (1, 2, "apc"),
+            ],
+            machines: [
+                (3, 1, "programming_terminal"),
+            ],
+            items: [
+                (3, 2, "floppy_disk.strange"),
+            ],
+            networks: [
+                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+            ],
+        ),
+    ],
+)

@@ -50,7 +50,8 @@ export function editorPane(
   const editor = editorOf(state.editor);
   const readOnly = editor?.read_only === true;
   const reader = fileReader(`${id}/reader/content`, open.ext, current.text, readerNodes,
-    current.dirty ? undefined : open.fragments);
+    current.dirty ? undefined : open.fragments,
+    current.dirty ? undefined : open.reader_output);
   if (!reader) current.sourceView = true;
   const showSource = current.sourceView === true;
   current.sourceVisible = showSource;
@@ -79,7 +80,7 @@ export function editorPane(
           (e) => documentAction(doc, "text", { field: "file_rename", option, text: e.value ?? open.name }),
           { submit: `${id}/editor/name`, disabled: !active || editor?.read_only }),
       ], { gap: 4, align: "center", style: { width: "100%" } }),
-      reader ? modeTabs(id, current, readOnly, showSource, submitBody) : null,
+      reader ? modeTabs(id, doc, open, current, readOnly, showSource, submitBody) : null,
     ),
     body: showSource
       ? [sourceArea(id, doc, bodyId, current, option, active, editor, open.ext)]
@@ -92,14 +93,26 @@ export function editorPane(
 /** View or Edit (View or Source when read-only). The View tab submits
  *  the source so an unflushed draft survives the switch; the kit's tab
  *  carries no `submit`, so it is set on the press the tab made. */
-function modeTabs(id: string, current: FileBuffer, readOnly: boolean, showSource: boolean, submitBody: string | undefined): UiNode {
+function modeTabs(
+  id: string,
+  doc: DocumentIdentity,
+  open: NonNullable<ModuleState["open"]>,
+  current: FileBuffer,
+  readOnly: boolean,
+  showSource: boolean,
+  submitBody: string | undefined,
+): UiNode {
+  const option = fileOption(open);
   // The events keep their old names: `<id>/editor/view` and `/edit`.
   const view = bind(`${id}/editor/view`, (e) => {
     if (e.value !== undefined) editBuffer(current, e.value, e.revision);
     current.sourceView = false; current.sourceVisible = false;
-    return undefined;
+    return documentAction(doc, "toggle", { field: "file_open", option });
   });
-  const edit = bind(`${id}/editor/edit`, () => { current.sourceView = true; current.sourceVisible = true; return undefined; });
+  const edit = bind(`${id}/editor/edit`, () => {
+    current.sourceView = true; current.sourceVisible = true;
+    return documentAction(doc, "toggle", { field: "file_reader_release", option });
+  });
   const tabs = Tabs(`${id}/editor/mode`, [
     { key: "view", label: S.tfs("ui.files.view"), selected: !showSource, event: view },
     { key: "edit", label: S.tfs(readOnly ? "ui.files.source" : "ui.files.edit"), selected: showSource, event: edit },
@@ -141,7 +154,7 @@ export function editorGuard(id: string, doc: DocumentIdentity, state: Partial<Mo
     body: [text(`${key}/detail`, current.revision !== current.open.revision ? S.CONFLICT
       : S.tfs(current.pending ? "ui.files.saving_guard" : "ui.files.dirty_guard_detail"))],
     actions: [
-      press(`${key}/cancel`, S.tfs("ui.files.cancel"), () => { cancelGuard(current); return undefined; }, { variant: "ghost" }),
+      press(`${key}/cancel`, S.tfs("ui.files.cancel"), () => cancelGuard(current), { variant: "ghost" }),
       press(`${key}/discard`, S.tfs("ui.files.discard"), () => discardGuard(current), { variant: "danger", disabled: !!current.pending }),
       press(`${key}/save`, S.SAVE, (e) => saveBuffer(current, e, true), { submit: submitBody, variant: "primary", disabled: locked }),
     ],

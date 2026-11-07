@@ -8,6 +8,7 @@
   "lunatic/tfs:entity.welder.name": "焊接工具",
   "lunatic/tfs:entity.cable_coil.name": "电缆卷",
   "lunatic/tfs:entity.floppy_disk.name": "软盘",
+  "lunatic/tfs:entity.floppy_disk.strange.name": "奇怪的软盘",
   "lunatic/tfs:entity.floppy_disk.red.name": "红色软盘",
   "lunatic/tfs:entity.floppy_disk.dark_blue.name": "深蓝色软盘",
   "lunatic/tfs:entity.floppy_disk.yellow.name": "黄色软盘",

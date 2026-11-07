@@ -1,4 +1,4 @@
-import type { Json } from "@lunatic/ui";
+import type { Json, UiBitmapNode } from "@lunatic/ui";
 import type { Label } from "./labels";
 
 // Consumed document fields: lunatic crates/lunatic-server/src/sim/ui/settings.rs
@@ -296,9 +296,11 @@ export interface OpenFile {
   ext: string;
   body: string;
   revision: number;
+  reader_output?: FileReaderOutput;
   cap?: number;
   fragments?: FileFragment[];
 }
+export type FileReaderOutput = Pick<UiBitmapNode, "width" | "height" | "palette" | "pixels">;
 export interface FileFragment {
   start_byte?: number;
   end_byte?: number;

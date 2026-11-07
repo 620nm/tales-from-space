@@ -8,6 +8,7 @@
   "lunatic/tfs:entity.welder.name": "aparat za zavarivanje",
   "lunatic/tfs:entity.cable_coil.name": "kotur kabla",
   "lunatic/tfs:entity.floppy_disk.name": "disketa",
+  "lunatic/tfs:entity.floppy_disk.strange.name": "čudna disketa",
   "lunatic/tfs:entity.floppy_disk.red.name": "crvena disketa",
   "lunatic/tfs:entity.floppy_disk.dark_blue.name": "tamnoplava disketa",
   "lunatic/tfs:entity.floppy_disk.yellow.name": "žuta disketa",

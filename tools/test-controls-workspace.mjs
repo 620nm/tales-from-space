@@ -130,6 +130,67 @@ test("preview readers omit source submits from workspace navigation", () => {
   }
 });
 
+test("editable file reader View and Edit bind native foreground leases", () => {
+  reset();
+  const state = base({
+    open: {
+      store: "host", uid: 1, binding: "host-1", revision: 3, name: "Adam", ext: "HC", body: "body",
+      reader_output: { width: 1, height: 1, palette: ["#000000"], pixels: "0" },
+    },
+    editor: { body: "body", read_only: false, byte_budget: 65536, markers: [], revision: 3, bound: true },
+  });
+  const nodes = render(state);
+  assert.ok(node(nodes, "editor/mode/view"));
+  assert.ok(node(nodes, "editor/mode/edit"));
+  assert.ok(nodes.some((entry) => entry.type === "bitmap"), "the server's flat bitmap projection renders directly");
+  assert.deepEqual(action("editor/edit")?.payload, {
+    field: "file_reader_release", option: "host:1:host-1",
+  });
+  assert.deepEqual(action("editor/view")?.payload, {
+    field: "file_open", option: "host:1:host-1",
+  });
+});
+
+test("read-only server bitmap opens in View without granting Edit", () => {
+  reset();
+  const state = base({
+    open: {
+      store: "host", uid: 1, binding: "host-1", revision: 3, name: "Adam", ext: "HC", body: "body",
+      reader_output: { width: 1, height: 1, palette: ["#000000"], pixels: "0" },
+    },
+    editor: { body: "body", read_only: true, byte_budget: 65536, markers: [], revision: 3, bound: true },
+  });
+  const nodes = render(state);
+  assert.ok(node(nodes, "editor/mode/view"), "read-only files retain the generated View mode");
+  assert.ok(nodes.some((entry) => entry.type === "bitmap"), "the readonly reader presents the server bitmap");
+  assert.equal(node(nodes, "editor/save"), undefined, "read-only files expose no save control");
+  assert.equal(nodes.some((entry) => entry.type === "textarea"), false, "read-only files expose no editable source input");
+});
+
+test("hidden Files page releases and returning in View reacquires its reader", () => {
+  reset();
+  const state = base({
+    control_panels: [],
+    open: {
+      store: "host", uid: 1, binding: "host-1", revision: 3, name: "Adam", ext: "HC", body: "body",
+      reader_output: { width: 1, height: 1, palette: ["#000000"], pixels: "0" },
+    },
+  });
+  render(state);
+  assert.deepEqual(action("workspace/files")?.payload, {
+    field: "file_open", option: "host:1:host-1",
+  });
+  let nodes = render(state);
+  assert.deepEqual(action("workspace/controls")?.payload, {
+    field: "file_reader_release", option: "host:1:host-1",
+  });
+  nodes = render(state);
+  assert.ok(node(nodes, "workspace/controls"));
+  assert.deepEqual(action("workspace/files")?.payload, {
+    field: "file_open", option: "host:1:host-1",
+  });
+});
+
 test("leaving Files submits the visible source and keeps the draft on return", () => {
   reset();
   const state = base();

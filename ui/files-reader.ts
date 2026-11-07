@@ -1,8 +1,8 @@
-import type { StyleProps, UiNode } from "@lunatic/ui";
+import { Bitmap, type StyleProps, type UiNode } from "@lunatic/ui";
 import { tfs } from "./strings";
 import { panel, text } from "./view";
 import { flowingText, markdownRuns, sliceUtf8, utf8Length, writingMarkupNodes } from "./writing-text";
-import type { FileFragment } from "./document-model";
+import type { FileFragment, FileReaderOutput } from "./document-model";
 
 const BODY_LIMIT = 65536;
 // Ceiling per reader; the caller passes what the tree has left
@@ -11,8 +11,9 @@ export const READER_NODES = 384;
 const TEXT_LIMIT = 4096;
 
 /** Text-only readers; unsupported or invalid records use the editor. */
-export function fileReader(id: string, ext: string, body: string, limit = READER_NODES, fragments?: FileFragment[]): UiNode[] | undefined {
+export function fileReader(id: string, ext: string, body: string, limit = READER_NODES, fragments?: FileFragment[], readerOutput?: FileReaderOutput): UiNode[] | undefined {
   const NODE_LIMIT = Math.max(2, Math.min(READER_NODES, limit));
+  if (ext === "HC") return strangeDiskReader(id, readerOutput);
   if (ext === "atmo") return atmosphere(id, body);
   if (ext !== "md" && ext !== "pem") return undefined;
   if (ext === "md" && fragments?.length) return committedReader(id, fragments, NODE_LIMIT);
@@ -51,6 +52,29 @@ export function fileReader(id: string, ext: string, body: string, limit = READER
     nodes.push(text(`${id}/truncated`, tfs("ui.files.reader.truncated", { lines })));
   }
   return nodes;
+}
+
+function strangeDiskReader(id: string, readerOutput?: FileReaderOutput): UiNode[] | undefined {
+  if (!readerOutput || !validBitmap(readerOutput)) return undefined;
+  return [Bitmap({
+    id: `${id}/picture`,
+    width: readerOutput.width,
+    height: readerOutput.height,
+    palette: readerOutput.palette,
+    pixels: readerOutput.pixels,
+  })];
+}
+
+function validBitmap(bitmap: FileReaderOutput): boolean {
+  const pixels = bitmap.width * bitmap.height;
+  return Number.isInteger(bitmap.width) && bitmap.width > 0 && bitmap.width <= 128 &&
+    Number.isInteger(bitmap.height) && bitmap.height > 0 && bitmap.height <= 128 &&
+    pixels <= 16384 && Array.isArray(bitmap.palette) && bitmap.palette.length > 0 && bitmap.palette.length <= 16 &&
+    bitmap.palette.every((color) => typeof color === "string" && /^#[0-9a-fA-F]{6}$/.test(color)) &&
+    typeof bitmap.pixels === "string" && bitmap.pixels.length === pixels && [...bitmap.pixels].every((value) => {
+      const index = Number.parseInt(value, 16);
+      return Number.isInteger(index) && index < bitmap.palette.length;
+    });
 }
 
 function committedReader(id: string, fragments: FileFragment[], limit: number): UiNode[] {

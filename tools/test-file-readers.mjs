@@ -26,6 +26,22 @@ assert.equal(read("disl", "print(1)"), undefined);
 assert.equal(read("doc", "legacy extension"), undefined);
 assert.equal(read("unknown", "text"), undefined);
 
+const serverBitmap = {
+  width: 64, height: 48,
+  palette: ["#000000", "#AA0000", "#555555", "#AAAAAA", "#FFFFFF"],
+  pixels: Array.from({ length: 3072 }, (_, index) => String(index % 5)).join(""),
+};
+const strange = fileReader("disk", "HC", "not parsed in the browser", 384, undefined, serverBitmap);
+assert.equal(strange.length, 1);
+assert.equal(strange[0].type, "bitmap");
+assert.equal(strange[0].width, 64);
+assert.equal(strange[0].height, 48);
+assert.equal(strange[0].pixels.length, 3072);
+assert.equal(fileReader("disk", "HC", "body without a server reader result"), undefined);
+assert.equal(fileReader("disk", "HC", "", 384, undefined, {
+  ...serverBitmap, pixels: "F".repeat(3072),
+}), undefined);
+
 const attack = '<script>alert(1)</script>\n![remote](https://example.invalid/image)\n[link](javascript:alert(1))';
 const markdown = read("md", `# Title\n${attack}\n> Quote\n- List item\n\x60\x60\x60luau\n# Code\n\x60\x60\x60`);
 assert.equal(markdown[0].text, "Title");

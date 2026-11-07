@@ -169,6 +169,7 @@
   "lunatic/tfs:entity.reinforced_lead_glass_tile.name": "reinforced lead glass floor tiles",
   "lunatic/tfs:entity.floor.name": "floor",
   "lunatic/tfs:entity.floppy_disk.name": "floppy disk",
+  "lunatic/tfs:entity.floppy_disk.strange.name": "strange disk",
   "lunatic/tfs:entity.floppy_disk.red.name": "red floppy disk",
   "lunatic/tfs:entity.floppy_disk.dark_blue.name": "dark blue floppy disk",
   "lunatic/tfs:entity.floppy_disk.yellow.name": "yellow floppy disk",

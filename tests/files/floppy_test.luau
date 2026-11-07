@@ -61,6 +61,11 @@ local function addr(value: unknown): string
         .. text(row.binding)
 end
 
+local stress_disks: { string } = table.create(58, "")
+for index = 1, 58 do
+    stress_disks[index] = '(4, 1, "floppy_disk.strange")'
+end
+
 -- A wired closet: generator, panel, port, and the terminal standing
 -- on the port's cord. The terminal is `corded`, so the map owes it a
 -- port it can path to (docs/POWER.md, "Outlets and cords") -- a spec
@@ -86,7 +91,17 @@ t.world(
             ],
             structures: [(2, 1, "player_spawn"), (1, 2, "apc")],
             machines: [(3, 1, "programming_terminal")],
-            items: [(2, 1, "floppy_disk"), (2, 2, "floppy_disk")],
+            items: [
+                (2, 1, "floppy_disk"),
+                (2, 2, "floppy_disk"),
+                (3, 1, "floppy_disk.strange"),
+                (3, 2, "floppy_disk.strange"),
+                (4, 1, "floppy_disk.strange"),
+                (4, 1, "floppy_disk.strange"),
+                (4, 1, "floppy_disk.strange"),
+                (4, 1, "floppy_disk.strange"),
+]==] .. table.concat(stress_disks, ",\n") .. [==[
+            ],
             networks: [
                 (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
                 (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
@@ -120,7 +135,7 @@ t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 -- who has never seen the panel.
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "floppy_disk")))
 t.run_ticks(2)
-t.click(p, 3, 1, assert(t.target_at(p, 3, 1)))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "programming_terminal")))
 t.tick()
 
 local function audit_rows(kind: string): { ui_controls.Record }
@@ -156,7 +171,7 @@ assert(
 -- afterwards.
 t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "floppy_disk")))
 t.run_ticks(2)
-t.click(p, 3, 1, assert(t.target_at(p, 3, 1)))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "programming_terminal")))
 t.tick()
 assert(
     said(p, "There is already"),
@@ -167,7 +182,7 @@ t.drop(p)
 t.run_ticks(2)
 
 -- ---- the panel ------------------------------------------------------
-t.click(p, 3, 1, assert(t.target_at(p, 3, 1)))
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "programming_terminal")))
 t.tick()
 local ui = record(assert(t.ui(p), "a bare-handed click opens the terminal's window"))
 assert(ui.presentation == "panes", "the files module is the panes one")
@@ -229,17 +244,22 @@ assert(record(ui.open).revision == 0, "and unedited")
 assert(record(ui.open).cap == BODY_CAP, "the panel publishes the byte cap a save is held to")
 local disk_file = addr(ui.open)
 local created = audit_rows("baseline")
+local matching_created = 0
+for _, event in ipairs(created) do
+    local state = record(event.state)
+    if state.name == "untitled" and state.ext == "md" then
+        matching_created += 1
+    end
+end
 assert(
-    #created == 1
-        and record(created[1].state).name == "untitled"
-        and record(created[1].state).ext == "md",
+    matching_created == 1,
     "made files are on the compact record"
 )
 
 -- ---- type into it ------------------------------------------------------
 local other = t.join()
 t.tick()
-t.click(other, 3, 1, assert(t.target_at(other, 3, 1)))
+t.click(other, 3, 1, assert(t.target_at(other, 3, 1, "programming_terminal")))
 t.tick()
 ui_files.address(other, disk_file, "open")
 t.tick()
@@ -385,3 +405,132 @@ assert(
     "the stale binding cannot restore access to the removed disk"
 )
 assert(#audit_rows("media_ejected") == 1, "and ejected nothing twice")
+
+-- ---- map entropy becomes an active reader -----------------------------
+-- Each strange disk samples its own map site. Its only file is inert text
+-- until the terminal opens it; that open decodes the image and score from
+-- the stored body through the registered pack reader.
+t.ui_close(p)
+t.drop(p)
+t.run_ticks(2)
+local dropped_hands = t.hands(p)
+assert(
+    dropped_hands[1] == nil and dropped_hands[2] == nil,
+    "the ejected floppy left the hand before pickup: "
+        .. tostring(dropped_hands[1])
+        .. "/"
+        .. tostring(dropped_hands[2])
+)
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2, "floppy_disk.strange")))
+t.run_ticks(2)
+local remounted_hands = t.hands(p)
+assert(
+    remounted_hands[1] == "floppy_disk.strange" or remounted_hands[2] == "floppy_disk.strange",
+    "the adjacent strange disk was picked up: "
+        .. tostring(remounted_hands[1])
+        .. "/"
+        .. tostring(remounted_hands[2])
+)
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "programming_terminal")))
+t.tick()
+local docked_hands = t.hands(p)
+assert(
+    #audit_rows("media_inserted") == 2
+        and docked_hands[1] == nil
+        and docked_hands[2] == nil,
+    "the strange disk docks before the files panel opens: hands="
+        .. tostring(docked_hands[1])
+        .. "/"
+        .. tostring(docked_hands[2])
+        .. " inserts="
+        .. #audit_rows("media_inserted")
+)
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "programming_terminal")))
+t.tick()
+ui = ui_controls.state(p)
+assert(
+    record(ui.media_slot).id ~= "files.media.empty",
+    "the mounted Strange Disk is present in the opened panel"
+)
+local strange_files: { ui_controls.Record } = {}
+for _, row in ipairs(rows(ui.files)) do
+    if row.store == "media" then
+        table.insert(strange_files, row)
+    end
+end
+assert(
+    #strange_files == 1
+        and strange_files[1].name == "Adam"
+        and strange_files[1].ext == "HC",
+    "the disk has only Adam.HC; all listed files: " .. table.concat(listing(ui), ",")
+)
+assert(
+    has(listing(ui), "media:Adam.HC"),
+    "the file keeps the exact HC suffix: " .. table.concat(listing(ui), ",")
+)
+local strange_file = addr(strange_files[1])
+ui_files.address(p, strange_file, "open")
+t.tick()
+ui = ui_controls.state(p)
+local strange_open = record(ui.open)
+local first_body = text(strange_open.body)
+assert(string.sub(first_body, 1, 9) == "STRANGE1\n", "the stored file is generated inert media")
+local bitmap = record(strange_open.reader_output)
+assert(bitmap.width == 64 and bitmap.height == 48, "the server reader presents the generated raster")
+local bitmap_pixels = bitmap.pixels
+assert(type(bitmap_pixels) == "string" and #bitmap_pixels == 64 * 48,
+    "the reader preserves the bounded indexed-pixel string")
+local pixel_counts: { [string]: number } = {}
+for pixel_index = 1, #bitmap_pixels do
+    local color_index = string.lower(string.sub(bitmap_pixels, pixel_index, pixel_index))
+    pixel_counts[color_index] = (pixel_counts[color_index] or 0) + 1
+end
+local histogram_parts: { string } = {}
+for palette_index = 0, 15 do
+    local color_index = string.format("%x", palette_index)
+    local count = pixel_counts[color_index]
+    if count then
+        table.insert(histogram_parts, color_index .. ":" .. count)
+    end
+end
+print("[strange-disk-reader-pixels] " .. table.concat(histogram_parts, ","))
+local palette = ui_controls.texts(bitmap.palette)
+assert(palette[1] == "#000000", "the darkest pixel stays pure black")
+assert(palette[3] == "#AAAAAA" and palette[4] == "#555555",
+    "the grayscale palette keeps TempleOS light-before-dark tie order")
+-- A second placed disk has a separate site fingerprint and produces its
+-- own permanent body rather than reusing a cached presentation.
+ui_controls.press(p, "/drive/media/eject")
+t.tick()
+t.ui_close(p)
+t.drop(p)
+t.run_ticks(2)
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "floppy_disk.strange")))
+t.run_ticks(2)
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "programming_terminal")))
+t.tick()
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "programming_terminal")))
+t.tick()
+ui = ui_controls.state(p)
+assert(record(ui.media_slot).id ~= "files.media.empty", "the second site's disk docks")
+local second_disk_files: { ui_controls.Record } = {}
+for _, row in ipairs(rows(ui.files)) do
+    if row.store == "media" then
+        table.insert(second_disk_files, row)
+    end
+end
+assert(
+    #second_disk_files == 1
+        and second_disk_files[1].name == "Adam"
+        and second_disk_files[1].ext == "HC",
+    "the second site's disk has only Adam.HC"
+)
+ui_files.address(p, addr(second_disk_files[1]), "open")
+t.tick()
+local second_open = record(ui_controls.state(p).open)
+assert(text(second_open.body) ~= first_body, "local map entropy distinguishes the two disk sites")
+	local second_output = record(second_open.reader_output)
+	assert(second_output.width == 64 and second_output.height == 48,
+		"the second body's current revision produces an image presentation")
+	assert(type(second_output.pixels) == "string" and #text(second_output.pixels) == 64 * 48,
+		"the second revision decodes its indexed-pixel string")

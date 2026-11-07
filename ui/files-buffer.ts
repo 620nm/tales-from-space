@@ -174,13 +174,20 @@ export function discardGuard(current: FileBuffer): Command | undefined {
   buffers.delete(scope(current.doc));
   return command;
 }
-export function cancelGuard(current: FileBuffer): void {
+export function cancelGuard(current: FileBuffer): Command | undefined {
+  const restoreReader = current.guardLocal !== undefined && current.sourceView !== true;
   if (current.pending) current.canceledSave = current.pending;
   current.guard = undefined; current.guardLocal = undefined;
   current.continuation = undefined; current.continuationLocal = undefined;
   current.pending = undefined;
   current.confirmed = undefined; current.confirmedLocal = undefined;
   current.released = undefined;
+  if (restoreReader) {
+    return documentAction(current.doc, "toggle", {
+      field: "file_open",
+      option: fileOption(current.open),
+    });
+  }
 }
 
 /** Guard a local workspace transition without ever returning a sim command. */

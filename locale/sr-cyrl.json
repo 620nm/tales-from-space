@@ -8,6 +8,7 @@
   "lunatic/tfs:entity.welder.name": "апарат за заваривање",
   "lunatic/tfs:entity.cable_coil.name": "котур кабла",
   "lunatic/tfs:entity.floppy_disk.name": "дискета",
+  "lunatic/tfs:entity.floppy_disk.strange.name": "чудна дискета",
   "lunatic/tfs:entity.floppy_disk.red.name": "црвена дискета",
   "lunatic/tfs:entity.floppy_disk.dark_blue.name": "тамноплава дискета",
   "lunatic/tfs:entity.floppy_disk.yellow.name": "жута дискета",
