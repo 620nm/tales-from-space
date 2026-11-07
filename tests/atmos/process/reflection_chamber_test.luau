@@ -9,6 +9,16 @@ local function has_item(x: number, y: number, id: string): boolean
     return false
 end
 
+local function has_layer(p: number, x: number, y: number, sprite: string): boolean
+    local drawn = t.layers(p, assert(t.target_at(p, x, y, "reflection_chamber")))
+    for _, ov in ipairs(drawn) do
+        if ov == sprite then
+            return true
+        end
+    end
+    return false
+end
+
 local function pick_up(p: number, x: number, y: number, id: string)
     local target = assert(t.target_at(p, x, y, id), "expected item " .. id)
     t.click(p, x, y, target)
@@ -75,6 +85,10 @@ assert(t.network_joined(3, 2, "pipe", "l2") == 0, "east l2 stays unjoined")
 assert(t.network_joined(3, 2, "pipe", "l1") == 0, "east l1 stays unjoined")
 
 local chamber_entity = assert(t.structure_at(2, 2)).entity
+assert(has_layer(p1, 2, 2, "pipe_intact_l3_8"), "connected west port draws west l3 pipe stub")
+assert(has_layer(p1, 2, 2, "pipe_intact_l3_4"), "connected east port draws east l3 pipe stub")
+assert(has_layer(p1, 2, 2, "reflection_chamber_flange_west"), "connected west port draws west flange cap")
+assert(has_layer(p1, 2, 2, "reflection_chamber_flange_east"), "connected east port draws east flange cap")
 assert(t.device_port_pressure(chamber_entity, 0) ~= nil, "west port 0 exists")
 assert(t.device_port_pressure(chamber_entity, 1) ~= nil, "east port 1 exists")
 assert(t.device_port_pressure(chamber_entity, 2) == nil, "only two axis ports exist")
@@ -160,6 +174,10 @@ t.run_ticks(2)
 
 assert(assert(t.structure_at(1, 1)).state == "standby", "inert N2 chamber stays on standby")
 assert(assert(t.structure_at(1, 1)).sprite == "reflection_chamber", "standby sprite")
+assert(not has_layer(p2, 1, 1, "pipe_intact_l3_8"), "unconnected west port omits west l3 pipe stub")
+assert(not has_layer(p2, 1, 1, "pipe_intact_l3_4"), "unconnected east port omits east l3 pipe stub")
+assert(not has_layer(p2, 1, 1, "reflection_chamber_flange_west"), "unconnected west port omits west flange cap")
+assert(not has_layer(p2, 1, 1, "reflection_chamber_flange_east"), "unconnected east port omits east flange cap")
 assert(assert(t.structure_at(7, 1)).state == "subcritical", "350 K UF6 chamber enters subcritical")
 assert(assert(t.structure_at(7, 1)).sprite == "reflection_chamber_subcritical", "subcritical sprite")
 

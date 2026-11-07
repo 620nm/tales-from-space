@@ -88,6 +88,12 @@ local function port_shapes(channels: {string})
             end
             caps[family] = sprites
         end
+        if channel == "l3" then
+            caps["chamber"] = {
+                [4] = "reflection_chamber_flange_east",
+                [8] = "reflection_chamber_flange_west",
+            }
+        end
         states.caps = caps
         result[channel] = states
     end

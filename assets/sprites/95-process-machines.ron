@@ -48,15 +48,14 @@
         // The UF6 radiation reflection chamber: a 32x48 cold-steel prism
         // anchored at its base (`Base`) whose lower 32x32 tile joins
         // Layer 3 East/West piping. `reflection_chamber` is the unlit
-        // cold-steel housing and neutral gray manifold; the five
-        // pre-composited state tags (`subcritical`, `critical`,
-        // `overheated`, `supercritical`, `open`) sit alongside 22
-        // separated 32x48 recombination overlays across six
-        // pixel-disjoint instrument/pipe slots (`core_*`, `pipe_*`,
-        // `rad_*`, `dial_*`, `slag_*`, `press_*`) plus `panel_open` and
-        // `panel_open_live` (which cover and replace the lower `slag_*`
-        // bay) so `state_sprites` or fixture overlays can compose states
-        // onto the base.
+        // cold-steel housing and internal copper heat-exchanger manifold;
+        // the five pre-composited state tags (`subcritical`, `critical`,
+        // `overheated`, `supercritical`, `open`) sit alongside 24
+        // separated 32x48 recombination overlays (`core_*`, `pipe_*`,
+        // `rad_*`, `dial_*`, `slag_*`, `press_*`, `panel_open`,
+        // `panel_open_live`, and the conditional pipe-connection collars
+        // `flange_west` and `flange_east`) so `state_sprites` or mouth
+        // caps can compose states and joined flanges onto the base.
         ("reflection_chamber", Anchored(Ase("@reflection_chamber", "base"), Base)),
         ("reflection_chamber_subcritical", Anchored(AseAnim("@reflection_chamber", "subcritical"), Base)),
         ("reflection_chamber_critical", Anchored(AseAnim("@reflection_chamber", "critical"), Base)),
@@ -87,5 +86,7 @@
         ("reflection_chamber_press_danger", Anchored(AseAnim("@reflection_chamber", "press_danger"), Base)),
         ("reflection_chamber_panel_open", Anchored(Ase("@reflection_chamber", "panel_open"), Base)),
         ("reflection_chamber_panel_open_live", Anchored(AseAnim("@reflection_chamber", "panel_open_live"), Base)),
+        ("reflection_chamber_flange_west", Anchored(Ase("@reflection_chamber", "flange_west"), Base)),
+        ("reflection_chamber_flange_east", Anchored(Ase("@reflection_chamber", "flange_east"), Base)),
     ],
 )

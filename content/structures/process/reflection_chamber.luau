@@ -58,6 +58,8 @@ return {
         device = "tank",
         port_layout = "axis",
         fixed_body = true,
+        joined_stubs = true,
+        mouth_cap = "chamber",
         volume_l = 1000.0,
         rated_kpa = 4500.0,
     },
