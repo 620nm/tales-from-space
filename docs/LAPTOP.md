@@ -89,6 +89,10 @@ Valid ATMO JSON has a pack
 reader; malformed or empty records stay editable. PEM files are ordinary
 text: writing one grants no credentials or authentication authority.
 
+The strange disk's `Adam.HC` opens as a generated picture and song. Its
+64×48 picture displays at 4× size with sharp pixels, shrinking proportionally
+when the reader is narrower than 256px. Source shows the stored media data.
+
 Save/Discard/Cancel protects unsaved work when changing files, workspace pages,
 locking the device or dismissing the workspace. Navigation captures the mounted
 editor's latest text; hidden editors do not advertise Save shortcuts.

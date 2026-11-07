@@ -328,7 +328,18 @@ async function readBitmapSource(browser) {
 async function captureBitmap(browser, node, sourceBitmap) {
   const selector = exact(node);
   const box = await browser.evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});if(!e)return null;const r=e.getBoundingClientRect();return{x:r.x,y:r.y,w:r.width,h:r.height}})()`);
-  assert.ok(box && box.w >= 16 && box.h >= 16, "the rendered bitmap has a visible screen-sized box");
+  assert.ok(box, "the rendered bitmap has a visible box");
+  assert.equal(box.w, sourceBitmap.width * 4, "the bitmap is displayed at four times its native width");
+  assert.equal(box.h, sourceBitmap.height * 4, "the bitmap keeps its aspect ratio at four times its native height");
+  const viewport = await browser.evaluate("({width:innerWidth,height:innerHeight})");
+  assert.ok(box.x >= 0 && box.y >= 0 && box.x + box.w <= viewport.width && box.y + box.h <= viewport.height,
+    "the entire enlarged bitmap fits in the viewer");
+  assert.equal(await browser.evaluate(`getComputedStyle(document.querySelector(${JSON.stringify(selector)})).imageRendering`),
+    "pixelated", "enlarging the bitmap preserves sharp pixel edges");
+  const viewer = await browser.call("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+  const viewerPng = Buffer.from(viewer.data, "base64");
+  await writeFile(join(output, "adam-hc-viewer.png"), viewerPng);
+  report.artifacts["adam-hc-viewer.png"] = { mime: "image/png", bytes: viewerPng.length };
   const clip = { x: Math.max(0, Math.floor(box.x)), y: Math.max(0, Math.floor(box.y)),
     width: Math.ceil(box.w), height: Math.ceil(box.h), scale: 1 };
   const screenshot = await browser.call("Page.captureScreenshot", { format: "png", captureBeyondViewport: false, clip });

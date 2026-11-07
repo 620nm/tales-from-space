@@ -53,6 +53,7 @@ local content = {
         strange = {
             name_label = "lunatic/tfs:entity.floppy_disk.strange.name",
             name = "strange disk",
+            sprite = "floppy_disk_templeos",
         },
         red = {
             name_label = "lunatic/tfs:entity.floppy_disk.red.name",

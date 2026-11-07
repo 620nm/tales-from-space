@@ -10,7 +10,7 @@ const BODY_LIMIT = 65536;
 export const READER_NODES = 384;
 const TEXT_LIMIT = 4096;
 
-/** Text-only readers; unsupported or invalid records use the editor. */
+/** File readers; unsupported or invalid records use the editor. */
 export function fileReader(id: string, ext: string, body: string, limit = READER_NODES, fragments?: FileFragment[], readerOutput?: FileReaderOutput): UiNode[] | undefined {
   const NODE_LIMIT = Math.max(2, Math.min(READER_NODES, limit));
   if (ext === "HC") return strangeDiskReader(id, readerOutput);
@@ -62,6 +62,12 @@ function strangeDiskReader(id: string, readerOutput?: FileReaderOutput): UiNode[
     height: readerOutput.height,
     palette: readerOutput.palette,
     pixels: readerOutput.pixels,
+    class: ["reader-bitmap"],
+    style: {
+      width: readerOutput.width * 4,
+      height: "auto",
+      maxWidth: "100%",
+    },
   })];
 }
 
