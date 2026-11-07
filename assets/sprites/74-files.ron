@@ -25,6 +25,7 @@
         ("file_md", Png("art/computer/files/file-md.png")),
         ("file_atmo", Png("art/computer/files/file-atmo.png")),
         ("file_pem", Png("art/computer/files/file-pem.png")),
+        ("file_HC", Png("art/computer/files/file-hc.png")),
         // First-party layered floppy disk (`art/items/electronics/floppy_disk.aseprite`):
         // greyscale `shell_paint` for runtime tinting (light teal on `templeos`), untinted `metal_shutter`,
         // and toggleable `label_*` layers (`label_blank`, `label_text`, `label_code`,

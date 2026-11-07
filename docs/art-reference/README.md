@@ -87,8 +87,9 @@ are separate sprites locked to the human paper-doll:
 
 The file family uses native 32×32 RGBA PNGs from
 `assets/originals/art/computer/files/`. Production manifests assign the verified
-sprite keys `file_disl`, `file_md`, `file_atmo`, and `file_pem`. PNGs carry their
-lettering; the browser keeps its ordinary UI typography and receives no font.
+sprite keys `file_disl`, `file_md`, `file_atmo`, `file_pem`, and `file_HC`.
+PNGs carry their lettering; the browser keeps its ordinary UI typography
+and receives no font.
 
 Use a transparent 32×32 canvas with a 26×32 page centered at x=3, y=0.
 Keep its stepped fold, square corners, dark outline and pale paper rim.
@@ -102,6 +103,11 @@ text rule. BoldsPixels is rasterized at 16 pixels, 72 dpi, without antialiasing.
 The gauge and key remain pictograms. Each file is recognizable without color.
 The runtime PNGs preserve the approved colors, outline and baked lettering.
 The PEM icon labels ordinary editable access material and grants no authority.
+
+HC uses the [TempleOS balance and sword](https://templeos.org/Logo128x152.jpg)
+on `#80ffff`, matching the strange disk. Its layered `file-hc.aseprite` is the editable source for
+`file-hc.png` and its indexed pixel record; the raster importer below handles
+the other four icons. The laptop and terminal share the file type's icon.
 
 ## Reproduction
 
