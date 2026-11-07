@@ -266,6 +266,16 @@ local composition_declaration: { [string]: any } = {
         { id = "matter_flame", parent = "world" },
         { id = "effects", parent = "world" },
     },
+    -- Upright occupants sort north-to-south across this contiguous band so
+    -- tall Base-anchored fixtures overhang entities on the tile behind them.
+    standing = {
+        "fixture",
+        "low_object",
+        "item",
+        "large_object",
+        "lying_mob",
+        "standing_mob",
+    },
     components = {
         { id = "space", label = "space", layer = "substrate", sprite = "space", substrate = { vacuum_boundary = true }, physical = { ambient = 0.06 } },
         { id = "ground", label = "ground", layer = "substrate", sprite = "ground", substrate = { vacuum_boundary = false },

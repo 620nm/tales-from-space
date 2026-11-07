@@ -113,6 +113,20 @@ local SPILL_GROUND = "lunatic/tfs:lib.vessel.spill_ground"
 local SPILL_NO_FOOTING = "lunatic/tfs:lib.vessel.spill_no_footing"
 local SCOOP = "lunatic/tfs:lib.vessel.scoop"
 local SCOOP_SEALED = "lunatic/tfs:lib.vessel.open_before_scooping"
+local DRAWN = "lunatic/tfs:lib.vessel.drawn"
+local RESERVOIR_EMPTY = "lunatic/tfs:lib.vessel.reservoir_empty"
+local RESERVOIR_BROKEN = "lunatic/tfs:lib.vessel.reservoir_broken"
+local OPEN_BEFORE_DRAWING = "lunatic/tfs:lib.vessel.open_before_drawing"
+
+-- Liquid reservoirs standing as machines answer a held vessel's primary click
+-- by drawing liquid out rather than charging gas off a pressurized valve.
+local LIQUID_RESERVOIRS: { [string]: boolean } = {
+    dewar = true,
+}
+
+local function holds_liquid(spec: Spec): boolean
+    return spec.phases == nil or table.find(spec.phases, "liquid") ~= nil
+end
 
 -- A SCOOP from standing water: tg's `rand(5, 10)` units into an open
 -- container (code/datums/elements/reagent_scoopable_atom.dm:28-34), off any
@@ -275,6 +289,69 @@ function vessel.charge(
     at: TileAddress
 ): GestureResult
     return charge(spec, self, user, source, at)
+end
+
+local function draw_reservoir(
+    spec: Spec,
+    self: Handle,
+    user: Handle,
+    source: Handle,
+    pour_amount: number | "all",
+    at: TileAddress
+): GestureResult
+    if source.state == "broken" then
+        sim.message.send({
+            recipient = user,
+            message = sim.msg(RESERVOIR_BROKEN, {}),
+        })
+        return true
+    end
+    local source_read = sim.matter_read(source)
+    local mine = sim.matter_read(self)
+    if source_read == nil or mine == nil then
+        return { replaced = false }
+    end
+    if mine.sealed then
+        sim.message.send({
+            recipient = user,
+            message = sim.msg(OPEN_BEFORE_DRAWING, { noun = spec.noun }),
+        })
+        return true
+    end
+    local source_liquid = 0
+    for _, entry in pairs(source_read.contents) do
+        source_liquid = source_liquid + (entry.liquid or 0)
+    end
+    if source_liquid < DREGS_MOL then
+        sim.message.send({
+            recipient = user,
+            message = sim.msg(RESERVOIR_EMPTY, {}),
+        })
+        return true
+    end
+    if mine.headspace_l <= HEADSPACE_L then
+        sim.message.send({
+            recipient = user,
+            message = sim.msg(SOAK_FULL, { noun = spec.noun }),
+        })
+        return true
+    end
+    if
+        sim.matter.transfer({
+            from = source,
+            to = self,
+            amount = pour_amount,
+            phases = { "liquid" },
+        }) ~= nil
+    then
+        return true
+    end
+    sim.sound.play({ sound = "slosh", at = at })
+    sim.message.send({
+        recipient = user,
+        message = sim.msg(DRAWN, { noun = spec.noun }),
+    })
+    return true
 end
 
 -- Nothing left worth pouring. One sentence for all four gestures,
@@ -477,11 +554,23 @@ end
 function vessel.actions(spec: Spec): { action_rules.Action }
     local actions: { action_rules.Action } = {}
     if spec.pour ~= nil then
+        if holds_liquid(spec) then
+            table.insert(
+                actions,
+                action_rules.primary("draw", {
+                    all = {
+                        action_rules.kind("machine"),
+                        action_rules.fact("target.proto", "dewar"),
+                    },
+                })
+            )
+        end
         table.insert(
             actions,
             action_rules.primary("charge_vessel", {
                 all = {
                     action_rules.kind("machine"),
+                    { ["not"] = action_rules.fact("target.proto", "dewar") },
                     action_rules.fact("target.has_matter", true),
                 },
             })
@@ -576,8 +665,23 @@ function vessel.attach(spec: Spec): Definition
                     return { replaced = false } -- not something that holds anything
                 end
                 -- A FIXTURE with an inside is a charge and not a pour: you
-                -- do not tip a vessel into the station's plumbing.
+                -- do not tip a vessel into the station's plumbing. A liquid
+                -- reservoir draws liquid out instead.
                 if clicked.kind == "machine" then
+                    local target_proto = clicked.entity.prototype
+                    if target_proto ~= nil and LIQUID_RESERVOIRS[target_proto] == true then
+                        if not holds_liquid(spec) then
+                            return { replaced = false }
+                        end
+                        return draw_reservoir(
+                            spec,
+                            self,
+                            user,
+                            clicked.entity,
+                            assert(pour_amount),
+                            at
+                        )
+                    end
                     return charge(spec, self, user, clicked.entity, at)
                 end
                 if spec.open_to_pour and assert(sim.matter_read(self)).sealed then
