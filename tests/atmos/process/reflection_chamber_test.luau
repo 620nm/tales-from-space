@@ -365,3 +365,55 @@ t.run_seconds(3.0)
 assert((assert(network_matter.gas(3, 2, "l3"))["co2"] or 0) > 5.0, "opened valve feeds co2 into west pipe")
 assert((assert(network_matter.gas(5, 2, "l3"))["co2"] or 0) == 0, "ruptured chamber no longer bridges west pipe to east pipe")
 assert(assert(t.tank_pressure(4, 2)) == 0, "ruptured chamber shell does not refill from attached pipes")
+
+-- ---------------------------------------------------------------------------
+-- 5. One chamber: a thermal band is live condition, never a placed variant
+-- ---------------------------------------------------------------------------
+local PLACED_WORLD = [==[(
+    name: "reflection chamber placed state",
+    blends: {
+        "n2_inert": (
+            rows: [("n2", 50.0)],
+            temperature_k: 380.0,
+            amount: total,
+        ),
+        "uf6_hot": (
+            rows: [("uf6:gas", 20.0)],
+            temperature_k: 2000.0,
+            amount: total,
+        ),
+    },
+    legend: {
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '.': (composition: (components: [(component: "station_base")])),
+    },
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#.......#",
+                "#.......#",
+                "#########",
+            ],
+            structures: [
+                (1, 2, "player_spawn"),
+                (1, 1, "reflection_chamber", "supercritical", { "blend": "n2_inert" }),
+                (3, 1, "reflection_chamber", "standby", { "blend": "uf6_hot" }),
+                (5, 1, "reflection_chamber", "open", { "blend": "uf6_hot" }),
+            ],
+        ),
+    ],
+)]==]
+
+t.world(PLACED_WORLD, 0)
+local p5 = t.join()
+t.run_ticks(2)
+
+assert(assert(t.structure_at(1, 1)).state == "standby", "placed supercritical band syncs to inert standby")
+assert(assert(t.structure_at(1, 1)).sprite == "reflection_chamber", "synced standby sprite")
+assert(assert(t.structure_at(3, 1)).state == "supercritical", "placed standby syncs to its 2000 K charge")
+assert(assert(t.structure_at(3, 1)).sprite == "reflection_chamber_supercritical", "synced supercritical sprite")
+assert(assert(t.structure_at(5, 1)).state == "open", "open panel is the operator's state and persists")
+
+local ex_synced = assert(t.examine(p5, 3, 1, assert(t.target_at(p5, 3, 1, "reflection_chamber"))))
+assert(table.concat(ex_synced.lines, " "):find("supercritical", 1, true) ~= nil, "examine reports live band")

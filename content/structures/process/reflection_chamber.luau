@@ -29,14 +29,6 @@ return {
         "overheated",
         "supercritical",
     },
-    palette_states = {
-        "standby",
-        "subcritical",
-        "critical",
-        "overheated",
-        "supercritical",
-        "open",
-    },
     passable = { "broken" },
     state_sprites = {
         standby = "reflection_chamber",
