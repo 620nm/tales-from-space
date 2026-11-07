@@ -85,6 +85,17 @@ return {
                 parts = { glass = 1 },
             },
         },
+        electrolyzer = {
+            name_label = "lunatic/tfs:entity.machine_board.electrolyzer.name",
+            name = "machine board (electrolyzer)",
+            board = {
+                structure = "electrolyzer",
+                parts = {
+                    cable_coil = 1,
+                    glass = 1,
+                },
+            },
+        },
         evaporator = {
             name_label = "lunatic/tfs:entity.machine_board.evaporator.name",
             name = "machine board (evaporator)",
