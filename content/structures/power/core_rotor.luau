@@ -2,8 +2,9 @@ local gas_turbine = require("@lib/power/gas_turbine")
 local gas_turbine_wrench = require("@lib/power/gas_turbine_wrench")
 
 -- The gas turbine's middle section and its brain: it checks that the line
--- is whole, is what the console links to, and feeds the grid while it
--- turns. tg's `/obj/machinery/power/turbine/core_rotor`
+-- is whole, advertises itself to its control console on the device
+-- network, and feeds the grid while it turns. tg's
+-- `/obj/machinery/power/turbine/core_rotor`
 -- (code/modules/power/turbine/turbine.dm:382-685).
 --
 -- Built on a machine frame from its board; its rotor part is the one
@@ -28,7 +29,7 @@ return {
         flavor = "The heart of a gas turbine: the shaft the hot gas spins, and the "
             .. "electronics that keep the three sections in step.",
     },
-    actions = { gas_turbine.link_parts_row(), gas_turbine_wrench.turn_row() },
+    actions = { gas_turbine.check_line_row(), gas_turbine_wrench.turn_row() },
     dense = true,
     -- tg's sections stop air (`can_atmos_pass = ATMOS_PASS_DENSITY`,
     -- turbine.dm:10), so the intake and the exhaust stay apart.
@@ -46,6 +47,11 @@ return {
     facings = gas_turbine.FACINGS,
     facing_sprites = gas_turbine.facing_sprites("core_rotor"),
     parts = { slots = { "rotor" } },
+    -- Its own interface, as an airlock's: the address is minted with the
+    -- rotor and dies with it, so a rebuilt rotor is a new node a console
+    -- picks afresh. Joined to a hub it advertises `turbine.control`
+    -- (lib/power/gas_turbine_service.luau).
+    link = { network_interface = true, role = "endpoint", class = "turbine" },
     -- What a map may place: a rotor already turning, its first run started
     -- once its line links at stand-up (the engine's
     -- docs/content-schema/placement.md; lib/power/gas_turbine_run.luau).

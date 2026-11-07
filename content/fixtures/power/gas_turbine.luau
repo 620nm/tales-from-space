@@ -1,15 +1,17 @@
 local gas_turbine = require("@lib/power/gas_turbine")
 local gas_turbine_run = require("@lib/power/gas_turbine_run")
 local gas_turbine_console = require("@lib/power/gas_turbine_console")
+local gas_turbine_service = require("@lib/power/gas_turbine_service")
 local gas_turbine_wrench = require("@lib/power/gas_turbine_wrench")
 
 -- The gas turbine's handlers (lib/power/gas_turbine.luau): every section
 -- links the line it completes when it stands up (starting a rotor mapped
 -- running), hears its own panel and turns to a wrench while it is open
--- (lib/power/gas_turbine_wrench.luau),
--- the core rotor answers the multitool that links the line, and the console
--- answers the multitool carrying a rotor and opens its window to an empty
--- hand (lib/power/gas_turbine_console.luau). A section set running takes its
+-- (lib/power/gas_turbine_wrench.luau), the core rotor checks its line to
+-- a bare hand and answers its `turbine.control` service on the device
+-- network (lib/power/gas_turbine_service.luau), and the console picks a
+-- rotor on its hub and drives it over that service
+-- (lib/power/gas_turbine_console.luau). A section set running takes its
 -- turns of the run (lib/power/gas_turbine_run.luau), whose record the rotor keeps.
 local content = { id = "gas_turbine" }
 if sim ~= nil then
@@ -23,7 +25,7 @@ if sim ~= nil then
         sim.define("message", key, { placeholders = {} })
     end
     sim.define("script_var", gas_turbine.LINKED, { replicate = "sight" })
-    sim.define("script_var", gas_turbine.CONSOLE_LINK, { replicate = "server" })
+    sim.define("script_var", gas_turbine_console.TARGET, { replicate = "server" })
     for _, row in ipairs(gas_turbine_run.messages()) do
         sim.define("message", row.key, { placeholders = row.placeholders })
     end
@@ -37,6 +39,7 @@ if sim ~= nil then
             function(ev: EntityInitializeDonePayload)
                 gas_turbine.on_section_initialized(ev)
                 gas_turbine_run.on_section_initialized(ev)
+                gas_turbine_service.on_initialized(ev)
             end
         )
         behavior:handle(
@@ -53,9 +56,14 @@ if sim ~= nil then
                 if gas_turbine_wrench.turn(ev) == true then
                     return true
                 end
-                return gas_turbine.link_parts(ev)
+                return gas_turbine.check_line(ev)
             end
             behavior:handle("examine.lines", { kind = "transform" }, gas_turbine.examine_lines)
+            behavior:handle(
+                "link.service.delivery",
+                { kind = "react" },
+                gas_turbine_service.on_delivery
+            )
         end
         behavior:handle("interaction.use", { kind = "replace", route = "interact" }, use)
     end
@@ -70,5 +78,13 @@ if sim ~= nil then
         gas_turbine_console.use
     )
     console:handle("interaction.act", { kind = "replace", route = "act" }, gas_turbine_console.act)
+    console:handle("link.service.reply", { kind = "react" }, gas_turbine_console.on_reply)
+    -- Send verdicts and directory changes name no one console; each
+    -- handler filters to its own kind.
+    sim.handle("link.service.send.done", { kind = "react" }, gas_turbine_console.on_send_done)
+    sim.handle("link.directory.changed", { kind = "react" }, function()
+        gas_turbine_service.on_directory_changed()
+        gas_turbine_console.on_directory_changed()
+    end)
 end
 return content

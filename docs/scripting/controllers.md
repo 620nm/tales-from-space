@@ -73,6 +73,20 @@ from another button cannot erase an older admitted press. Denials do not
 advance the watermark. Cancelable task identities permit an edited guest
 to replace a deadline with an earlier one without polling.
 
+## The turbine service
+
+A core rotor advertises `turbine.control` in `directory`. A `service`
+command to it carries `{ op = "status" }`, `{ op = "start" }`,
+`{ op = "stop" }` or `{ op = "set_intake", intake = <fraction> }` and
+nothing else; ask with `request = true`. The reply arrives as a service
+event whose payload is `{ kind = "turbine.status", op, ok, reason?,
+status? }`: `status` holds `connected`, `active`, `rpm`, `power_w`,
+`integrity`, `max_rpm`, `max_temperature_k`, `intake_k` and `intake`, and
+a refused switch names its `reason` (`running`, `not_running`,
+`not_linked`, `wrecked`, `too_fast`). The rotor answers only its own hub:
+the hub hosting the guest, or a console joined to it. A refused send
+replies `ok = false, reason = "unreachable"` in the same shape.
+
 ## Delivery and limits
 
 Plans contain at most six commands and at most one `service` command. The bridge validates the complete plan

@@ -51,11 +51,30 @@ function valve(id: string, doc: DocumentIdentity, state: TurbineState, active: b
   ], { dir: "column", gap: 4, cls: ["card"] });
 }
 
+/** The working turbines on the console's hub, each one press away from being linked. */
+function candidates(id: string, doc: DocumentIdentity, state: TurbineState, active: boolean): UiNode {
+  const rows = (Array.isArray(state.candidates) ? state.candidates : []).slice(0, 32);
+  const items = rows.map((candidate, index) => {
+    const mac = candidate.mac ?? "";
+    const picked = candidate.selected === true;
+    return row(`${id}/candidate/${index}`, [
+      text(`${id}/candidate/${index}/name`, candidate.name ?? mac, ["grow", "list-label"]),
+      text(`${id}/candidate/${index}/address`, mac, ["hint"]),
+      press(`${id}/candidate/${index}/select`, S.tfs(picked ? "ui.turbine.linked_label" : "ui.turbine.select"),
+        scriptAction(doc, "select", mac), { variant: picked ? "selected" : "ghost", disabled: !active || !mac || picked }),
+    ], { cls: ["list-row"] });
+  });
+  return Section(`${id}/candidates`, S.tfs("ui.turbine.candidates"), [
+    ...items,
+    ...(items.length ? [] : [text(`${id}/candidates/empty`, S.tfs("ui.turbine.none"), ["notice"])]),
+  ]);
+}
+
 export function turbineBody(id: string, doc: DocumentIdentity, state: TurbineState, active: boolean): UiNode[] {
   if (state.linked !== true)
-    return [text(`${id}/unlinked`, S.tfs("ui.turbine.unlinked"), ["notice"])];
+    return [text(`${id}/unlinked`, S.tfs("ui.turbine.unlinked"), ["notice"]), candidates(id, doc, state, active)];
   if (state.connected !== true)
-    return [text(`${id}/disconnected`, S.tfs("ui.turbine.disconnected"), ["notice"])];
+    return [text(`${id}/disconnected`, S.tfs("ui.turbine.disconnected"), ["notice"]), candidates(id, doc, state, active)];
   const running = state.active === true;
   const integrity = Math.max(0, Math.min(100, finite(state.integrity)));
   return [
@@ -79,5 +98,6 @@ export function turbineBody(id: string, doc: DocumentIdentity, state: TurbineSta
       }),
       LabeledList(`${id}/readings`, readings(state)),
     ]),
+    candidates(id, doc, state, active),
   ];
 }

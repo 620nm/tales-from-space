@@ -72,9 +72,17 @@ export interface CopierState {
   reason?: string;
 }
 /** The gas turbine console's view (content/lib/power/gas_turbine_console.luau). */
+export interface TurbineCandidate {
+  mac?: string;
+  name?: string;
+  selected?: boolean;
+}
 export interface TurbineState {
   kind: "turbine";
   linked?: boolean;
+  selected?: string;
+  available?: boolean;
+  candidates?: TurbineCandidate[];
   connected?: boolean;
   active?: boolean;
   rpm?: number;

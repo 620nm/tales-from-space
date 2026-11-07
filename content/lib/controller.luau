@@ -1,5 +1,6 @@
 -- Capability-scoped controller program slot: only joined, reachable members enter the guest.
 local device_queue = require("@lib/device_queue")
+local gas_turbine_service = require("@lib/power/gas_turbine_service")
 local program_slot = require("@lib/program_slot")
 
 export type Voice = { at: TileAddress, said: { [string]: boolean } }
@@ -126,7 +127,7 @@ local function members(host: Handle)
     end
     -- Keep the service directory separate from direct members. A reachable
     -- service may be behind another endpoint and still be a legal target.
-    for _, service in ipairs({ "fax.print", "fax.send" }) do
+    for _, service in ipairs({ "fax.print", "fax.send", gas_turbine_service.SERVICE }) do
         local cursor: number? = 0
         local pages = 0
         repeat
@@ -360,6 +361,14 @@ local function valid(candidate: unknown, handles: { [string]: Handle }): boolean
                 or not token(command.service)
                 or type(command.request) ~= "boolean"
                 or command.payload == nil
+            then
+                return false
+            end
+            -- A turbine request is settled here by the service's own
+            -- question, so a shape its rotor would refuse never sends.
+            if
+                command.service == gas_turbine_service.SERVICE
+                and not gas_turbine_service.valid_request(command.payload)
             then
                 return false
             end
@@ -678,11 +687,21 @@ function controller.message(ev: MessageEvent): ()
         then
             return
         end
-        local payload = type(p) == "table" and p or {}
-        local expected = active.service == "fax.print" and "fax.printed"
-            or (active.service == "fax.send" and "fax.sent" or nil)
-        if payload.kind ~= expected and payload.kind ~= "fax.failed" then
-            return
+        local payload: unknown = nil
+        if active.service == gas_turbine_service.SERVICE then
+            local clean = gas_turbine_service.sanitize_reply(p)
+            if clean == nil then
+                return
+            end
+            payload = clean
+        else
+            local fax_payload = type(p) == "table" and p or {}
+            local expected = active.service == "fax.print" and "fax.printed"
+                or (active.service == "fax.send" and "fax.sent" or nil)
+            if fax_payload.kind ~= expected and fax_payload.kind ~= "fax.failed" then
+                return
+            end
+            payload = fax_payload
         end
         if active.abandoned then
             pending.active = nil
@@ -754,10 +773,13 @@ function controller.service_send_done(ev: LinkServiceSendDonePayload): ()
     if ev.outcome ~= "completed" then
         pending.active = nil
         pending_services[key] = nil
+        local payload: unknown = if ev.service == gas_turbine_service.SERVICE
+            then gas_turbine_service.failure_reply(active.payload)
+            else { kind = "fax.failed" }
         controller.run(ev.self, {
             kind = "service",
             service = ev.service,
-            payload = { kind = "fax.failed" },
+            payload = payload,
             request_id = active.id,
         })
     end

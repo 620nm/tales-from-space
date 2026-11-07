@@ -1,9 +1,9 @@
--- Linking a gas turbine: a multitool on the core rotor checks the
+-- Linking a gas turbine's line: a bare hand on the core rotor checks the
 -- compressor-rotor-outlet line in tg's order and names the first break
--- (turbine.dm:497-559); a whole line is logged in the multitool's buffer
--- (:456-472), which the control console reads to link to the rotor
--- (turbine_computer.dm:24-37). A line placed whole links at init
--- (turbine.dm:39-42); an opened panel breaks it.
+-- (turbine.dm:497-559). A line placed whole links at init
+-- (turbine.dm:39-42); an opened panel breaks it. Which console drives it
+-- is the device network's business, covered by console_test.luau and
+-- gas_turbine_network_test.luau.
 
 local LINKED = "lunatic/tfs:turbine_linked"
 
@@ -34,8 +34,7 @@ t.world([==[(
                 (3, 5, "core_rotor", "closed", { "dir": "east" }),
                 (4, 5, "turbine_outlet", "closed", { "dir": "east" }),
             ],
-            machines: [(4, 1, "turbine_computer")],
-            items: [(2, 1, "multitool"), (3, 1, "screwdriver")],
+            items: [(3, 1, "screwdriver")],
         ),
     ],
 )]==])
@@ -50,24 +49,26 @@ local function said(line: string): boolean
     return table.find(heard, line) ~= nil
 end
 
--- Each tool lies on its own tile beside the player, so neither hides the
--- other; one goes in each hand and a swap brings the other up.
-local function pick(x: number, y: number, id: string)
-    t.click(p, x, y, assert(t.target_at(p, x, y, id)))
-    t.run_ticks(2)
-    assert(t.hands(p).held == id, "expected " .. id .. " in hand")
-end
-
-pick(2, 1, "multitool")
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "screwdriver")))
+t.run_ticks(2)
+assert(t.hands(p).held == "screwdriver", "the screwdriver in hand")
 t.swap_hands(p)
-pick(3, 1, "screwdriver")
+t.run_ticks(1)
 
-local function take(id: string)
-    if t.hands(p).held ~= id then
+local function bare()
+    if t.hands(p).held ~= nil then
         t.swap_hands(p)
         t.run_ticks(1)
     end
-    assert(t.hands(p).held == id, "expected " .. id .. " in hand")
+    assert(t.hands(p).held == nil, "a bare hand for the check")
+end
+
+local function tool()
+    if t.hands(p).held ~= "screwdriver" then
+        t.swap_hands(p)
+        t.run_ticks(1)
+    end
+    assert(t.hands(p).held == "screwdriver", "the screwdriver in hand")
 end
 
 local function click(x: number, y: number, id: string, seconds: number)
@@ -89,43 +90,25 @@ end
 assert(linked_at(5), "a line mapped whole is linked at init")
 assert(not linked(), "a line mapped with a panel open is not")
 
--- An empty buffer links the console to nothing.
-take("multitool")
-click(4, 1, "turbine_computer", 0.5)
-assert(
-    said("The multitool has no rotor logged that this console can reach."),
-    "an empty buffer is refused"
-)
-
--- The outlet's panel is open: the rotor names it and links nothing.
+-- The outlet's panel is open: the check names it and links nothing.
+bare()
 click(3, 3, "core_rotor", 0.2)
 assert(said("The outlet's panel is open. Shut it first."), "the first break is named")
 assert(not linked(), "and the line stays unlinked")
-assert(not said("The compressor, rotor and outlet lock into one line."), "nothing is logged")
+assert(not said("The compressor, rotor and outlet lock into one line."), "nothing links")
 
 -- Shut it, and the line is whole.
-take("screwdriver")
+tool()
 click(4, 3, "turbine_outlet", 0.2)
 assert(assert(t.structure_at(4, 3)).state == "closed", "the outlet's panel shuts")
-take("multitool")
+bare()
 click(3, 3, "core_rotor", 0.2)
 assert(said("The compressor, rotor and outlet lock into one line."), "a whole line links")
-assert(said("The multitool logs the rotor."), "and is logged")
 assert(linked(), "the rotor remembers it")
-
--- The console reads the buffer after tg's fifth of a second; linking it a
--- second time says it already held a link (turbine_computer.dm:29-30).
-local CONSOLE_LINKED = "The console links to the rotor the multitool logged."
-local RELINKING = "The console lets go of the rotor it was linked to."
-click(4, 1, "turbine_computer", 0.5)
-assert(said(CONSOLE_LINKED), "the console links")
-assert(not said(RELINKING), "a console with no link has none to change")
-click(4, 1, "turbine_computer", 0.5)
-assert(said(RELINKING) and said(CONSOLE_LINKED), "the console remembers the rotor it holds")
 
 -- Opening the compressor breaks the line; shutting it again does not relink
 -- it, the rotor does (tg `activate_parts`, turbine.dm:216-221 against :497).
-take("screwdriver")
+tool()
 click(2, 3, "inlet_compressor", 0.2)
 assert(not linked(), "an open panel unlinks the rotor")
 click(2, 3, "inlet_compressor", 0.2)

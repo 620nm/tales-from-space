@@ -9,8 +9,9 @@ local ui_controls = require("@helpers/ui_controls")
 
 local CHANNEL = "turbine"
 
--- The generator feeds the APC, whose socket at (6, 4) cords the console;
--- the main runs on under the rotor at (3, 1), the bus its watts feed.
+-- The generator feeds the APC, whose socket at (6, 4) cords the console
+-- and whose hub the console and rotor are joined to; the main runs on
+-- under the rotor at (3, 1), the bus its watts feed.
 -- The intake pocket at (1, 1) is far hotter than tier-one parts are rated
 -- for (50000 K, turbine_parts.dm:43-47) and dense enough to stay so: the
 -- tile's own floor and walls soak heat (a light 60000 K pocket read 30000 K
@@ -58,13 +59,14 @@ t.world(
             ],
             structures: [
                 (3, 2, "player_spawn"),
-                (1, 4, "apc"),
+                (1, 4, "apc", { "network_1": "network_card" }),
                 (2, 1, "inlet_compressor", "closed", { "dir": "east" }),
                 (3, 1, "core_rotor", "closed", { "dir": "east" }),
                 (4, 1, "turbine_outlet", "closed", { "dir": "east" }),
             ],
             machines: [(4, 3, "turbine_computer")],
-            items: [(2, 2, "multitool"), (2, 2, "screwdriver")],
+            links: [(1, 4, 3, 1), (1, 4, 4, 3)],
+            items: [(2, 2, "screwdriver")],
             painted: [
                 (1, 1, "hot_nitrogen"),
                 (2, 2, "room_air"), (3, 2, "room_air"), (4, 2, "room_air"), (1, 3, "room_air"),
@@ -137,22 +139,20 @@ end
 local function press_power(): { string }
     local _ = t.messages(p)
     t.ui_press(p, control("/toggle_power"))
-    t.run_ticks(2)
+    t.run_seconds(0.6)
     return t.messages(p)
 end
 
--- Log the rotor and link the console to it (turbine_computer.dm:24-37).
-click(2, 2, "multitool", 0.2)
-assert(t.hands(p).held == "multitool", "the multitool is in hand")
-click(3, 1, "core_rotor", 0.2)
-click(4, 3, "turbine_computer", 0.5)
-
--- The console's window, opened with the free hand.
-t.swap_hands(p)
-t.run_ticks(1)
+-- Open the console and link the hub's turbine from its window.
 click(4, 3, "turbine_computer", 0.2)
-local scope = assert(t.ui_document(p, CHANNEL), "the window has an address")
-assert(ui_controls.find(p, "/toggle_power", scope), "the switch is drawn")
+t.ui_press(p, control("/candidate/0/select"))
+assert(
+    eventually(function()
+        local window = assert(t.ui_document(p, CHANNEL), "the window has an address")
+        return ui_controls.find(p, "/toggle_power", window) ~= nil
+    end, 5),
+    "the switch is drawn once the rotor answers"
+)
 -- The free hand takes the screwdriver now. Loose things on a floor drift with
 -- its air, so look for it rather than trust where the map laid it.
 local function find_item(id: string): (number, number)
@@ -171,7 +171,12 @@ local sx, sy = find_item("screwdriver")
 click(sx, sy, "screwdriver", 0.2)
 assert(t.hands(p).held == "screwdriver", "the screwdriver is in hand")
 press_power()
-assert(reading().active == true, "the switch starts a linked turbine")
+assert(
+    eventually(function()
+        return reading().active == true
+    end, 5),
+    "the switch starts a linked turbine"
+)
 assert(all_in("running"), "every section turns")
 
 -- The window reads the intake against the parts' rating; the setup holds
@@ -237,8 +242,12 @@ assert(assert(t.structure_at(4, 1)).state == "running", "and the outlet keeps tu
 local valve = control("/regulate")
 t.ui_edit(p, valve, "0.01")
 t.ui_press(p, valve, "change")
-t.run_ticks(2)
-assert(math.abs(number("intake") - 0.01) < 1e-9, "the valve throttles the intake")
+assert(
+    eventually(function()
+        return math.abs(number("intake") - 0.01) < 1e-9
+    end, 5),
+    "the valve throttles the intake"
+)
 
 -- Wall the exhaust again: nothing leaves, so the next pass turns nothing
 -- (turbine.dm:673-676) and the shaft reads under 1000 rpm.
@@ -249,7 +258,12 @@ end, 6), "a shaft with no exhaust stops turning")
 
 -- Now the switch stops it, and the panel opens.
 press_power()
-assert(reading().active == false, "the switch stops it")
+assert(
+    eventually(function()
+        return reading().active == false
+    end, 5),
+    "the switch stops it"
+)
 assert(all_in("closed"), "every section stands still")
 click(4, 1, "turbine_outlet", 0.2)
 assert(assert(t.structure_at(4, 1)).state == "open", "a stopped section's panel opens")

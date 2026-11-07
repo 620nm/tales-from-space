@@ -1,13 +1,13 @@
-local gas_turbine = require("@lib/power/gas_turbine")
-
 -- The gas turbine's control console. tg's `/obj/machinery/computer/
--- turbine_computer` (code/modules/power/turbine/turbine_computer.dm): a
--- multitool carrying a core rotor in its buffer links the console to that
--- rotor (:24-37); tg clicks at volume 10 then (:34), and this pack's sound
--- roster carries no volume, so the click plays at its own. An empty hand
--- opens tg's window (:50-119): the linked rotor's speed, output, integrity
--- and limits, the power switch and the intake valve
--- (lib/power/gas_turbine_console.luau, ui/documents-turbine.ts).
+-- turbine_computer` (code/modules/power/turbine/turbine_computer.dm) is
+-- linked by a multitool carrying a core rotor in its buffer (:24-37);
+-- here the console and the rotor are device-network endpoints joined to
+-- the same hub, and the window itself picks which working turbine on
+-- that hub it drives, over the rotor's `turbine.control` service
+-- (lib/power/gas_turbine_service.luau). An empty hand opens tg's window
+-- (:50-119): the chosen rotor's speed, output, integrity and limits, the
+-- power switch and the intake valve (lib/power/gas_turbine_console.luau,
+-- ui/documents-turbine.ts).
 --
 -- tg builds consoles on a computer frame finished with two glass panels
 -- (code/game/machinery/computer/buildandrepair.dm:18,92); this pack has one
@@ -26,7 +26,6 @@ return {
         flavor = "A console for running a gas turbine from somewhere it cannot reach you.",
     },
     actions = {
-        gas_turbine.link_console_row(),
         {
             id = "open",
             gesture = "primary",
@@ -38,6 +37,9 @@ return {
     sounds = { teardown = "smash" },
     dense = true,
     corded = true,
+    -- Its own interface, the rotor's answer: joined to the same hub as a
+    -- working rotor, the window may link to it and drive it.
+    link = { network_interface = true, role = "endpoint", class = "turbine" },
     -- tg's two generic rungs (`default_deconstruction_screwdriver`,
     -- _machinery.dm:1049; `default_deconstruction_crowbar`, :912), both
     -- instant; the frame stands up holding the board (the engine's

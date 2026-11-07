@@ -1,15 +1,17 @@
 local ui_controls = require("@helpers/ui_controls")
 
--- The gas turbine console's window (tg turbine_computer.dm:50-119): an
--- unlinked console says so; linked to a whole line it shows the rotor's
--- readout, its power switch starts and stops the rotor, and its intake
--- valve sets the compressor's regulator (lib/power/gas_turbine_console.luau
--- over lib/power/gas_turbine_run.luau).
+-- The gas turbine console's window (tg turbine_computer.dm:50-119): the
+-- console and the core rotor are endpoints on the room panel's hub, an
+-- unlinked console offers the working turbine there, linking it reads
+-- the rotor over the wire, and its power switch and intake valve drive
+-- it the same way (lib/power/gas_turbine_console.luau over
+-- lib/power/gas_turbine_service.luau).
 
 local CHANNEL = "turbine"
 
 -- A powered room: the generator feeds the APC, whose socket at (3, 2)
 -- cords the console and the rotor (docs/POWER.md, "Outlets and cords").
+-- The panel is also the hub both endpoints are joined to.
 t.world(
     [==[(
     name: "turbine control room",
@@ -40,13 +42,13 @@ t.world(
             ],
             structures: [
                 (4, 4, "player_spawn"),
-                (1, 2, "apc"),
+                (1, 2, "apc", { "network_1": "network_card" }),
                 (2, 3, "inlet_compressor", "closed", { "dir": "east" }),
                 (3, 3, "core_rotor", "closed", { "dir": "east" }),
                 (4, 3, "turbine_outlet", "closed", { "dir": "east" }),
             ],
             machines: [(5, 4, "turbine_computer")],
-            items: [(5, 3, "multitool")],
+            links: [(1, 2, 3, 3), (1, 2, 5, 4)],
         ),
     ],
 )]==],
@@ -71,32 +73,42 @@ local function scope(): ui_controls.Scope
     return assert(t.ui_document(p, CHANNEL), "the window has an address")
 end
 
+-- Requests cross the network and replies redraw; run until one lands.
+local function eventually(holds: () -> boolean, seconds: number): boolean
+    local waited = 0
+    while not holds() do
+        if waited >= seconds then
+            return false
+        end
+        t.run_seconds(0.2)
+        waited += 0.2
+    end
+    return true
+end
+
 local function open_console()
     assert(t.hands(p).held == nil, "an empty hand opens the console")
     t.click(p, 5, 4, assert(t.target_at(p, 5, 4, "turbine_computer")))
     t.run_ticks(2)
 end
 
--- An unlinked console opens and says it has no rotor.
+-- An unlinked console opens, says so, and offers the hub's one turbine.
 open_console()
 assert(script_data().linked == false, "an unlinked console discloses no rotor")
 assert(ui_controls.find(p, "/unlinked", scope()), "and says so")
 assert(not ui_controls.find(p, "/toggle_power", scope()), "with no switch to press")
-t.ui_close(p, CHANNEL)
+assert(#ui_controls.rows(script_data().candidates) == 1, "the working turbine is offered")
 
--- Log the rotor in the multitool, then link the console to it.
-t.click(p, 5, 3, assert(t.target_at(p, 5, 3, "multitool")))
-t.run_ticks(2)
-assert(t.hands(p).held == "multitool", "the multitool is in hand")
-t.click(p, 3, 3, assert(t.target_at(p, 3, 3, "core_rotor")))
-t.run_seconds(0.2)
-t.click(p, 5, 4, assert(t.target_at(p, 5, 4, "turbine_computer")))
-t.run_seconds(0.5)
-t.swap_hands(p)
-t.run_ticks(1)
+-- Link it from the window.
+t.ui_press(p, control("/candidate/0/select"))
+assert(
+    eventually(function()
+        return script_data().connected == true
+    end, 5),
+    "the linked rotor answers over the network"
+)
 
 -- Linked to a whole line, the window shows the rotor's readout.
-open_console()
 local reading = script_data()
 assert(reading.kind == "turbine" and reading.linked == true, "the console reads its rotor")
 assert(reading.connected == true, "over a whole line")
@@ -109,20 +121,38 @@ assert(ui_controls.find(p, "/toggle_power", scope()), "the power switch is drawn
 
 -- The switch starts the rotor.
 t.ui_press(p, control("/toggle_power"))
-t.run_ticks(2)
-assert(script_data().active == true, "the switch starts the rotor")
+assert(
+    eventually(function()
+        return script_data().active == true
+    end, 5),
+    "the switch starts the rotor"
+)
 
 -- The valve sets the rotor's intake: typed, then stepped up one percent.
 local valve = control("/regulate")
 t.ui_edit(p, valve, "0.5")
 t.ui_press(p, valve, "change")
-t.run_ticks(2)
-assert(math.abs(ui_controls.number(script_data().intake) - 0.5) < 1e-6, "the valve sets the intake")
+assert(
+    eventually(function()
+        return math.abs(ui_controls.number(script_data().intake) - 0.5) < 1e-6
+    end, 5),
+    "the valve sets the intake"
+)
+-- Text acts are paced (docs/TGUI.md); let the typed act's window pass.
+t.run_seconds(0.6)
 t.ui_press(p, control("/regulate/up"))
-t.run_ticks(2)
-assert(math.abs(ui_controls.number(script_data().intake) - 0.51) < 1e-6, "a step raises it one percent")
+assert(
+    eventually(function()
+        return math.abs(ui_controls.number(script_data().intake) - 0.51) < 1e-6
+    end, 5),
+    "a step raises it one percent"
+)
 
 -- An idle shaft is under tg's 1000 rpm, so the switch stops it again.
 t.ui_press(p, control("/toggle_power"))
-t.run_ticks(2)
-assert(script_data().active == false, "the switch stops the rotor")
+assert(
+    eventually(function()
+        return script_data().active == false
+    end, 5),
+    "the switch stops the rotor"
+)
