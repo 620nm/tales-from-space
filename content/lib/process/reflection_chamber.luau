@@ -28,6 +28,7 @@ local STATUS_BY_STATE: { [string]: string } = {
     supercritical = "lunatic/tfs:lib.reflection_chamber.status_supercritical",
     open = "lunatic/tfs:lib.reflection_chamber.status_open",
     broken = "lunatic/tfs:lib.reflection_chamber.status_broken",
+    destroyed = "lunatic/tfs:lib.reflection_chamber.status_destroyed",
 }
 
 local MESSAGE_KEYS: { string } = {
@@ -38,6 +39,7 @@ local MESSAGE_KEYS: { string } = {
     "lunatic/tfs:lib.reflection_chamber.status_supercritical",
     "lunatic/tfs:lib.reflection_chamber.status_open",
     "lunatic/tfs:lib.reflection_chamber.status_broken",
+    "lunatic/tfs:lib.reflection_chamber.status_destroyed",
 }
 
 function reflection_chamber.message_keys(): { string }
@@ -68,7 +70,7 @@ local function step_chamber(chamber: Handle, add_heat: boolean): boolean
         return false
     end
     local state = chamber.state
-    if state == "broken" then
+    if state == "broken" or state == "destroyed" then
         sim.script_var.set({ scope = chamber, key = WATCH_VAR, value = false })
         return false
     end

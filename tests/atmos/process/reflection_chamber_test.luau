@@ -356,6 +356,7 @@ assert(bit32.band(assert(t.network_joined(5, 2, "pipe", "l3")), 8) ~= 0, "east p
 assert((assert(t.room_gas(3, 2))["uf6"] or 0) == 0, "room initially holds no uf6")
 t.run_seconds(10.0)
 assert(assert(t.structure_at(4, 2)).state == "broken", "overpressured chamber ruptures into broken state")
+assert(assert(t.structure_at(4, 2)).sprite == "reflection_chamber_broken", "broken sprite")
 assert((assert(t.room_gas(3, 2))["uf6"] or 0) > 10.0, "ruptured chamber dumps uf6 into room")
 assert(bit32.band(assert(t.network_joined(3, 2, "pipe", "l3")), 4) == 0, "west pipe detaches from ruptured chamber")
 assert(t.network_joined(5, 2, "pipe", "l3") == 0, "east pipe detaches from ruptured chamber")
@@ -400,6 +401,7 @@ local PLACED_WORLD = [==[(
                 (1, 1, "reflection_chamber", "supercritical", { "blend": "n2_inert" }),
                 (3, 1, "reflection_chamber", "standby", { "blend": "uf6_hot" }),
                 (5, 1, "reflection_chamber", "open", { "blend": "uf6_hot" }),
+                (7, 1, "reflection_chamber", "destroyed"),
             ],
         ),
     ],
@@ -414,6 +416,8 @@ assert(assert(t.structure_at(1, 1)).sprite == "reflection_chamber", "synced stan
 assert(assert(t.structure_at(3, 1)).state == "supercritical", "placed standby syncs to its 2000 K charge")
 assert(assert(t.structure_at(3, 1)).sprite == "reflection_chamber_supercritical", "synced supercritical sprite")
 assert(assert(t.structure_at(5, 1)).state == "open", "open panel is the operator's state and persists")
+assert(assert(t.structure_at(7, 1)).state == "destroyed", "destroyed state persists")
+assert(assert(t.structure_at(7, 1)).sprite == "reflection_chamber_destroyed", "destroyed sprite")
 
 local ex_synced = assert(t.examine(p5, 3, 1, assert(t.target_at(p5, 3, 1, "reflection_chamber"))))
 assert(table.concat(ex_synced.lines, " "):find("supercritical", 1, true) ~= nil, "examine reports live band")

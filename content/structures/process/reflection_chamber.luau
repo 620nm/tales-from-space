@@ -21,6 +21,7 @@ return {
         "supercritical",
         "open",
         "broken",
+        "destroyed",
     },
     scripted_states = {
         "standby",
@@ -29,7 +30,7 @@ return {
         "overheated",
         "supercritical",
     },
-    passable = { "broken" },
+    passable = { "broken", "destroyed" },
     state_sprites = {
         standby = "reflection_chamber",
         subcritical = {
@@ -67,11 +68,8 @@ return {
             "reflection_chamber_press_danger",
         },
         open = "reflection_chamber_open",
-        broken = {
-            "reflection_chamber",
-            "reflection_chamber_slag_heavy",
-            "reflection_chamber_panel_open",
-        },
+        broken = "reflection_chamber_broken",
+        destroyed = "reflection_chamber_destroyed",
     },
     atmos = {
         network = "pipe",

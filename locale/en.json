@@ -426,6 +426,7 @@
   "lunatic/tfs:lib.reflection_chamber.status_supercritical": "Cherenkov glare bleeds through the supercritical reflector seams!",
   "lunatic/tfs:lib.reflection_chamber.status_open": "Its maintenance panel is open, disabling the reflector geometry.",
   "lunatic/tfs:lib.reflection_chamber.status_broken": "The reflector housing is slagged and ruptured.",
+  "lunatic/tfs:lib.reflection_chamber.status_destroyed": "Nothing remains of the reflector housing but its scorched base and shredded metal.",
   "lunatic/tfs:entity.status_display.name": "status display",
   "lunatic/tfs:entity.steam_generator.name": "steam generator",
   "lunatic/tfs:entity.sump_pump.name": "sump pump",
