@@ -178,7 +178,7 @@ repository's gitignored `target/`, never the engine's served root.
   `lunatic-v1.d.luau` signatures, the engine's `docs/luau-api/runtime.md`).
   Budget output (load ms, spec ms) is advisory wall clock; the
   hard budget is the host's fuel, counted per invocation and per mod
-  per game second (lunatic's `crates/lunatic-script-vm/src/fuel.rs`).
+  per game second (lunatic's `crates/lunatic-script-luau/src/fuel.rs`).
 - Map RON inside Luau specs goes in `[==[ ... ]==]` long strings, not
   `[[ ... ]]` — rows like `"####"` can end a plain long string early
   (the Luau twin of Rust's raw-string trap).
