@@ -61,6 +61,7 @@ changing their identity:
 | `layer_adapter` | The deliberate bridge between pipe layers. It has no pump, direction or power draw; joining it joins the connected layers. |
 | `stationary_tank` | A 2,500 L, 46,000 kPa reservoir on `l3` with four open mouths. The placement supplies its contents and starting pressure instead of a gas-specific prototype. |
 | `canister` | A portable 2,000 L vessel. It arrives empty and shut; a placement may charge it with a blend and open it, and an unfastened open vessel releases into its room. |
+| `dewar` | A portable 1,000 L liquid vessel rated to 2,500 kPa with a 1,200 kPa boil-off relief valve. Fastened to a connector port it equalizes liquid with the pipe run; loose and open it drains liquid at 0–50 L/s onto its tile, and open vessels can draw from or pour into it. |
 
 Every property bag is an override. Omitted fields keep the prototype's
 default, so a fixture can test one changed setting without silently inventing
@@ -106,6 +107,9 @@ are not a claim that one map assembles a station-scale department:
 - `tests/atmos/environment/canister_test.luau` checks canister→pipe→vent→room
   supply and recovery after a breach; `canister_water_test.luau` checks a
   liquid charge, headspace and vapor behavior.
+- `tests/atmos/liquid/dewar_test.luau` checks `dewar` connector-port liquid
+  equalization, gas headspace isolation, handheld vessel drawing and pouring,
+  volumetric drain and fill-band sprites, and boil-off relief versus rupture.
 - `tests/atmos/pipenet/stationary_tank_test.luau`, `tank_fill_test.luau`,
   `tank_flow_test.luau` and `tank_mouths_test.luau` check placement fills,
   ideal-gas amounts, transfer and four-mouth sharing. The `tests/maps/tank_row.ron`
