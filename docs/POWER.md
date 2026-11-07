@@ -185,12 +185,16 @@ ahead, each built on a machine frame from its board and its one part
 (`lib/power/gas_turbine.luau`); the vendor sells the boards and tier-one
 parts. A screwdriver opens or shuts a stopped section's panel; open, a
 wrench turns it a quarter clockwise (`lib/power/gas_turbine_wrench.luau`,
-`_machinery.dm:1069-1077`) and a crowbar takes it apart. A whole line links silently; a
-multitool on the shut rotor checks it in tg's order (`turbine.dm:497-559`)
-and logs the rotor for the console. An open panel unlinks the line.
+`_machinery.dm:1069-1077`) and a crowbar takes it apart. A whole line links
+silently; a bare hand on the shut rotor checks it in tg's order
+(`turbine.dm:497-559`). An open panel unlinks the line.
 
-An empty hand opens the console's window (`lib/power/gas_turbine_console.luau`);
-its switch (`lib/power/gas_turbine_run.luau`) starts a linked, unwrecked rotor
+The rotor and its computer are device-network endpoints: on the same hub the
+rotor advertises `turbine.control`; an empty hand opens a console window
+listing that hub's working turbines to link between and drive over the service
+a controller guest automates, and only a sender on the rotor's hub is answered
+([controllers](scripting/controllers.md); `lib/power/gas_turbine_{console,service}.luau`).
+Its switch (`lib/power/gas_turbine_run.luau`) starts a linked, unwrecked rotor
 and refuses a stop above 1000 rpm (`turbine_computer.dm:94`); a rotor mapped
 `running` starts its first run once its line links at boot. Each section is a
 sealed vessel of tg's 1000/3000/6000 L and, running, runs a task on its own

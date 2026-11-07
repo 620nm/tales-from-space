@@ -1,17 +1,12 @@
--- A multitool's buffer is an entity ref to one rotor, not a tile: tg's
--- buffer holds the machine itself (multitool.dm:37, :131) and the console
--- checks it is a rotor (turbine_computer.dm:26). A rotor taken apart and
--- built again on the same tile is a different entity, so the old ref
--- resolves to nothing and no longer links
--- a console to it; logging the new rotor does. A finished frame faces
--- south (tg sets no dir, machine_frame.dm:458), so the line here runs
--- south and the built rotor stands up onto it whole, linking silently
--- (turbine.dm:39-42).
+-- A rotor taken apart and built again on the same tile is a different
+-- entity, but the physical line is the line: a finished frame faces
+-- south (tg sets no dir,
+-- machine_frame.dm:458), so the line here runs south and the built
+-- rotor stands up onto it whole, linking silently (turbine.dm:39-42),
+-- and a bare-hand check at the new rotor says so.
 
 local LINKED = "lunatic/tfs:turbine_linked"
-local REFUSED = "The multitool has no rotor logged that this console can reach."
-local LOGGED = "The multitool logs the rotor."
-local CONSOLE_LINKED = "The console links to the rotor the multitool logged."
+local LINE_WHOLE = "The compressor, rotor and outlet lock into one line."
 
 t.world([==[(
     name: "turbine rebuild",
@@ -36,9 +31,7 @@ t.world([==[(
                 (3, 2, "core_rotor", "closed", { "dir": "south" }),
                 (3, 3, "turbine_outlet", "closed", { "dir": "south" }),
             ],
-            machines: [(1, 3, "turbine_computer")],
             items: [
-                (1, 1, "multitool"),
                 (1, 2, "screwdriver"),
                 (2, 1, "crowbar"),
                 (5, 4, "cable_coil", { "units": 10 }),
@@ -101,23 +94,18 @@ local function rotor(): SpecStructureAt
     return assert(t.structure_at(3, 2), "something stands on the rotor's tile")
 end
 
--- Log the rotor and link the console to it.
-take(1, 1, "multitool")
-swap()
+-- The mapped line stands linked, and a bare-hand check says so.
 take(1, 2, "screwdriver")
 swap()
 assert(rotor().vars[LINKED] == true, "the mapped line is linked")
 click(3, 2, "core_rotor", 0.2)
-assert(said(LOGGED), "the multitool logs the first rotor")
-click(1, 3, "turbine_computer", 0.5)
-assert(said(CONSOLE_LINKED), "and the console links to it")
+assert(said(LINE_WHOLE), "the check finds the first rotor's line whole")
 
 -- Open the rotor and pry it apart; its frame stays on the tile.
 swap()
 click(3, 2, "core_rotor", 0.2)
 assert(rotor().state == "open", "the rotor's panel opens")
 swap()
-put_down()
 take(2, 1, "crowbar")
 click(3, 2, "core_rotor", 0.2)
 assert(rotor().id == "machine_frame", "the rotor comes apart into its frame")
@@ -155,16 +143,7 @@ click(3, 2, "machine_frame", 4.5)
 assert(rotor().id == "core_rotor", "the frame becomes a rotor again")
 assert(rotor().vars[LINKED] == true, "a built rotor standing up onto a whole line links it")
 
--- The old buffer names the rotor that was taken apart.
-walk({ "south", "south", "west", "west", "north" }, 2, 3)
+-- And the new rotor answers a check as the old one did.
 swap()
-take(2, 2, "multitool")
-click(1, 3, "turbine_computer", 0.5)
-assert(said(REFUSED), "the old buffer names no rotor here")
-assert(not said(CONSOLE_LINKED), "so the console links to nothing")
-
--- Logging the rebuilt rotor is what links it.
 click(3, 2, "core_rotor", 0.2)
-assert(said(LOGGED), "the multitool logs the rebuilt rotor")
-click(1, 3, "turbine_computer", 0.5)
-assert(said(CONSOLE_LINKED), "and the console links to it")
+assert(said(LINE_WHOLE), "the check finds the rebuilt rotor's line whole")

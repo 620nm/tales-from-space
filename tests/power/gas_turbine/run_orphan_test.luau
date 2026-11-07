@@ -11,8 +11,9 @@ local ui_controls = require("@helpers/ui_controls")
 
 local CHANNEL = "turbine"
 
--- The generator feeds the APC, whose socket at (6, 4) cords the console;
--- the main runs on under the rotor at (3, 1), the bus its watts feed.
+-- The generator feeds the APC, whose socket at (6, 4) cords the console
+-- and whose hub the console and rotor are joined to; the main runs on
+-- under the rotor at (3, 1), the bus its watts feed.
 -- The intake pocket at (1, 1) is far hotter than tier-one parts are rated
 -- for (50000 K, turbine_parts.dm:43-47) and dense enough to stay so: the
 -- tile's own floor and walls soak heat (a light 60000 K pocket read 30000 K
@@ -60,13 +61,13 @@ t.world(
             ],
             structures: [
                 (3, 2, "player_spawn"),
-                (1, 4, "apc"),
+                (1, 4, "apc", { "network_1": "network_card" }),
                 (2, 1, "inlet_compressor", "closed", { "dir": "east" }),
                 (3, 1, "core_rotor", "closed", { "dir": "east" }),
                 (4, 1, "turbine_outlet", "closed", { "dir": "east" }),
             ],
             machines: [(4, 3, "turbine_computer")],
-            items: [(2, 2, "multitool")],
+            links: [(1, 4, 3, 1), (1, 4, 4, 3)],
             painted: [
                 (1, 1, "hot_nitrogen"),
                 (2, 2, "room_air"), (3, 2, "room_air"), (4, 2, "room_air"), (1, 3, "room_air"),
@@ -118,18 +119,28 @@ local function click(player: number, x: number, y: number, id: string, seconds: 
     t.run_seconds(seconds)
 end
 
--- Link the console to the rotor, open its window and throw the switch.
-click(p, 2, 2, "multitool", 0.2)
-assert(t.hands(p).held == "multitool", "the multitool is in hand")
-click(p, 3, 1, "core_rotor", 0.2)
-click(p, 4, 3, "turbine_computer", 0.5)
-t.swap_hands(p)
-t.run_ticks(1)
+-- Presses one control in `player`'s open window, by its current address.
+local function press(player: number, suffix: string): ()
+    local address = assert(t.ui_document(player, CHANNEL), "the window has an address")
+    t.ui_press(player, "doc/" .. address.document .. "/" .. address.generation .. suffix)
+end
+
+-- Open the console, link the hub's turbine and throw the switch.
 click(p, 4, 3, "turbine_computer", 0.2)
-local address = assert(t.ui_document(p, CHANNEL), "the window has an address")
-t.ui_press(p, "doc/" .. address.document .. "/" .. address.generation .. "/toggle_power")
-t.run_ticks(2)
-assert(reading(p).active == true, "the switch starts a linked turbine")
+press(p, "/candidate/0/select")
+assert(
+    eventually(function()
+        return reading(p).connected == true
+    end, 5),
+    "the linked rotor answers over the network"
+)
+press(p, "/toggle_power")
+assert(
+    eventually(function()
+        return reading(p).active == true
+    end, 5),
+    "the switch starts a linked turbine"
+)
 
 -- One pass of wear, then the body goes.
 local intake_k = ui_controls.number(reading(p).intake_k)
@@ -147,7 +158,12 @@ local q = t.join()
 t.run_ticks(2)
 assert(t.hands(q).held == nil, "an empty hand opens the console")
 click(q, 4, 3, "turbine_computer", 0.2)
-assert(reading(q).active == true, "the run outlives its starter")
+assert(
+    eventually(function()
+        return reading(q).active == true
+    end, 5),
+    "the run outlives its starter"
+)
 assert(eventually(function()
     return integrity(q) < before - 0.3
 end, 8), "and its rotor still takes its turns")
@@ -199,15 +215,19 @@ end, 4), "a rotor two passes silent reads stopped")
 -- Presses the switch in `player`'s open window; answers what it heard.
 local function toggle(player: number): { string }
     local _ = t.messages(player)
-    local address = assert(t.ui_document(player, CHANNEL), "the window has an address")
-    t.ui_press(player, "doc/" .. address.document .. "/" .. address.generation .. "/toggle_power")
-    t.run_ticks(2)
+    press(player, "/toggle_power")
+    t.run_seconds(0.6)
     return t.messages(player)
 end
 
 -- The switch restarts it: each section shut, then turning again in a new run.
 toggle(q)
-assert(reading(q).active == true, "the switch restarts the run")
+assert(
+    eventually(function()
+        return reading(q).active == true
+    end, 5),
+    "the switch restarts the run"
+)
 assert(assert(t.structure_at(3, 1)).state == "running", "the rotor turns again")
 -- Read off the window's own refresh, never reopened.
 assert(eventually(function()
@@ -225,7 +245,7 @@ assert(t.destroy(outlet.entity) == nil, "the outlet is removed")
 assert(t.structure_at(4, 1) == nil, "and is gone from its tile")
 local heard = toggle(q)
 assert(
-    table.find(heard, "The turbine's line is not linked. Link the rotor with a multitool first.") ~= nil,
+    table.find(heard, "The turbine's line is not linked. Check the line at the rotor first.") ~= nil,
     "the start is refused: " .. table.concat(heard, " | ")
 )
 assert(reading(q).active == false, "the stalled run is stopped")

@@ -1,5 +1,5 @@
--- The core rotor's line check names the FIRST break in tg's order
--- (`activate_parts`, turbine.dm:497-559). Five broken east-facing lines
+-- The core rotor's bare-hand line check names the FIRST break in tg's
+-- order (`activate_parts`, turbine.dm:497-559). Five broken east-facing lines
 -- stand along the north wall, each built so that a check run out of order
 -- names a different break: a reversed line has neither section where it
 -- should be (:512-520), a perpendicular compressor also faces away from its
@@ -39,17 +39,13 @@ t.world([==[(
                 (17, 1, "inlet_compressor", "closed", { "dir": "east" }),
                 (18, 1, "core_rotor", "closed", { "dir": "east" }),
             ],
-            items: [(1, 2, "multitool")],
         ),
     ],
 )]==])
 
 local p = t.join()
 t.tick()
-
-t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "multitool")))
-t.run_ticks(2)
-assert(t.hands(p).held == "multitool", "the multitool in hand")
+assert(t.hands(p).held == nil, "a bare hand checks each line")
 
 -- Every walk is along the south row, a step under the rotor it tests.
 local function walk_to(x: number)

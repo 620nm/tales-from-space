@@ -1,12 +1,12 @@
 local assembly = require("@lib/assembly")
 local ignition = require("@lib/ignition")
-local multitool_buffer = require("@lib/tools/multitool_buffer")
 
 -- The gas turbine's three sections and its console: what each section
--- declares, and the discrete verbs tg's turbine.dm and turbine_computer.dm
--- run at a click. A compressor stands behind the core rotor and the outlet
--- ahead of it, along the rotor's facing; the rotor checks the line, the
--- multitool carries the rotor to the console. Running is
+-- declares, and the discrete verbs tg's turbine.dm runs at a click. A
+-- compressor stands behind the core rotor and the outlet ahead of it,
+-- along the rotor's facing; the rotor checks the line. Reaching the
+-- console is the device network's business instead of a multitool's
+-- (lib/power/gas_turbine_service.luau). Running is
 -- lib/power/gas_turbine_run.luau and gas_turbine_turns.luau.
 local gas_turbine = {}
 
@@ -19,7 +19,6 @@ gas_turbine.SECTIONS = { gas_turbine.COMPRESSOR, gas_turbine.CORE, gas_turbine.O
 local CLOSED = "closed"
 local OPEN = "open"
 local RUNNING = "running"
-local MULTITOOL = "multitool"
 
 -- Panel shut, panel open (tg's `panel_open`), then shut and turning (tg's
 -- `<prefix>_on` overlay while the rotor is active, turbine.dm:117-128).
@@ -35,16 +34,12 @@ gas_turbine.FACINGS = { "south", "west", "north", "east" }
 -- Whether the rotor last found its line whole (tg `all_parts_connected`).
 -- A reader asks `connected`, which checks the line again.
 gas_turbine.LINKED = "lunatic/tfs:turbine_linked"
--- The rotor a console is linked to, as a buffer ref (tg `turbine_core`).
-gas_turbine.CONSOLE_LINK = "lunatic/tfs:turbine_core"
 -- The rotor's map knob: a placement that sets it starts the rotor's first
 -- run once its line links at stand-up (lib/power/gas_turbine_run.luau).
 gas_turbine.STARTS_RUNNING = "lunatic/tfs:turbine_starts_running"
 
 -- Every line is the pack's own sentence for one of tg's: the refusals for
--- the balloons of turbine.dm:519-558, `linked` and `buffer_stored` for
--- :466 and :469, `wrong_buffer`, `relinking` and `console_linked` for
--- turbine_computer.dm:27, :30 and :36.
+-- the balloons of turbine.dm:519-558, `linked` for :466.
 local MESSAGE = "lunatic/tfs:lib.gas_turbine."
 local REFUSALS = {
     "wrong_way",
@@ -65,10 +60,6 @@ local UNLINKED = MESSAGE .. "unlinked"
 function gas_turbine.message_keys(): { string }
     local keys = {
         MESSAGE .. "linked",
-        MESSAGE .. "buffer_stored",
-        MESSAGE .. "wrong_buffer",
-        MESSAGE .. "relinking",
-        MESSAGE .. "console_linked",
         STOP_FIRST,
         UNLINKED,
     }
@@ -149,31 +140,19 @@ function gas_turbine.section_transitions(prototype: string): { { [string]: any }
     }
 end
 
--- The multitool row on the core rotor, the pack's words for tg's
--- "Link/Log parts" screentip (turbine.dm:427-432), offered with the panel shut.
-function gas_turbine.link_parts_row(): { [string]: any }
+-- The bare-hand row on the core rotor: check the line, the pack's words
+-- for tg's "Link/Log parts" screentip (turbine.dm:427-432), offered with
+-- the panel shut. tg wants its multitool here; this pack's line is a
+-- physical thing a hand at the rotor can prove, and the console finds
+-- the rotor on the device network (lib/power/gas_turbine_service.luau).
+function gas_turbine.check_line_row(): { [string]: any }
     return {
-        id = "link_parts",
+        id = "check_line",
         gesture = "primary",
         route = "receiver",
-        label = "lunatic/tfs:ui.affordance.link_parts",
+        label = "lunatic/tfs:ui.affordance.check_line",
         target = { fact = "target.state", value = CLOSED },
-        held = { fact = "held.proto", value = MULTITOOL },
-        uses_held = true,
-        suggest_implement = { item = MULTITOOL },
-    }
-end
-
--- The multitool row on the console (`multitool_act`, turbine_computer.dm:24-37).
-function gas_turbine.link_console_row(): { [string]: any }
-    return {
-        id = "link_console",
-        gesture = "primary",
-        route = "receiver",
-        label = "lunatic/tfs:ui.affordance.link_console",
-        held = { fact = "held.proto", value = MULTITOOL },
-        uses_held = true,
-        suggest_implement = { item = MULTITOOL },
+        held = { fact = "held.present", value = "false" },
     }
 end
 
@@ -364,65 +343,18 @@ function gas_turbine.on_section_changed(ev: StructureChangedPayload): ()
     end
 end
 
-local function multitool_in(ev: InteractionUsePayload): Handle?
-    local tool = ev.implement
-    if tool == nil or not tool.alive or prototype_of(tool) ~= MULTITOOL then
-        return nil
-    end
-    return tool
-end
-
--- A multitool on the rotor, panel shut: link the line and log the rotor
--- in the buffer (`multitool_act`, turbine.dm:456-472). An open panel is
--- tg's cable-layer change, which this pack has no use for.
-function gas_turbine.link_parts(ev: InteractionUsePayload): boolean | { replaced: boolean }
+-- A bare hand on the rotor, panel shut: check the line and say the
+-- answer (tg's `multitool_act` -> `activate_parts`, turbine.dm:456-466,
+-- without its buffer). A held tool keeps its own step here, so anything
+-- in hand declines.
+function gas_turbine.check_line(ev: InteractionUsePayload): boolean | { replaced: boolean }
     local core, actor = ev.subject, ev.actor
-    local tool = multitool_in(ev)
-    if tool == nil or core.state ~= CLOSED then
+    if ev.implement ~= nil or core.state ~= CLOSED then
         return { replaced = false }
     end
     if link(core, actor) then
         send(actor, "linked")
-        multitool_buffer.store(tool, core)
-        send(actor, "buffer_stored")
     end
-    return true
-end
-
--- How long tg's console takes to read the buffer (turbine_computer.dm:31).
-local CONSOLE_LINK_SECONDS = 0.2
-local CONSOLE_CLICK_VOLUME = 0.1
-
--- A multitool on the console: link the rotor in its buffer
--- (`multitool_act`, turbine_computer.dm:24-37). A buffer naming a rotor
--- taken apart, or rebuilt since it was logged, names no rotor.
-function gas_turbine.link_console(ev: InteractionUsePayload): boolean | { replaced: boolean }
-    local console, actor = ev.subject, ev.actor
-    local tool = multitool_in(ev)
-    if tool == nil then
-        return { replaced = false }
-    end
-    local core = multitool_buffer.read(tool)
-    if core == nil or prototype_of(core) ~= gas_turbine.CORE then
-        send(actor, "wrong_buffer")
-        return true
-    end
-    -- tg says so whenever the console already holds a link (:29-30).
-    if console.vars[gas_turbine.CONSOLE_LINK] ~= nil then
-        send(actor, "relinking")
-    end
-    sim.spawn_task(actor, function()
-        if sim.do_after(actor, sim.ticks(CONSOLE_LINK_SECONDS), {}) ~= "ok" then
-            return
-        end
-        if not actor.alive or not console.alive or not core.alive then
-            return
-        end
-        -- tg clicks at the user's turf, volume 10 of 100 (:34).
-        sim.sound.play({ sound = "click", at = actor.tile, volume = CONSOLE_CLICK_VOLUME })
-        console.vars[gas_turbine.CONSOLE_LINK] = core:ref()
-        send(actor, "console_linked")
-    end)
     return true
 end
 
