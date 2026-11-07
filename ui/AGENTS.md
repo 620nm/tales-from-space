@@ -17,4 +17,4 @@ Commands below run from the engine with `LUNATIC_PACK` set to this pack;
 | Computer/files | `documents-desktop.ts`, `files*.ts`, `theme/workspace.ts` | `node tools/ui-lab.mjs shot laptop-create-cancel --lint` | previews, single modal, naming/draft preservation |
 | Hover/world overlays | `overlay/`, `world-overlays.ts` | `node tools/ui-lab.mjs shot hover-actions --lint` | edge containment, native-size pixel type |
 | New/changed fixtures | `fixtures/` | `node tools/ui-lab.mjs shot <fixture> --lint` | real browser actions, geometry and reviewed baseline |
-| Trusted shell/editor | engine `web/`, `crates/lunatic-client/` | engine `web/AGENTS.md` route | actual compiled client; engine-owned fixtures |
+| Trusted shell/editor | engine `web/`, `crates/lunatic-client-web/` | engine `web/AGENTS.md` route | actual compiled client; engine-owned fixtures |

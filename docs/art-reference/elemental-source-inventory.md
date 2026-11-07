@@ -130,7 +130,7 @@ revision [assets/tg-revision](../../assets/tg-revision) pins; sprite rosters are
    - When an `AirCell.wind` is non-zero, the profile's `streak` sprite `wind_streak` ([`assets/sprites/95-originals.ron`](../../assets/sprites/95-originals.ron) <- `assets/originals/art/fx/wind_streak.png`) is rotated along the velocity vector and scrolled across the tile on a sawtooth phase, solid at `full_alpha_mps = 8`.
 2. **Spray Puffs**:
    - `spray_puff` (the `92-*-fillings.ron` roster <- `obj/medical/chempuff.dmi` `""`), used by `fire_extinguisher.luau` and `spray_bottle.luau`.
-3. **Engine Density Plume Automaton (`sim.visual.plume`, the engine's `crates/lunatic-client/src/scene_fx/density.rs`, the engine's `docs/luau-api/effects.md`)**:
+3. **Engine Density Plume Automaton (`sim.visual.plume`, the engine's `crates/lunatic-client-web/src/scene_fx/density.rs`, the engine's `docs/luau-api/effects.md`)**:
    - `sim.visual.plume({ at, strength, speed?, color?, direction_x?, direction_y?, duration? })`: 32×32 cellular density advection field that rises, drifts with wind `lean` (`±2 px`), and rasters translucent smoke/steam/mist plumes. 
 
 ### 3.2 Unimported Air, Mist, Cloud & Weather Material in `tgstation`
@@ -162,7 +162,7 @@ revision [assets/tg-revision](../../assets/tg-revision) pins; sprite rosters are
    - `welder_lit` & `welder_flame` ([`10-turf-fixtures-and-tools.ron`](../../assets/sprites/10-turf-fixtures-and-tools.ron), `emissive: ["welder_flame"]` in [`sprites.ron`](../../assets/sprites.ron)).
    - `burner_lit` ([`10-turf-fixtures-and-tools.ron`](../../assets/sprites/10-turf-fixtures-and-tools.ron) <- the `obj/medical/` burner sheet `"burner-on"`).
    - `paperplane_onfire` ([`41-writing.ron`](../../assets/sprites/41-writing.ron) <- `obj/service/bureaucracy.dmi` `"paperplane_onfire"`).
-2. **Engine Fire Cellular Automaton, Heat Shimmer & Flicker Glow (the engine's `crates/lunatic-client/src/scene_fx.rs`, the engine's `docs/luau-api/effects.md`)**:
+2. **Engine Fire Cellular Automaton, Heat Shimmer & Flicker Glow (the engine's `crates/lunatic-client-web/src/scene_fx.rs`, the engine's `docs/luau-api/effects.md`)**:
    - **`sim.visual.field({ at, palette, strength, duration })`**: 32×32 Doom-fire cellular automaton stepping every `40 ms` (`FIELD_STEP_MS = 40.0`), leaning with wind and indexing into a named color ramp in `sprites.ron` `palettes: [...]`.
    - **`sim.visual.shimmer({ at, strength, duration })`**: Per-texel horizontal sine wave heat-haze displacement column rising `0.5..4` tiles above `at`.
    - **`sim.visual.flicker_glow({ at, strength, range?, color?, duration? })`**: Dynamic point light with a 50 ms flickering envelope (`0.55..1.0`).

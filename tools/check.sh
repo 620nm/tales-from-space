@@ -109,7 +109,7 @@ esac
 BAKED_ATLAS=$PACK_WEB/assets/atlas.ron
 # The roster document the `roster` lane writes -- stdout only, since
 # that lane's stderr carries an unbaked NOTE. Read by `placeable`
-# (crates/lunatic-client/tests/placeable.rs) and by the pack's own node
+# (crates/lunatic-client-web/tests/placeable.rs) and by the pack's own node
 # checks over the served roster, which fail hard when it is unreadable.
 ROSTER=$GATE/roster.json
 # Both are this gate's OUTPUTS, never its inputs, and each is exported
@@ -428,12 +428,12 @@ roster_check() {
 # Whether the engine's palette test can be pointed at a web root. Until
 # it can, its ART half reads `Atlas::baked()`, which resolves the ENGINE
 # checkout's own served root at COMPILE time
-# (crates/lunatic-client/src/delivery.rs, `repo_web_root`) -- the wrong
+# (crates/lunatic-client-web/src/delivery.rs, `repo_web_root`) -- the wrong
 # pack's bake here. The probe reads the file that would read the
 # variable, so this arms itself with the engine change and needs no
 # edit here.
 placeable_reads_a_web_root() {
-  grep -q LUNATIC_WEB_ROOT "$ENGINE/crates/lunatic-client/tests/placeable.rs" 2>/dev/null
+  grep -q LUNATIC_WEB_ROOT "$ENGINE/crates/lunatic-client-web/tests/placeable.rs" 2>/dev/null
 }
 
 # Is what this pack declares actually offered in the map editor? The
@@ -443,7 +443,7 @@ placeable_reads_a_web_root() {
 # rules over this pack's roster still run.
 #
 # The test is named across the engine's WORKSPACE, never with
-# `-p lunatic-client`: that selection resolves the client's dependencies
+# `-p lunatic-client-web`: that selection resolves the client's dependencies
 # differently and rewrites its unhashed cdylib rlib in the engine's
 # target/, so the engine's next build recompiles lunatic-server.
 placeable_check() {
@@ -518,7 +518,7 @@ browser_skip() {
 # client and shell, so both must exist (tools/dev/artifacts.mjs,
 # checkArtifacts).
 live_pair_skip() {
-  [ -f "$ENGINE/web/pkg/lunatic_client_bg.wasm" ] \
+  [ -f "$ENGINE/web/pkg/lunatic_client_web_bg.wasm" ] \
     || { echo "no compiled client (sh $ENGINE/tools/build-web.sh)"; return; }
   [ -f "$ENGINE/web/dist/pack-ui/worker.js" ] \
     || { echo "no built web shell (npm --prefix $ENGINE/web run build)"; return; }

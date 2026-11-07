@@ -58,7 +58,7 @@ const shifts = (text, name) =>
       .map(([, sprite, x, y]) => [sprite, { x: Number(x), y: Number(y) }]),
   );
 
-/** `crates/lunatic-client/src/atlas.rs`'s index, as much as art needs. */
+/** `crates/lunatic-client-web/src/atlas.rs`'s index, as much as art needs. */
 function readAtlas(text) {
   const tile = field(text, "tile");
   const columns = field(text, "columns");
@@ -179,7 +179,7 @@ function predictor(kind, a, b, c) {
 
 /**
  * The atlas index and its pages, each accepted against the digest and
- * length `delivery.ron` pinned (`lunatic-client/src/delivery.rs`,
+ * length `delivery.ron` pinned (`lunatic-client-web/src/delivery.rs`,
  * `Object::accept`). A partial store is disagreement, so it throws.
  */
 function loadBake() {
