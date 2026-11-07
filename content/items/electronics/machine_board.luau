@@ -131,6 +131,17 @@ return {
                 parts = { glass = 2 },
             },
         },
+        pyrolyzer = {
+            name_label = "lunatic/tfs:entity.machine_board.pyrolyzer.name",
+            name = "machine board (pyrolyzer)",
+            board = {
+                structure = "pyrolyzer",
+                parts = {
+                    cable_coil = 1,
+                    glass = 1,
+                },
+            },
+        },
         network_router = {
             name_label = "lunatic/tfs:entity.machine_board.network_router.name",
             name = "machine board (network router)",
