@@ -24,9 +24,9 @@ return {
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.floppy_disk.name",
     name = "floppy disk",
-    -- tg's `/obj/item/disk` off `icons/obj/devices/floppy_disks.dmi`,
-    -- `icon_state = "datadisk3"` -- the black sleeve
-    -- (code/game/objects/items/floppy_disk.dm:41-45).
+    -- First-party `art/items/electronics/floppy_disk.aseprite` (`unlabeled`),
+    -- tinted to the dark sleeve of tg's `/obj/item/disk` (`datadisk3`,
+    -- code/game/objects/items/floppy_disk.dm:41-45).
     sprite = "floppy_disk",
     examine = {
         flavor = "Nine centimeters of hard plastic around a disc of "

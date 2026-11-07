@@ -14,8 +14,7 @@
 (
     // Sheet aliases are local to this family; @names below resolve here.
     sheets: [
-        ("floppy", "obj/devices/floppy_disks.dmi"),
-        ("floppy_disk_ase", "art/items/electronics/floppy_disk.aseprite"),
+        ("floppy", "art/items/electronics/floppy_disk.aseprite"),
         ("computer", "obj/machines/computer.dmi"),
         ("box", "obj/storage/box.dmi"),
         ("medical_l", "mob/inhands/equipment/medical_lefthand.dmi"),
@@ -26,32 +25,31 @@
         ("file_md", Png("art/computer/files/file-md.png")),
         ("file_atmo", Png("art/computer/files/file-atmo.png")),
         ("file_pem", Png("art/computer/files/file-pem.png")),
-        // tg floppy_disk.dm:6-39 precolors the sleeves as skins,
-        // datadisk0-7; the pack bakes each as its own cell for the
-        // color variants of `content/items/floppy_disk.luau`. The same
-        // sheet's datadisk12 is the orange shell of the stock disk.
-        ("floppy_disk", Dmi("@floppy", "datadisk3", 0)),
-        ("floppy_disk_red", Dmi("@floppy", "datadisk0", 0)),
-        ("floppy_disk_dark_blue", Dmi("@floppy", "datadisk1", 0)),
-        ("floppy_disk_yellow", Dmi("@floppy", "datadisk2", 0)),
-        ("floppy_disk_green", Dmi("@floppy", "datadisk4", 0)),
-        ("floppy_disk_purple", Dmi("@floppy", "datadisk5", 0)),
-        ("floppy_disk_gray", Dmi("@floppy", "datadisk6", 0)),
-        ("floppy_disk_light_blue", Dmi("@floppy", "datadisk7", 0)),
-        ("floppy_disk_atmos_stock", Dmi("@floppy", "datadisk12", 0)),
         // First-party layered floppy disk (`art/items/electronics/floppy_disk.aseprite`):
         // neutral greyscale `shell_paint` for runtime tinting, untinted `metal_shutter`,
         // and toggleable `label_*` layers (`label_blank`, `label_text`, `label_code`,
         // `label_damaged`, `label_medical`, `label_dna`, `label_nt`, `label_templeos`).
-        ("floppy_disk_unlabeled", Ase("@floppy_disk_ase", "unlabeled")),
-        ("floppy_disk_blank", Ase("@floppy_disk_ase", "blank")),
-        ("floppy_disk_text", Ase("@floppy_disk_ase", "text")),
-        ("floppy_disk_code", Ase("@floppy_disk_ase", "code")),
-        ("floppy_disk_damaged", Ase("@floppy_disk_ase", "damaged")),
-        ("floppy_disk_medical", Ase("@floppy_disk_ase", "medical")),
-        ("floppy_disk_dna", Ase("@floppy_disk_ase", "dna")),
-        ("floppy_disk_nt", Ase("@floppy_disk_ase", "nt")),
-        ("floppy_disk_templeos", Ase("@floppy_disk_ase", "templeos")),
+        // The sleeve color variants of `content/items/electronics/floppy_disk.luau`
+        // tint the `unlabeled` tag to match tg's `datadisk0`..`datadisk7` and `datadisk12`
+        // (code/game/objects/items/floppy_disk.dm:6-45).
+        ("floppy_disk", Tinted(Ase("@floppy", "unlabeled"), (58, 58, 58))),
+        ("floppy_disk_red", Tinted(Ase("@floppy", "unlabeled"), (162, 55, 43))),
+        ("floppy_disk_dark_blue", Tinted(Ase("@floppy", "unlabeled"), (64, 42, 163))),
+        ("floppy_disk_yellow", Tinted(Ase("@floppy", "unlabeled"), (246, 197, 0))),
+        ("floppy_disk_green", Tinted(Ase("@floppy", "unlabeled"), (60, 160, 45))),
+        ("floppy_disk_purple", Tinted(Ase("@floppy", "unlabeled"), (130, 74, 240))),
+        ("floppy_disk_gray", Tinted(Ase("@floppy", "unlabeled"), (139, 139, 139))),
+        ("floppy_disk_light_blue", Tinted(Ase("@floppy", "unlabeled"), (59, 146, 202))),
+        ("floppy_disk_atmos_stock", Tinted(Ase("@floppy", "unlabeled"), (243, 162, 87))),
+        ("floppy_disk_unlabeled", Ase("@floppy", "unlabeled")),
+        ("floppy_disk_blank", Ase("@floppy", "blank")),
+        ("floppy_disk_text", Ase("@floppy", "text")),
+        ("floppy_disk_code", Ase("@floppy", "code")),
+        ("floppy_disk_damaged", Ase("@floppy", "damaged")),
+        ("floppy_disk_medical", Ase("@floppy", "medical")),
+        ("floppy_disk_dna", Ase("@floppy", "dna")),
+        ("floppy_disk_nt", Ase("@floppy", "nt")),
+        ("floppy_disk_templeos", Ase("@floppy", "templeos")),
         // tg storage/boxes/_boxes.dm:5-6,38-41; science_boxes.dm:27-34.
         ("disk_box", DmiLayers([("@box", "box"), ("@box", "disk_kit")], 0)),
 
@@ -82,7 +80,7 @@
     // tg storage/boxes/_boxes.dm:7-9 shares the syringe-kit hand art.
     groups: [
         (
-            sheet: "floppy_disk_ase",
+            sheet: "floppy",
             sprites: [
                 Layer("floppy_disk_shell_paint", "shell_paint", 1),
                 Layer("floppy_disk_metal_shutter", "metal_shutter", 1),
