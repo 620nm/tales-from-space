@@ -248,7 +248,9 @@ assert(
     table.find(heard, "The turbine's line is not linked. Check the line at the rotor first.") ~= nil,
     "the start is refused: " .. table.concat(heard, " | ")
 )
-assert(reading(q).active == false, "the stalled run is stopped")
+-- The rotor no longer stands on the hub as a working turbine, so the
+-- window claims none of its readings; the run it refused is halted.
+assert(reading(q).active ~= true and reading(q).connected == false, "the stalled run is stopped")
 for sx = 2, 3 do
     local section = assert(t.structure_at(sx, 1))
     assert(section.state == "closed", "and every section left shut: " .. tostring(section.state))
