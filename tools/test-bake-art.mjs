@@ -82,7 +82,7 @@ function readAtlas(text) {
   const offsets = shifts(text, "offsets");
   const wornOffsets = shifts(text, "worn_offsets");
   // Oversized frames take the last cells and sit on large pages after the
-  // grid pages (`crates/lunatic-client-model/src/atlas/oversize.rs`).
+  // grid pages (`crates/lunatic-client/src/atlas/oversize.rs`).
   const largePages = [...section(text, "large_pages").matchAll(/\((\d+), (\d+)\)/g)]
     .map(([, width, height]) => ({ width: Number(width), height: Number(height) }));
   const largeFrames = [...section(text, "large_frames")
