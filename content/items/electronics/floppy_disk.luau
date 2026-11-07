@@ -173,11 +173,11 @@ if sim ~= nil then
         return seed
     end
 
-    local function draws(initial: number): (number) -> (count: number) -> number
+    local function draws(initial: number): (count: number) -> number
         local seed = initial
         return function(count: number): number
             seed = (seed * 1664525 + 1013904223) % 4294967296
-		return math.floor(seed / 4294967296 * math.pow(2, count))
+            return math.floor(seed / 4294967296 * math.pow(2, count))
         end
     end
 
@@ -188,14 +188,14 @@ if sim ~= nil then
         local presentation = strange_disk.generate(
             draws(seed_for(self, fingerprint, "raster")),
             draws(seed_for(self, fingerprint, "song")),
-				sim.bitmap.rasterize,
-				sim.bitmap.mode_filter
+            sim.bitmap.rasterize,
+            sim.bitmap.mode_filter
         )
-			local body = strange_disk.serialize(presentation)
+        local body = strange_disk.serialize(presentation)
         assert(body ~= nil, "generated disk media exceeds its format")
         sim.documents.seed({
             store = self,
-			files = { { name = "Adam", ext = "HC", body = body } },
+            files = { { name = "Adam", ext = "HC", body = body } },
         })
     end)
 end

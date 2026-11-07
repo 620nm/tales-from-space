@@ -8,9 +8,9 @@ import { networkInterfaces } from "node:os";
 import { isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const pack = resolve(fileURLToPath(new URL("..", import.meta.url)));
+const pack = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const scene = join(pack, "tools/scenes/strange-disk-browser.ron");
-const usage = "Usage: node tools/strange-disk-browser.mjs /absolute/engine [--out DIR] [--listener-host IPv4]";
+const usage = "Usage: node tools/browser/strange-disk.mjs /absolute/engine [--out DIR] [--listener-host IPv4]";
 
 function parseArgs(argv) {
   if (argv[0] === "--help") {
@@ -73,10 +73,10 @@ const AUDIO_PROBE = `(() => {
       if (destination !== context.destination) return result;
       if (!seen.has(this)) {
         try {
-          const analyser = context.createAnalyser();
-          analyser.fftSize = 2048;
-          Reflect.apply(nativeConnect, this, [analyser]);
-          state.taps.push({ node: this, context, analyser, samples: new Float32Array(analyser.fftSize) });
+          const analyzer = context.createAnalyser();
+          analyzer.fftSize = 2048;
+          Reflect.apply(nativeConnect, this, [analyzer]);
+          state.taps.push({ node: this, context, analyzer, samples: new Float32Array(analyzer.fftSize) });
           seen.add(this);
         } catch { /* A failed observer never changes the page's audio route. */ }
       }
@@ -97,7 +97,7 @@ const AUDIO_PROBE = `(() => {
   }
   const stats = () => {
     const taps = state.taps.map((tap, index) => {
-      tap.analyser.getFloatTimeDomainData(tap.samples);
+      tap.analyzer.getFloatTimeDomainData(tap.samples);
       let square = 0, peak = 0;
       for (const sample of tap.samples) {
         square += sample * sample;

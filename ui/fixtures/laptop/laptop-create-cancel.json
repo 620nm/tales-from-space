@@ -175,7 +175,7 @@
       "key": "End",
       "expect": {
         "value": "Air notes",
-        "actionCount": 1
+        "actionCount": 2
       }
     }
   ]

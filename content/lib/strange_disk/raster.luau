@@ -1,13 +1,9 @@
 -- Adapted from TempleOS GodDoodle.HC:Adam/God/GodDoodle.HC:96-181.
-export type Raster = { width: number, height: number, palette: { string }, pixels: string }
+export type Raster = IndexedBitmap
 export type Random = (count: number) -> number
-export type Operation =
-	{ kind: "line", x0: number, y0: number, x1: number, y1: number, color: number }
-	| { kind: "ellipse_outline", cx: number, cy: number, rx: number, ry: number, inner_ratio_sq: number, color: number }
-	| { kind: "rectangle_border", x0: number, y0: number, x1: number, y1: number, color: number }
-	| { kind: "flood_fill", start_index: number, color: number }
+export type Operation = BitmapRasterOperation
 export type Rasterize = (bitmap: Raster, operations: { Operation }) -> Raster
-export type ModeFilter = (bitmap: Raster, options: { radius: number, tie: "lowest" | "highest" }) -> Raster
+export type ModeFilter = (bitmap: Raster, options: BitmapFilterOptions) -> Raster
 
 local raster = {}
 local WIDTH, HEIGHT = 64, 48

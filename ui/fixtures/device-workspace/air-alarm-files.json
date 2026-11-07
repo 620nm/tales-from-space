@@ -157,7 +157,7 @@
       "type": "click",
       "id": "doc/1/1/workspace/files",
       "expect": {
-        "actionCount": 0
+        "actionCount": 1
       }
     }
   ]
