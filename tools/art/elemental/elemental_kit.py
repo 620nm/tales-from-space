@@ -377,35 +377,8 @@ def validate_spec(
     return layer_order, layer_props, used_hexes
 
 
-# Run after drawing: every layer's repeated drawing becomes ONE image linked across its
-# frames (docs/art-reference/aseprite-documents.md "One drawing is one image").
-LINK_REPEATED_CELS_LUA = """
-local s = app.activeSprite
-for _, l in ipairs(s.layers) do
-  local groups, order = {}, {}
-  for _, c in ipairs(l.cels) do
-    local h = { c.position.x, c.position.y, c.opacity }
-    for it in c.image:pixels() do
-      local v = it()
-      if app.pixelColor.rgbaA(v) > 0 then h[#h + 1] = it.x .. "," .. it.y .. ":" .. v end
-    end
-    local k = table.concat(h, ";")
-    if not groups[k] then groups[k] = {}; order[#order + 1] = k end
-    table.insert(groups[k], c.frame)
-  end
-  for _, k in ipairs(order) do
-    if #groups[k] > 1 then
-      app.activeLayer = l
-      app.range:clear()
-      app.range.layers = { l }
-      app.range.frames = groups[k]
-      app.command.LinkCels()
-    end
-  end
-end
-s:saveAs(s.filename)
-print("linked")
-"""
+# Run after drawing: links every repeated cel (shared by the art kits).
+LINK_REPEATED_CELS_LUA = (ELEMENTAL_DIR.parent / "link_repeated_cels.lua").read_text(encoding="utf-8")
 
 
 async def draw_source(

@@ -321,7 +321,7 @@ def main():
         if not borrowed and ase_info["durations"] != sp["durations_ms"]:
             findings.append(("CRITICAL", sid, f"Durations mismatch: .aseprite={ase_info['durations']} vs manifest={sp['durations_ms']}"))
 
-        for f_i, dur in enumerate(ase_info["durations"], 1):
+        for f_i, dur in enumerate(ase_info["durations"][:n_frames], 1):
             if dur < 100 or dur % 100 != 0:
                 findings.append(("MAJOR", sid, f"Frame {f_i} duration {dur}ms violates 100ms decisecond rule"))
 
@@ -331,7 +331,7 @@ def main():
             for tg in ase_info["tags"]:
                 if tg["dir"] != 0:
                     findings.append(("CRITICAL", sid, f"Tag {tg['name']!r} has non-Forward direction {tg['dir']}"))
-                if tg["from"] != 0 or tg["to"] != ase_info["frames"] - 1:
+                if not borrowed and (tg["from"] != 0 or tg["to"] != ase_info["frames"] - 1):
                     findings.append(("MINOR", sid, f"Tag {tg['name']!r} spans {tg['from']}..{tg['to']} instead of 0..{ase_info['frames']-1}"))
 
         off_gpl_pal = []

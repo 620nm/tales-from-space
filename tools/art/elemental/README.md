@@ -65,7 +65,8 @@ exports just those ids and leaves the domain manifest and board untouched.
 A drawn source follows [docs/art-reference/aseprite-documents.md](../../../docs/art-reference/aseprite-documents.md):
 a layer gets no cel on a frame where its spec rows are all `.`, and after drawing,
 every repeated drawing in a layer is one image linked across its frames
-(`LINK_REPEATED_CELS_LUA`). The audit reads linked cels like any other.
+(`tools/art/link_repeated_cels.lua`, shared with the drainage and terrestrial
+kits). The audit reads linked cels like any other.
 
 A one-frame still whose spec sets `first_frame_of: "<id>"` has no file of its own:
 `load_sprites` refuses it unless its frame equals that sprite's frame 1 layer for layer
