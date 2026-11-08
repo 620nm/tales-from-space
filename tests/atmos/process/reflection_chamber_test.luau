@@ -1,4 +1,5 @@
 local network_matter = require("@helpers/network_matter")
+local ui_controls = require("@helpers/ui_controls")
 
 local function has_item(x: number, y: number, id: string): boolean
     for _, name in ipairs(t.items_at(x, y)) do
@@ -29,6 +30,15 @@ end
 local function click_structure(p: number, x: number, y: number, id: string)
     local target = assert(t.target_at(p, x, y, id), "expected structure " .. id)
     t.click(p, x, y, target)
+    t.run_ticks(2)
+end
+
+local function toggle_chamber(player: number)
+    if t.ui_document(player) == nil then
+        click_structure(player, 2, 2, "reflection_chamber")
+    end
+    assert(t.ui_document(player) ~= nil, "the chamber's tank window opens")
+    ui_controls.toggle(player, "action", "toggle_power")
     t.run_ticks(2)
 end
 
@@ -107,7 +117,28 @@ t.tick()
 assert(bit32.band(assert(t.network_joined(1, 2, "pipe", "l3")), 4) ~= 0, "west l3 still joined after alt-click")
 assert(t.network_joined(2, 1, "pipe", "l3") == 0, "north l3 still unjoined after alt-click")
 
+-- A placed chamber starts switched off: its charge can flow, but the
+-- reflector adds no heat until a player engages it.
+local ex_off = assert(t.examine(p1, 2, 2, chamber_target))
+assert(table.concat(ex_off.lines, " "):find("switched off", 1, true) ~= nil, "the chamber starts switched off")
 t.run_seconds(3.0)
+local off_temp = assert(t.vessel_at(2, 2, "reflection_chamber")).temp_k
+assert(off_temp <= 380.1, "a switched-off chamber adds no heat")
+toggle_chamber(p1)
+t.run_seconds(2.0)
+assert(assert(t.structure_at(2, 2)).state == "subcritical", "the tank-window switch engages the chamber")
+assert(
+    assert(t.vessel_at(2, 2, "reflection_chamber")).temp_k > off_temp + 0.5,
+    "an engaged chamber heats its charge"
+)
+toggle_chamber(p1)
+assert(assert(t.structure_at(2, 2)).state == "standby", "the switch disengages it")
+local stopped_temp = assert(t.vessel_at(2, 2, "reflection_chamber")).temp_k
+t.run_seconds(2.0)
+assert(
+    assert(t.vessel_at(2, 2, "reflection_chamber")).temp_k <= stopped_temp + 0.5,
+    "a disengaged chamber stops adding heat"
+)
 local tank_p = assert(t.tank_pressure(2, 2))
 assert(math.abs(assert(network_matter.pressure(1, 2, "l3")) - tank_p) < 5.0, "west l3 equalizes pressure")
 assert(math.abs(assert(network_matter.pressure(3, 2, "l3")) - tank_p) < 5.0, "east l3 equalizes pressure")
@@ -160,9 +191,9 @@ local THERMAL_WORLD = [==[(
             structures: [
                 (1, 2, "player_spawn"),
                 (1, 1, "reflection_chamber", { "blend": "n2_inert" }),
-                (3, 1, "reflection_chamber", { "blend": "uf6_low" }),
-                (5, 1, "reflection_chamber", { "blend": "uf6_double" }),
-                (7, 1, "reflection_chamber", { "blend": "uf6_ladder" }),
+                (3, 1, "reflection_chamber", { "blend": "uf6_low", "engaged": true }),
+                (5, 1, "reflection_chamber", { "blend": "uf6_double", "engaged": true }),
+                (7, 1, "reflection_chamber", { "blend": "uf6_ladder", "engaged": true }),
             ],
         ),
     ],
@@ -232,7 +263,7 @@ local BUILD_WORLD = [==[(
             ],
             structures: [
                 (2, 2, "player_spawn"),
-                (3, 1, "reflection_chamber", { "blend": "uf6_active" }),
+                (3, 1, "reflection_chamber", { "blend": "uf6_active", "engaged": true }),
                 (1, 1, "machine_frame"),
             ],
             items: [
@@ -341,7 +372,7 @@ local RUPTURE_WORLD = [==[(
                 (2, 1, "player_spawn"),
                 (1, 2, "stationary_tank", { "blend": "co2_tracer" }),
                 (2, 2, "manual_valve"),
-                (4, 2, "reflection_chamber", { "blend": "uf6_overpressure" }),
+                (4, 2, "reflection_chamber", { "blend": "uf6_overpressure", "engaged": true }),
             ],
         ),
     ],
@@ -399,7 +430,7 @@ local PLACED_WORLD = [==[(
             structures: [
                 (1, 2, "player_spawn"),
                 (1, 1, "reflection_chamber", "supercritical", { "blend": "n2_inert" }),
-                (3, 1, "reflection_chamber", "standby", { "blend": "uf6_hot" }),
+                (3, 1, "reflection_chamber", "standby", { "blend": "uf6_hot", "engaged": true }),
                 (5, 1, "reflection_chamber", "open", { "blend": "uf6_hot" }),
                 (7, 1, "reflection_chamber", "destroyed"),
             ],
@@ -421,3 +452,32 @@ assert(assert(t.structure_at(7, 1)).sprite == "reflection_chamber_destroyed", "d
 
 local ex_synced = assert(t.examine(p5, 3, 1, assert(t.target_at(p5, 3, 1, "reflection_chamber"))))
 assert(table.concat(ex_synced.lines, " "):find("supercritical", 1, true) ~= nil, "examine reports live band")
+
+-- ---------------------------------------------------------------------------
+-- 6. An empty chamber mapped in a thermal band falls back to standby
+-- ---------------------------------------------------------------------------
+t.world([==[(
+    name: "reflection chamber empty",
+    legend: {
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '.': (composition: (components: [(component: "station_base")])),
+    },
+    levels: [
+        (
+            rows: ["#####", "#...#", "#...#", "#...#", "#####"],
+            structures: [
+                (1, 1, "player_spawn"),
+                (2, 2, "reflection_chamber", "subcritical"),
+            ],
+        ),
+    ],
+)]==], 0)
+local p6 = t.join()
+t.run_seconds(2.0)
+assert(assert(t.structure_at(2, 2)).state == "standby", "an empty chamber does not retain a thermal band")
+local ex_empty = assert(t.examine(p6, 2, 2, assert(t.target_at(p6, 2, 2, "reflection_chamber"))))
+assert(
+    table.concat(ex_empty.lines, " "):find("switched off", 1, true) ~= nil,
+    "a mapped thermal band is not a switch grant"
+)
+assert(assert(t.structure_at(2, 2)).sprite == "reflection_chamber", "empty chamber standby sprite")

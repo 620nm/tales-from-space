@@ -7,6 +7,7 @@ if sim ~= nil then
         sim.define("message", key, { placeholders = {} })
     end
     sim.define("script_var", "lunatic/tfs:reflection_watching", { replicate = "server" })
+    sim.define("script_var", reflection_chamber.ENABLED_VAR, { replicate = "sight" })
     local behavior =
         sim.define("behavior", "lunatic/tfs:reflection_chamber", { prototype = "reflection_chamber" })
     behavior:handle(
@@ -16,6 +17,11 @@ if sim ~= nil then
     )
     behavior:handle("structure.changed", { kind = "react" }, reflection_chamber.on_changed)
     behavior:handle("examine.lines", { kind = "transform" }, reflection_chamber.examine_lines)
+    behavior:handle(
+        "interaction.act",
+        { kind = "replace", route = "act" },
+        reflection_chamber.toggle_power
+    )
 end
 
 return content

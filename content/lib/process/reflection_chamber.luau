@@ -10,6 +10,16 @@ local CRITICAL_K = 600.0
 local OVERHEATED_K = 1100.0
 local SUPERCRITICAL_K = 1800.0
 local WATCH_VAR = "reflection_watching"
+-- The chamber's switch position. The prototype's `engaged` placement flag
+-- writes this same var, so a map can place a chamber already running
+-- without making a thermal band a placed variant.
+local ENABLED_VAR = "lunatic/tfs:reflection_enabled"
+local OPERATIONAL_STATES: { [string]: boolean } = {
+    subcritical = true,
+    critical = true,
+    overheated = true,
+    supercritical = true,
+}
 
 reflection_chamber.PASS_SECONDS = PASS_SECONDS
 reflection_chamber.MIN_UF6_MOL = MIN_UF6_MOL
@@ -19,6 +29,7 @@ reflection_chamber.CRITICAL_K = CRITICAL_K
 reflection_chamber.OVERHEATED_K = OVERHEATED_K
 reflection_chamber.SUPERCRITICAL_K = SUPERCRITICAL_K
 reflection_chamber.WATCH_VAR = WATCH_VAR
+reflection_chamber.ENABLED_VAR = ENABLED_VAR
 
 local STATUS_BY_STATE: { [string]: string } = {
     standby = "lunatic/tfs:lib.reflection_chamber.status_standby",
@@ -32,6 +43,10 @@ local STATUS_BY_STATE: { [string]: string } = {
 }
 
 local MESSAGE_KEYS: { string } = {
+    "lunatic/tfs:lib.reflection_chamber.status_on",
+    "lunatic/tfs:lib.reflection_chamber.status_off",
+    "lunatic/tfs:lib.reflection_chamber.enabled",
+    "lunatic/tfs:lib.reflection_chamber.disabled",
     "lunatic/tfs:lib.reflection_chamber.status_standby",
     "lunatic/tfs:lib.reflection_chamber.status_subcritical",
     "lunatic/tfs:lib.reflection_chamber.status_critical",
@@ -52,6 +67,29 @@ local function uf6_moles(reading: MatterRead): number
         return 0
     end
     return (u.gas or 0) + (u.liquid or 0) + (u.solid or 0)
+end
+
+function reflection_chamber.enabled(chamber: Handle): boolean
+    return sim.var(chamber, ENABLED_VAR) == true
+end
+
+-- The switch in the chamber's tank window: engage or disengage the
+-- reflector without venting or opening the machine to stop it.
+function reflection_chamber.toggle_power(ev: InteractionActPayload): boolean | { replaced: boolean }
+    if ev.action ~= "toggle_power" then
+        return { replaced = false }
+    end
+    local chamber = ev.subject
+    local engaged = not reflection_chamber.enabled(chamber)
+    sim.script_var.set({ scope = chamber, key = ENABLED_VAR, value = engaged })
+    if not engaged and OPERATIONAL_STATES[chamber.state or ""] then
+        sim.appearance.set_state({ entity = chamber, state = "standby" })
+    end
+    local key = if engaged
+        then "lunatic/tfs:lib.reflection_chamber.enabled"
+        else "lunatic/tfs:lib.reflection_chamber.disabled"
+    sim.message.send({ recipient = ev.actor, message = sim.msg(key, {}) })
+    return true
 end
 
 local function state_for_temperature(temp_k: number): string
@@ -78,9 +116,9 @@ local function step_chamber(chamber: Handle, add_heat: boolean): boolean
         return true
     end
     local reading = sim.matter_read(chamber)
-    if reading ~= nil then
+    local next_state = "standby"
+    if reading ~= nil and reflection_chamber.enabled(chamber) then
         local n_uf6 = uf6_moles(reading)
-        local next_state = "standby"
         if n_uf6 >= MIN_UF6_MOL then
             if add_heat then
                 local watts = QUAD_W_PER_MOL2 * n_uf6 * n_uf6 + LINEAR_W_PER_MOL * n_uf6
@@ -88,9 +126,9 @@ local function step_chamber(chamber: Handle, add_heat: boolean): boolean
             end
             next_state = state_for_temperature(reading.temp_k)
         end
-        if chamber.state ~= next_state then
-            sim.appearance.set_state({ entity = chamber, state = next_state })
-        end
+    end
+    if chamber.state ~= next_state then
+        sim.appearance.set_state({ entity = chamber, state = next_state })
     end
     return true
 end
@@ -132,6 +170,12 @@ function reflection_chamber.examine_lines(ev: ExamineLinesPayload): { lines: { E
     local key = STATUS_BY_STATE[ev.subject.state or "standby"]
     if key ~= nil then
         table.insert(lines, { key = key, message = sim.msg(key, {}) })
+    end
+    if ev.subject.state ~= "open" then
+        local switch = if reflection_chamber.enabled(ev.subject)
+            then "lunatic/tfs:lib.reflection_chamber.status_on"
+            else "lunatic/tfs:lib.reflection_chamber.status_off"
+        table.insert(lines, { key = switch, message = sim.msg(switch, {}) })
     end
     return { lines = lines }
 end

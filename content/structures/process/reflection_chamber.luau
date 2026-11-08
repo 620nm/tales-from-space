@@ -1,4 +1,5 @@
 local assembly = require("@lib/assembly")
+local reflection_chamber = require("@lib/process/reflection_chamber")
 
 return {
     id = "reflection_chamber",
@@ -7,7 +8,12 @@ return {
     sprite = "reflection_chamber",
     visual_layer = "fixture",
     script = "reflection_chamber",
-    ui = { modules = { "tank" } },
+    ui = {
+        modules = { "tank", "actions" },
+        actions = {
+            { key = "toggle_power", label = "lunatic/tfs:action.reflection_chamber.toggle_power" },
+        },
+    },
     dense = true,
     facings = { "east" },
     examine = {
@@ -29,6 +35,16 @@ return {
         "critical",
         "overheated",
         "supercritical",
+    },
+    -- A map places a chamber already engaged without choosing a thermal
+    -- band as a variant; the band stays a live condition of its charge.
+    placement = {
+        engaged = {
+            var = reflection_chamber.ENABLED_VAR,
+            kind = "flag",
+            default = false,
+            label = "lunatic/tfs:editor.reflection_chamber.engaged",
+        },
     },
     passable = { "broken", "destroyed" },
     state_sprites = {
