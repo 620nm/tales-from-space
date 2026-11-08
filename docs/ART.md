@@ -6,8 +6,9 @@ drawn in tgstation's idiom at the revision `assets/tg-revision` pins
 (`3c5ff70be69`); where this file diverges, chiefly in color identity
 and indicator restraint, it wins. The unified palette is
 [tales-from-space.gpl](art-reference/palettes/tales-from-space.gpl);
-visual plates, coordinate tables, the file icon recipe and provenance
-live in [art-reference](art-reference/README.md).
+[aseprite-documents.md](art-reference/aseprite-documents.md) lays out an
+original's layers and tags; plates, coordinate tables, the file icon
+recipe and provenance live in [art-reference](art-reference/README.md).
 
 ## tg's current direction
 

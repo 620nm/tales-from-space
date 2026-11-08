@@ -19,6 +19,9 @@ palette rules, animation timing and LED restraint policy. Nothing here ships.
   - **Swatch naming**: Aseprite's C++ `.gpl` loader reads swatch names with
     whitespace-delimited `operator>>`, so every swatch name is a single
     hyphenated token (`structure-1-outline`, `eng-yellow-3`).
+- [aseprite-documents.md](aseprite-documents.md) holds the layer and tag layout of
+  every first-party `.aseprite`: tags as DMI states, cels only on the tags that
+  show them, linked static parts, and no baked pipe stubs or seated cells.
 - [elemental-asset-guide.md](elemental-asset-guide.md) holds the ground, water,
   air and fire art rules, importer arms and tile-connectivity mechanisms;
   [elemental-source-inventory.md](elemental-source-inventory.md) lists the

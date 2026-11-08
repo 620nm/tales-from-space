@@ -50,14 +50,20 @@
         ("steam_generator_on", Png("art/bench/steam_generator_on.png")),
         ("steam_generator_on_loaded", Png("art/bench/steam_generator_on_loaded.png")),
 
-        // The life support power unit (LSPU): a 5-layer inline manifold
-        // hub (`manifoldlayer_center` outer pipe joints across tracks
-        // l1..l5) boxed in a full-width `engi_e_crate` electrical
-        // housing with a screwdriver-shut maintenance panel over a
-        // `ccharger`-style cell bay and a 2x2 corner status LED. Two
-        // axes (`_ns`, `_ew`), six closed status-LED states (steady and
-        // blinking green, yellow, and red), and open-panel states with
-        // and without a cell seated on the bottom contacts.
+        // The life support power unit (LSPU): a full-width
+        // `engi_e_crate` electrical housing with a screwdriver-shut
+        // maintenance panel over a `ccharger`-style cell bay and a 2x2
+        // corner status LED. Two axes (`_ns`, `_ew`), six closed
+        // status-LED states (steady and blinking green, yellow, and
+        // red), and two open-panel LED states.
+        //
+        // The body is BARE, as every in-line atmos body is
+        // (20-atmos-inline-devices.ron): the engine underlays its pipe
+        // mouths per port. The bay is EMPTY: a seated cell is tg's own
+        // `cell_charger.dmi` cell, overlaid at no offset as the charger
+        // does (cell_charger.dm:21), so `open_cell` and `open_empty`
+        // differ only in the LED. Layout:
+        // docs/art-reference/aseprite-documents.md.
         ("lspu_powered_ready_ns", Ase("@life_support_power_unit", "powered_ready_ns")),
         ("lspu_powered_ready_ew", Ase("@life_support_power_unit", "powered_ready_ew")),
         ("lspu_powered_active_ns", AseAnim("@life_support_power_unit", "powered_active_ns")),
