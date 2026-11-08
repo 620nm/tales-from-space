@@ -6,7 +6,7 @@
 --
 -- Paint is not decoration on this station. Two pipe ends only join when
 -- their colors agree or one of them is unpainted (tg's
--- `is_connectable`, ported in crates/lunatic-conduit/src/pipes/paint.rs),
+-- `is_connectable`, ported in crates/lunatic-conduit-pipe/src/paint.rs),
 -- which is what makes a stripe of the wrong color across a
 -- distribution main CUT it. Very useful, until the day you actually
 -- want the blue supply and the red waste line to meet and every
