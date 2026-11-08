@@ -175,11 +175,17 @@ release_lock() {
 # others read always run: the build, the bake, the roster document and the
 # compiled interface. An engine without carry.sh keeps nothing.
 CARRY_PRODUCERS="build bake roster pack-ui-build"
-# What these lanes run against beyond this pack's own tree: the engine's.
+# What these lanes run against beyond this pack's own tree: the engine's
+# checkout, its compiled client, web shell and web packages, which this
+# gate never builds, and its toolchain. An unknown engine tree keeps nothing.
 pack_carry_inputs() {
-  printf 'engine tree %s\n' "$(cd "$ENGINE" && prov_snapshot && printf '%s' "$PROV_WORK_TREE")"
+  (cd "$ENGINE" && prov_snapshot && carry_checkout engine) &&
+    carry_files 'engine web/pkg' "$ENGINE/web/pkg" &&
+    carry_files 'engine web/dist' "$ENGINE/web/dist" &&
+    carry_files 'engine web/node_modules' "$ENGINE/web/node_modules/.package-lock.json"
 }
 CARRY_EXTRA=pack_carry_inputs
+CARRY_TOOLCHAIN_DIR=$ENGINE
 if [ -f "$ENGINE/tools/gate/carry.sh" ]; then
   . "$ENGINE/tools/gate/carry.sh"
 else
@@ -198,8 +204,8 @@ trap 'run_log_interrupted SIGTERM; carry_seal; release_lock; exit 143' TERM
 if [ -f "$ENGINE/tools/gate/machine-lock.sh" ]; then
   . "$ENGINE/tools/gate/machine-lock.sh"
   trap 'machine_lock_release; release_lock' EXIT
-  trap 'run_log_interrupted SIGINT; carry_seal; machine_lock_release; release_lock; exit 130' INT
-  trap 'run_log_interrupted SIGTERM; carry_seal; machine_lock_release; release_lock; exit 143' TERM
+  trap 'run_log_interrupted SIGINT; machine_lock_release; carry_seal; release_lock; exit 130' INT
+  trap 'run_log_interrupted SIGTERM; machine_lock_release; carry_seal; release_lock; exit 143' TERM
   machine_lock_acquire "pack gate in $PACK (engine $ENGINE): ${ONLY:-all lanes}"
   gate_full_width
 else
@@ -266,12 +272,16 @@ want() {
 }
 
 # run NAME COMMAND... -- one status line, output to a log, status returned.
+# A lane green on these inputs before is kept instead. While it runs,
+# SKIPPED is its own file, so the skips it declares are kept with its green.
 run() {
   name=$1
   shift
   want "$name" || return 0
   carry_kept "$name" && return 0
   start=$(now_ms)
+  SKIPPED=$RUN_DIR/skipped.$name
+  : > "$SKIPPED"
   if [ "$VERBOSE" = 1 ]; then
     printf '\n== %s ==\n' "$name"
     "$@"
@@ -280,11 +290,13 @@ run() {
     { run_log_stamp "$name"; "$@"; } > "$LOGS/$name.log" 2>&1
     rc=$?
   fi
+  SKIPPED=$RUN_DIR/skipped
+  cat "$SKIPPED.$name" >> "$SKIPPED"
   elapsed=$(took "$(( $(now_ms) - start ))")
   if [ "$rc" -eq 0 ]; then
     status_line 'ok    %-22s %8s\n' "$name" "$elapsed"
     printf '%s\n' "$name" >> "$RAN"
-    carry_green "$name"
+    carry_green "$name" "$SKIPPED.$name"
   else
     status_line 'FAIL  %-22s %8s\n' "$name" "$elapsed"
     printf '%s\n' "$name" >> "$FAILED"

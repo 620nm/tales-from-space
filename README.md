@@ -141,9 +141,10 @@ A run in which nothing executed prints `NOTHING RAN` and exits 1 rather than
 a green banner, so a mistyped lane name and a wholly blocked selection are
 both visible.
 
-A lane green before on these exact inputs (this pack's tree, the engine's,
-the toolchain) prints `kept` and does not run, so a rerun after a red or
-interrupted full run runs only the rest. `build`, `bake`, `roster` and
+A lane green before on these exact inputs (this pack's tree, the engine's
+checkout and the client and shell it built, the toolchain, the environment)
+prints `kept`, repeats the skips it declared, and does not run, so a rerun
+after a red or interrupted full run runs only the rest. `build`, `bake`, `roster` and
 `pack-ui-build` always run, since later lanes read what they produce, and
 only a run that ran all four records its greens: a filtered run may read
 an older bake. `GATE_FRESH=1` keeps nothing. The contract is the engine's
