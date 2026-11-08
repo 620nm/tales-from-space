@@ -578,6 +578,8 @@ async def draw_source(
     for f_idx, fspec in enumerate(frames_spec, start=1):
         await mcp_call(session, "set_frame_duration", {"filename": fn, "frame_index": f_idx, "duration_ms": int(fspec.get("duration_ms", 200))})
         for lspec in fspec["layers"]:
+            if all(ch == "." for row in lspec["rows"] for ch in row):
+                continue  # a layer has no cel on a frame it leaves blank
             await mcp_call(session, "draw_rows", {"filename": fn, "layer_name": lspec["name"], "frame_index": f_idx, "x": 0, "y": 0, "rows": lspec["rows"], "legend": lspec["legend"]})
 
     await mcp_call(session, "set_tag", {"filename": fn, "name": bake_tag(spec), "from_frame": 1, "to_frame": len(frames_spec), "direction": "forward"})
