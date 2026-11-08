@@ -26,9 +26,10 @@
     ],
     sprites: [
         // Glass, its reinforced form, and the rods a grille is woven
-        // from. The window states come from tg's SMOOTHED sheet at
+        // from. The clear window states come from tg's SMOOTHED sheet at
         // variant 0 -- the isolated pane, which is the one that reads
-        // correctly when nothing adjoins it. We do not smooth yet.
+        // correctly when nothing adjoins it; clear panes do not smooth
+        // yet. Lead-glass panes smooth (90-smooth-structures.ron).
         ("glass", Dmi("@stack_objects", "sheet-glass", 0)),
         ("rglass", Dmi("@stack_objects", "sheet-rglass", 0)),
         ("lead_glass", Ase("art/items/materials/lead_glass_sheet.aseprite", "idle")),
@@ -41,8 +42,6 @@
         ("grille", Dmi("@structures", "grille", 0)),
         ("window", Dmi("@window", "window-0", 0)),
         ("rwindow", Dmi("@reinforced_window", "reinforced_window-0", 0)),
-        ("lead_window", Ase("art/turf/lead_window.aseprite", "0")),
-        ("rlead_window", Ase("art/turf/reinforced_lead_window.aseprite", "0")),
         ("held_glass_l_s", Dmi("@sheets_l", "sheet-glass", 0)),
         ("held_glass_l_n", Dmi("@sheets_l", "sheet-glass", 1)),
         ("held_glass_l_e", Dmi("@sheets_l", "sheet-glass", 2)),

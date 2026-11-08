@@ -244,7 +244,7 @@ take(p, 1, 1, "lead_glass")
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "grille")))
 t.run_seconds(2.5)
 assert(assert(t.structure_at(2, 1)).id == "lead_glass_grille", "lead glass swaps in lead_glass_grille")
-assert_layers(2, 1, "lead_glass_grille", "lead_window")
+assert_layers(2, 1, "lead_glass_grille", "lead_window-0")
 
 take(p, 1, 3, "crowbar")
 t.messages(p)
@@ -277,7 +277,7 @@ assert(
     assert(t.structure_at(2, 3)).id == "reinforced_lead_glass_grille",
     "reinforced lead glass swaps in"
 )
-assert_layers(2, 3, "reinforced_lead_glass_grille", "rlead_window")
+assert_layers(2, 3, "reinforced_lead_glass_grille", "rlead_window-0")
 
 take(p, 1, 2, "welder")
 t.use_self(p)
@@ -299,3 +299,58 @@ t.run_seconds(4.5)
 restored = assert(t.structure_at(2, 3))
 assert(restored.id == "grille" and restored.state == "bolted", "five-tool ladder leaves a bolted grille")
 assert(t.item_at(2, 3, "reinforced_lead_glass") ~= nil, "reinforced_lead_glass sheets recovered")
+
+-- ---------------------------------------------------------------
+-- Lead glass panes in a row join as one window: the pane over each
+-- grille wears its junction, plain and reinforced alike, and keeps it
+-- through a state change.
+-- ---------------------------------------------------------------
+t.world(
+    [==[(
+    name: "lead window row",
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+    },
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [
+                (2, 2, "player_spawn"),
+                (1, 1, "lead_glass_grille", "glazed"),
+                (2, 1, "lead_glass_grille", "glazed"),
+                (3, 1, "reinforced_lead_glass_grille", "reinforced"),
+            ],
+            items: [
+                (1, 2, "screwdriver"),
+            ],
+        ),
+    ],
+)]==],
+    7
+)
+
+p = t.join()
+t.tick()
+
+-- tg's junction bits: east 4, west 8 (code/__DEFINES/icon_smoothing.dm).
+assert_layers(1, 1, "lead_glass_grille", "lead_window-4")
+assert_layers(2, 1, "lead_glass_grille", "lead_window-12")
+assert_layers(3, 1, "reinforced_lead_glass_grille", "rlead_window-8")
+
+take(p, 1, 2, "screwdriver")
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "lead_glass_grille")))
+t.run_seconds(4.5)
+assert(assert(t.structure_at(1, 1)).state == "unsealed", "lead glass unfastened")
+assert_layers(1, 1, "lead_glass_grille", "lead_window-4")
+
+-- Taking the middle pane away leaves both ends standing alone.
+assert(t.destroy(assert(t.structure_at(2, 1)).entity) == nil, "the middle pane is removed")
+t.tick()
+assert_layers(1, 1, "lead_glass_grille", "lead_window-0")
+assert_layers(3, 1, "reinforced_lead_glass_grille", "rlead_window-0")

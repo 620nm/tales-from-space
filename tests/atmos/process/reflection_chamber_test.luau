@@ -314,9 +314,11 @@ assert(built.state == "standby", "newly built chamber starts on standby")
 click_structure(p3, 1, 1, "reflection_chamber")
 assert(assert(t.structure_at(1, 1)).state == "open", "screwdriver opens standby panel")
 assert(assert(t.structure_at(1, 1)).sprite == "reflection_chamber", "open panel keeps the housing")
+assert(has_layer(p3, 1, 1, "reflection_chamber_panel_open"), "open panel draws its stripes")
 
 click_structure(p3, 1, 1, "reflection_chamber")
 assert(assert(t.structure_at(1, 1)).state == "standby", "screwdriver closes panel back to standby")
+assert(not has_layer(p3, 1, 1, "reflection_chamber_panel_open"), "closed panel hides its stripes")
 
 assert(assert(t.structure_at(3, 1)).state == "subcritical", "charged chamber is active")
 click_structure(p3, 3, 1, "reflection_chamber")
