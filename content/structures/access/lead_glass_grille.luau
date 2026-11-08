@@ -27,8 +27,16 @@ return {
         "unsealed",
     },
     state_sprites = {
-        glazed = { "grille", "lead_window" },
-        unsealed = { "grille", "lead_window" },
+        glazed = { "grille", "lead_window-0" },
+        unsealed = { "grille", "lead_window-0" },
+    },
+    -- The pane joins its neighbours as tg's fulltile windows do
+    -- (code/game/objects/structures/window.dm:752-754); the grille under
+    -- it stays whole, so the junction picture replaces the stack's pane.
+    smooth = {
+        group = "fulltile_windows",
+        sprites = "lead_window",
+        layer = 2,
     },
     examine = {
         flavor = "A bolted grille glazed with thick amber lead-silicate glass that attenuates ionizing radiation.",

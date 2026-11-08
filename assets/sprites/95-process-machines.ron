@@ -51,8 +51,9 @@
         // cold-steel housing and internal steel gas manifold (layer
         // `housing`, frame 1). It is also the body of the `subcritical`,
         // `critical`, `overheated`, `supercritical` and `open` states:
-        // `state_sprites` stacks the core and every gauge from the
-        // overlays below, so no state bakes a body of its own.
+        // `state_sprites` stacks the core, every gauge and the open
+        // panel from the overlays below, so no state bakes a body of
+        // its own.
         // `broken` and `destroyed` are their own layers and frames.
         // The 24 separated 32x48 recombination overlays (`core_*`,
         // `pipe_*`, `rad_*`, `dial_*`, `slag_*`, `press_*`,

@@ -83,7 +83,9 @@ return {
             "reflection_chamber_slag_choked",
             "reflection_chamber_press_danger",
         },
-        open = "reflection_chamber",
+        -- The deconstruction rung: the board is in and the panel is off,
+        -- so the housing wears its open-panel stripes.
+        open = { "reflection_chamber", "reflection_chamber_panel_open" },
         broken = "reflection_chamber_broken",
         destroyed = "reflection_chamber_destroyed",
     },

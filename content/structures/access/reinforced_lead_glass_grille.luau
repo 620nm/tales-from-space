@@ -33,11 +33,19 @@ return {
         "cut",
     },
     state_sprites = {
-        reinforced = { "grille", "rlead_window" },
-        heated = { "grille", "rlead_window" },
-        unscrewed = { "grille", "rlead_window" },
-        popped = { "grille", "rlead_window" },
-        cut = { "grille", "rlead_window" },
+        reinforced = { "grille", "rlead_window-0" },
+        heated = { "grille", "rlead_window-0" },
+        unscrewed = { "grille", "rlead_window-0" },
+        popped = { "grille", "rlead_window-0" },
+        cut = { "grille", "rlead_window-0" },
+    },
+    -- The pane joins its neighbours as tg's fulltile windows do
+    -- (code/game/objects/structures/window.dm:752-754); the grille under
+    -- it stays whole, so the junction picture replaces the stack's pane.
+    smooth = {
+        group = "fulltile_windows",
+        sprites = "rlead_window",
+        layer = 2,
     },
     examine = {
         flavor = "A bolted grille set with rod-reinforced amber lead-silicate glass for high-integrity radiation shielding.",
