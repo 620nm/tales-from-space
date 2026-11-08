@@ -3,7 +3,7 @@ import type { Label } from "./labels";
 
 // Consumed document fields: lunatic crates/lunatic-server/src/sim/ui/settings.rs
 // (`to_json`, `push_json`), ui/settings/files.rs, ui/vending.rs, build.rs,
-// crates/lunatic-core/src/protocol/matter.rs and
+// crates/lunatic-network/src/messages/matter.rs and
 // crates/lunatic-core/src/matter_contents.rs; docs/tgui/documents.md.
 export interface DocumentIdentity {
   id: number;

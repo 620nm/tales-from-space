@@ -14,7 +14,7 @@
 -- (code/__DEFINES/atmospherics/atmos_mapping_helpers.dm:14).
 --
 -- The id is the one the engine migrates an old zero-pressure map entry
--- onto (lunatic_core::map::blend), so a map written before blends
+-- onto (lunatic_map::blend), so a map written before blends
 -- existed lands on this file rather than on one nobody named.
 return {
     id = "vacuum",
