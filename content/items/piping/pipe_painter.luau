@@ -9,7 +9,7 @@ local pipe_paints = require("@lib/pipe_paints")
 -- it is more than that, because color is not a label here: two pipe
 -- ends only join when their paint agrees or one of them is omni (tg's
 -- `is_connectable`, atmosmachinery.dm:335-354, ported in
--- crates/lunatic-server/src/pipes/paint.rs). So a stripe of the wrong
+-- crates/lunatic-conduit/src/pipes/paint.rs). So a stripe of the wrong
 -- color across a distribution main CUTS it, and the line still looks
 -- whole. Paint carefully.
 --

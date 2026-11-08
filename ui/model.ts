@@ -25,8 +25,12 @@ export interface HoverAction {
   detail?: ActionLabel | null;
 }
 
-// Consumed projections: lunatic crates/lunatic-client/src/ui.rs and
-// crates/lunatic-core/src/protocol/{messages,types}.rs; docs/PACK-UI.md.
+// Consumed engine projections: `crates/lunatic-client/src/ui.rs`,
+// `crates/lunatic-core/src/protocol/actions.rs`,
+// `crates/lunatic-core/src/protocol/messages.rs`,
+// `crates/lunatic-core/src/protocol/round.rs`, and
+// `crates/lunatic-core/src/protocol/wire_primitives.rs`; the engine's
+// `docs/PACK-UI.md` documents the contract.
 // Compile-time shapes, never runtime validators: every reader here
 // treats a field as absent rather than trusting it.
 export interface ItemFill {

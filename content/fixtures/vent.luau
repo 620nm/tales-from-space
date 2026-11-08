@@ -33,7 +33,7 @@ if sim ~= nil then
     -- NO `route`. A completion the engine queues re-enters on its own
     -- route, and a handler that names one is only offered occurrences
     -- that arrived by it -- which for this anchor is none at all
-    -- (crates/lunatic-server/src/script/mod.rs, the handler filter).
+    -- (crates/lunatic-script-host/src/host/handler_index.rs, the handler filter).
     script_definition:handle("atmos.hazard.done", { kind = "react" }, netmsg.report_hazard)
 end
 
