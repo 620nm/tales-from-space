@@ -25,7 +25,7 @@ export interface HoverAction {
   detail?: ActionLabel | null;
 }
 
-// Consumed projections: lunatic crates/lunatic-client-web/src/ui/mod.rs and
+// Consumed projections: lunatic crates/lunatic-client/src/ui.rs and
 // crates/lunatic-core/src/protocol/{messages,types}.rs; docs/PACK-UI.md.
 // Compile-time shapes, never runtime validators: every reader here
 // treats a field as absent rather than trusting it.

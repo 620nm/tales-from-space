@@ -428,7 +428,7 @@ roster_check() {
 # Whether the engine's palette test can be pointed at a web root. Until
 # it can, its ART half reads `Atlas::baked()`, which resolves the ENGINE
 # checkout's own served root at COMPILE time
-# (crates/lunatic-client-web/src/delivery.rs, `repo_web_root`) -- the wrong
+# (crates/lunatic-client/src/delivery.rs, `repo_web_root`) -- the wrong
 # pack's bake here. The probe reads the file that would read the
 # variable, so this arms itself with the engine change and needs no
 # edit here.
