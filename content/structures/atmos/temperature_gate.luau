@@ -19,13 +19,13 @@
 -- the pressure valve it approaches level and never crosses it -- the
 -- temperature decides WHETHER, and the plumbing decides how much.
 --
--- THE SENSOR CAN BE REVERSED. A multitool on the gate inverts it
--- (temperature_gate.dm:137-145) and the same device then passes only
--- what is HOTTER than its setting, which is the machine you put on the
--- other leg: heat leaves for the radiators, cold gas stays where it is
--- wanted. tg tells you which way round a gate is set on examine and
--- nowhere else; the panel here says so too, because a reversed gate at
--- 273 K and a broken one look identical from the corridor.
+-- THE SENSOR CAN BE REVERSED. The flow panel or a multitool on the gate
+-- inverts it (temperature_gate.dm:137-145), and the same device then
+-- passes only what is HOTTER than its setting, which is the machine you
+-- put on the other leg: heat leaves for the radiators, cold gas stays
+-- where it is wanted. The panel shows which way round the gate reads,
+-- because a reversed gate at 273 K and a broken one look identical from
+-- the corridor.
 --
 -- It draws power (the binary base's idle draw, which
 -- temperature_gate.dm does not override) and stops without it. That is

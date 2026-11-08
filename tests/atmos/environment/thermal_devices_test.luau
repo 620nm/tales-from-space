@@ -55,6 +55,18 @@ local function said(p, line)
     return false
 end
 
+local function sensor_toggle(value: unknown, inverted: boolean)
+    local panel = ui_controls.record(value)
+    local toggles = ui_controls.pressable(panel, "invert")
+    assert(#toggles == 1, "the gate panel has one disclosed sensor switch")
+    local toggle = toggles[1]
+    assert(toggle.on == inverted, "the sensor switch reflects the gate mode")
+    assert(word(toggle.label) == "flow.sensor", "the switch identifies the sensor")
+    assert(word(toggle.on_text) == "flow.sensor.reversed", "on passes hotter")
+    assert(word(toggle.off_text) == "flow.sensor.normal", "off passes colder")
+    return toggle
+end
+
 local function readout(value: unknown, label: string): string
     local panel = ui_controls.record(value)
     for _, r in ipairs(ui_controls.rows(panel.readouts)) do
@@ -137,6 +149,15 @@ local GATE_MAP = [==[(
 
 )]==]
 
+-- Reuse the gate run and change only its map-authored property.
+local INVERTED_GATE_MAP, gate_replacements = string.gsub(
+    GATE_MAP,
+    '%(3, 1, "temperature_gate"%)',
+    '(3, 1, "temperature_gate", {"inverted": true})',
+    1
+)
+assert(gate_replacements == 1, "the authored map overrides exactly one gate")
+
 local SUPPLY_M3 = net_m3(2, 1)
 local DELIVERY_M3 = net_m3(3, 1)
 
@@ -173,10 +194,9 @@ end
 -- freshly armed gate with head to spare passes NOTHING -- the gas in
 -- front of it is twenty degrees too warm.
 --
--- Then a multitool on the sensor (temperature_gate.dm:137-145) reverses
--- the test, and the same gate, at the same setting, with the same gas
--- in front of it, opens. Nothing about the machine changed but which
--- way round it reads.
+-- Then a multitool reverses the sensor, and the same gate, at the same
+-- setting, with the same gas in front of it, opens. The panel's switch
+-- is exercised on the map-authored gate below.
 -- ---------------------------------------------------------------
 t.world(GATE_MAP, 7)
 
@@ -199,10 +219,7 @@ assert(setpoint.unit == "K")
 near(ui_controls.number(setpoint.value), T0C, 0.01, "tg's T0C out of the crate")
 near(ui_controls.number(setpoint.max), 4500.0, 0.01, "tg's max_temperature")
 assert(ui_controls.number(setpoint.min) < 3.0, "and its floor is TCMB, not zero")
-assert(
-    readout(panel, "flow.sensor") == "flow.sensor.normal",
-    "the panel says which way round it reads, which tg hides on examine"
-)
+sensor_toggle(panel, false)
 
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
@@ -245,16 +262,63 @@ assert(
     "the books balance across the gate: " .. books .. " mol -> " .. after .. " mol"
 )
 
--- The panel says so too. A gate whose sensor is backwards and a gate
--- that is simply shut are otherwise identical from the corridor, which
--- is the one thing tg's interface cannot tell you.
+-- The panel reflects a multitool change too.
 t.drop(p)
 t.run_ticks(2)
 t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "temperature_gate")))
 t.tick()
 assert(
-    readout(ui_controls.state(p), "flow.sensor") == "flow.sensor.reversed",
-    "and the panel says the sensor is reversed"
+    sensor_toggle(ui_controls.state(p), true).on,
+    "the panel shows the multitool's reversed setting"
+)
+
+-- ---------------------------------------------------------------
+-- MAP-AUTHORED REVERSED MODE STARTS FROM THE OVERRIDE.
+-- ---------------------------------------------------------------
+t.world(INVERTED_GATE_MAP, 7)
+
+local authored = t.join()
+t.tick()
+assert(assert(t.structure_at(3, 1)).state == "shut", "the authored gate starts shut")
+local authored_supply, authored_delivery = charge_gate_map(authored)
+
+t.click(authored, 3, 1, assert(t.target_at(authored, 3, 1, "temperature_gate")))
+t.tick()
+sensor_toggle(ui_controls.state(authored), true)
+ui_controls.toggle(authored, "invert")
+t.run_ticks(2)
+sensor_toggle(ui_controls.state(authored), false)
+ui_controls.toggle(authored, "power")
+t.run_ticks(2)
+assert(assert(t.structure_at(3, 1)).state == "armed", "the authored gate is armed")
+t.run_seconds(30)
+near(
+    assert(network_matter.pressure(6, 1)),
+    authored_delivery,
+    0.5,
+    "the panel's normal mode blocks warm gas"
+)
+near(
+    assert(network_matter.pressure(1, 1)),
+    authored_supply,
+    0.5,
+    "blocked gas leaves the authored gate's supply untouched"
+)
+
+ui_controls.toggle(authored, "invert")
+t.run_ticks(2)
+sensor_toggle(ui_controls.state(authored), true)
+local reversed_supply = assert(network_matter.pressure(1, 1))
+local reversed_delivery = assert(network_matter.pressure(6, 1))
+t.run_seconds(60)
+local authored_out = assert(network_matter.pressure(6, 1))
+assert(
+    authored_out > reversed_delivery + 10.0,
+    "the panel's reversed mode passes warm gas: " .. reversed_delivery .. " -> " .. authored_out
+)
+assert(
+    assert(network_matter.pressure(1, 1)) < reversed_supply,
+    "the authored reversed gate draws from its supply"
 )
 
 -- ---------------------------------------------------------------
