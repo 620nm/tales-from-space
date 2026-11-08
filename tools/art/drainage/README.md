@@ -9,7 +9,7 @@ Everything generated lands in the pack's gitignored `target/art/drainage/` (`png
 
 | Path | Purpose |
 |---|---|
-| `drainage_kit.py` | Validates the specs, draws a missing source through Aseprite MCP, exports each source's frames and writes `manifests/<fixture>.json`. |
+| `drainage_kit.py` | Validates the specs, draws a missing source through Aseprite MCP in the guide's minimal layout (per-facing layers, no blank cels, linked repeats), exports each source's frames and writes `manifests/<fixture>.json`. |
 | `intake_validation.py` | Validates the intake: its two faces, its mouth caps and its two pixel libraries. |
 | `specs/spec_{floor_drain,scupper,sump_pump,intake_floor,intake_ceiling,intake_mouth_caps}.py` | `SPEC`: pixel rows, layers, durations and tags of one source. |
 | `specs/spec_intake_{head,vault}.py` | Pixel libraries: the head and the hatch that `intake_floor` and `intake_ceiling` draw. Validated, never exported. |

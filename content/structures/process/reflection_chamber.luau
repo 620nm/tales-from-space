@@ -50,7 +50,7 @@ return {
     state_sprites = {
         standby = "reflection_chamber",
         subcritical = {
-            "reflection_chamber_subcritical",
+            "reflection_chamber",
             "reflection_chamber_core_subcritical",
             "reflection_chamber_rad_green",
             "reflection_chamber_dial_low",
@@ -58,7 +58,7 @@ return {
             "reflection_chamber_press_low",
         },
         critical = {
-            "reflection_chamber_critical",
+            "reflection_chamber",
             "reflection_chamber_core_critical",
             "reflection_chamber_rad_green",
             "reflection_chamber_dial_nominal",
@@ -66,7 +66,7 @@ return {
             "reflection_chamber_press_nominal",
         },
         overheated = {
-            "reflection_chamber_overheated",
+            "reflection_chamber",
             "reflection_chamber_pipe_overheated",
             "reflection_chamber_core_critical",
             "reflection_chamber_rad_yellow",
@@ -75,7 +75,7 @@ return {
             "reflection_chamber_press_high",
         },
         supercritical = {
-            "reflection_chamber_supercritical",
+            "reflection_chamber",
             "reflection_chamber_pipe_supercritical",
             "reflection_chamber_core_supercritical",
             "reflection_chamber_rad_red",
@@ -83,7 +83,7 @@ return {
             "reflection_chamber_slag_choked",
             "reflection_chamber_press_danger",
         },
-        open = "reflection_chamber_open",
+        open = "reflection_chamber",
         broken = "reflection_chamber_broken",
         destroyed = "reflection_chamber_destroyed",
     },

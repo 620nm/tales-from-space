@@ -1,7 +1,7 @@
 # Elemental sprite tools
 
-Authors, exports and audits the elemental matter and fire sprites: 60 `.aseprite`
-sources under `assets/originals/art/matter/{gasses,liquids,solids}/` and
+Authors, exports and audits the elemental matter and fire sprites: 60 sprites from 57
+`.aseprite` sources under `assets/originals/art/matter/{gasses,liquids,solids}/` and
 `assets/originals/art/fx/fire/`. The art rules are
 [docs/art-reference/elemental-asset-guide.md](../../../docs/art-reference/elemental-asset-guide.md).
 Everything generated lands in the pack's gitignored `target/art/elemental/`
@@ -11,6 +11,7 @@ tracked.
 | Path | Purpose |
 |---|---|
 | `elemental_kit.py` | Per domain: validates the specs, exports each source's frames through Aseprite MCP, audits color, chroma and junction tiles, writes `manifests/<domain>.json` and a review board. |
+| `spec_loading.py` | `load_sprites`: imports a domain's specs, applies the seam patches and resolves `first_frame_of` stills; `bake_tag`. |
 | `specs/spec_{gasses,liquids,solids,fire}.py` | `SPRITES = [...]`: procedural pixel rows, layers, durations, tint samples and metadata per sprite. |
 | `build_gallery.py` | Bundles the manifests with `gallery/` into `target/art/elemental/gallery/`. `reading_thresholds()` is the one place the gallery's amounts (mL, mol) come from: it reads the game's `content/matter_appearances.luau`, so the gallery previews what the game draws. |
 | `luau_table.py` | The small reader for the data subset of Luau that `reading_thresholds()` uses; a form outside the subset raises with its line. |
@@ -61,6 +62,18 @@ domain from its spec and replaces the file, discarding hand edits and any tag or
 layer change; review the diff before committing the result. `--only ID` (repeatable)
 exports just those ids and leaves the domain manifest and board untouched.
 
+A drawn source follows [docs/art-reference/aseprite-documents.md](../../../docs/art-reference/aseprite-documents.md):
+a layer gets no cel on a frame where its spec rows are all `.`, and after drawing,
+every repeated drawing in a layer is one image linked across its frames
+(`tools/art/link_repeated_cels.lua`, shared with the drainage and terrestrial
+kits). The audit reads linked cels like any other.
+
+A one-frame still whose spec sets `first_frame_of: "<id>"` has no file of its own:
+`load_sprites` refuses it unless its frame equals that sprite's frame 1 layer for layer
+and pixel for pixel, then points its `ase_relpath` at that sprite's source. The kit
+draws owners first and exports a still's frame 1 only; the audit checks it as one
+untimed frame.
+
 ## Bake link
 
 The baker reads each `.aseprite` directly (tags are the states); no PNG is baked from
@@ -72,6 +85,8 @@ Every source carries exactly one forward tag over frames 1..N. A `single` is tag
 `idle` and rostered top-level (`Ase` for one frame, `AseAnim` for more); a `smooth_strip`
 is tagged `idle-s` (`bake_tag` in the kit) and rostered through `Slice(5, 1, ...)`, which
 mints `<name>_0_0` .. `<name>_0_4`. The roster is `assets/sprites/94-elemental.ron`.
+A `first_frame_of` still is rostered on its owner's file: `Ase(owner, "idle")` or, in
+the owner's `Slice` group, `Sprite(name, "idle", s)`; both read the tag's first frame.
 
 ```sh
 # a PNG strip per frame, the form the audits and gallery read

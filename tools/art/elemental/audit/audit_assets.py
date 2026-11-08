@@ -311,12 +311,17 @@ def main():
             findings.append(("CRITICAL", sid, f"Wrong canvas size {ase_info['width']}x{ase_info['height']}, expected {exp_w}x32"))
         if ase_info["depth"] != 32:
             findings.append(("CRITICAL", sid, f"Color depth is {ase_info['depth']}, expected 32-bit RGBA"))
-        if ase_info["frames"] != sp["frame_count"]:
+        # A `first_frame_of` still reads frame 1 of its owner's source: one frame, no timing.
+        borrowed = bool(sp.get("first_frame_of"))
+        n_frames = sp["frame_count"] if borrowed else ase_info["frames"]
+        if borrowed and sp["frame_count"] != 1:
+            findings.append(("CRITICAL", sid, f"first_frame_of still has {sp['frame_count']} frames, expected 1"))
+        if not borrowed and ase_info["frames"] != sp["frame_count"]:
             findings.append(("CRITICAL", sid, f"Frame count mismatch: .aseprite={ase_info['frames']} vs manifest={sp['frame_count']}"))
-        if ase_info["durations"] != sp["durations_ms"]:
+        if not borrowed and ase_info["durations"] != sp["durations_ms"]:
             findings.append(("CRITICAL", sid, f"Durations mismatch: .aseprite={ase_info['durations']} vs manifest={sp['durations_ms']}"))
 
-        for f_i, dur in enumerate(ase_info["durations"], 1):
+        for f_i, dur in enumerate(ase_info["durations"][:n_frames], 1):
             if dur < 100 or dur % 100 != 0:
                 findings.append(("MAJOR", sid, f"Frame {f_i} duration {dur}ms violates 100ms decisecond rule"))
 
@@ -326,7 +331,7 @@ def main():
             for tg in ase_info["tags"]:
                 if tg["dir"] != 0:
                     findings.append(("CRITICAL", sid, f"Tag {tg['name']!r} has non-Forward direction {tg['dir']}"))
-                if tg["from"] != 0 or tg["to"] != ase_info["frames"] - 1:
+                if not borrowed and (tg["from"] != 0 or tg["to"] != ase_info["frames"] - 1):
                     findings.append(("MINOR", sid, f"Tag {tg['name']!r} spans {tg['from']}..{tg['to']} instead of 0..{ase_info['frames']-1}"))
 
         off_gpl_pal = []
@@ -350,7 +355,7 @@ def main():
         per_frame_coords = defaultdict(Counter)
 
         for f_idx, l_idx, cx, cy, cw, ch, copacity, raw_px in ase_info["cels"]:
-            if not ase_info["layers"][l_idx]["visible"]:
+            if f_idx >= n_frames or not ase_info["layers"][l_idx]["visible"]:
                 continue
             for py in range(ch):
                 gy = cy + py
@@ -390,7 +395,7 @@ def main():
         )
         frames_im = [
             Image.open(export_tmp / f"{sid}_f{f_i}.png").convert("RGBA")
-            for f_i in range(1, ase_info["frames"] + 1)
+            for f_i in range(1, n_frames + 1)
         ]
 
         # Verify gallery_data.js atlas_data_uri matches fresh .aseprite export byte-for-pixel
@@ -619,8 +624,8 @@ def main():
             "element": element,
             "kind": kind,
             "colorable": colorable,
-            "frames": ase_info["frames"],
-            "durations": ase_info["durations"],
+            "frames": n_frames,
+            "durations": ase_info["durations"][:n_frames],
             "overlapping_layer_px": overlapping_layer_pixels,
             "flat_off_gpl_count": len(flat_off_gpl),
             "worst_dom_share": round(worst_dom_share, 3),

@@ -1556,7 +1556,7 @@
 
     const c = DATA.counts_by_domain;
     document.getElementById("header-summary").textContent =
-      `${DATA.total_sprites} authored .aseprite assets (${c.gasses} gas, ${c.liquids} liquid, ${c.solids} solid, ${c.fire} fire) | tales-from-space.gpl | 47-junction BitmaskSlice`;
+      `${DATA.total_sprites} sprites (${c.gasses} gas, ${c.liquids} liquid, ${c.solids} solid, ${c.fire} fire) | tales-from-space.gpl | 47-junction BitmaskSlice`;
 
     buildPresetPills("liq-tint-pills", LIQUID_PRESETS);
     buildPresetPills("gas-tint-pills", GAS_PRESETS);
