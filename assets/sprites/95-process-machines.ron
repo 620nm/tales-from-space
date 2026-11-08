@@ -48,21 +48,19 @@
         // The UF6 radiation reflection chamber: a 32x48 cold-steel prism
         // anchored at its base (`Base`) whose lower 32x32 tile joins
         // Layer 3 East/West piping. `reflection_chamber` is the unlit
-        // cold-steel housing and internal steel gas manifold;
-        // the seven pre-composited state tags (`subcritical`, `critical`,
-        // `overheated`, `supercritical`, `open`, `broken`, `destroyed`)
-        // sit alongside 24
-        // separated 32x48 recombination overlays (`core_*`, `pipe_*`,
-        // `rad_*`, `dial_*`, `slag_*`, `press_*`, `panel_open`,
-        // `panel_open_live`, and the conditional pipe-connection collars
-        // `flange_west` and `flange_east`) so `state_sprites` or mouth
-        // caps can compose states and joined flanges onto the base.
+        // cold-steel housing and internal steel gas manifold (layer
+        // `housing`, frame 1). It is also the body of the `subcritical`,
+        // `critical`, `overheated`, `supercritical` and `open` states:
+        // `state_sprites` stacks the core and every gauge from the
+        // overlays below, so no state bakes a body of its own.
+        // `broken` and `destroyed` are their own layers and frames.
+        // The 24 separated 32x48 recombination overlays (`core_*`,
+        // `pipe_*`, `rad_*`, `dial_*`, `slag_*`, `press_*`,
+        // `panel_open`, `panel_open_live`, and the conditional
+        // pipe-connection collars `flange_west` and `flange_east`) each
+        // sit on one layer per family, so `state_sprites` or mouth caps
+        // can compose states and joined flanges onto the base.
         ("reflection_chamber", Anchored(Ase("@reflection_chamber", "base"), Base)),
-        ("reflection_chamber_subcritical", Anchored(AseAnim("@reflection_chamber", "subcritical"), Base)),
-        ("reflection_chamber_critical", Anchored(AseAnim("@reflection_chamber", "critical"), Base)),
-        ("reflection_chamber_overheated", Anchored(AseAnim("@reflection_chamber", "overheated"), Base)),
-        ("reflection_chamber_supercritical", Anchored(AseAnim("@reflection_chamber", "supercritical"), Base)),
-        ("reflection_chamber_open", Anchored(Ase("@reflection_chamber", "open"), Base)),
         ("reflection_chamber_broken", Anchored(Ase("@reflection_chamber", "broken"), Base)),
         ("reflection_chamber_destroyed", Anchored(Ase("@reflection_chamber", "destroyed"), Base)),
 

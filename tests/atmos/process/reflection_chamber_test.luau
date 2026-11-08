@@ -210,7 +210,7 @@ assert(not has_layer(p2, 1, 1, "pipe_intact_l3_4"), "unconnected east port omits
 assert(not has_layer(p2, 1, 1, "reflection_chamber_flange_west"), "unconnected west port omits west flange cap")
 assert(not has_layer(p2, 1, 1, "reflection_chamber_flange_east"), "unconnected east port omits east flange cap")
 assert(assert(t.structure_at(7, 1)).state == "subcritical", "350 K UF6 chamber enters subcritical")
-assert(assert(t.structure_at(7, 1)).sprite == "reflection_chamber_subcritical", "subcritical sprite")
+assert(has_layer(p2, 7, 1, "reflection_chamber_core_subcritical"), "subcritical core drawn")
 
 local ex_standby = assert(t.examine(p2, 1, 1, assert(t.target_at(p2, 1, 1, "reflection_chamber"))))
 assert(table.concat(ex_standby.lines, " "):find("standby", 1, true) ~= nil, "examine reports standby")
@@ -226,15 +226,15 @@ assert(dt_low > 15.0, "20 mol UF6 heats appreciably")
 assert(dt_double > 1.5 * dt_low, "doubling UF6 moles delivers > 2x heating power (> 1.5x dT)")
 
 assert(assert(t.structure_at(7, 1)).state == "critical", "200 mol UF6 reaches critical (>= 600 K)")
-assert(assert(t.structure_at(7, 1)).sprite == "reflection_chamber_critical", "critical sprite")
+assert(has_layer(p2, 7, 1, "reflection_chamber_core_critical"), "critical core drawn")
 
 t.run_seconds(13.0)
 assert(assert(t.structure_at(7, 1)).state == "overheated", "200 mol UF6 reaches overheated (>= 1100 K)")
-assert(assert(t.structure_at(7, 1)).sprite == "reflection_chamber_overheated", "overheated sprite")
+assert(has_layer(p2, 7, 1, "reflection_chamber_pipe_overheated"), "overheated piping drawn")
 
 t.run_seconds(18.0)
 assert(assert(t.structure_at(7, 1)).state == "supercritical", "200 mol UF6 reaches supercritical (>= 1800 K)")
-assert(assert(t.structure_at(7, 1)).sprite == "reflection_chamber_supercritical", "supercritical sprite")
+assert(has_layer(p2, 7, 1, "reflection_chamber_core_supercritical"), "supercritical core drawn")
 
 -- ---------------------------------------------------------------------------
 -- 3. Frame assembly, panel gating & crowbar teardown
@@ -313,7 +313,7 @@ assert(built.state == "standby", "newly built chamber starts on standby")
 
 click_structure(p3, 1, 1, "reflection_chamber")
 assert(assert(t.structure_at(1, 1)).state == "open", "screwdriver opens standby panel")
-assert(assert(t.structure_at(1, 1)).sprite == "reflection_chamber_open", "open sprite")
+assert(assert(t.structure_at(1, 1)).sprite == "reflection_chamber", "open panel keeps the housing")
 
 click_structure(p3, 1, 1, "reflection_chamber")
 assert(assert(t.structure_at(1, 1)).state == "standby", "screwdriver closes panel back to standby")
@@ -445,7 +445,7 @@ t.run_ticks(2)
 assert(assert(t.structure_at(1, 1)).state == "standby", "placed supercritical band syncs to inert standby")
 assert(assert(t.structure_at(1, 1)).sprite == "reflection_chamber", "synced standby sprite")
 assert(assert(t.structure_at(3, 1)).state == "supercritical", "placed standby syncs to its 2000 K charge")
-assert(assert(t.structure_at(3, 1)).sprite == "reflection_chamber_supercritical", "synced supercritical sprite")
+assert(has_layer(p5, 3, 1, "reflection_chamber_core_supercritical"), "synced supercritical core drawn")
 assert(assert(t.structure_at(5, 1)).state == "open", "open panel is the operator's state and persists")
 assert(assert(t.structure_at(7, 1)).state == "destroyed", "destroyed state persists")
 assert(assert(t.structure_at(7, 1)).sprite == "reflection_chamber_destroyed", "destroyed sprite")
