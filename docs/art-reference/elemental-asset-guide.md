@@ -150,7 +150,10 @@ There are **three distinct connectivity mechanisms** in the engine and the pack 
 
 The elemental matter and fire sprites under `assets/originals/art/matter/` and
 `assets/originals/art/fx/fire/` are authored as one `.aseprite` per sprite by
-[tools/art/elemental/](../../tools/art/elemental/README.md):
+[tools/art/elemental/](../../tools/art/elemental/README.md), laid out as
+[aseprite-documents.md](aseprite-documents.md) says. A still that is exactly frame 1
+of an animated sibling (`liquid_pool_smooth_still`, `liquid_puddle_smooth`,
+`liquid_zerog_large_still`) has no file and is rostered on the sibling's:
 
 - A `single` sprite is one 32×32 cell per frame. A `smooth_strip` is the 160×32
   five-block strip of Mechanism A (`0:convex 1:vertical 2:horizontal 3:concave 4:flat`);

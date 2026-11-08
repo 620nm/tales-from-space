@@ -17,6 +17,8 @@ Each entry is a dict:
       "require_top_light": True | False,   # True enforces luma_top >= luma_bottom - 1.0
       "ase_relpath": "assets/originals/art/matter/gasses/gas_mist_smooth_gentle.aseprite",
       "tag": "idle",                       # state name; a smooth_strip is tagged "idle-s" (`bake_tag`)
+      "first_frame_of": "<id>",            # optional, one-frame stills only: no file of its own; it
+                                           # must equal that sprite's frame 1 and is read from its source
       "description": "Concise technical note on physical appearance & layer usage.",
       "frames": [
           {
@@ -41,7 +43,6 @@ import asyncio
 import base64
 from collections import Counter
 from contextlib import asynccontextmanager
-import importlib.util
 import io
 import json
 import os
@@ -51,6 +52,8 @@ import sys
 from typing import Any
 
 from PIL import Image, ImageDraw
+
+from spec_loading import bake_tag, load_sprites
 
 # tools/art/elemental/elemental_kit.py -> the pack root is three levels up.
 PACK_ROOT = Path(__file__).resolve().parents[3]
@@ -374,10 +377,35 @@ def validate_spec(
     return layer_order, layer_props, used_hexes
 
 
-def bake_tag(spec: dict[str, Any]) -> str:
-    """The tag the roster reads: a strip is cut by `Slice`, which asks for `<state>-s`."""
-    state = spec.get("tag", "idle")
-    return f"{state}-s" if spec["kind"] == "smooth_strip" else state
+# Run after drawing: every layer's repeated drawing becomes ONE image linked across its
+# frames (docs/art-reference/aseprite-documents.md "One drawing is one image").
+LINK_REPEATED_CELS_LUA = """
+local s = app.activeSprite
+for _, l in ipairs(s.layers) do
+  local groups, order = {}, {}
+  for _, c in ipairs(l.cels) do
+    local h = { c.position.x, c.position.y, c.opacity }
+    for it in c.image:pixels() do
+      local v = it()
+      if app.pixelColor.rgbaA(v) > 0 then h[#h + 1] = it.x .. "," .. it.y .. ":" .. v end
+    end
+    local k = table.concat(h, ";")
+    if not groups[k] then groups[k] = {}; order[#order + 1] = k end
+    table.insert(groups[k], c.frame)
+  end
+  for _, k in ipairs(order) do
+    if #groups[k] > 1 then
+      app.activeLayer = l
+      app.range:clear()
+      app.range.layers = { l }
+      app.range.frames = groups[k]
+      app.command.LinkCels()
+    end
+  end
+end
+s:saveAs(s.filename)
+print("linked")
+"""
 
 
 async def draw_source(
@@ -441,6 +469,8 @@ async def draw_source(
             {"filename": str(ase_path), "frame_index": f_idx, "duration_ms": dur},
         )
         for lspec in fspec["layers"]:
+            if all(set(row) <= {"."} for row in lspec["rows"]):
+                continue  # a layer that draws nothing on this frame has no cel there
             await mcp_call(
                 session,
                 "draw_rows",
@@ -465,6 +495,9 @@ async def draw_source(
             "to_frame": len(frames_spec),
             "direction": "forward",
         },
+    )
+    await mcp_call(
+        session, "run_lua_script", {"filename": str(ase_path), "script": LINK_REPEATED_CELS_LUA}
     )
 
 
@@ -491,7 +524,11 @@ async def build_and_validate_sprite(
     if not ase_path.is_relative_to(pack_root / "assets/originals"):
         raise ValueError(f"{sid}: ase_relpath must stay under assets/originals/")
     durations_ms = [int(f.get("duration_ms", 200)) for f in frames_spec]
-    if rebuild_source or not ase_path.exists():
+    if spec.get("first_frame_of"):
+        # Drawn by its owner, which `run_build` handles first; export reads frame 1 only.
+        if not ase_path.exists():
+            raise FileNotFoundError(f"{sid}: source of {spec['first_frame_of']} is missing: {ase_path}")
+    elif rebuild_source or not ase_path.exists():
         ase_path.parent.mkdir(parents=True, exist_ok=True)
         if ase_path.exists():
             ase_path.unlink()
@@ -629,6 +666,7 @@ async def build_and_validate_sprite(
         "default_tint": spec.get("default_tint", "#FFFFFF"),
         "sample_tints": spec.get("sample_tints", []),
         "ase_relpath": spec["ase_relpath"],
+        "first_frame_of": spec.get("first_frame_of"),
         "description": spec.get("description", ""),
         "physics_notes": spec.get("physics_notes", ""),
         "frame_count": n_frames,
@@ -787,60 +825,6 @@ def render_domain_review_board(records: list[dict[str, Any]], out_png: Path) -> 
     board.save(out_png)
 
 
-def load_sprites(spec_path: Path) -> list[dict[str, Any]]:
-    mod_spec = importlib.util.spec_from_file_location("domain_sprites", str(spec_path))
-    if mod_spec is None or mod_spec.loader is None:
-        raise RuntimeError(f"Cannot load spec module: {spec_path}")
-    mod = importlib.util.module_from_spec(mod_spec)
-    mod_spec.loader.exec_module(mod)
-    sprites = getattr(mod, "SPRITES", None)
-    if not isinstance(sprites, list) or not sprites:
-        raise ValueError(f"{spec_path}: must define non-empty SPRITES = [...]")
-    apply_seam_patches(sprites)
-    return sprites
-
-
-SEAM_PATCHES_PATH = ELEMENTAL_DIR / "specs/seam_patches.json"
-
-
-def _patch_char(layer: dict[str, Any], hex_color: str) -> str:
-    for ch, hx in layer["legend"].items():
-        if hx.upper() == hex_color:
-            return ch
-    ch = next(c for c in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" if c not in layer["legend"])
-    layer["legend"][ch] = hex_color
-    return ch
-
-
-def _patch_pixel(layer: dict[str, Any], x: int, y: int, ch: str) -> None:
-    row = layer["rows"][y]
-    layer["rows"][y] = row[:x] + ch + row[x + 1 :]
-
-
-def apply_seam_patches(sprites: list[dict[str, Any]]) -> None:
-    """Set the pixels `specs/seam_patches.json` lists on top of the procedural spec.
-
-    A patch names one flattened pixel (frame, x, y) and its final color and alpha. An
-    opaque patch recolors the topmost layer that draws the pixel; a partial-alpha patch
-    moves it into the layer of that opacity and clears the others (tiers are disjoint).
-    The same list is written into the sources, so a rebuild reproduces them.
-    """
-    patches = json.loads(SEAM_PATCHES_PATH.read_text(encoding="utf-8"))
-    for sp in sprites:
-        for p in patches.get(sp["id"], []):
-            layers = sp["frames"][p["frame"] - 1]["layers"]
-            x, y, alpha = p["x"], p["y"], p["alpha"]
-            drawn = [lay for lay in layers if lay["rows"][y][x] != "."]
-            if alpha == 255:
-                target = drawn[-1]
-            else:
-                target = next(lay for lay in layers if lay["opacity"] == alpha)
-                for lay in drawn:
-                    if lay is not target:
-                        _patch_pixel(lay, x, y, ".")
-            _patch_pixel(target, x, y, _patch_char(target, p["hex"].upper()))
-
-
 def check_specs(spec_path: Path) -> None:
     allowed_gpl = load_gpl_palette(GPL_PATH)
     sprites = load_sprites(spec_path)
@@ -863,9 +847,10 @@ async def run_build(
             raise ValueError(f"{spec_path.name}: no spec with id {sorted(unknown)}")
         sprites = [sp for sp in sprites if sp["id"] in only]
     allowed_gpl = load_gpl_palette(GPL_PATH)
-    records: list[dict[str, Any]] = []
+    by_id: dict[str, dict[str, Any]] = {}
     async with open_mcp() as session:
-        for sp in sprites:
+        # Owners first: a `first_frame_of` still reads the source its owner draws.
+        for sp in sorted(sprites, key=lambda s: bool(s.get("first_frame_of"))):
             rec = await build_and_validate_sprite(
                 session=session,
                 spec=sp,
@@ -874,12 +859,13 @@ async def run_build(
                 allowed_gpl=allowed_gpl,
                 rebuild_source=rebuild_sources,
             )
-            records.append(rec)
+            by_id[rec["id"]] = rec
             print(
                 f"[OK] {rec['id']:32s} | {rec['kind']:12s} | f={rec['frame_count']} | "
                 f"px={rec['telemetry']['active_px']:4d} | domRGB={rec['telemetry']['dominant_rgb_share']:.2f}"
             )
 
+    records: list[dict[str, Any]] = [by_id[sp["id"]] for sp in sprites]
     if only:
         print("--only: exported the named sprites; manifest and review board left untouched")
         return

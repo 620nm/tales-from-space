@@ -232,15 +232,17 @@ class ExtractionContext:
         over(dmi.crop("can-2"))
         return acc
 
-    def export_aseprite_frames(self, ase_path: Path, tmp_sheet_path: Path) -> tuple[list[Image.Image], list[int]]:
-        """Export frames and frame durations read-only from `ase_path`."""
+    def export_aseprite_frames(
+        self, ase_path: Path, tmp_sheet_path: Path, *, first_frame_only: bool = False
+    ) -> tuple[list[Image.Image], list[int]]:
+        """Export frames and frame durations read-only from `ase_path` (only frame 1 when asked)."""
         if not ase_path.exists():
             raise FileNotFoundError(f"Missing Aseprite source: {ase_path}")
         safe_sheet = assert_out_write(tmp_sheet_path, self.out_dir)
         safe_json = assert_out_write(tmp_sheet_path.with_suffix(".json"), self.out_dir)
         subprocess.run(
             [
-                self.ase_bin, "-b", str(ase_path),
+                self.ase_bin, "-b", *(["--frame-range", "0,0"] if first_frame_only else []), str(ase_path),
                 "--sheet", str(safe_sheet), "--sheet-type", "horizontal",
                 "--format", "json-array", "--data", str(safe_json),
             ],
@@ -313,20 +315,21 @@ def extract_tfs_matter(ctx: ExtractionContext) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     jagged_ase = PACK_ROOT / "assets" / "originals" / "art" / "matter" / "solids" / "solid_debris_jagged_smooth.aseprite"
     smooth_specs = [
-        ("liquid_puddle_smooth", "Liquid Puddle (Smooth)", ORIGINALS_ART / "matter/liquids/liquid_puddle_smooth.aseprite", True, "#5EB5C4", "94-elemental.ron:28"),
-        ("liquid_puddle_smooth_shimmer", "Liquid Puddle Shimmer (Smooth)", ORIGINALS_ART / "matter/liquids/liquid_puddle_smooth_shimmer.aseprite", True, "#5EB5C4", "94-elemental.ron:29"),
-        ("liquid_pool_smooth_ripple", "Liquid Pool Ripple (Smooth)", ORIGINALS_ART / "matter/liquids/liquid_pool_smooth_ripple.aseprite", True, "#3889C9", "94-elemental.ron:26"),
-        ("solid_dusting_flour_smooth", "Fine Dusting / Frost / Regolith (Smooth)", ORIGINALS_ART / "matter/solids/solid_dusting_flour_smooth.aseprite", True, "#EAF6FA", "94-elemental.ron:31"),
-        ("solid_debris_jagged_smooth", "Jagged Scree / Rubble (Smooth)", jagged_ase, True, "#9E5637", "94-elemental.ron:30"),
-        ("solid_soil_smooth", "Planetary Soil / Regolith Bed (Smooth)", ORIGINALS_ART / "matter/solids/solid_soil_smooth.aseprite", True, "#9E5637", "94-elemental.ron:32"),
-        ("solid_soil_tilled_smooth", "Tilled Soil Bed (Smooth)", ORIGINALS_ART / "matter/solids/solid_soil_tilled_smooth.aseprite", True, "#7D5838", "94-elemental.ron:33"),
-        ("gas_mist_smooth_gentle", "Low Mist / Vapor (Smooth)", ORIGINALS_ART / "matter/gasses/gas_mist_smooth_gentle.aseprite", True, "#DFE8C0", "94-elemental.ron:20"),
-        ("gas_cloud_smooth_gentle", "Dense Gas Cloud / Haze (Smooth)", ORIGINALS_ART / "matter/gasses/gas_cloud_smooth_gentle.aseprite", True, "#DFE8C0", "94-elemental.ron:17"),
-        ("fire_gas_smooth_violent", "Violent Gas Fire (Smooth)", ORIGINALS_ART / "fx/fire/fire_gas_smooth_violent.aseprite", False, "#FFFFFF", "94-elemental.ron:35"),
+        ("liquid_puddle_smooth", "Liquid Puddle (Smooth)", ORIGINALS_ART / "matter/liquids/liquid_puddle_smooth_shimmer.aseprite", True, "#5EB5C4", "94-elemental.ron:99"),
+        ("liquid_puddle_smooth_shimmer", "Liquid Puddle Shimmer (Smooth)", ORIGINALS_ART / "matter/liquids/liquid_puddle_smooth_shimmer.aseprite", True, "#5EB5C4", "94-elemental.ron:32"),
+        ("liquid_pool_smooth_ripple", "Liquid Pool Ripple (Smooth)", ORIGINALS_ART / "matter/liquids/liquid_pool_smooth_ripple.aseprite", True, "#3889C9", "94-elemental.ron:31"),
+        ("solid_dusting_flour_smooth", "Fine Dusting / Frost / Regolith (Smooth)", ORIGINALS_ART / "matter/solids/solid_dusting_flour_smooth.aseprite", True, "#EAF6FA", "94-elemental.ron:34"),
+        ("solid_debris_jagged_smooth", "Jagged Scree / Rubble (Smooth)", jagged_ase, True, "#9E5637", "94-elemental.ron:33"),
+        ("solid_soil_smooth", "Planetary Soil / Regolith Bed (Smooth)", ORIGINALS_ART / "matter/solids/solid_soil_smooth.aseprite", True, "#9E5637", "94-elemental.ron:35"),
+        ("solid_soil_tilled_smooth", "Tilled Soil Bed (Smooth)", ORIGINALS_ART / "matter/solids/solid_soil_tilled_smooth.aseprite", True, "#7D5838", "94-elemental.ron:36"),
+        ("gas_mist_smooth_gentle", "Low Mist / Vapor (Smooth)", ORIGINALS_ART / "matter/gasses/gas_mist_smooth_gentle.aseprite", True, "#DFE8C0", "94-elemental.ron:25"),
+        ("gas_cloud_smooth_gentle", "Dense Gas Cloud / Haze (Smooth)", ORIGINALS_ART / "matter/gasses/gas_cloud_smooth_gentle.aseprite", True, "#DFE8C0", "94-elemental.ron:22"),
+        ("fire_gas_smooth_violent", "Violent Gas Fire (Smooth)", ORIGINALS_ART / "fx/fire/fire_gas_smooth_violent.aseprite", False, "#FFFFFF", "94-elemental.ron:38"),
     ]
     for sid, title, ase_path, colorable, tint, ron_ref in smooth_specs:
         raw_strip_path = ctx.cache_dir / "tfs_matter" / f"{sid}_strip.png"
-        frames, durs = ctx.export_aseprite_frames(ase_path, raw_strip_path)
+        # liquid_puddle_smooth is frame 1 of the shimmer strip and has no file of its own.
+        frames, durs = ctx.export_aseprite_frames(ase_path, raw_strip_path, first_frame_only=sid == "liquid_puddle_smooth")
         strip_im = Image.open(raw_strip_path).convert("RGBA")
         atlas = Image.new("RGBA", (47 * 32, len(frames) * 32), (0, 0, 0, 0))
         for f_i, fim in enumerate(frames):
@@ -343,13 +346,13 @@ def extract_tfs_matter(ctx: ExtractionContext) -> list[dict[str, Any]]:
         )
 
     single_specs = [
-        ("solid_shards_large", "Crystalline / Ice Shards (Large)", "matter/solids/solid_shards_large.aseprite", True, "#D4EFF7", "94-elemental.ron:68"),
-        ("solid_shards_small", "Crystalline / Ice Shards (Small)", "matter/solids/solid_shards_small.aseprite", True, "#D4EFF7", "94-elemental.ron:69"),
-        ("solid_pile_large", "Loose Granular Pile (Large)", "matter/solids/solid_pile_large.aseprite", True, "#9E5637", "94-elemental.ron:65"),
-        ("solid_pile_small", "Loose Granular Pile (Small)", "matter/solids/solid_pile_small.aseprite", True, "#8A837C", "94-elemental.ron:66"),
-        ("solid_scattering", "Coarse Pebble / Slag Scattering", "matter/solids/solid_scattering.aseprite", True, "#B85C3C", "94-elemental.ron:67"),
-        ("liquid_spill_1", "Liquid Spill Splash 1", "matter/liquids/liquid_spill_1.aseprite", True, "#5EB5C4", "94-elemental.ron:50"),
-        ("fire_campfire_steady", "Steady Campfire / Brazier Flame", "fx/fire/fire_campfire_steady.aseprite", False, "#FFFFFF", "94-elemental.ron:74"),
+        ("solid_shards_large", "Crystalline / Ice Shards (Large)", "matter/solids/solid_shards_large.aseprite", True, "#D4EFF7", "94-elemental.ron:71"),
+        ("solid_shards_small", "Crystalline / Ice Shards (Small)", "matter/solids/solid_shards_small.aseprite", True, "#D4EFF7", "94-elemental.ron:72"),
+        ("solid_pile_large", "Loose Granular Pile (Large)", "matter/solids/solid_pile_large.aseprite", True, "#9E5637", "94-elemental.ron:68"),
+        ("solid_pile_small", "Loose Granular Pile (Small)", "matter/solids/solid_pile_small.aseprite", True, "#8A837C", "94-elemental.ron:69"),
+        ("solid_scattering", "Coarse Pebble / Slag Scattering", "matter/solids/solid_scattering.aseprite", True, "#B85C3C", "94-elemental.ron:70"),
+        ("liquid_spill_1", "Liquid Spill Splash 1", "matter/liquids/liquid_spill_1.aseprite", True, "#5EB5C4", "94-elemental.ron:53"),
+        ("fire_campfire_steady", "Steady Campfire / Brazier Flame", "fx/fire/fire_campfire_steady.aseprite", False, "#FFFFFF", "94-elemental.ron:77"),
     ]
     for sid, title, ase_rel, colorable, tint, ron_ref in single_specs:
         sheet_path = ctx.cache_dir / "tfs_matter" / f"{sid}.png"

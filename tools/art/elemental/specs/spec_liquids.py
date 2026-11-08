@@ -1331,8 +1331,9 @@ def _entry(
     description: str,
     physics_notes: str,
     frames: list[dict[str, Any]],
+    first_frame_of: str | None = None,
 ) -> dict[str, Any]:
-    return {
+    entry = {
         "id": sid,
         "title": title,
         "element": "liquid",
@@ -1348,6 +1349,11 @@ def _entry(
         "physics_notes": physics_notes,
         "frames": frames,
     }
+    if first_frame_of:
+        # No file of its own: the kit checks this still equals that sprite's frame 1
+        # and reads it from that sprite's source.
+        entry["first_frame_of"] = first_frame_of
+    return entry
 
 
 SPRITES: list[dict[str, Any]] = [
@@ -1451,6 +1457,7 @@ SPRITES: list[dict[str, Any]] = [
         description="160x32 5-block bitmask puddle with 4-tier [68, 122, 168, 212] feathered seepage margin, calm glassy sheet, and zero seams.",
         physics_notes="Forms the continuous calm base wet contour shell (>= 220 mL) underneath deeper pool shells with 0.00 seam MAE.",
         frames=generate_puddle_strip_frames(1),
+        first_frame_of="liquid_puddle_smooth_shimmer",
     ),
     _entry(
         sid="liquid_puddle_smooth_shimmer",
@@ -1485,6 +1492,7 @@ SPRITES: list[dict[str, Any]] = [
         description="160x32 5-block deep pool with 9.0px 4-layer [56, 112, 168, 216] edge taper, calm water swells, and 5 isolated horizontal wavelets.",
         physics_notes="Shoreline-ring-free alpha/depth taper allows deep pool shells (>= 2600 mL) to blend smoothly over underlying calm puddle shells.",
         frames=generate_pool_strip_frames(1),
+        first_frame_of="liquid_pool_smooth_ripple",
     ),
     _entry(
         sid="liquid_pool_smooth_ripple",
@@ -1552,6 +1560,7 @@ SPRITES: list[dict[str, Any]] = [
         description="Dominant r=8.45 cohesive microgravity liquid bolus with dual NNW specular catchlights, subsurface lens caustic, and 3 satellite beads.",
         physics_notes="Large Bond-zero liquid bolus exhibits classic ISS water-ball optics: 360-degree Fresnel rim, translucent core, and opposite caustic.",
         frames=generate_zerog_large(1),
+        first_frame_of="liquid_zerog_large_float",
     ),
     _entry(
         sid="liquid_zerog_large_float",
