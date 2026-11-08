@@ -170,9 +170,27 @@ release_lock() {
   fi
 }
 . "$ENGINE/tools/gate/run-log.sh"
+# Lanes green before on these exact inputs are kept, not rerun ($ENGINE's
+# tools/gate/carry.sh, docs/gates.md "Kept gates"). The lanes whose output
+# others read always run: the build, the bake, the roster document and the
+# compiled interface. An engine without carry.sh keeps nothing.
+CARRY_PRODUCERS="build bake roster pack-ui-build"
+# What these lanes run against beyond this pack's own tree: the engine's.
+pack_carry_inputs() {
+  printf 'engine tree %s\n' "$(cd "$ENGINE" && prov_snapshot && printf '%s' "$PROV_WORK_TREE")"
+}
+CARRY_EXTRA=pack_carry_inputs
+if [ -f "$ENGINE/tools/gate/carry.sh" ]; then
+  . "$ENGINE/tools/gate/carry.sh"
+else
+  carry_open() { KEPT=$RUN_DIR/kept; : > "$KEPT"; run_log_note "kept gates: none ($ENGINE has no tools/gate/carry.sh)"; }
+  carry_kept() { return 1; }
+  carry_green() { :; }
+  carry_seal() { :; }
+fi
 trap release_lock EXIT
-trap 'run_log_interrupted SIGINT; release_lock; exit 130' INT
-trap 'run_log_interrupted SIGTERM; release_lock; exit 143' TERM
+trap 'run_log_interrupted SIGINT; carry_seal; release_lock; exit 130' INT
+trap 'run_log_interrupted SIGTERM; carry_seal; release_lock; exit 143' TERM
 
 # See ONE PER MACHINE above. An engine older than the lock has none to
 # take; the run says so and goes ahead, since the lock guards the box's
@@ -180,8 +198,8 @@ trap 'run_log_interrupted SIGTERM; release_lock; exit 143' TERM
 if [ -f "$ENGINE/tools/gate/machine-lock.sh" ]; then
   . "$ENGINE/tools/gate/machine-lock.sh"
   trap 'machine_lock_release; release_lock' EXIT
-  trap 'run_log_interrupted SIGINT; machine_lock_release; release_lock; exit 130' INT
-  trap 'run_log_interrupted SIGTERM; machine_lock_release; release_lock; exit 143' TERM
+  trap 'run_log_interrupted SIGINT; carry_seal; machine_lock_release; release_lock; exit 130' INT
+  trap 'run_log_interrupted SIGTERM; carry_seal; machine_lock_release; release_lock; exit 143' TERM
   machine_lock_acquire "pack gate in $PACK (engine $ENGINE): ${ONLY:-all lanes}"
   gate_full_width
 else
@@ -216,6 +234,7 @@ mkdir -p "$LOGS" "$RUN_DIR"
 : > "$FAILED"
 : > "$BLOCKED"
 : > "$RAN"
+carry_open "$GATE/carry"
 
 # Sub-second timings need GNU date; a shell without %N still gets whole
 # seconds rather than nothing.
@@ -251,6 +270,7 @@ run() {
   name=$1
   shift
   want "$name" || return 0
+  carry_kept "$name" && return 0
   start=$(now_ms)
   if [ "$VERBOSE" = 1 ]; then
     printf '\n== %s ==\n' "$name"
@@ -264,6 +284,7 @@ run() {
   if [ "$rc" -eq 0 ]; then
     status_line 'ok    %-22s %8s\n' "$name" "$elapsed"
     printf '%s\n' "$name" >> "$RAN"
+    carry_green "$name"
   else
     status_line 'FAIL  %-22s %8s\n' "$name" "$elapsed"
     printf '%s\n' "$name" >> "$FAILED"
@@ -760,7 +781,10 @@ skipped_phrases() {
 seal_run_log() {
   [ -s "$BLOCKED" ] && run_log_note "blocked, so unverified: $(tr '\n' ' ' < "$BLOCKED" | sed 's/ $//')"
   [ -s "$SKIPPED" ] && run_log_note "skipped, so unverified: $(skipped_phrases)"
+  [ -s "$KEPT" ] && run_log_note "kept, green before on these inputs: $(tr '\n' ' ' < "$KEPT" | sed 's/ $//')"
   run_log_close "$(printf '%s' "$1" | sed 's/ *$//')" "$total"
+  # A red run's green lanes are kept too: its rerun runs only the rest.
+  carry_seal
 }
 
 if [ -s "$FAILED" ]; then
@@ -771,6 +795,7 @@ if [ -s "$FAILED" ]; then
     done < "$FAILED"
   fi
   printf '\nGATE FAILED in %s: %s\n' "$total" "$(tr '\n' ' ' < "$FAILED")" >&2
+  printf 'on these inputs, a rerun keeps every lane already green\n' >&2
   printf 'logs: %s\n' "$LOGS" >&2
   if [ -s "$BLOCKED" ]; then
     printf 'BLOCKED, SO UNVERIFIED: %s\n' "$(tr '\n' ' ' < "$BLOCKED")" >&2
@@ -789,10 +814,10 @@ printf 'logs  %s\n' "$LOGS"
 if [ -s "$BLOCKED" ]; then
   printf 'BLOCKED, SO UNVERIFIED: %s\n' "$(tr '\n' ' ' < "$BLOCKED")" >&2
 fi
-# Nothing executed: every selected lane was blocked or skipped, or the
-# words named no lane at all. Either way this run is evidence of
-# nothing, and it says so rather than printing a banner over it.
-if [ ! -s "$RAN" ]; then
+# Nothing executed or was kept: every selected lane was blocked or
+# skipped, or the words named no lane at all. Either way this run is
+# evidence of nothing, and it says so rather than printing a banner over it.
+if [ ! -s "$RAN" ] && [ ! -s "$KEPT" ]; then
   printf 'NOTHING RAN%s\n' "${ONLY:+: $ONLY matched no lane that could run}" >&2
   if [ -s "$SKIPPED" ]; then
     printf 'SKIPPED, SO UNVERIFIED: %s\n' "$(skipped_phrases)" >&2
@@ -800,10 +825,15 @@ if [ ! -s "$RAN" ]; then
   seal_run_log "NOTHING RAN"
   exit 1
 fi
+# Kept lanes are named apart from the ones this run executed.
+ran_list=$(tr '\n' ' ' < "$RAN" | sed 's/ $//')
+kept_list=$(tr '\n' ' ' < "$KEPT" | sed 's/ $//')
 if [ -n "$ONLY" ]; then
-  banner="SELECTED PACK GATES GREEN: $(tr '\n' ' ' < "$RAN")"
+  banner="SELECTED PACK GATES GREEN: $ran_list"
+  [ -n "$kept_list" ] && banner="$banner${ran_list:+; }kept: $kept_list"
 else
   banner="ALL PACK GATES GREEN"
+  [ -n "$kept_list" ] && banner="$banner ($(wc -l < "$KEPT" | tr -d ' ') kept, green before on these inputs)"
 fi
 echo "$banner"
 if [ -s "$SKIPPED" ]; then

@@ -89,8 +89,8 @@ editor palette, `ui/`, the node checks, the specs and the two live browser
 fixtures). `README.md` §The gate lists every lane and what it proves. It runs
 once per landing batch, whatever lands on `master` together (one branch or
 several): whoever merges runtime or content changes runs it once on the merged
-tip, reruns failing lanes by name until fixed, then the full gate once more.
-The engine's own
+tip, reruns failing lanes by name until fixed, then the full gate once more,
+which keeps every lane already green on unchanged inputs. The engine's own
 `tools/check.sh` is the other subject and asserts nothing about this pack, so
 a green engine gate is not evidence here; the boundary between the two, and
 what each proves, is the engine's `docs/gates.md`. The gate writes only this

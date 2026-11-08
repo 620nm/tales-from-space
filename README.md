@@ -141,6 +141,14 @@ A run in which nothing executed prints `NOTHING RAN` and exits 1 rather than
 a green banner, so a mistyped lane name and a wholly blocked selection are
 both visible.
 
+A lane green before on these exact inputs (this pack's tree, the engine's,
+the toolchain) prints `kept` and does not run, so a rerun after a red or
+interrupted full run runs only the rest. `build`, `bake`, `roster` and
+`pack-ui-build` always run, since later lanes read what they produce, and
+only a run that ran all four records its greens: a filtered run may read
+an older bake. `GATE_FRESH=1` keeps nothing. The contract is the engine's
+`docs/gates.md` (Kept gates).
+
 Three lanes need an engine new enough to be pointed at a served root — the
 lab's `--web`, `build-ui`'s `--web` and the palette test's `LUNATIC_WEB_ROOT`.
 Each is probed rather than assumed, because an older engine ignores all three
