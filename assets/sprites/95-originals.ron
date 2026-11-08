@@ -49,9 +49,35 @@
         ("steam_generator_loaded", Png("art/bench/steam_generator_off_loaded.png")),
         ("steam_generator_on", Png("art/bench/steam_generator_on.png")),
         ("steam_generator_on_loaded", Png("art/bench/steam_generator_on_loaded.png")),
+
+        // The life support power unit (LSPU): a 5-layer inline manifold
+        // hub (`manifoldlayer_center` outer pipe joints across tracks
+        // l1..l5) boxed in a full-width `engi_e_crate` electrical
+        // housing with a screwdriver-shut maintenance panel over a
+        // `ccharger`-style cell bay and a 2x2 corner status LED. Two
+        // axes (`_ns`, `_ew`), six closed status-LED states (steady and
+        // blinking green, yellow, and red), and open-panel states with
+        // and without a cell seated on the bottom contacts.
+        ("lspu_powered_ready_ns", Ase("@life_support_power_unit", "powered_ready_ns")),
+        ("lspu_powered_ready_ew", Ase("@life_support_power_unit", "powered_ready_ew")),
+        ("lspu_powered_active_ns", AseAnim("@life_support_power_unit", "powered_active_ns")),
+        ("lspu_powered_active_ew", AseAnim("@life_support_power_unit", "powered_active_ew")),
+        ("lspu_battery_ready_ns", Ase("@life_support_power_unit", "battery_ready_ns")),
+        ("lspu_battery_ready_ew", Ase("@life_support_power_unit", "battery_ready_ew")),
+        ("lspu_battery_active_ns", AseAnim("@life_support_power_unit", "battery_active_ns")),
+        ("lspu_battery_active_ew", AseAnim("@life_support_power_unit", "battery_active_ew")),
+        ("lspu_unpowered_ns", Ase("@life_support_power_unit", "unpowered_ns")),
+        ("lspu_unpowered_ew", Ase("@life_support_power_unit", "unpowered_ew")),
+        ("lspu_unpowered_demand_ns", AseAnim("@life_support_power_unit", "unpowered_demand_ns")),
+        ("lspu_unpowered_demand_ew", AseAnim("@life_support_power_unit", "unpowered_demand_ew")),
+        ("lspu_open_cell_ns", Ase("@life_support_power_unit", "open_cell_ns")),
+        ("lspu_open_cell_ew", Ase("@life_support_power_unit", "open_cell_ew")),
+        ("lspu_open_empty_ns", Ase("@life_support_power_unit", "open_empty_ns")),
+        ("lspu_open_empty_ew", Ase("@life_support_power_unit", "open_empty_ew")),
     ],
     sheets: [
         ("hazard_placard", "art/signs/nfpa-704.ase"),
+        ("life_support_power_unit", "art/machines/life_support_power_unit.aseprite"),
         ("utility_outlet_port", "art/subfloor/electrical/utility_outlet_port.aseprite"),
     ],
     groups: [
