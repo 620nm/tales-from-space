@@ -2,9 +2,10 @@
 
 32x32 RGBA, 12 frames: E-W manifold on frames 1..6, N-S manifold on 7..12, each off (1),
 pumping (4), fault (1). Tags `<state>-<dir>`: e and w share the E-W frames, n and s the
-N-S frames, so a facing always meets the solid spine. Layers, bottom to top:
+N-S frames, so a facing always meets the solid spine. Spec layers, bottom to top:
 pump_housing_and_sump (static per axis), impeller_and_water (animated), top_grille_and_hub
-(static per axis). The rules are docs/art-reference/drainage-asset-guide.md.
+(static per axis); each is one Aseprite layer per axis (`<layer>_ew`, `<layer>_ns`).
+The rules are docs/art-reference/drainage-asset-guide.md.
 """
 
 from __future__ import annotations
@@ -345,6 +346,11 @@ def join_axes(ew: dict[str, Any], ns: dict[str, Any]) -> dict[str, Any]:
         "frame_count": 12,
         "frame_durations_ms": ew["frame_durations_ms"] + ns["frame_durations_ms"],
         "tags": tags,
+        # Each axis is its own drawing, so each spec layer is one Aseprite layer per axis.
+        "facings": {
+            "ew": ["off-e", "pumping-e", "fault-e"],
+            "ns": ["off-n", "pumping-n", "fault-n"],
+        },
         "layers": joined,
     }
 

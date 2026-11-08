@@ -24,6 +24,10 @@ and [assets/sprites/22-atmos-mouth-caps.ron](../../assets/sprites/22-atmos-mouth
 
 `<dir>` is `n`, `s`, `e`, `w`, the suffix form the engine's `Directions` and `Anim` rows read
 (`docs/assets/rosters.md`). Every canvas is 32×32 RGBA; every layer stays editable.
+Each source follows [aseprite-documents.md](aseprite-documents.md): a static part is one
+linked image, a blank frame has no cel, and a part drawn per face is one layer per face —
+`<layer>_n`/`_s`/`_e`/`_w` on `scupper`, `<layer>_ew`/`_ns` on `sump_pump` (the spec's
+`facings`).
 
 The intake is one fixture drawn twice: `intake_floor` on the level it sits in, seen from
 above, and `intake_ceiling` on the level below. Their tags name the head's position and

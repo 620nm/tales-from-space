@@ -2,8 +2,9 @@
 
 32x32 RGBA, 20 frames. Each face is drawn on the wall tile itself, at the edge beside
 the room, so its sprite row displaces it one whole tile (+-32 px). Tags: idle-<dir>
-(1 frame) and draining-<dir> (4 frames), dir n/s/e/w. Layers, bottom to top:
-scupper_housing (static), drain_flow (animated), bars_and_trim (static).
+(1 frame) and draining-<dir> (4 frames), dir n/s/e/w. Spec layers, bottom to top:
+scupper_housing (static), drain_flow (animated), bars_and_trim (static); each is one
+Aseprite layer per face (`scupper_housing_n` ... `bars_and_trim_w`).
 """
 
 from __future__ import annotations
@@ -474,6 +475,8 @@ SPEC: dict[str, Any] = {
     "frame_count": 20,
     "frame_durations_ms": DURATIONS,
     "tags": TAGS,
+    # Each face is its own drawing, so each spec layer is one Aseprite layer per face.
+    "facings": {d: [f"idle-{d}", f"draining-{d}"] for d in ("n", "s", "e", "w")},
     "layers": [
         make_layer(
             "scupper_housing",

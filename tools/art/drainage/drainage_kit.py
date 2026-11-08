@@ -380,6 +380,10 @@ def validate_spec(spec: dict[str, Any]) -> dict[str, Any]:
         if unused:
             raise AssertionError(f"{name}/{layer['name']}: unused legend keys {sorted(unused)}")
 
+    covered = [f for _, frames in facing_frames(spec) for f in frames]
+    if sorted(covered) != list(range(n_frames)):
+        raise AssertionError(f"{name}: facings must own every frame exactly once, got {sorted(covered)}")
+
     if kind in intake_validation.INTAKE_KINDS:
         return intake_validation.validate_intake_spec(spec, composite_frame, analyze_grid, rec709_luma)
 
@@ -720,8 +724,52 @@ def render_layer_png(layer: dict[str, Any], out_path: Path, frame_idx: int = 0) 
     im.save(out_path)
 
 
+# Links every set of identical cels in one layer into one image
+# (docs/art-reference/aseprite-documents.md, "One drawing is one image").
+LINK_CELS_LUA = """
+local s = app.activeSprite
+for _, l in ipairs(s.layers) do
+  local groups, order = {}, {}
+  for _, c in ipairs(l.cels) do
+    local k = c.position.x .. "," .. c.position.y .. ":" .. c.image.width .. "x" .. c.image.height .. ":" .. c.image.bytes
+    if not groups[k] then groups[k] = {}; order[#order + 1] = k end
+    table.insert(groups[k], c.frame)
+  end
+  for _, k in ipairs(order) do
+    if #groups[k] > 1 then
+      app.activeLayer = l
+      app.range:clear()
+      app.range.layers = { l }
+      app.range.frames = groups[k]
+      app.command.LinkCels()
+    end
+  end
+end
+s:saveAs(s.filename)
+print("linked")
+"""
+
+
+def facing_frames(spec: dict[str, Any]) -> list[tuple[str, set[int]]]:
+    """`(layer suffix, 0-based frames)` per facing; one unsuffixed facing over every frame without `facings`."""
+    n_frames = int(spec["frame_count"])
+    if "facings" not in spec:
+        return [("", set(range(n_frames)))]
+    by_tag = {tg["name"]: tg for tg in spec["tags"]}
+    out: list[tuple[str, set[int]]] = []
+    for suffix, tag_names in spec["facings"].items():
+        frames = {f - 1 for name in tag_names for f in range(by_tag[name]["from"], by_tag[name]["to"] + 1)}
+        out.append((f"_{suffix}", frames))
+    return out
+
+
 async def draw_source(session: Any, spec: dict[str, Any], ase_path: Path) -> None:
-    """Replace `ase_path` with the spec's layers, frames and tags."""
+    """Replace `ase_path` with the spec's layers, frames and tags, in the minimal layout.
+
+    A spec layer becomes one Aseprite layer per facing (`<name>_<suffix>`, spec `facings`)
+    holding cels only on that facing's frames; a blank frame gets no cel, and identical cels
+    are linked into one image.
+    """
     n_frames = int(spec["frame_count"])
     ase_path.parent.mkdir(parents=True, exist_ok=True)
     if ase_path.exists():
@@ -734,11 +782,14 @@ async def draw_source(session: Any, spec: dict[str, Any], ase_path: Path) -> Non
         for hx in leg.values():
             if hx not in used_hexes:
                 used_hexes.append(hx)
-        resolved_layers.append({
-            "name": layer["name"],
-            "legend": leg,
-            "frames": layer["frames"] if "frames" in layer else [layer["rows"]] * n_frames,
-        })
+        frames = layer["frames"] if "frames" in layer else [layer["rows"]] * n_frames
+        for suffix, owned in facing_frames(spec):
+            resolved_layers.append({
+                "name": layer["name"] + suffix,
+                "legend": leg,
+                "frames": frames,
+                "owned": owned,
+            })
 
     await call_tool(session, "create_canvas", {"width": 32, "height": 32, "filename": str(ase_path)})
     await call_tool(session, "set_palette", {"filename": str(ase_path), "colors": used_hexes})
@@ -762,7 +813,9 @@ async def draw_source(session: Any, spec: dict[str, Any], ase_path: Path) -> Non
         )
 
     for lyr in resolved_layers:
-        for f_zero in range(n_frames):
+        for f_zero in sorted(lyr["owned"]):
+            if all(ch == "." for row in lyr["frames"][f_zero] for ch in row):
+                continue
             await call_tool(
                 session, "draw_rows",
                 {
@@ -787,6 +840,8 @@ async def draw_source(session: Any, spec: dict[str, Any], ase_path: Path) -> Non
                 "direction": "forward",
             },
         )
+
+    await call_tool(session, "run_lua_script", {"filename": str(ase_path), "script": LINK_CELS_LUA})
 
 
 async def export_source(session: Any, spec: dict[str, Any], ase_path: Path, val: dict[str, Any]) -> dict[str, Any]:
