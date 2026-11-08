@@ -17,14 +17,21 @@
 // other way. `grav_emitter_<facing>` and `grav_emitter_anchored_<facing>` are
 // named for the way the nozzle points, so each wears the tag of the opposite
 // slot.
-// `gravity-ring` holds the four corner arcs of `02_rings`, 32x32 each, tagged
-// by the facing that wears them: north is the north-west arc, then clockwise.
+// `gravity-ring` holds the four corner arcs of the battery's `02_rings`
+// layer, 32x32 each, one layer and tag per facing that wears them: north
+// is the north-west arc, then clockwise. `gravity-pillar` keeps one layer
+// per part and slot; an anchored tag adds that slot's `anchor_bolts_*`.
 //
 // DISC. 48x48, centered on the center tile (`Anchored(.., Center)`); it
 // is not a cell of the 96x96 sheet.
 //
-// STATUS LED. `led_display` frames 27..30 of its `03_status_glyphs`
-// layer: charging, discharging, fault, unpowered.
+// BODY. `gravity-battery` holds only the baked stages: `10_active` shares
+// the last four frames of `09_startup`, and `08_standby` is the last frame
+// of `11_shutdown`. It bakes no status glyph.
+//
+// STATUS LED. `led_display` is the glyph alone, frames 1..4 of its
+// `status_glyphs` layer: charging, discharging, fault, unpowered (blank).
+// The steady states stack one over the body's south cell.
 (
     sprites: [
         // Emitters: facing F wears the pillar tag of the opposite slot.
@@ -149,9 +156,9 @@
         ("grav_disc_shutdown", Anchored(AseAnimOnce("art/machines/gravity/gravity-disc.aseprite", "03_shutdown"), Center)),
 
         // The south panel's status glyphs.
-        ("grav_led_charging", AseLayer("art/machines/gravity/led_display.aseprite", "03_status_glyphs", 27)),
-        ("grav_led_discharging", AseLayer("art/machines/gravity/led_display.aseprite", "03_status_glyphs", 28)),
-        ("grav_led_fault", AseLayer("art/machines/gravity/led_display.aseprite", "03_status_glyphs", 29)),
-        ("grav_led_unpowered", AseLayer("art/machines/gravity/led_display.aseprite", "03_status_glyphs", 30)),
+        ("grav_led_charging", AseLayer("art/machines/gravity/led_display.aseprite", "status_glyphs", 1)),
+        ("grav_led_discharging", AseLayer("art/machines/gravity/led_display.aseprite", "status_glyphs", 2)),
+        ("grav_led_fault", AseLayer("art/machines/gravity/led_display.aseprite", "status_glyphs", 3)),
+        ("grav_led_unpowered", AseLayer("art/machines/gravity/led_display.aseprite", "status_glyphs", 4)),
     ],
 )
