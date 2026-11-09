@@ -22,6 +22,7 @@ local action_rules = require("@lib/action_rules")
 
 local content = {
     id = "pipe",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pipe.name",

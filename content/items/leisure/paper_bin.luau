@@ -4,6 +4,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- tg paperbin.dm:3-18, :42-77, :91-141.
 local content = {
     id = "paper_bin",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.paper_bin.name",

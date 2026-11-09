@@ -3,6 +3,7 @@
 -- tg: code/modules/reagents/chemistry/machinery/chem_master.dm:3-8.
 return {
     id = "chem_packager",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.chem_packager.name",

@@ -3,6 +3,7 @@ local physical_profiles = require("@lib/physical_profiles")
 
 local content = {
     id = "blood_pack",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     -- tg's base name, description and icon (`code/modules/reagents/reagent_containers/blood_pack.dm:2-5`).

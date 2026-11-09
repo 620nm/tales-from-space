@@ -122,6 +122,7 @@ end
 
 local entry: { [string]: any } = {
     id = "grav_smes",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.grav_smes.name",

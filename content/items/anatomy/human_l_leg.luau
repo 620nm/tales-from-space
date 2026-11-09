@@ -9,6 +9,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- (default_parts.dm:376-377).
 return {
     id = "human_l_leg",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.human_l_leg.name",

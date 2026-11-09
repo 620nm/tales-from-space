@@ -22,6 +22,7 @@ local SIDES = 4
 
 local content = {
     id = "d4",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     actions = dice.actions(),

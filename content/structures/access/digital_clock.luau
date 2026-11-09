@@ -6,6 +6,7 @@
 -- declaration does both from the sim tick; no script runs on a cadence.
 return {
     id = "digital_clock",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.digital_clock.name",
     name = "digital clock",

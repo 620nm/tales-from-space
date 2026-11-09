@@ -7,6 +7,7 @@
 -- docs/content-schema/fixture-states.md and docs/power/topology.md.
 return {
     id = "utility_outlet_port",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.utility_outlet_port.name",

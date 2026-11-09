@@ -25,6 +25,7 @@ local stock_parts = require("@lib/stock_parts")
 -- a tier two would be a rung with nothing on it.
 return {
     id = "network_card",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.network_card.name",

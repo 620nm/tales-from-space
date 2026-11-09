@@ -74,6 +74,7 @@
 -- is written here and neither can be.
 return {
     id = "air_alarm",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     -- tg's AREA_USAGE_ENVIRON, _air_alarm.dm:10 (docs/POWER.md).

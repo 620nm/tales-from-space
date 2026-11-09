@@ -6,6 +6,7 @@ local assembly = require("@lib/assembly")
 -- 95-process-machines.ron:18-21).
 return {
     id = "pyrolyzer",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.pyrolyzer.name",
     name = "pyrolyzer",

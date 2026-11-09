@@ -4,6 +4,7 @@
 -- that already exists, never floating alone in the dark.
 return {
     id = "space",
+    entity_class = "installed",
     visual_layer = "substrate",
     name_label = "lunatic/tfs:entity.space.name",
     name = "space",

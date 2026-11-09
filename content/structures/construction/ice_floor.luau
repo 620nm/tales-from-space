@@ -2,6 +2,7 @@
 -- metal floor tiles as plating like any misc turf (misc.dm:33-35).
 return {
     id = "ice_floor",
+    entity_class = "installed",
     visual_layer = "substrate",
     name_label = "lunatic/tfs:entity.ice_floor.name",
     name = "ice",

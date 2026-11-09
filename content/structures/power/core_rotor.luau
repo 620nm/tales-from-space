@@ -14,6 +14,7 @@ local gas_turbine_wrench = require("@lib/power/gas_turbine_wrench")
 -- no Alt+click turn, as tg's sections have none (_machinery.dm:1069-1077).
 return {
     id = "core_rotor",
+    entity_class = "installed",
     visual_layer = "fixture",
     -- A source on the cable under it, its watts set by the running loop
     -- (lib/power/gas_turbine_turns.luau; tg `add_avail`, turbine.dm:685).

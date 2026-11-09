@@ -5,6 +5,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- tg crayons.dm:24-74, :628-634, :726-752.
 local content = {
     id = "crayon_box",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.crayon_box.name",

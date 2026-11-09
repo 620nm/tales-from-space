@@ -7,6 +7,7 @@ local wheeled_tub = require("@lib/wheeled_tub")
 -- head: 100 tg units at 250/15 mL.
 local content = {
     id = "mop_bucket",
+    entity_class = "carried",
     visual_layer = "low_object",
     dense = true,
     motion_response = {

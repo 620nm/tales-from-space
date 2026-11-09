@@ -43,6 +43,7 @@ local lit_states = { closet_data.chamber_items_state, closet_data.chamber_bodies
 
 return {
     id = "cadaver_chamber",
+    entity_class = "installed",
     script = "cadaver_chamber",
     -- Closets draw under items (low_object in content/compositions.luau).
     visual_layer = "low_object",

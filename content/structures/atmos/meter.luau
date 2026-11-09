@@ -50,6 +50,7 @@ table.insert(lamps, "meter_l4")
 
 return {
     id = "meter",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.meter.name",
     name = "flow meter",

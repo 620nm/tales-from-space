@@ -7,6 +7,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- As the left arm (default_parts.dm:123-125, _bodyparts.dm:1643-1644).
 return {
     id = "human_r_arm",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.human_r_arm.name",

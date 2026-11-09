@@ -6,6 +6,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- the reload spends it into the weapon's charges.
 return {
     id = "round_c45",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.round_c45.name",

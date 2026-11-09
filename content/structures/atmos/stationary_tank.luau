@@ -66,6 +66,7 @@
 -- stack recipe on the frame beside this file is its only route here.
 return {
     id = "stationary_tank",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.stationary_tank.name",
     name = "pressure tank",

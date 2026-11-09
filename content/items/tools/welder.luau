@@ -11,6 +11,7 @@ local ignition = require("@lib/ignition")
 -- tfs/content/structures/.
 local content = {
     id = "welder",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     -- The ordinary self-use key remains available through `self`; the

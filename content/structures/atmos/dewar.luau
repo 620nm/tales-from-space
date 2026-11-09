@@ -14,6 +14,7 @@ local wrench_anchor, wrench_unanchor = anchorable.pair({
 -- boil-off vapor above 1200 kPa.
 return {
     id = "dewar",
+    entity_class = "installed",
     visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.dewar.name",
     name = "liquid dewar",

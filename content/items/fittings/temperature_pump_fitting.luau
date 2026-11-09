@@ -7,6 +7,7 @@ local turning = require("@lib/turning")
 -- `"tpump"` here (components/binary_devices/temperature_pump.dm:8).
 local content = {
     id = "temperature_pump_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.temperature_pump_fitting.name",

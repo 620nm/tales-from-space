@@ -28,6 +28,7 @@
 -- does not exist here; none of them changes what a table IS.
 return {
     id = "table",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.table.name",
     name = "table",

@@ -5,6 +5,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- to a frame.
 return {
     id = "screwdriver",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.screwdriver.name",

@@ -36,6 +36,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- `w_class` in the same breath), not bolted on for a toy.
 return {
     id = "dice_bag",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.dice_bag.name",

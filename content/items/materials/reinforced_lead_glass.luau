@@ -2,6 +2,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- Reinforced lead-silicate glass sheets with embedded rods for shielded windows.
 return {
     id = "reinforced_lead_glass",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.reinforced_lead_glass.name",

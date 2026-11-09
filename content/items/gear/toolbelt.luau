@@ -10,6 +10,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- seven things it arrives with.
 return {
     id = "toolbelt",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.toolbelt.name",

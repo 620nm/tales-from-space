@@ -9,6 +9,7 @@ local action_rules = require("@lib/action_rules")
 -- tg's try_to_crowbar refuses bolts itself.
 local content = {
     id = "crowbar",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.crowbar.name",

@@ -6,6 +6,7 @@ local writing = require("@lib/writing")
 -- tg pen.dm:125-152.
 local content = {
     id = "four_color_pen",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.four_color_pen.name",

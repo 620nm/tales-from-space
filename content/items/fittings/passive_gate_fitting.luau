@@ -7,6 +7,7 @@ local turning = require("@lib/turning")
 -- `"passivegate"` (passive_gate.dm:18).
 local content = {
     id = "passive_gate_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.passive_gate_fitting.name",

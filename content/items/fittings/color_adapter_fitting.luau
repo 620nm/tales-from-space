@@ -7,6 +7,7 @@ local turning = require("@lib/turning")
 -- `"adapter_center"` here (pipes/color_adapter.dm:17).
 local content = {
     id = "color_adapter_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.color_adapter_fitting.name",

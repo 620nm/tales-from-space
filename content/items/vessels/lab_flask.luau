@@ -6,6 +6,7 @@ local vessel = require("@lib/vessel")
 -- for a useful syngas batch.
 local content = {
     id = "lab_flask",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.lab_flask.name",

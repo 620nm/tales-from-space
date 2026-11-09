@@ -7,6 +7,7 @@ local turning = require("@lib/turning")
 -- `"manifoldlayer"` here (pipes/layermanifold.dm:13).
 local content = {
     id = "layer_adapter_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.layer_adapter_fitting.name",

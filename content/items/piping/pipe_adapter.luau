@@ -14,6 +14,7 @@ local action_rules = require("@lib/action_rules")
 -- multiz.dm:17). The wrench takes it back up like any length.
 local content = {
     id = "pipe_adapter",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pipe_adapter.name",

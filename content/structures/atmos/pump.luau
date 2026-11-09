@@ -31,6 +31,7 @@
 -- (pump.dm:68), where the manual valve's starts the wheel turning.
 return {
     id = "pump",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).

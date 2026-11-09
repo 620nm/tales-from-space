@@ -11,6 +11,7 @@ local turning = require("@lib/turning")
 -- this is a second item rather than a click on the first.
 local content = {
     id = "filter_flipped_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.filter_flipped_fitting.name",

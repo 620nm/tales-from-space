@@ -6,6 +6,7 @@ local action_rules = require("@lib/action_rules")
 -- your hand to get at them).
 local content = {
     id = "toolbox",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.toolbox.name",

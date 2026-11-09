@@ -126,6 +126,7 @@ local content = {
         self = { label = "lunatic/tfs:ui.affordance.view_interface" },
     },
     id = "rpd",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.rpd.name",

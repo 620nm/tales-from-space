@@ -12,6 +12,7 @@ local vessel = require("@lib/vessel")
 local SAFE, READY = 0, 1
 local content = {
     id = "fire_extinguisher",
+    entity_class = "carried",
     visual_layer = "item",
     name_label = "lunatic/tfs:entity.fire_extinguisher.name",
     name = "fire extinguisher",

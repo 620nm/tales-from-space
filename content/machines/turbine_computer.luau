@@ -15,6 +15,7 @@
 -- machine_board.luau) as the programming terminal's does.
 return {
     id = "turbine_computer",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.turbine_computer.name",

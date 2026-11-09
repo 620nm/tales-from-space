@@ -34,6 +34,7 @@
 --     north and west onto east.
 return {
     id = "layer_adapter",
+    entity_class = "covered",
     visual_layer = "pipe",
     name_label = "lunatic/tfs:entity.layer_adapter.name",
     name = "layer adapter",

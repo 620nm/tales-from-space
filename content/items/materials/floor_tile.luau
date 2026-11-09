@@ -5,6 +5,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- with the turfs that make them, in tfs/content/structures/.
 return {
     id = "floor_tile",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.floor_tile.name",

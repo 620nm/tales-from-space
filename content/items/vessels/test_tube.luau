@@ -18,6 +18,7 @@ local vessel = require("@lib/vessel")
 -- line is refused.
 local content = {
     id = "test_tube",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.test_tube.name",

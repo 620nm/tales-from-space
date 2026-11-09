@@ -3,6 +3,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- container, filled at spawn. Reuses the toolbelt picture for now.
 return {
     id = "surgical_kit",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.surgical_kit.name",

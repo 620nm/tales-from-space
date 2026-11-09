@@ -2,6 +2,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- Drills a hole in bone (tg surgery_tools.dm:158-178): force 15, pointy.
 return {
     id = "surgical_drill",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.surgical_drill.name",

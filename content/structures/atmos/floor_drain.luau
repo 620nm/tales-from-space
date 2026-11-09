@@ -22,6 +22,7 @@
 -- empties a deck, and a scupper's 0.5 m wins any argument on the same run.
 return {
     id = "floor_drain",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.floor_drain.name",
     name = "floor drain",

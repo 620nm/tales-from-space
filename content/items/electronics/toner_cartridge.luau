@@ -3,6 +3,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- tg photocopier.dm:879-887 supplies the source item and charge gauge.
 return {
     id = "toner_cartridge",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.toner_cartridge.name",

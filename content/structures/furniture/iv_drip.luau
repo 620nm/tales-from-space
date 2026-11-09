@@ -2,6 +2,7 @@
 -- tg: code/game/machinery/iv_drip.dm:14-21.
 return {
     id = "iv_drip",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.iv_drip.name",
     name = "IV drip",

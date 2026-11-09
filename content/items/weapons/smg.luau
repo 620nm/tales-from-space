@@ -11,6 +11,7 @@ local firearm = require("@lib/firearm")
 -- feeds carried magazines into them a round at a time (`lib/firearm`).
 local content = {
     id = "smg",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     interaction_labels = {

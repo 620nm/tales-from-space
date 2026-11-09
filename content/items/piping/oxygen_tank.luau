@@ -25,6 +25,7 @@ local content = {
         self = { label = "lunatic/tfs:ui.affordance.toggle_internals" },
     },
     id = "oxygen_tank",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.oxygen_tank.name",

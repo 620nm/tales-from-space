@@ -14,6 +14,7 @@ local preserved_organ = require("@lib/medical/preserved_organ")
 -- (code/modules/surgery/organs/internal/ears/_ears.dm).
 return {
     id = "organ_ears",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.organ_ears.name",

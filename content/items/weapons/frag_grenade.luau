@@ -23,6 +23,7 @@ local FUSE_SECONDS = 5
 
 local content = {
     id = "frag_grenade",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     interaction_labels = {

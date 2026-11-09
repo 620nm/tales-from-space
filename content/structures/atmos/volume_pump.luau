@@ -28,6 +28,7 @@
 -- over it, like the pipe either side.
 return {
     id = "volume_pump",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).

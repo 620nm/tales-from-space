@@ -3,6 +3,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- floor_tile.luau, and held art shares `glass_tile`'s.
 return {
     id = "lead_glass_tile",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.lead_glass_tile.name",

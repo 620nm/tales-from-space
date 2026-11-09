@@ -7,6 +7,7 @@ local turning = require("@lib/turning")
 -- `"injector"` here (components/unary_devices/outlet_injector.dm:11).
 local content = {
     id = "air_injector_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.air_injector_fitting.name",

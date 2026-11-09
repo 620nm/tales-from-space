@@ -8,6 +8,7 @@ local firearm = require("@lib/firearm")
 -- refuses anything else before the engine stows it.
 local content = {
     id = "smg_mag",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.smg_mag.name",

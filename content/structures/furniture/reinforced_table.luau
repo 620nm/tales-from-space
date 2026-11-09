@@ -33,6 +33,7 @@
 -- other needs a cable under a table to mean something.
 return {
     id = "reinforced_table",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.reinforced_table.name",
     name = "reinforced table",

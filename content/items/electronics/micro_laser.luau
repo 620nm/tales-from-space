@@ -17,6 +17,7 @@ local stock_parts = require("@lib/stock_parts")
 -- `lib/stock_parts.luau`, which is where this pack's ladder is argued.
 return {
     id = "micro_laser",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.micro_laser.name",

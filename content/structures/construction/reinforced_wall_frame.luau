@@ -27,6 +27,7 @@
 -- station.
 return {
     id = "reinforced_wall_frame",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.reinforced_wall_frame.name",
     name = "reinforced wall frame",

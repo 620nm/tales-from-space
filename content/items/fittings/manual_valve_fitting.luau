@@ -15,6 +15,7 @@ local turning = require("@lib/turning")
 -- target is the expert.
 local content = {
     id = "manual_valve_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.manual_valve_fitting.name",

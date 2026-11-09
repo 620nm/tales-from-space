@@ -49,6 +49,7 @@ local preserved_organ = require("@lib/medical/preserved_organ")
 -- with the `breathing` capacity, so damaged lungs turn over less air.
 return {
     id = "organ_lungs",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.organ_lungs.name",

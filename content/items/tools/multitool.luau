@@ -14,6 +14,7 @@ local load_classes = require("@lib/load_classes")
 -- tg: /obj/item/multitool (multitool.dm:14).
 local content = {
     id = "multitool",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.multitool.name",

@@ -7,6 +7,7 @@ local turning = require("@lib/turning")
 -- `pipe_state`, `"pvalve"` (pressure_valve.dm:129).
 local content = {
     id = "pressure_valve_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pressure_valve_fitting.name",

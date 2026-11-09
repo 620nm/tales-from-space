@@ -9,6 +9,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- half rate under the knife (_bodyparts.dm:1641-1642).
 return {
     id = "human_head",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.human_head.name",

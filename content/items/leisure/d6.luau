@@ -51,6 +51,7 @@ end
 
 local content = {
     id = "d6",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     actions = dice.actions(),

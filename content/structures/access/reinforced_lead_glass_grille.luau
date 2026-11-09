@@ -4,6 +4,7 @@
 -- two reinforced lead glass sheets and leaves a bolted `grille` standing.
 return {
     id = "reinforced_lead_glass_grille",
+    entity_class = "installed",
     visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.reinforced_lead_glass_grille.name",
     name = "reinforced lead glass grille",

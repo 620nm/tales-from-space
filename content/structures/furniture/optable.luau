@@ -32,6 +32,7 @@
 -- by the mapper rather than raised out of silver.
 return {
     id = "optable",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.optable.name",
     name = "operating table",

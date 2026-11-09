@@ -7,6 +7,7 @@ local turning = require("@lib/turning")
 -- `"heunary"` here (components/unary_devices/heat_exchanger.dm:16).
 local content = {
     id = "heat_exchanger_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.heat_exchanger_fitting.name",

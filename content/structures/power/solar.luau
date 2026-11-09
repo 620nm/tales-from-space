@@ -5,6 +5,7 @@
 -- is no day/night cycle yet, so a panel is simply a source.
 return {
     id = "solar",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.solar.name",

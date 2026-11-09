@@ -101,6 +101,7 @@
 -- station has.
 return {
     id = "chem_dispenser",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.chem_dispenser.name",

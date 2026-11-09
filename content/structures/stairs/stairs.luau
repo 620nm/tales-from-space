@@ -16,6 +16,7 @@
 -- Not ported: merged art (:155-179), chained flights (:355-367), frames.
 return {
     id = "stairs",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.stairs.name",
     name = "stairs",

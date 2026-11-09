@@ -12,6 +12,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- (code/modules/surgery/bodyparts/_bodyparts.dm:1641-1644).
 return {
     id = "human_chest",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.human_chest.name",

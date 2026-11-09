@@ -15,6 +15,7 @@ local preserved_organ = require("@lib/medical/preserved_organ")
 -- (code/modules/surgery/organs/internal/liver/_liver.dm:16).
 return {
     id = "organ_liver",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.organ_liver.name",

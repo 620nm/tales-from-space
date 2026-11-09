@@ -3,6 +3,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- window hangs in.
 return {
     id = "rod",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.rod.name",

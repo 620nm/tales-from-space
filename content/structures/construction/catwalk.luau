@@ -5,6 +5,7 @@
 -- Removal declares dependent power-cable loss; replacement keeps supported runs.
 return {
     id = "catwalk",
+    entity_class = "installed",
     visual_layer = "support",
     name_label = "lunatic/tfs:entity.catwalk.name",
     name = "catwalk",

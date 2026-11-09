@@ -8,6 +8,7 @@ local turning = require("@lib/turning")
 -- items/filter_fitting.luau for why the pair are two items.
 local content = {
     id = "mixer_flipped_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.mixer_flipped_fitting.name",

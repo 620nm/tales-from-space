@@ -2,6 +2,7 @@
 -- Refund: code/game/turfs/open/floor.dm:18,144-176.
 return {
     id = "floor",
+    entity_class = "installed",
     visual_layer = "cover",
     name_label = "lunatic/tfs:entity.floor.name",
     name = "floor",

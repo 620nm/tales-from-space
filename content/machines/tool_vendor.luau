@@ -17,6 +17,7 @@
 -- vending machine, not of any particular one.
 return {
     id = "tool_vendor",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.tool_vendor.name",

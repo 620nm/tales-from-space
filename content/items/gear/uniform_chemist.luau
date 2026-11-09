@@ -4,6 +4,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- yet model its fire and acid armor, so this file claims no protection.
 return {
     id = "uniform_chemist",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.uniform_chemist.name",

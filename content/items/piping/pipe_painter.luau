@@ -27,6 +27,7 @@ local FIXED_COLOR = { radiator_pipe = true, adapter = true }
 
 local content = {
     id = "pipe_painter",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pipe_painter.name",

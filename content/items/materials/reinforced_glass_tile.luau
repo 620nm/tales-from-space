@@ -5,6 +5,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- `tile-rglass`. Stack size and scatter follow floor_tile.luau.
 return {
     id = "reinforced_glass_tile",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.reinforced_glass_tile.name",

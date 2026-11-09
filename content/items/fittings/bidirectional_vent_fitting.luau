@@ -2,6 +2,7 @@ local physical_profiles = require("@lib/physical_profiles")
 local turning = require("@lib/turning")
 local content = {
     id = "bidirectional_vent_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.bidirectional_vent_fitting.name",

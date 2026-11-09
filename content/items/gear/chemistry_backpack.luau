@@ -3,6 +3,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- (`/obj/item/storage/backpack/chemistry`, backpack.dm:182-186).
 return {
     id = "chemistry_backpack",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.chemistry_backpack.name",

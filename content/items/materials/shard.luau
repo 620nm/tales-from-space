@@ -5,6 +5,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- sheet's picture until a shard sprite is baked.
 return {
     id = "shard",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.shard.name",

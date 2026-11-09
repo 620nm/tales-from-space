@@ -50,6 +50,7 @@ local DRAW, INJECT = 0, 1
 
 local content = {
     id = "syringe",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.syringe.name",

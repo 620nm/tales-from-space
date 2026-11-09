@@ -12,6 +12,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- and a stack of plasteel is a rarer thing to be holding.
 return {
     id = "plasteel",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.plasteel.name",

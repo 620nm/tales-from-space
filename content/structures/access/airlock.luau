@@ -29,6 +29,7 @@
 -- station came with.
 return {
     id = "airlock",
+    entity_class = "passage",
     visual_layer = "fixture",
     energy_network = "power",
     -- tg's AREA_USAGE_ENVIRON, door.dm:16 (docs/POWER.md).

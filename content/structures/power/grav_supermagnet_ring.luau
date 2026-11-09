@@ -11,6 +11,7 @@ local CORNERS = { "north", "east", "south", "west" }
 
 return {
     id = "grav_supermagnet_ring",
+    entity_class = "installed",
     visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.grav_supermagnet_ring.name",
     name = "supermagnet ring",

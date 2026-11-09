@@ -47,6 +47,7 @@ local NEXT_SETTING: { [number]: number } = { [1] = 2, [2] = 0, [0] = 4, [4] = 5,
 
 local content = {
     id = "cable_coil",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.cable_coil.name",

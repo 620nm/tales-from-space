@@ -25,6 +25,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- cloth pair its plain-suit parent uses.
 return {
     id = "eva_suit",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.eva_suit.name",

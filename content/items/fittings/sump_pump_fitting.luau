@@ -3,6 +3,7 @@ local turning = require("@lib/turning")
 -- A sump pump, in your hands: set it on the deck and wrench it down.
 local content = {
     id = "sump_pump_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.sump_pump_fitting.name",

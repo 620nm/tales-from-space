@@ -29,6 +29,7 @@ local CHANNELS = { "l1", "l2", "l3", "l4", "l5" }
 
 local content = {
     id = "pipe_meter",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pipe_meter.name",

@@ -10,6 +10,7 @@
 -- up and a new one fitted without the engine learning what a light is.
 return {
     id = "light",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.light.name",

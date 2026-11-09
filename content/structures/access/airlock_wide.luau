@@ -40,6 +40,7 @@
 -- draws no department stripes on this sheet.
 return {
     id = "airlock_wide",
+    entity_class = "passage",
     visual_layer = "fixture",
     energy_network = "power",
     -- tg's AREA_USAGE_ENVIRON, door.dm:16 (docs/POWER.md).

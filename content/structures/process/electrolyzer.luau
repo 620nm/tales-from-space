@@ -5,6 +5,7 @@ local assembly = require("@lib/assembly")
 -- frame and its circuitboard.
 return {
     id = "electrolyzer",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.electrolyzer.name",
     name = "electrolyzer",

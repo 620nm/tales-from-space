@@ -8,6 +8,7 @@ local wheeled_tub = require("@lib/wheeled_tub")
 -- replacer and four signs (janitor.dm:58-64). docs/janitorial/trolley.md.
 local content = {
     id = "janitor_trolley",
+    entity_class = "carried",
     visual_layer = "low_object",
     dense = true,
     motion_response = {

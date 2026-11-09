@@ -5,6 +5,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- light requires a tube!", light.dm:396).
 return {
     id = "light_bulb",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.light_bulb.name",

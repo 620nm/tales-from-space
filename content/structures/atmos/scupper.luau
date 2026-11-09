@@ -19,6 +19,7 @@
 -- fitting; the RPD lays nothing that hangs on a wall.
 return {
     id = "scupper",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.scupper.name",
     name = "scupper",

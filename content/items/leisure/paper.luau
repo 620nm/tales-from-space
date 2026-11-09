@@ -9,6 +9,7 @@ local writing = require("@lib/writing")
 -- what it does over a hole. It stays the same file store, so it keeps its writing.
 local content = {
     id = "paper",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.paper.name",

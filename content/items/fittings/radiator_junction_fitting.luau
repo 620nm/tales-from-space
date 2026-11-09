@@ -7,6 +7,7 @@ local turning = require("@lib/turning")
 -- (heat_exchange/junction.dm:16).
 local content = {
     id = "radiator_junction_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.radiator_junction_fitting.name",

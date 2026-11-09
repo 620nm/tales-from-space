@@ -13,6 +13,7 @@
 -- ever surprised by a meter that will not move.
 return {
     id = "smes",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     default_props = { l1 = "output", l2 = "input", l3 = "output" },

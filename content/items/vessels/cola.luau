@@ -11,6 +11,7 @@ local vessel = require("@lib/vessel")
 -- your own feet falls through to whatever it would otherwise have been.
 local content = {
     id = "cola",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.cola.name",

@@ -16,6 +16,7 @@ local preserved_organ = require("@lib/medical/preserved_organ")
 -- thing a tongue on the deck does.
 return {
     id = "organ_tongue",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.organ_tongue.name",

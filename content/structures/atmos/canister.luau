@@ -36,6 +36,7 @@ local wrench_anchor, wrench_unanchor = anchorable.pair({
 -- shoving a live one somewhere it should not be is a decision.
 return {
     id = "canister",
+    entity_class = "installed",
     -- Large and portable, so it draws over items: tg's own layer for
     -- one, ABOVE_OBJ_LAYER (portable_atmospherics.dm:10).
     visual_layer = "large_object",

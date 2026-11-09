@@ -2,6 +2,7 @@
 -- (asteroid.dm:5-14). Laying plating on it is not ported: no transitions.
 return {
     id = "rock_floor",
+    entity_class = "installed",
     visual_layer = "substrate",
     name_label = "lunatic/tfs:entity.rock_floor.name",
     name = "rock floor",

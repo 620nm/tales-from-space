@@ -8,6 +8,7 @@ local turbine_parts = require("@lib/power/turbine_parts")
 -- tool vendor sells tier one and tiers two to four are variants a map places.
 return {
     id = "stator_part",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.stator_part.name",

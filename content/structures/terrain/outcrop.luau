@@ -7,6 +7,7 @@
 -- `get_potential_products`, :1042-1043) and its integrity.
 return {
     id = "outcrop",
+    entity_class = "installed",
     visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.outcrop.name",
     name = "boulder",

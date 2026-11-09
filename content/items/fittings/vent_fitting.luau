@@ -8,6 +8,7 @@ local turning = require("@lib/turning")
 -- "air vent fitting" (construction.dm:53).
 local content = {
     id = "vent_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.vent_fitting.name",

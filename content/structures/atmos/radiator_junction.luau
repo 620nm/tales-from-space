@@ -43,6 +43,7 @@
 -- (pipes.dm:27-28).
 return {
     id = "radiator_junction",
+    entity_class = "covered",
     visual_layer = "pipe",
     name_label = "lunatic/tfs:entity.radiator_junction.name",
     name = "junction",

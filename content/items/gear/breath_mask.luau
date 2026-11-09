@@ -21,6 +21,7 @@ local BIO_PROTECTION = 50
 -- without a noise in tg too (the rule the headset already keeps).
 local content = {
     id = "breath_mask",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.breath_mask.name",

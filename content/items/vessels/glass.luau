@@ -4,6 +4,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- through still stops you walking through it.
 return {
     id = "glass",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.glass.name",

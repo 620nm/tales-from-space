@@ -7,6 +7,7 @@ local turning = require("@lib/turning")
 -- (components/unary_devices/passive_vent.dm:12).
 local content = {
     id = "passive_vent_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.passive_vent_fitting.name",

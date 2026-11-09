@@ -2,6 +2,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- A scupper, in your hands: hold it and hang it on the wall beside you.
 return {
     id = "scupper_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.scupper_fitting.name",

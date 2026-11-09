@@ -5,6 +5,7 @@
 -- instantly: `pry_tile` has no do_after (floor.dm:159-161).
 return {
     id = "reinforced_glass_floor",
+    entity_class = "installed",
     visual_layer = "cover",
     name_label = "lunatic/tfs:entity.reinforced_glass_floor.name",
     name = "reinforced glass floor",

@@ -1,6 +1,7 @@
 -- Furniture with opinions.
 return {
     id = "tv",
+    entity_class = "installed",
     actions = {
         {
             id = "watch",

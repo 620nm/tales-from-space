@@ -12,6 +12,7 @@ local gas_turbine_wrench = require("@lib/power/gas_turbine_wrench")
 -- no Alt+click turn, as tg's sections have none (_machinery.dm:1069-1077).
 return {
     id = "turbine_outlet",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.turbine_outlet.name",
     name = "turbine outlet",

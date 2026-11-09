@@ -28,6 +28,7 @@ type PillSwallow = { user: Handle, at: TileAddress }
 
 local content = {
     id = "pill",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pill.name",

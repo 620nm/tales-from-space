@@ -42,6 +42,7 @@ local wrench_anchor, wrench_unanchor = anchorable.pair({
 -- step and not a way of taking the bolts back out.
 return {
     id = "stationary_tank_frame",
+    entity_class = "installed",
     -- Large and loose, so it draws over items (large_object in content/compositions.luau).
     visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.stationary_tank_frame.name",

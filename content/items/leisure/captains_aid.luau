@@ -33,6 +33,7 @@ local DIRECTIONS = { "off", "port", "starboard", "fore", "aft" }
 
 local content = {
     id = "captains_aid",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.captains_aid.name",

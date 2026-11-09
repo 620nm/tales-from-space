@@ -23,6 +23,7 @@
 -- maximal stores in one window is a lot of paper for one console.
 return {
     id = "programming_terminal",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.programming_terminal.name",

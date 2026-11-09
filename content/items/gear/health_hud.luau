@@ -15,6 +15,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- NOT PORTED: tg's glasses pickup/drop/equip sounds (_glasses.dm:15-17).
 return {
     id = "health_hud",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.health_hud.name",

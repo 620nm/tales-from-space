@@ -3,6 +3,7 @@ local vessel = require("@lib/vessel")
 
 local content = {
     id = "beaker_plastic",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.beaker_plastic.name",

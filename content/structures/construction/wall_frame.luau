@@ -30,6 +30,7 @@ local assembly = require("@lib/assembly")
 -- torch gives back is the sheets.
 return {
     id = "wall_frame",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.wall_frame.name",
     name = "wall frame",

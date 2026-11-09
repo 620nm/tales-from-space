@@ -16,6 +16,7 @@ local preserved_organ = require("@lib/medical/preserved_organ")
 -- smaller and fail sooner than anything else in the head.
 local content = {
     id = "organ_eyes",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.organ_eyes.name",

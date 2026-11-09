@@ -22,6 +22,7 @@ local closet_rows = require("@lib/closets/rows")
 
 return {
     id = "locker",
+    entity_class = "installed",
     script = "locker",
     -- Closets draw under items (low_object in content/compositions.luau).
     visual_layer = "low_object",

@@ -18,6 +18,7 @@
 -- (:1395-1404), which tables here lack too.
 return {
     id = "rack",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.rack.name",
     name = "rack",

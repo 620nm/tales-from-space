@@ -10,6 +10,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- which have no socket of their own.
 return {
     id = "machine_board",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.machine_board.name",

@@ -3,6 +3,7 @@ local reflection_chamber = require("@lib/process/reflection_chamber")
 
 return {
     id = "reflection_chamber",
+    entity_class = "installed",
     name_label = "lunatic/tfs:entity.reflection_chamber.name",
     name = "reflection chamber",
     sprite = "reflection_chamber",

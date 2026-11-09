@@ -3,6 +3,7 @@
 -- Station crews also call it the 'dual-port vent' or 'equalization port'.
 return {
     id = "bidirectional_vent",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).

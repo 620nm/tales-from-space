@@ -1,6 +1,7 @@
 -- Solid terrain can support a new deck without an adjacent station floor.
 return {
     id = "ground",
+    entity_class = "installed",
     visual_layer = "substrate",
     name_label = "lunatic/tfs:entity.ground.name",
     name = "ground",

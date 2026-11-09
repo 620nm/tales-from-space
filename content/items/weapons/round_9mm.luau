@@ -6,6 +6,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- everywhere — the round the compat gate turns away.
 return {
     id = "round_9mm",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.round_9mm.name",

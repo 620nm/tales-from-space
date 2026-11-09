@@ -34,6 +34,7 @@
 -- gets switched on. No power hookup yet, as with the rest of the kit.
 return {
     id = "mixer",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).

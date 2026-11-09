@@ -22,6 +22,7 @@
 -- the ledger row is forensic either way.
 return {
     id = "air_sensor",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.air_sensor.name",
     name = "air sensor",

@@ -4,6 +4,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- directly without teaching the chemistry machine another product format.
 return {
     id = "plastic_sheet",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.plastic_sheet.name",

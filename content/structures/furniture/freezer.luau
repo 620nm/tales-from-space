@@ -5,6 +5,7 @@ local closet_rows = require("@lib/closets/rows")
 
 return {
     id = "freezer",
+    entity_class = "installed",
     script = "freezer",
     visual_layer = "low_object",
     energy_network = "power",

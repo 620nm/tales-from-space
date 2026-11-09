@@ -51,6 +51,7 @@
 -- whole kit exists for survivable by accident.
 return {
     id = "air_scrubber",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).

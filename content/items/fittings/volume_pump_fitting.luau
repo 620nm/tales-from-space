@@ -7,6 +7,7 @@ local turning = require("@lib/turning")
 -- `"volumepump"` (volume_pump.dm:20).
 local content = {
     id = "volume_pump_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.volume_pump_fitting.name",

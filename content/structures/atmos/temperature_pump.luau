@@ -28,6 +28,7 @@
 -- (temperature_pump.dm:70-76). A dead equipment channel stops it.
 return {
     id = "temperature_pump",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).

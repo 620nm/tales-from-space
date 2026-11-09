@@ -5,6 +5,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- (docs/CONSTRUCTION.md — the target is the expert).
 return {
     id = "light_tube",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.light_tube.name",

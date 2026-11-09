@@ -54,6 +54,7 @@
 -- economy. The clean-room shelf exposes only live stock (docs/TGUI.md).
 return {
     id = "games_vendor",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.games_vendor.name",

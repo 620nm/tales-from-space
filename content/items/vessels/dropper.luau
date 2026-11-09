@@ -20,6 +20,7 @@ local vessel = require("@lib/vessel")
 -- dropper's. Liquid only: a pipette does not pick up a crystal.
 local content = {
     id = "dropper",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.dropper.name",

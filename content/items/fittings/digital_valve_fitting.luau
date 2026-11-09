@@ -9,6 +9,7 @@ local turning = require("@lib/turning")
 -- the two in tg as well.
 local content = {
     id = "digital_valve_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.digital_valve_fitting.name",

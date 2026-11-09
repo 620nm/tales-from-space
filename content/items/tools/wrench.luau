@@ -36,6 +36,7 @@ local RETURN_ITEMS: { [string]: string } =
 -- tile up and the same click works.
 local content = {
     id = "wrench",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.wrench.name",

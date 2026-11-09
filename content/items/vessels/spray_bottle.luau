@@ -4,6 +4,7 @@ local physical_profiles = require("@lib/physical_profiles")
 local SPRAY, STREAM = 0, 1
 local content = {
     id = "spray_bottle",
+    entity_class = "carried",
     visual_layer = "item",
     name_label = "lunatic/tfs:entity.spray_bottle.name",
     name = "spray bottle",

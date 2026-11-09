@@ -29,6 +29,7 @@
 -- ends has two axes and not four facings.
 return {
     id = "color_adapter",
+    entity_class = "covered",
     visual_layer = "pipe",
     name_label = "lunatic/tfs:entity.color_adapter.name",
     name = "color adapter",

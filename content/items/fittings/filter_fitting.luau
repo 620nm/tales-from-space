@@ -24,6 +24,7 @@ local turning = require("@lib/turning")
 -- recipes still represent the honest two layouts.
 local content = {
     id = "filter_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.filter_fitting.name",

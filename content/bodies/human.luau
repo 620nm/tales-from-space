@@ -10,6 +10,7 @@
 -- NOT PORTED and is a Tales from Space choice.
 local content = {
     id = "human",
+    entity_class = "outfitted",
     visual_layer = "standing_mob",
     lying_visual_layer = "lying_mob",
     name = "human",

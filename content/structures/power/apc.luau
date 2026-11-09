@@ -49,6 +49,7 @@
 --   labels: [(12, 5, "The Commons")]
 return {
     id = "apc",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     default_props = { l1 = "output", l2 = "input", l3 = "output" },

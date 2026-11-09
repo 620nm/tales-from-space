@@ -22,6 +22,7 @@ local strange_disk_reader = require("@lib/file_readers/strange_disk")
 -- there is nothing in a hand to read it WITH.
 local content = {
     id = "floppy_disk",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.floppy_disk.name",

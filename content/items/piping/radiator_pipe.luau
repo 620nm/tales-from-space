@@ -30,6 +30,7 @@ local LAYERS = { 2, 3, 4 }
 
 local content = {
     id = "radiator_pipe",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.radiator_pipe.name",

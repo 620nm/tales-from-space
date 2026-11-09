@@ -24,6 +24,7 @@
 -- a panel's 10 kW `charge_w` the net 8 kW takes about 125 s.
 return {
     id = "sump_pump",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).

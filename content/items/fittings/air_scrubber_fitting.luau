@@ -7,6 +7,7 @@ local turning = require("@lib/turning")
 -- `"scrubber"` here (components/unary_devices/vent_scrubber.dm:17).
 local content = {
     id = "air_scrubber_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.air_scrubber_fitting.name",

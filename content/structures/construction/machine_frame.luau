@@ -4,6 +4,7 @@ local assembly = require("@lib/assembly")
 -- (tg's machine_frame.dm).
 return {
     id = "machine_frame",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.machine_frame.name",
     name = "machine frame",

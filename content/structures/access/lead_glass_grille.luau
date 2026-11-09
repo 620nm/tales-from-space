@@ -4,6 +4,7 @@
 -- refusal sentences exact ("The lead glass grille must be unsealed first.").
 return {
     id = "lead_glass_grille",
+    entity_class = "installed",
     visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.lead_glass_grille.name",
     name = "lead glass grille",

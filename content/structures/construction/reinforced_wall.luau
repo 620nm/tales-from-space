@@ -19,6 +19,7 @@
 -- back and puts the wall back.
 return {
     id = "reinforced_wall",
+    entity_class = "installed",
     visual_layer = "cover",
     name_label = "lunatic/tfs:entity.reinforced_wall.name",
     name = "reinforced wall",

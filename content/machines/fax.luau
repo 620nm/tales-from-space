@@ -5,6 +5,7 @@ local printing = require("@lib/printing")
 
 return {
     id = "fax",
+    entity_class = "installed",
     actions = printing.actions(),
     visual_layer = "fixture",
     energy_network = "power",

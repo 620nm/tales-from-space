@@ -14,7 +14,6 @@ return {
     interactions = {
         body = true,
         poke = true,
-        hover = "lift",
         -- What a construction step nobody named is called. `{item}` is what
         -- the step takes.
         verbs = {
@@ -74,17 +73,44 @@ return {
     -- halves the volume, so a sound from another level never passes for one in
     -- the room.
     hearing = { range = 15, opening_reach = 2, gain_per_level = 0.5 },
-    -- A loose thing on a tile without gravity bobs 2 px up and 2 px down, 1 s
-    -- each way (`DO_FLOATING_ANIM`, tgstation/code/__HELPERS/visual_effects.dm:8-10).
-    -- tg sets it on living mobs (TRAIT_MOVE_FLOATING,
-    -- tgstation/code/modules/mob/living/living.dm:1283); here every loose body,
-    -- item and structure floats, and an anchored one stays put.
-    weightless = {
-        bob = {
-            per_kind = {
-                player = { rise_px = 2, rise_seconds = 1 },
-                item = { rise_px = 2, rise_seconds = 1 },
-                machine = { rise_px = 2, rise_seconds = 1 },
+    -- Hover lifts every class. Outfitted, carried and installed pictures bob
+    -- 2 px up and down over 1 s each way without gravity (`DO_FLOATING_ANIM`,
+    -- tgstation/code/__HELPERS/visual_effects.dm:8-10). Passages remember
+    -- their last disclosed density; covered fittings do neither.
+    entities = {
+        classes = {
+            outfitted = {
+                hover = "lift",
+                weightless_bob = { rise_px = 2, rise_seconds = 1 },
+                use_worn_offsets = true,
+                opacity = 255,
+                reveal_only_opacity = 128,
+                prediction = { counts_as_body = true },
+            },
+            carried = {
+                hover = "lift",
+                weightless_bob = { rise_px = 2, rise_seconds = 1 },
+                opacity = 255,
+                reveal_only_opacity = 128,
+                prediction = { shovable = true },
+            },
+            installed = {
+                hover = "lift",
+                weightless_bob = { rise_px = 2, rise_seconds = 1 },
+                opacity = 255,
+                reveal_only_opacity = 128,
+                prediction = { shovable = true },
+            },
+            passage = {
+                hover = "lift",
+                opacity = 255,
+                reveal_only_opacity = 128,
+                remember_passage = true,
+            },
+            covered = {
+                hover = "lift",
+                opacity = 255,
+                reveal_only_opacity = 128,
             },
         },
     },

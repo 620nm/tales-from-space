@@ -2,6 +2,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- Lead-silicate glass sheets for radiation-shielded window panes.
 return {
     id = "lead_glass",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.lead_glass.name",

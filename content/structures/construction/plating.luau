@@ -8,6 +8,7 @@
 -- (`:57`, "You need two rods to make a reinforced floor!").
 return {
     id = "plating",
+    entity_class = "installed",
     visual_layer = "support",
     name_label = "lunatic/tfs:entity.plating.name",
     name = "plating",

@@ -8,6 +8,7 @@
 -- material would make it something you carry in a pocket.
 return {
     id = "wall",
+    entity_class = "installed",
     visual_layer = "cover",
     name_label = "lunatic/tfs:entity.wall.name",
     name = "wall",

@@ -10,6 +10,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- under the knife (_bodyparts.dm:1643-1644).
 return {
     id = "human_l_arm",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.human_l_arm.name",

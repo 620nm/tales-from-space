@@ -156,6 +156,7 @@ local vessel_action = action_rules.primary("scan_vessel", vessel_selector)
 
 local self_action: action_rules.Action = {
     id = "scan_self",
+    entity_class = "carried",
     gesture = "self",
     route = "self_use",
     label = "lunatic/tfs:ui.affordance.scan_self",

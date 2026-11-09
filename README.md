@@ -259,6 +259,9 @@ gateway; running a game server alone does not host its executable bootstrap.
   Author durations in seconds (`printing.copy_seconds`, extinguisher
   `cooldown_seconds`). Pass seconds directly to seconds-valued native APIs;
   use `sim.ticks` only when an API takes ticks.
+  `entities.classes` declares this pack's five presentation/prediction classes;
+  every item, structure, machine and body names one with `entity_class`. The
+  engine's `docs/content-schema/entity-classes.md` owns that schema.
   Validate clock-adjacent edits narrowly first: the engine's
   `node tools/luau.mjs check "$LUNATIC_PACK"` (§Specs) plus the named specs
   covering the touched content, before the full gate.

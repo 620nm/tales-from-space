@@ -11,6 +11,7 @@ local closet_rows = require("@lib/closets/rows")
 
 return {
     id = "crate",
+    entity_class = "installed",
     script = "crate",
     visual_layer = "low_object",
     name_label = "lunatic/tfs:entity.crate.name",

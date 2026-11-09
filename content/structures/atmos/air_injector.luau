@@ -30,6 +30,7 @@
 -- dial goes to two hundred.
 return {
     id = "air_injector",
+    entity_class = "installed",
     visual_layer = "fixture",
     energy_network = "power",
     -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).

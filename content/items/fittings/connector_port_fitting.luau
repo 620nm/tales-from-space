@@ -25,6 +25,7 @@ local turning = require("@lib/turning")
 -- in structures/connector_port.luau where the target is the expert.
 local content = {
     id = "connector_port_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.connector_port_fitting.name",

@@ -9,6 +9,7 @@ local WALLPAPERS = { "wallpaper_bliss", "wallpaper_moonlake" }
 
 local content = {
     id = "laptop",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.laptop.name",

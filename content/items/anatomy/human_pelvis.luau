@@ -17,6 +17,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- (code/__DEFINES/bodyparts.dm:11, :25).
 return {
     id = "human_pelvis",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.human_pelvis.name",

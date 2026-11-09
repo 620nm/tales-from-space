@@ -210,6 +210,7 @@ end
 
 local content = {
     id = "analyzer",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.analyzer.name",

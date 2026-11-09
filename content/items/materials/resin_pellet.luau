@@ -6,6 +6,7 @@ local vessel = require("@lib/vessel")
 -- a toner or plastic run without carrying the packager's docked glass.
 local content = {
     id = "resin_pellet",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.resin_pellet.name",

@@ -9,6 +9,7 @@ local turning = require("@lib/turning")
 -- tile waiting for a wrench.
 local content = {
     id = "pump_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pump_fitting.name",

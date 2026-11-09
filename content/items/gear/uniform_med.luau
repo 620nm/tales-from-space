@@ -1,6 +1,7 @@
 local physical_profiles = require("@lib/physical_profiles")
 return {
     id = "uniform_med",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.uniform_med.name",

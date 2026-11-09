@@ -23,6 +23,7 @@
 -- steps.
 return {
     id = "passive_gate",
+    entity_class = "installed",
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.passive_gate.name",
     name = "passive gate",

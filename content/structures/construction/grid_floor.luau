@@ -1,6 +1,7 @@
 -- Transparent grid cover retains the station base when pried away.
 return {
     id = "grid_floor",
+    entity_class = "installed",
     visual_layer = "cover",
     name_label = "lunatic/tfs:entity.floor.name",
     name = "grid floor",

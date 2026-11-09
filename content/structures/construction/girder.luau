@@ -27,6 +27,7 @@ local wrench_anchor, wrench_unanchor = anchorable.pair({
 -- (tg's wall recipes all demand GIRDER_NORMAL).
 return {
     id = "girder",
+    entity_class = "installed",
     -- Large and loose, so it draws over items (large_object in content/compositions.luau).
     visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.girder.name",

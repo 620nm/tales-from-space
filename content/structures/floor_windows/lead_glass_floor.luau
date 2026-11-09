@@ -2,6 +2,7 @@
 -- with `glass_floor` and pries up instantly to `station_base`, yielding its tile.
 return {
     id = "lead_glass_floor",
+    entity_class = "installed",
     visual_layer = "cover",
     name_label = "lunatic/tfs:entity.lead_glass_floor.name",
     name = "lead glass floor",

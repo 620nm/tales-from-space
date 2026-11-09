@@ -9,6 +9,7 @@ local turning = require("@lib/turning")
 -- (structures/mixer.luau).
 local content = {
     id = "mixer_fitting",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.mixer_fitting.name",

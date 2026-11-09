@@ -8,6 +8,7 @@ local vessel = require("@lib/vessel")
 -- heads. Pour and sip are the vessel's; a wrung mop arrives through the mop.
 local content = {
     id = "bucket",
+    entity_class = "carried",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.bucket.name",
