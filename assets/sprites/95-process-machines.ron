@@ -12,23 +12,29 @@
         ("reflection_chamber", "art/machines/reflection_chamber.aseprite"),
     ],
     sprites: [
-        // The pyrolyzer (methane cracker): a domed retort drum and
-        // control column with an H2 top riser and a lower carbon drawer,
-        // four states (`off`, `standby`, `working`, `open`).
+        // The pyrolyzer (methane cracker): a stepped twin-block retort and
+        // condenser column with a right half-height beaker bay and lower ash
+        // cleanout hatch, six tags (`off`, `standby`, `working`, `open_empty`,
+        // `open_beaker`, `maintenance`).
         ("pyrolyzer_off", Ase("art/machines/pyrolyzer.aseprite", "off")),
         ("pyrolyzer", Ase("art/machines/pyrolyzer.aseprite", "standby")),
         ("pyrolyzer_on", AseAnim("art/machines/pyrolyzer.aseprite", "working")),
-        ("pyrolyzer_open", Ase("art/machines/pyrolyzer.aseprite", "open")),
+        ("pyrolyzer_open_empty", Ase("art/machines/pyrolyzer.aseprite", "open_empty")),
+        ("pyrolyzer_open_beaker", Ase("art/machines/pyrolyzer.aseprite", "open_beaker")),
+        ("pyrolyzer_open", Ase("art/machines/pyrolyzer.aseprite", "maintenance")),
 
-        // The electrolyzer (water to H2 and O2): a 2:1 Hofmann pair of
-        // glass columns on a steel housing, four states (`off`,
-        // `standby`, `working`, `open`). `fluid_body` and
-        // `fluid_bubbles` are their own layers so the liquid can be
+        // The electrolyzer (water to H2 and O2): a shrouded 3/4ths steel
+        // cabinet with a left half-height beaker bay and paired Hofmann glass
+        // columns with fitted brass collars, six tags (`off`, `standby`,
+        // `working`, `open_empty`, `open_beaker`, `maintenance`). `fluid_body`
+        // and `fluid_bubbles` are their own layers so the liquid can be
         // recolored and clipped to its level.
         ("electrolyzer_off", Ase("art/machines/electrolyzer.aseprite", "off")),
         ("electrolyzer", Ase("art/machines/electrolyzer.aseprite", "standby")),
         ("electrolyzer_on", AseAnim("art/machines/electrolyzer.aseprite", "working")),
-        ("electrolyzer_open", Ase("art/machines/electrolyzer.aseprite", "open")),
+        ("electrolyzer_open_empty", Ase("art/machines/electrolyzer.aseprite", "open_empty")),
+        ("electrolyzer_open_beaker", Ase("art/machines/electrolyzer.aseprite", "open_beaker")),
+        ("electrolyzer_open", Ase("art/machines/electrolyzer.aseprite", "maintenance")),
 
         // The liquid dewar: tg's canister footprint and gauge ladder
         // (`can-3`..`can-0`), told apart as a liquid fixture by its

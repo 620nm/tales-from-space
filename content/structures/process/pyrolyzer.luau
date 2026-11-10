@@ -1,9 +1,9 @@
 local assembly = require("@lib/assembly")
 
--- The pyrolyzer (methane cracker): a domed thermal retort drum and control
--- column with an H2 top riser and a lower carbon drawer, wired as a
--- frame-built structure across its four baked states (assets/sprites/
--- 95-process-machines.ron:18-21).
+-- The pyrolyzer (methane cracker): a stepped twin-block thermal retort and
+-- condenser column with a right half-height beaker bay and lower ash hatch,
+-- wired as a frame-built structure across its six baked states (assets/sprites/
+-- 95-process-machines.ron:19-24).
 return {
     id = "pyrolyzer",
     entity_class = "installed",
@@ -15,12 +15,14 @@ return {
     examine = {
         flavor = "A domed thermal retort drum with a top riser and a lower carbon drawer.",
     },
-    states = { "standby", "off", "working", "open" },
-    palette_states = { "standby", "off", "working", "open" },
+    states = { "standby", "off", "working", "open_empty", "open_beaker", "open" },
+    palette_states = { "standby", "off", "working", "open_empty", "open_beaker", "open" },
     state_sprites = {
         standby = "pyrolyzer",
         off = "pyrolyzer_off",
         working = "pyrolyzer_on",
+        open_empty = "pyrolyzer_open_empty",
+        open_beaker = "pyrolyzer_open_beaker",
         open = "pyrolyzer_open",
     },
     transitions = {

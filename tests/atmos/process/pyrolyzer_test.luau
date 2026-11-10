@@ -1,6 +1,6 @@
--- The pyrolyzer asset structure: its four baked states (`standby`, `off`,
--- `working`, `open`), examine prose, and the full frame construction and
--- deconstruction loop through `machine_board.pyrolyzer`.
+-- The pyrolyzer asset structure: its six baked states (`standby`, `off`,
+-- `working`, `open_empty`, `open_beaker`, `open`), examine prose, and the full
+-- frame construction and deconstruction loop through `machine_board.pyrolyzer`.
 
 local FLAVOR = "A domed thermal retort drum with a top riser and a lower carbon drawer."
 
@@ -26,6 +26,8 @@ t.world(
                 (2, 1, "pyrolyzer", "off"),
                 (6, 1, "pyrolyzer", "working"),
                 (7, 1, "pyrolyzer", "open"),
+                (1, 3, "pyrolyzer", "open_empty"),
+                (7, 3, "pyrolyzer", "open_beaker"),
                 (4, 1, "machine_frame"),
                 (4, 2, "player_spawn"),
             ],
@@ -68,6 +70,8 @@ local mapped: { { x: number, y: number, state: string, sprite: string } } = {
     { x = 2, y = 1, state = "off", sprite = "pyrolyzer_off" },
     { x = 6, y = 1, state = "working", sprite = "pyrolyzer_on" },
     { x = 7, y = 1, state = "open", sprite = "pyrolyzer_open" },
+    { x = 1, y = 3, state = "open_empty", sprite = "pyrolyzer_open_empty" },
+    { x = 7, y = 3, state = "open_beaker", sprite = "pyrolyzer_open_beaker" },
 }
 
 for _, row in ipairs(mapped) do
