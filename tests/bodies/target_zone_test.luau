@@ -100,7 +100,7 @@ assert(not has(parts.chest.surgical_states, "skin_cut"), "the default zone was n
 -- THE NUMBERED KEYS. A browser never sends a key: it reads the doll
 -- roster the server pushed, finds the row sitting on the number that
 -- was pressed, and claims that row's id
--- (`crates/lunatic-client-web/src/doll.rs::zone_for_slot`, which is unit
+-- (`crates/lunatic-web/src/doll.rs::zone_for_slot`, which is unit
 -- tested there against ids that mean nothing). `t.doll` is that same
 -- roster, so this section presses Numpad 2 the way a browser does.
 --
