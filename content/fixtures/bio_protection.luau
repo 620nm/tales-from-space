@@ -10,6 +10,7 @@ if sim ~= nil then
         visual_layer = "item",
         name = "bio protection probe",
         sprite = "breath_mask",
+        entity_class = "carried",
     })
     item:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local actor = ev.actor

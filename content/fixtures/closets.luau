@@ -8,6 +8,7 @@ if sim ~= nil then
         name = "closet cut test remover",
         sprite = "welder",
         visual_layer = "item",
+        entity_class = "carried",
     })
     closet.attach("crate", {
         secure_variants = { ["crate.secure"] = true },
