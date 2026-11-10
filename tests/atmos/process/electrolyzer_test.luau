@@ -1,6 +1,6 @@
--- The electrolyzer: its four baked states on the map (`standby`, `off`,
--- `working`, `open`), its examine line, and the full machine-frame build,
--- panel toggle, and crowbar deconstruction loop.
+-- The electrolyzer: its six baked states on the map (`standby`, `off`,
+-- `working`, `open_empty`, `open_beaker`, `open`), its examine line, and the
+-- full machine-frame build, panel toggle, and crowbar deconstruction loop.
 
 local FLAVOR = "A steel electrolysis cabinet topped with paired glass collection columns."
 
@@ -27,6 +27,8 @@ t.world(
                 (3, 1, "machine_frame", "empty"),
                 (4, 1, "electrolyzer", "working"),
                 (5, 1, "electrolyzer", "open"),
+                (1, 3, "electrolyzer", "open_empty"),
+                (5, 3, "electrolyzer", "open_beaker"),
                 (3, 2, "player_spawn"),
             ],
             items: [
@@ -54,6 +56,8 @@ local MAPPED: { { x: number, y: number, state: string, sprite: string } } = {
     { x = 2, y = 1, state = "off", sprite = "electrolyzer_off" },
     { x = 4, y = 1, state = "working", sprite = "electrolyzer_on" },
     { x = 5, y = 1, state = "open", sprite = "electrolyzer_open" },
+    { x = 1, y = 3, state = "open_empty", sprite = "electrolyzer_open_empty" },
+    { x = 5, y = 3, state = "open_beaker", sprite = "electrolyzer_open_beaker" },
 }
 
 for _, row in ipairs(MAPPED) do

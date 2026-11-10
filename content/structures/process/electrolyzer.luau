@@ -1,8 +1,9 @@
 local assembly = require("@lib/assembly")
 
--- The electrolyzer: a Hofmann pair of glass columns over a steel cabinet
--- (`assets/sprites/95-process-machines.ron:23-31`), built from a machine
--- frame and its circuitboard.
+-- The electrolyzer: a shrouded 3/4ths steel cabinet with a left half-height
+-- beaker bay and paired Hofmann glass columns (`assets/sprites/
+-- 95-process-machines.ron:26-37`), built from a machine frame and its
+-- circuitboard.
 return {
     id = "electrolyzer",
     entity_class = "installed",
@@ -14,12 +15,14 @@ return {
     examine = {
         flavor = "A steel electrolysis cabinet topped with paired glass collection columns.",
     },
-    states = { "standby", "off", "working", "open" },
-    palette_states = { "standby", "off", "working", "open" },
+    states = { "standby", "off", "working", "open_empty", "open_beaker", "open" },
+    palette_states = { "standby", "off", "working", "open_empty", "open_beaker", "open" },
     state_sprites = {
         standby = "electrolyzer",
         off = "electrolyzer_off",
         working = "electrolyzer_on",
+        open_empty = "electrolyzer_open_empty",
+        open_beaker = "electrolyzer_open_beaker",
         open = "electrolyzer_open",
     },
     transitions = {
