@@ -175,6 +175,24 @@ test("a shown scale draws the scaled value and sends stored units", () => {
   });
 });
 
+test("a setpoint missing a bound draws only the bounds it has and still acts", () => {
+  const floorOnly = { field: "pmp-01/target_kpa", label: "Target", unit: "kPa", value: 101.325, min: 0, step: 10.1325, decimals: 2 };
+  const unbounded = { field: "pmp-01/rate_lps", label: "Rate", unit: "L/s", value: 10, step: 10 };
+  const nodes = render({ document: "modules", control_panels: [panel("pmp-01", "Pump", { setpoints: [floorOnly, unbounded] })] });
+  const range = nodes.find((node) => node.id.endsWith("/set/pmp-01/target_kpa/range"));
+  assert.equal(range?.text, "from 0.00 kPa");
+  assert(!nodes.some((node) => node.id.endsWith("/set/pmp-01/rate_lps/range")), "no bound, no range line");
+  assert(!nodes.some((node) => /undefined|NaN/.test(node.text ?? "")), "no unset bound leaks into text");
+  const input = nodes.find((node) => node.type === "input" && node.id.endsWith("/set/pmp-01/target_kpa/value"));
+  assert.deepEqual(command(input.id, { type: "submit", value: "202.65" }), {
+    kind: "document", document: 7, generation: 2, act: "set", payload: { field: "pmp-01/target_kpa", value: 202.65 },
+  });
+  const up = nodes.find((node) => node.type === "button" && node.id.endsWith("/set/pmp-01/rate_lps/up"));
+  assert.deepEqual(command(up.id), {
+    kind: "document", document: 7, generation: 2, act: "set", payload: { field: "pmp-01/rate_lps", adjust: 10 },
+  });
+});
+
 test("the whole-air switch remains one native switch and gas rows remain individually actionable", () => {
   const nodes = render(fixtureState);
   const roster = nodes.filter((node) => node.type === "button" && command(node.id)?.payload?.field?.endsWith("/whole_air"));

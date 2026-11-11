@@ -193,7 +193,7 @@ try {
   await call("Input.dispatchMouseEvent", { type: "mouseWheel", ...bodyBox, deltaX: 0, deltaY: -1200 });
   await delay(400);
 
-  const setpoint = await evaluate(`(()=>[...document.querySelectorAll('input[data-pack-node]')].find(e=>{const p=e.dataset.packNode;return p.includes('/set/')&&p.includes('setpoint')&&!e.disabled&&e.getBoundingClientRect().width>0})?.dataset.packNode??null)()`);
+  const setpoint = await evaluate(`(()=>[...document.querySelectorAll('input[data-pack-node]')].find(e=>{const p=e.dataset.packNode;return p.includes('/set/')&&p.endsWith('/target_kpa/value')&&!e.disabled&&e.getBoundingClientRect().width>0})?.dataset.packNode??null)()`);
   assert.ok(setpoint, "a reached air device exposes its native setpoint input");
   const field = setpoint.match(/\/set\/(.+)\/value$/)?.[1];
   const setting = stateFromFixture(controlsFixture).control_panels.flatMap(panel => panel.setpoints).find(point => point.field === field);
@@ -216,7 +216,7 @@ try {
   reports.push({ action: "setpoint", node: setpoint, before: setting.value, after: wanted, server: serverSetpoint });
 
   const power = stateFromFixture(controlsFixture).control_panels.flatMap(panel => panel.toggles)
-    .find(toggle => toggle.field.endsWith("/power"));
+    .find(toggle => toggle.field.endsWith("/on"));
   assert.ok(power, "native provider declares a reached power switch");
   await click(suffix(`/toggle/${power.field}/switch/press`));
   await delay(250);

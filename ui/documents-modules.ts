@@ -89,16 +89,24 @@ export interface SetpointDisplay {
   spell: (stored: number) => string;
   unit: string;
   stored: (typed: number) => number;
+  /** The bounds as text, one-sided where the row has one bound, null with none. */
+  range: string | null;
 }
 export function setpointDisplay(point: Setpoint): SetpointDisplay {
   const places = point.decimals ?? 0;
   const shown = point.shown;
   const scale = shown && Number.isFinite(shown.scale) && shown.scale > 0 ? shown.scale : 1;
-  return {
-    spell: (stored) => (stored * scale).toFixed(places),
-    unit: shown ? shown.unit : point.unit,
-    stored: (typed) => typed / scale,
-  };
+  const unit = shown ? shown.unit : point.unit;
+  const spell = (stored: number): string => (stored * scale).toFixed(places);
+  const bound = (value: number | undefined): string | null =>
+    typeof value === "number" && Number.isFinite(value) ? spell(value) : null;
+  const min = bound(point.min);
+  const max = bound(point.max);
+  const range = min !== null && max !== null ? S.range(min, max, unit)
+    : min !== null ? S.rangeFrom(min, unit)
+    : max !== null ? S.rangeTo(max, unit)
+    : null;
+  return { spell, unit, stored: (typed) => typed / scale, range };
 }
 
 /**
@@ -113,7 +121,7 @@ export function moduleSetpointRow(
   point: Setpoint,
   active: boolean,
 ): UiNode {
-  const { spell, unit, stored } = setpointDisplay(point);
+  const { spell, unit, stored, range } = setpointDisplay(point);
   const step = point.step && point.step > 0 ? point.step : 1;
   const move = (to: number) =>
     documentAction(doc, "set", { field: point.field, value: stored(to) });
@@ -125,14 +133,10 @@ export function moduleSetpointRow(
     [
       row(
         `${id}/head`,
-        [
+        some(
           text(`${id}/label`, labelText(point.label), ["grow", "list-label"]),
-          text(
-            `${id}/range`,
-            S.range(spell(point.min), spell(point.max), unit),
-            ["hint"],
-          ),
-        ],
+          range === null ? null : text(`${id}/range`, range, ["hint"]),
+        ),
         { cls: ["list-row"] },
       ),
       Stack(

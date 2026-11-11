@@ -244,13 +244,13 @@ function labelRows(base: string, doc: DocumentIdentity, labels: Indexed<LabelRow
 
 function setpointRow(base: string, doc: DocumentIdentity, point: Setpoint, sourceIndex: number, active: boolean, unique: boolean): UiNode {
   const key = bounded(`${base}/set`, unique ? safePart(point.field, `index/${sourceIndex}`) : `index/${sourceIndex}`, sourceIndex);
-  const { spell, unit, stored } = setpointDisplay(point);
+  const { spell, unit, stored, range } = setpointDisplay(point);
   const step = point.step && point.step > 0 ? point.step : 1;
   const box = `${key}/value`;
   return row(key, [
     column(`${key}/description`, [
       text(`${key}/label`, labelText(point.label), ["workspace-control-label"]),
-      text(`${key}/range`, S.range(spell(point.min), spell(point.max), unit), ["workspace-control-range"]),
+      ...(range === null ? [] : [text(`${key}/range`, range, ["workspace-control-range"])]),
     ], { cls: ["workspace-control-label-block"] }),
     row(`${key}/controls`, [
       press(`${key}/down`, S.LOWER, documentAction(doc, "set", { field: point.field, adjust: -step }), { disabled: !active, cls: ["workspace-control-step-button"] }),

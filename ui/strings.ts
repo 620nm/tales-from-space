@@ -115,6 +115,11 @@ export const range = (min: string, max: string, unit: string): string =>
   unit
     ? tfs("ui.module.range_unit", { min, max, unit })
     : tfs("ui.module.range", { min, max });
+/** A one-sided range: only a floor, or only a ceiling. */
+export const rangeFrom = (min: string, unit: string): string =>
+  unit ? tfs("ui.module.range_from_unit", { min, unit }) : tfs("ui.module.range_from", { min });
+export const rangeTo = (max: string, unit: string): string =>
+  unit ? tfs("ui.module.range_to_unit", { max, unit }) : tfs("ui.module.range_to", { max });
 export const channel = (name: string): string =>
   tfs("ui.comms.channel", { name });
 export const speaker = (name: string): string =>

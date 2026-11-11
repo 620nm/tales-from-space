@@ -180,8 +180,9 @@ export interface Setpoint {
   unit: string;
   value: number;
   field: string;
-  min: number;
-  max: number;
+  /** Absent when the row has no bound on that side. */
+  min?: number;
+  max?: number;
   step?: number;
   /** Places shown, in shown units. */
   decimals?: number;
