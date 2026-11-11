@@ -1,4 +1,4 @@
-// Process machines: the first-party fixtures that crack, split,
+// Process machines: the first-party fixtures that crack, split, vaporize,
 // moderate and hold matter. Paths are relative to `assets/originals/`;
 // each `.aseprite` is a tagged document whose tags are its states (the
 // engine's docs/assets/importers.md and docs/assets/rosters.md).
@@ -35,6 +35,18 @@
         ("electrolyzer_open_empty", Ase("art/machines/electrolyzer.aseprite", "open_empty")),
         ("electrolyzer_open_beaker", Ase("art/machines/electrolyzer.aseprite", "open_beaker")),
         ("electrolyzer_open", Ase("art/machines/electrolyzer.aseprite", "maintenance")),
+
+        // The vaporizer (condensed matter to pipe gas): a 3/4ths steel base
+        // cabinet with a left half-height beaker bay and a brass-crowned glass
+        // bell-jar sublimation dome, seven tags (`unpowered`, `idle`, `on`,
+        // `errored`, `open_empty`, `open_beaker`, `maintenance`).
+        ("vaporizer_off", Ase("art/machines/vaporizer.aseprite", "unpowered")),
+        ("vaporizer", Ase("art/machines/vaporizer.aseprite", "idle")),
+        ("vaporizer_on", AseAnim("art/machines/vaporizer.aseprite", "on")),
+        ("vaporizer_errored", Ase("art/machines/vaporizer.aseprite", "errored")),
+        ("vaporizer_open_empty", Ase("art/machines/vaporizer.aseprite", "open_empty")),
+        ("vaporizer_open_beaker", Ase("art/machines/vaporizer.aseprite", "open_beaker")),
+        ("vaporizer_open", Ase("art/machines/vaporizer.aseprite", "maintenance")),
 
         // The liquid dewar: tg's canister footprint and gauge ladder
         // (`can-3`..`can-0`), told apart as a liquid fixture by its
