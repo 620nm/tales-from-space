@@ -143,7 +143,7 @@ near(assert(t.holder_k(beaker)), T20C, 0.3, "a chamber nobody switched on moves 
 -- -- not a number per tick.
 -- ---------------------------------------------------------------
 ui_controls.set(p, "temperature", 350)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the element is on")
 near(

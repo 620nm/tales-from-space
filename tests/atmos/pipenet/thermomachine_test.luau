@@ -164,7 +164,7 @@ near(
 -- HEATING: monotone towards the dial, and an ARREST on it.
 -- ---------------------------------------------------------------
 ui_controls.set(p, "temperature", 400)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "running", "the unit is running")
 
@@ -221,7 +221,7 @@ pass()
 local cooling = assert(network_matter.temperature(1, 1))
 assert(cooling < 400.0 - 5.0, "the same machine cools: 400 -> " .. cooling)
 
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "off", "switched off mid-job")
 local frozen = assert(network_matter.temperature(1, 1))
@@ -265,7 +265,7 @@ assert(
     "the panel says the mains are not behind it"
 )
 ui_controls.set(d, "temperature", 500)
-ui_controls.toggle(d, "power")
+ui_controls.toggle(d, "on")
 t.run_seconds(30)
 
 assert(ui_controls.rows(ui_controls.state(d).toggles)[1].on == true, "the switch is on")

@@ -117,7 +117,7 @@ t.click(p, 3, 2, heater)
 t.tick()
 ui_controls.set(p, "temperature", 600)
 t.run_ticks(2)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 
 -- The chamber has to get there before anything can leave, so watch for
 -- the vapor rather than guessing the tick it appears on: the crossing

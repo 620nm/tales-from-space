@@ -133,7 +133,7 @@ near(
     "and its dial opens at water's boil"
 )
 
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 t.run_seconds(30)
 local crossed = pipe_of(3, 1, "ethanol")

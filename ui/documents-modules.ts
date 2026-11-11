@@ -83,10 +83,28 @@ export function moduleLabelRow(
   );
 }
 
+/** A setpoint as a player reads it: `shown` scales the stored value and
+ * names its unit; every act still carries stored units. */
+export interface SetpointDisplay {
+  spell: (stored: number) => string;
+  unit: string;
+  stored: (typed: number) => number;
+}
+export function setpointDisplay(point: Setpoint): SetpointDisplay {
+  const places = point.decimals ?? 0;
+  const shown = point.shown;
+  const scale = shown && Number.isFinite(shown.scale) && shown.scale > 0 ? shown.scale : 1;
+  return {
+    spell: (stored) => (stored * scale).toFixed(places),
+    unit: shown ? shown.unit : point.unit,
+    stored: (typed) => typed / scale,
+  };
+}
+
 /**
  * A dial with its range under it. Nothing here does the arithmetic the
  * server owns: a step press sends the STEP it wants and the end stops
- * send `min`/`max`, and `Setpoint::resolve` decides what that comes to
+ * send `min`/`max`, and the server's `NumberSpec::resolve` decides what that comes to
  * (docs/tgui/action-boundary.md).
  */
 export function moduleSetpointRow(
@@ -95,11 +113,10 @@ export function moduleSetpointRow(
   point: Setpoint,
   active: boolean,
 ): UiNode {
-  const places = point.decimals ?? 0;
+  const { spell, unit, stored } = setpointDisplay(point);
   const step = point.step && point.step > 0 ? point.step : 1;
-  const spell = (value: number): string => value.toFixed(places);
   const move = (to: number) =>
-    documentAction(doc, "set", { field: point.field, value: to });
+    documentAction(doc, "set", { field: point.field, value: stored(to) });
   const stepBy = (by: number) =>
     documentAction(doc, "set", { field: point.field, adjust: by });
   const box = `${id}/value`;
@@ -112,7 +129,7 @@ export function moduleSetpointRow(
           text(`${id}/label`, labelText(point.label), ["grow", "list-label"]),
           text(
             `${id}/range`,
-            S.range(spell(point.min), spell(point.max), point.unit),
+            S.range(spell(point.min), spell(point.max), unit),
             ["hint"],
           ),
         ],
@@ -133,7 +150,7 @@ export function moduleSetpointRow(
             },
             { cls: ["num"], disabled: !active, label: labelText(point.label) },
           ),
-          point.unit ? text(`${id}/unit`, point.unit, ["mod-unit"]) : null,
+          unit ? text(`${id}/unit`, unit, ["mod-unit"]) : null,
           press(`${id}/up`, S.RAISE, stepBy(step), {
             disabled: !active,
           }),

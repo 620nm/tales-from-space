@@ -197,9 +197,9 @@ assert(
 -- This read-only window renders neither the canister's valve nor
 -- the pump's dial.
 -- ---------------------------------------------------------------
-assert(ui_controls.find(p, "/toggle/valve/switch") == nil, "no valve control")
-assert(ui_controls.find(p, "/set/target/value") == nil, "no target dial")
-assert(ui_controls.find(p, "/set/release/value") == nil, "no release dial")
+assert(ui_controls.find(p, "/toggle/open/switch") == nil, "no valve control")
+assert(ui_controls.find(p, "/set/target_kpa/value") == nil, "no target dial")
+assert(ui_controls.find(p, "/set/release_kpa/value") == nil, "no release dial")
 t.run_ticks(2)
 assert(
     #ui_controls.rows(ui_controls.state(p).toggles) == 0

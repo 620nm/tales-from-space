@@ -157,7 +157,7 @@ t.tick()
 ui_controls.set(chemist, "temperature", 530)
 t.run_ticks(2)
 if ui_controls.rows(ui_controls.state(chemist).toggles)[1].on ~= true then
-    ui_controls.toggle(chemist, "power")
+    ui_controls.toggle(chemist, "on")
     t.run_ticks(2)
 end
 assert(ui_controls.rows(ui_controls.state(chemist).toggles)[1].on == true, "the element is on")
@@ -180,7 +180,7 @@ assert(assert(t.vessel(jar)).contents.n2o.gas == BENCH_MADE, "keyed as `n2o` and
 
 -- ...and so does the examine pane, in the substance file's own words
 -- (sim/examine.rs, `matter_lines`; substances/n2o.luau, `name`).
-ui_controls.toggle(chemist, "power")
+ui_controls.toggle(chemist, "on")
 t.run_ticks(2)
 ui_controls.toggle(chemist, "eject")
 t.run_ticks(2)
@@ -464,7 +464,7 @@ local before_pipe = pipe("n2o")
 local before_lungs = lungs("n2o")
 ui_controls.toggle(diver, "filter", "n2o")
 t.run_ticks(2)
-ui_controls.toggle(diver, "power")
+ui_controls.toggle(diver, "on")
 t.run_seconds(120)
 
 local moved = before_room - room("n2o")

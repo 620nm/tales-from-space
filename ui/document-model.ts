@@ -183,8 +183,15 @@ export interface Setpoint {
   min: number;
   max: number;
   step?: number;
+  /** Places shown, in shown units. */
   decimals?: number;
+  /** How the stored value reads to a player (a fraction as percent); acts stay in stored units. */
+  shown?: ShownScale;
   section?: Label;
+}
+export interface ShownScale {
+  scale: number;
+  unit: string;
 }
 export interface Product {
   sprite?: string | null;

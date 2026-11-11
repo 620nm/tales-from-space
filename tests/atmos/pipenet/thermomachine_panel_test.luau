@@ -149,7 +149,7 @@ assert(
 )
 near(assert(network_matter.temperature(3, 1)), T20C, 0.5, "with nothing switched on and nothing moved")
 
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(5, 1)).state == "running", "now it is running")
 
@@ -258,7 +258,7 @@ near(assert(network_matter.temperature(3, 1)), caught_k, 1e-9, "and not one joul
 -- The switch survives being thrown while dead, too: off is a position
 -- somebody chose, and a machine that came back up on its own would be
 -- one that ignored the last hand on it.
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(
     ui_controls.rows(ui_controls.state(p).toggles)[1].on == false,

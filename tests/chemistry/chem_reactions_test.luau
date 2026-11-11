@@ -264,7 +264,7 @@ eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
 ui_controls.set(p, "temperature", 500)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_seconds(120)
 assert(
     assert(t.holder_k(d)) > 480.0,
@@ -286,7 +286,7 @@ near(amount(d, "naphtha"), 0.0, 1e-6, "and there is none of it left")
 -- The water is in excess, so the SILICON is the clamp and the run has
 -- an end rather than an asymptote.
 -- ---------------------------------------------------------------
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 eject()
 t.drop(p)
 t.tick()

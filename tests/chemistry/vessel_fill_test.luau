@@ -177,7 +177,7 @@ t.click(p, 3, 2, heater)
 t.tick()
 ui_controls.set(p, "temperature", 600)
 t.run_ticks(2)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 
 -- Watch the PICTURE rather than the moles: the assertion is about what
 -- a crewman sees, and the two only agree if the repaint follows the

@@ -166,9 +166,9 @@ local ui = ui_controls.record(t.ui(p))
 assert(ui, "clicking a filter opens its window")
 assert(ui.document == "modules" and ui.presentation == "modules", "the generic module document")
 
-assert(ui_controls.rows(ui.toggles)[1].field == "power", "the first switch is the power")
+assert(ui_controls.rows(ui.toggles)[1].field == "on", "the first switch is the power")
 assert(ui_controls.rows(ui.toggles)[1].on == false)
-assert(ui_controls.rows(ui.setpoints)[1].field == "rate", "the one knob is the transfer rate")
+assert(ui_controls.rows(ui.setpoints)[1].field == "rate_lps", "the one knob is the transfer rate")
 near(
     ui_controls.number(ui_controls.rows(ui.setpoints)[1].value),
     200.0,
@@ -205,7 +205,7 @@ assert(roster.salt == nil, "and salt has none, so it does not")
 -- Switch it on and set it to divert oxygen. Two clicks, both through
 -- the window the player has open.
 -- ---------------------------------------------------------------
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 ui_controls.toggle(p, "filter", "o2")
 t.tick()
 assert(
@@ -273,7 +273,7 @@ near(
 -- Both acts are on the record, against the PLAYER, and the roster act
 -- says WHICH gas -- which is what the settings contract's `option`
 -- carries (docs/TGUI.md).
-assert(t.ledger_has("MachineToggled", "power", "Player"), "switching it on is an attributed act")
+assert(t.ledger_has("MachineToggled", "on", "Player"), "switching it on is an attributed act")
 assert(t.ledger_has("MachineToggled", "filter", "o2", "Player"), "so is selecting a gas")
 
 -- ---------------------------------------------------------------
@@ -294,7 +294,7 @@ end
 
 assert(ui_controls.find(p, "/toggle/filter/tabasco") == nil, "no invented gas choice")
 assert(ui_controls.find(p, "/toggle/filter/water") ~= nil, "water vapor is a gas choice")
-assert(ui_controls.find(p, "/toggle/power/o2") == nil, "power is a switch")
+assert(ui_controls.find(p, "/toggle/on/o2") == nil, "power is a switch")
 t.tick()
 assert(selected("o2") == true, "an invented gas selects nothing")
 assert(selected("n2") == false, "and unselects nothing")
@@ -303,7 +303,7 @@ assert(
     "and the power switch is not a roster"
 )
 
-ui_controls.set(p, "rate", 9000)
+ui_controls.set(p, "rate_lps", 9000)
 t.tick()
 near(
     ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value),
@@ -311,7 +311,7 @@ near(
     0.001,
     "a client cannot dial past MAX_TRANSFER_RATE"
 )
-ui_controls.set(p, "rate", -40)
+ui_controls.set(p, "rate_lps", -40)
 t.tick()
 near(
     ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value),
@@ -338,7 +338,7 @@ local was_main = gas(OUT_X, OUT_Y, "o2") + gas(OUT_X, OUT_Y, "n2")
 
 t.click(q, 3, 1, assert(t.target_at(q, 3, 1, "filter")))
 t.tick()
-ui_controls.toggle(q, "power")
+ui_controls.toggle(q, "on")
 t.run_seconds(30)
 
 assert(
@@ -366,7 +366,7 @@ t.tick()
 -- Switch it on first, so the refusal has something to refuse.
 t.click(r, 3, 1, assert(t.target_at(r, 3, 1, "filter")))
 t.tick()
-ui_controls.toggle(r, "power")
+ui_controls.toggle(r, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "running", "running")
 t.ui_close(r)
@@ -385,7 +385,7 @@ assert(t.structure_at(3, 1) ~= nil, "and it is still on the line")
 t.swap_hands(r)
 t.click(r, 3, 1, assert(t.target_at(r, 3, 1, "filter")))
 t.tick()
-ui_controls.toggle(r, "power")
+ui_controls.toggle(r, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "off", "off")
 t.ui_close(r)

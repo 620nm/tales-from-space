@@ -63,8 +63,8 @@ assert(assert(t.canister_pressure(2, 2)) > 4000.0, "the bottle starts full")
 -- would spend itself into the floor instead of straining.
 t.click(p, 2, 2, assert(t.target_at(p, 2, 2)))
 t.tick()
-assert(ui_controls.rows(ui_controls.state(p).toggles)[1].field == "valve")
-ui_controls.toggle(p, "valve")
+assert(ui_controls.rows(ui_controls.state(p).toggles)[1].field == "open")
+ui_controls.toggle(p, "open")
 t.tick()
 assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == false, "the valve is shut")
 
@@ -74,10 +74,10 @@ assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == false, "the valve
 assert(t.charge_vessel(2, 2, "n2", 30000000.0), "a canister takes a charge")
 -- Open immediately before rupture. The room is already at the valve's
 -- release setpoint, so this tick must not drain the charged vessel first.
-ui_controls.toggle(p, "valve")
+ui_controls.toggle(p, "open")
 t.tick()
 local opened_rows = ui_controls.rows(ui_controls.state(p).toggles)
-assert(opened_rows[1].field == "valve", "the canister valve row should remain visible")
+assert(opened_rows[1].field == "open", "the canister valve row should remain visible")
 assert(opened_rows[1].on == true, "the canister must be open immediately before rupture")
 t.run_seconds(4)
 
@@ -114,7 +114,7 @@ end
 assert(seen_broken_sprite, "the disclosed canister appearance should include its broken sprite")
 
 local closed_rows = ui_controls.rows(ui_controls.state(p).toggles)
-assert(closed_rows[1].field == "valve", "the canister valve row should remain visible after rupture")
+assert(closed_rows[1].field == "open", "the canister valve row should remain visible after rupture")
 assert(closed_rows[1].on == false, "rupture must force the canister valve closed")
 
 -- A broken canister is no longer dense: the player must be able to enter its

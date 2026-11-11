@@ -162,7 +162,7 @@ t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 assert(word(row(t.ui(p), "dock.vessel").value) == "beaker (libital)", "with the beaker docked")
 ui_controls.set(p, "temperature", 350)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 t.ui_close(p)
 

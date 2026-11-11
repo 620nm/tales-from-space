@@ -34,7 +34,7 @@ const panel = (address, name, extra = {}) => ({
     { section: label("Power"), label: label("Power supply"), value: label("On"), tone: "on" },
   ],
   toggles: [
-    { section: label("Power"), field: `${address}/power`, label: label("Power"), on: true, on_text: label("On"), off_text: label("Off") },
+    { section: label("Power"), field: `${address}/on`, label: label("Power"), on: true, on_text: label("On"), off_text: label("Off") },
     { section: label("Reach"), field: `${address}/service`, option: "1", group: `${address}/service`, label: label("Tile (1×)"), on: true, on_text: label("Selected"), off_text: label("Select") },
     { section: label("Reach"), field: `${address}/service`, option: "5", group: `${address}/service`, label: label("Cardinals (5×)"), on: false, on_text: label("Selected"), off_text: label("Select") },
     { section: label("Gas"), field: `${address}/filter`, option: "carbon_dioxide", label: label("Carbon dioxide"), on: true, on_text: label("Selected"), off_text: label("Select") },
@@ -69,7 +69,7 @@ test("same-address controls stay under their source panel and keep scoped payloa
   assert(buttons.some((node) => node.id.includes("scr-02")));
   assert(ids.every((id) => id.length <= 120), "control ids stay within the protocol budget");
   const first = buttons.find((node) => node.id.includes("vnt-01"));
-  assert.deepEqual(command(first.id), { kind: "document", document: 7, generation: 2, act: "toggle", payload: { field: "vnt-01/power" } });
+  assert.deepEqual(command(first.id), { kind: "document", document: 7, generation: 2, act: "toggle", payload: { field: "vnt-01/on" } });
 });
 
 test("empty reach is disclosed without invented targets or counts", () => {
@@ -160,9 +160,24 @@ test("setpoint input and step buttons retain native set payloads", () => {
   });
 });
 
-test("roster remains one native switch and gas rows remain individually actionable", () => {
+test("a shown scale draws the scaled value and sends stored units", () => {
+  const ratio = { field: "mix-01/ratio", label: "Mix", unit: "", value: 0.79, min: 0, max: 1, step: 0.05, decimals: 0, shown: { scale: 100, unit: "%" } };
+  const nodes = render({ document: "modules", control_panels: [panel("mix-01", "Mixer", { setpoints: [ratio] })] });
+  const input = nodes.find((node) => node.type === "input" && node.id.endsWith("/set/mix-01/ratio/value"));
+  assert.equal(input?.value, "79");
+  assert(nodes.some((node) => node.id.endsWith("/set/mix-01/ratio/unit") && node.text === "%"));
+  assert.deepEqual(command(input.id, { type: "submit", value: "50" }), {
+    kind: "document", document: 7, generation: 2, act: "set", payload: { field: "mix-01/ratio", value: 0.5 },
+  });
+  const up = nodes.find((node) => node.type === "button" && node.id.endsWith("/set/mix-01/ratio/up"));
+  assert.deepEqual(command(up.id), {
+    kind: "document", document: 7, generation: 2, act: "set", payload: { field: "mix-01/ratio", adjust: 0.05 },
+  });
+});
+
+test("the whole-air switch remains one native switch and gas rows remain individually actionable", () => {
   const nodes = render(fixtureState);
-  const roster = nodes.filter((node) => node.type === "button" && command(node.id)?.payload?.field?.endsWith("/roster"));
+  const roster = nodes.filter((node) => node.type === "button" && command(node.id)?.payload?.field?.endsWith("/whole_air"));
   assert.equal(roster.length, 1);
   assert(nodes.some((node) => node.text === "oxygen"));
   assert(nodes.some((node) => node.text === "ammonia"));

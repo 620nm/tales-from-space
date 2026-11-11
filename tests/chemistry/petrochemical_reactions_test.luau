@@ -99,9 +99,9 @@ end
 
 local function heat(kelvin, seconds)
     ui_controls.set(p, "temperature", kelvin)
-    ui_controls.toggle(p, "power")
+    ui_controls.toggle(p, "on")
     t.run_seconds(seconds)
-    ui_controls.toggle(p, "power")
+    ui_controls.toggle(p, "on")
 end
 
 local function eject()

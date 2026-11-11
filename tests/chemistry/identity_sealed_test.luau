@@ -167,7 +167,7 @@ t.click(p, 3, 2, heater)
 t.tick()
 ui_controls.set(p, "temperature", 450)
 t.run_ticks(2)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the element is on")
 
@@ -238,7 +238,7 @@ near(after.substances.water, before.substances.water, 1e-9, "the water is all st
 -- which `t.matter_totals().energy_j` books back in through
 -- `space_radiated`. So the whole station's energy is a constant, and
 -- one joule of slack out of the tens of millions this room holds.
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 ui_controls.toggle(p, "eject")
 t.run_ticks(2)

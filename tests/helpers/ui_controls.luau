@@ -291,6 +291,17 @@ function controls.press_inert(p: number, field: string, option: Option?, channel
     return reason
 end
 
+-- What a player types for a stored value: a row with `shown` reads
+-- `value × shown.scale` and the panel divides it back on send.
+local function typed_value(row: Record, value: number): string
+    if row.shown == nil then
+        return tostring(value)
+    end
+    local scale = controls.number(controls.record(row.shown).scale)
+    return string.format("%.10g", value * scale)
+end
+
+-- `value` is in stored units (a ratio as a fraction, 0.79).
 function controls.set(p: number, field: string, value: number | "min" | "max", channel: string?): ()
     local scope = assert(t.ui_document(p, channel), "no document observed")
     local state = controls.state(p, channel)
@@ -302,12 +313,10 @@ function controls.set(p: number, field: string, value: number | "min" | "max", c
     end
     local suffix = target_suffix(target)
     local node = controls.node(p, suffix, scope)
-    if value == "min" or value == "max" then
-        local bound = target.row[value]
-        assert(type(bound) == "number", "the setpoint bound is numeric")
-        value = bound
-    end
-    t.ui_edit(p, node.id, tostring(value))
+    local stored = if value == "min" or value == "max"
+        then controls.number(target.row[value])
+        else value :: number
+    t.ui_edit(p, node.id, typed_value(target.row, stored))
     t.ui_press(p, node.id, "change")
 end
 

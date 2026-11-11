@@ -214,9 +214,9 @@ local TRINARIES = {
         -- from being drained dry before the switch can be thrown, which
         -- would make the stop below a stop with nothing left to stop.
         configure = function(p)
-            ui_controls.set(p, "rate", 20)
+            ui_controls.set(p, "rate_lps", 20)
             ui_controls.toggle(p, "filter", "o2")
-            ui_controls.toggle(p, "power")
+            ui_controls.toggle(p, "on")
         end,
         moved = function(was: { [string]: number })
             assert(
@@ -250,8 +250,8 @@ local TRINARIES = {
         -- time given: a mixer AT its target has finished, and finished
         -- is not off.
         configure = function(p)
-            ui_controls.set(p, "pressure", 250)
-            ui_controls.toggle(p, "power")
+            ui_controls.set(p, "target_kpa", 250)
+            ui_controls.toggle(p, "on")
         end,
         moved = function(was: { [string]: number })
             assert(
@@ -302,7 +302,7 @@ for _, job in ipairs(TRINARIES) do
 
     -- ...and stop it.
     open_panel(p, job.id)
-    ui_controls.toggle(p, "power")
+    ui_controls.toggle(p, "on")
     t.run_ticks(2)
     assert(assert(t.structure_at(5, 1)).state == "off", job.id .. " is switched off")
     assert(
@@ -336,7 +336,7 @@ for _, job in ipairs(TRINARIES) do
     )
 
     open_panel(p, job.id)
-    ui_controls.toggle(p, "power")
+    ui_controls.toggle(p, "on")
     t.run_ticks(2)
     assert(
         ui_controls.rows(ui_controls.state(p).toggles)[1].on == true,
@@ -436,7 +436,7 @@ assert(t.network_feed(5, 1, "power", "environment") == nil, "nothing on this sid
 open_panel(p, GATE)
 panel_says(p, "flow.supply.dead", "the gate's panel says the mains are not behind it")
 ui_controls.set(p, "temperature", 500)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(
     ui_controls.rows(ui_controls.state(p).toggles)[1].on == true,
@@ -516,7 +516,7 @@ near(
 -- this one too, a few seconds later.
 open_panel(p, GATE)
 panel_says(p, "flow.supply.fed", "the mains are behind it again")
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(5, 1)).state == "shut", "the gate is shut")
 assert(feeding(), "with the APC feeding it the whole time")

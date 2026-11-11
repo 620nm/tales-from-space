@@ -116,7 +116,7 @@ near(assert(network_matter.pressure(1, 2)), charged, 0.001, "a pump that is off 
 t.click(p, 3, 2, assert(t.target_at(p, 3, 2, "volume_pump")))
 t.tick()
 assert(t.ui(p), "the pump wears a panel")
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 2)).state == "running", "it is on")
 

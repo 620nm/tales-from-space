@@ -306,7 +306,7 @@ end
 assert(roster.chlorine == false, "chlorine is on the roster, and starts unselected")
 
 ui_controls.toggle(diver, "filter", "chlorine")
-ui_controls.toggle(diver, "power")
+ui_controls.toggle(diver, "on")
 -- Five minutes. A scrubber only ever works the tile it stands on and
 -- the rest of the room refills that tile by ordinary diffusion between
 -- passes, so this is one mouth against six neighbors -- which is why

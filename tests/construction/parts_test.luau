@@ -293,7 +293,7 @@ assert(
     "and the frame it came out of was wired: " .. tostring(word(row(ui, "dock.supply").value))
 )
 ui_controls.set(p, "temperature", 400)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 t.ui_close(p)
 
@@ -316,7 +316,7 @@ assert(
     "worth three plain lasers: " .. four_tier .. " " .. four_eff
 )
 ui_controls.set(p, "temperature", 400)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 t.ui_close(p)
 
@@ -341,7 +341,7 @@ assert(
 )
 assert(word(row(t.ui(p), "dock.vessel").value) == "beaker (libital)", "with a beaker in it")
 ui_controls.set(p, "temperature", 400)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 t.ui_close(p)
 

@@ -178,14 +178,14 @@ t.tick()
 local panel = t.ui(p)
 assert(panel ~= nil, "an empty hand on a vent opens a panel")
 
-assert(dial(p, "setpoint").unit == "kPa", "the setpoint is a pressure")
-near(dial(p, "setpoint").value, ONE_ATM, 0.001, "tg's external_pressure_bound")
-near(dial(p, "release").value, FEEDS_UNDER, 0.001, "the low line of the dead band")
-near(dial(p, "siphon").value, EMPTIES_OVER, 0.001, "and the high one")
+assert(dial(p, "target_kpa").unit == "kPa", "the setpoint is a pressure")
+near(dial(p, "target_kpa").value, ONE_ATM, 0.001, "tg's external_pressure_bound")
+near(dial(p, "release_below_kpa").value, FEEDS_UNDER, 0.001, "the low line of the dead band")
+near(dial(p, "siphon_above_kpa").value, EMPTIES_OVER, 0.001, "and the high one")
 
 -- The switch, which this machine did not have before the panel did. tg
 -- maps every vent on, and so does the pack.
-assert(toggle(p, "power").on == true, "a vent opens the shift running")
+assert(toggle(p, "on").on == true, "a vent opens the shift running")
 
 -- The three readouts a room device wears, which are the scrubber's
 -- exactly -- one helper, not two copies (sim/ui/settings/room_device.rs).
@@ -202,19 +202,19 @@ assert(readout(p, "vent.supply_line") ~= nil, "and so is the run it draws from")
 -- breath. Each dial therefore publishes the other two as its bounds,
 -- and a client that asks for more gets the bound.
 -- ---------------------------------------------------------------
-near(dial(p, "release").max, ONE_ATM, 0.001, "the low dial stops at the setpoint")
-near(dial(p, "siphon").min, ONE_ATM, 0.001, "and the high dial starts there")
-near(dial(p, "setpoint").min, FEEDS_UNDER, 0.001, "the setpoint stays inside the band")
-near(dial(p, "setpoint").max, EMPTIES_OVER, 0.001, "at both ends")
+near(dial(p, "release_below_kpa").max, ONE_ATM, 0.001, "the low dial stops at the setpoint")
+near(dial(p, "siphon_above_kpa").min, ONE_ATM, 0.001, "and the high dial starts there")
+near(dial(p, "target_kpa").min, FEEDS_UNDER, 0.001, "the setpoint stays inside the band")
+near(dial(p, "target_kpa").max, EMPTIES_OVER, 0.001, "at both ends")
 
-set(p, "siphon", 50.0)
-near(dial(p, "siphon").value, ONE_ATM, 0.001, "the high line cannot be pulled under the setpoint")
-set(p, "release", 500.0)
-near(dial(p, "release").value, ONE_ATM, 0.001, "nor the low one pushed over it")
-set(p, "release", FEEDS_UNDER)
-set(p, "siphon", EMPTIES_OVER)
-near(dial(p, "release").value, FEEDS_UNDER, 0.001, "and both go back")
-near(dial(p, "siphon").value, EMPTIES_OVER, 0.001, "where they started")
+set(p, "siphon_above_kpa", 50.0)
+near(dial(p, "siphon_above_kpa").value, ONE_ATM, 0.001, "the high line cannot be pulled under the setpoint")
+set(p, "release_below_kpa", 500.0)
+near(dial(p, "release_below_kpa").value, ONE_ATM, 0.001, "nor the low one pushed over it")
+set(p, "release_below_kpa", FEEDS_UNDER)
+set(p, "siphon_above_kpa", EMPTIES_OVER)
+near(dial(p, "release_below_kpa").value, FEEDS_UNDER, 0.001, "and both go back")
+near(dial(p, "siphon_above_kpa").value, EMPTIES_OVER, 0.001, "where they started")
 
 -- ---------------------------------------------------------------
 -- THE SETPOINT IS THE MACHINE'S, THE SWITCH IS REAL, AND THE SIM
@@ -241,17 +241,17 @@ local TUNED = 150.0
 -- it is a press that needed reach, sight and an interactive document,
 -- and it earns a ledger row naming who made it, because a room that
 -- stops being fed is how people die slowly.
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_seconds(2)
-assert(toggle(p, "power").on == false, "the switch is thrown")
+assert(toggle(p, "on").on == false, "the switch is thrown")
 assert(assert(t.structure_at(2, 1)).state == "off", "and the fan is drawn dead")
 assert(t.ledger_has("MachineToggled"), "with the press on the record")
 
-set(p, "siphon", 200.0)
-set(p, "setpoint", TUNED)
-set(p, "release", TUNED - 1.0)
-near(dial(p, "setpoint").value, TUNED, 0.001, "the vent is set to a hundred and fifty")
-near(dial(p, "release").value, TUNED - 1.0, 0.001, "with its low line just under")
+set(p, "siphon_above_kpa", 200.0)
+set(p, "target_kpa", TUNED)
+set(p, "release_below_kpa", TUNED - 1.0)
+near(dial(p, "target_kpa").value, TUNED, 0.001, "the vent is set to a hundred and fifty")
+near(dial(p, "release_below_kpa").value, TUNED - 1.0, 0.001, "with its low line just under")
 t.ui_close(p)
 t.tick()
 
@@ -265,9 +265,9 @@ near(room_moles(), opening, 0.5, "a switched-off vent hands the corridor nothing
 -- which is the whole of what this file catches.
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "vent")))
 t.tick()
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
-assert(toggle(p, "power").on == true, "the fan is switched back on")
+assert(toggle(p, "on").on == true, "the fan is switched back on")
 t.ui_close(p)
 t.tick()
 

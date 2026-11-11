@@ -165,7 +165,7 @@ local function onto_the_element(target_k: number)
     ui_controls.set(p, "temperature", target_k)
     t.run_ticks(2)
     if ui_controls.rows(ui_controls.state(p).toggles)[1].on ~= true then
-        ui_controls.toggle(p, "power")
+        ui_controls.toggle(p, "on")
         t.run_ticks(2)
     end
     assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the element is on")

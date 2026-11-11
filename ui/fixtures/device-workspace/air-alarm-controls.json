@@ -31,16 +31,16 @@
                 {"label": {"id": "room.supply"}, "section": null, "tone": "on", "value": {"id": "room.supply.fed"}}
               ],
               "setpoints": [
-                {"decimals": 0, "field": "3a-43-ec-2b-4c-aa/rate", "label": {"id": "scrubber.rate"}, "max": 200, "min": 0, "section": null, "step": 10, "unit": "L/s", "value": 5},
-                {"decimals": 1, "field": "3a-43-ec-2b-4c-aa/floor", "label": {"id": "scrubber.stop_at"}, "max": 4500, "min": 0, "section": null, "step": 10.1325, "unit": "kPa", "value": 100}
+                {"decimals": 0, "field": "3a-43-ec-2b-4c-aa/rate_lps", "label": {"id": "scrubber.rate"}, "max": 200, "min": 0, "section": null, "step": 10, "unit": "L/s", "value": 5},
+                {"decimals": 1, "field": "3a-43-ec-2b-4c-aa/floor_kpa", "label": {"id": "scrubber.stop_at"}, "max": 4500, "min": 0, "section": null, "step": 10.1325, "unit": "kPa", "value": 100}
               ],
               "sprite": "scrubber_off_n",
               "toggles": [
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/power", "group": null, "icon": null, "label": {"id": "room.power"}, "off_text": {"id": "switch.off"}, "on": false, "on_text": {"id": "switch.on"}, "option": null, "section": null},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/on", "group": null, "icon": null, "label": {"id": "room.power"}, "off_text": {"id": "switch.off"}, "on": false, "on_text": {"id": "switch.on"}, "option": null, "section": null},
                 {"color": null, "field": "3a-43-ec-2b-4c-aa/service", "group": null, "icon": null, "label": {"args": {"factor": "1×"}, "id": "scrubber.reach.tile"}, "off_text": {"args": {"factor": "1×"}, "id": "scrubber.reach.tile"}, "on": true, "on_text": {"args": {"factor": "1×"}, "id": "scrubber.reach.tile"}, "option": "1", "section": null},
                 {"color": null, "field": "3a-43-ec-2b-4c-aa/service", "group": null, "icon": null, "label": {"args": {"factor": "5×"}, "id": "scrubber.reach.cardinals"}, "off_text": {"args": {"factor": "5×"}, "id": "scrubber.reach.cardinals"}, "on": false, "on_text": {"args": {"factor": "5×"}, "id": "scrubber.reach.cardinals"}, "option": "5", "section": null},
                 {"color": null, "field": "3a-43-ec-2b-4c-aa/service", "group": null, "icon": null, "label": {"args": {"factor": "9×"}, "id": "scrubber.reach.ring"}, "off_text": {"args": {"factor": "9×"}, "id": "scrubber.reach.ring"}, "on": false, "on_text": {"args": {"factor": "9×"}, "id": "scrubber.reach.ring"}, "option": "9", "section": null},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/roster", "group": null, "icon": null, "label": {"id": "scrubber.roster"}, "off_text": {"id": "scrubber.roster.selected"}, "on": false, "on_text": {"id": "scrubber.roster.all"}, "option": null, "section": null},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/whole_air", "group": null, "icon": null, "label": {"id": "scrubber.roster"}, "off_text": {"id": "scrubber.roster.selected"}, "on": false, "on_text": {"id": "scrubber.roster.all"}, "option": null, "section": null},
                 {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "oxygen"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "o2", "section": {"text": "Station atmosphere"}},
                 {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "nitrogen"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "n2", "section": {"text": "Station atmosphere"}},
                 {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "carbon dioxide"}, "off_text": {"id": "scrubber.gas.left"}, "on": true, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "co2", "section": {"text": "Station atmosphere"}},
@@ -71,13 +71,13 @@
                 {"label": {"id": "room.supply"}, "section": null, "tone": "on", "value": {"id": "room.supply.fed"}}
               ],
               "setpoints": [
-                {"decimals": 2, "field": "aa-33-36-03-3d-a2/setpoint", "label": {"id": "vent.hold_at"}, "max": 109.431, "min": 101.325, "section": null, "step": 10.1325, "unit": "kPa", "value": 101.325},
-                {"decimals": 2, "field": "aa-33-36-03-3d-a2/release", "label": {"id": "vent.feed_under"}, "max": 101.325, "min": 0, "section": null, "step": 10.1325, "unit": "kPa", "value": 101.325},
-                {"decimals": 2, "field": "aa-33-36-03-3d-a2/siphon", "label": {"id": "vent.empty_over"}, "max": 4500, "min": 101.325, "section": null, "step": 10.1325, "unit": "kPa", "value": 109.431}
+                {"decimals": 2, "field": "aa-33-36-03-3d-a2/target_kpa", "label": {"id": "vent.hold_at"}, "max": 109.431, "min": 101.325, "section": null, "step": 10.1325, "unit": "kPa", "value": 101.325},
+                {"decimals": 2, "field": "aa-33-36-03-3d-a2/release_below_kpa", "label": {"id": "vent.feed_under"}, "max": 101.325, "min": 0, "section": null, "step": 10.1325, "unit": "kPa", "value": 101.325},
+                {"decimals": 2, "field": "aa-33-36-03-3d-a2/siphon_above_kpa", "label": {"id": "vent.empty_over"}, "max": 4500, "min": 101.325, "section": null, "step": 10.1325, "unit": "kPa", "value": 109.431}
               ],
               "sprite": "vent_off",
               "toggles": [
-                {"color": null, "field": "aa-33-36-03-3d-a2/power", "group": null, "icon": null, "label": {"id": "room.power"}, "off_text": {"id": "switch.off"}, "on": true, "on_text": {"id": "switch.on"}, "option": null, "section": null}
+                {"color": null, "field": "aa-33-36-03-3d-a2/on", "group": null, "icon": null, "label": {"id": "room.power"}, "off_text": {"id": "switch.off"}, "on": true, "on_text": {"id": "switch.on"}, "option": null, "section": null}
               ]
             }
           ],

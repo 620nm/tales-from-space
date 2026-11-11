@@ -404,11 +404,11 @@ t.swap_hands(q)
 t.click(q, 2, 1, assert(t.target_at(q, 2, 1, "air_injector")))
 t.tick()
 assert(
-    ui_controls.rows(ui_controls.state(q).setpoints)[1].field == "rate",
+    ui_controls.rows(ui_controls.state(q).setpoints)[1].field == "rate_lps",
     "the injector's dial is a volume rate"
 )
-ui_controls.set(q, "rate", 200)
-ui_controls.toggle(q, "power")
+ui_controls.set(q, "rate_lps", 200)
+ui_controls.toggle(q, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(2, 1)).state == "injecting", "and it is running")
 

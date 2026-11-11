@@ -383,7 +383,7 @@ local function bake(
     panel(6, 2, heater)
     ui_controls.set(p, "temperature", target_k)
     if ui_controls.rows(ui_controls.state(p).toggles)[1].on ~= true then
-        ui_controls.toggle(p, "power")
+        ui_controls.toggle(p, "on")
     end
     t.run_ticks(2)
     assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the element is on")
@@ -394,7 +394,7 @@ end
 -- Off the element and out of the way, so the next bottle gets its turn.
 local function unload()
     if ui_controls.rows(ui_controls.state(p).toggles)[1].on == true then
-        ui_controls.toggle(p, "power")
+        ui_controls.toggle(p, "on")
         t.run_ticks(2)
     end
     ui_controls.toggle(p, "eject")

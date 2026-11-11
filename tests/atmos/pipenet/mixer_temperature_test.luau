@@ -199,12 +199,12 @@ assert(
 )
 near(
     ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[2].value),
-    50.0,
+    0.5,
     0.001,
     "half and half out of the box"
 )
-ui_controls.set(p, "pressure", 200)
-ui_controls.toggle(p, "power")
+ui_controls.set(p, "target_kpa", 200)
+ui_controls.toggle(p, "on")
 t.run_seconds(30)
 -- Thirty seconds later the outlet is at the 200 kPa it was dialed to,
 -- so the machine has ARRIVED -- and a trinary is drawn by what the last
@@ -299,9 +299,9 @@ energy0 = assert(network_matter.energy(BACK_X, BACK_Y))
 
 t.click(q, 9, 1, assert(t.target_at(q, 9, 1, "mixer")))
 t.tick()
-ui_controls.set(q, "ratio", 80)
-ui_controls.set(q, "pressure", 200)
-ui_controls.toggle(q, "power")
+ui_controls.set(q, "ratio", 0.8)
+ui_controls.set(q, "target_kpa", 200)
+ui_controls.toggle(q, "on")
 t.run_seconds(30)
 
 gave_back = back0 - moles(BACK_X, BACK_Y)

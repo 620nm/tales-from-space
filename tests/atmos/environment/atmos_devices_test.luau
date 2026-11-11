@@ -463,10 +463,10 @@ assert(
     ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text)
 )
 assert(ui_controls.word(ui_controls.rows(panel.toggles)[1].off_text) == "off")
-assert(ui_controls.rows(panel.setpoints)[1].field == "target", "and one dial, in kPa")
+assert(ui_controls.rows(panel.setpoints)[1].field == "target_kpa", "and one dial, in kPa")
 assert(math.abs(ui_controls.number(ui_controls.rows(panel.setpoints)[1].value) - 101.325) < 0.001)
 
-ui_controls.toggle(r, "power")
+ui_controls.toggle(r, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(5, 1)).state == "running", "and the switch throws")
 assert(t.ledger_has("AtmosDeviceSet", "pump"), "switching it is on the record")
@@ -585,7 +585,7 @@ for _ = 1, 2 do
 end
 t.click(s, 3, 1, assert(t.target_at(s, 3, 1, "pump")))
 t.tick()
-ui_controls.toggle(s, "power")
+ui_controls.toggle(s, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "running", "switched on")
 t.run_seconds(60)

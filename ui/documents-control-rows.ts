@@ -14,6 +14,7 @@ import type {
 import { documentAction } from "./document-action";
 import { labelId, labelText, type Label } from "./labels";
 import { matterBlock } from "./matter-block";
+import { setpointDisplay } from "./documents-modules";
 import { grayedCard, subjectBadge, subjectCard, unavailableBadge } from "./documents-choices";
 import { bind, column, entry, press, row, text } from "./view";
 import * as S from "./strings";
@@ -243,22 +244,21 @@ function labelRows(base: string, doc: DocumentIdentity, labels: Indexed<LabelRow
 
 function setpointRow(base: string, doc: DocumentIdentity, point: Setpoint, sourceIndex: number, active: boolean, unique: boolean): UiNode {
   const key = bounded(`${base}/set`, unique ? safePart(point.field, `index/${sourceIndex}`) : `index/${sourceIndex}`, sourceIndex);
-  const places = point.decimals ?? 0;
+  const { spell, unit, stored } = setpointDisplay(point);
   const step = point.step && point.step > 0 ? point.step : 1;
-  const spell = (value: number): string => value.toFixed(places);
   const box = `${key}/value`;
   return row(key, [
     column(`${key}/description`, [
       text(`${key}/label`, labelText(point.label), ["workspace-control-label"]),
-      text(`${key}/range`, S.range(spell(point.min), spell(point.max), point.unit), ["workspace-control-range"]),
+      text(`${key}/range`, S.range(spell(point.min), spell(point.max), unit), ["workspace-control-range"]),
     ], { cls: ["workspace-control-label-block"] }),
     row(`${key}/controls`, [
       press(`${key}/down`, S.LOWER, documentAction(doc, "set", { field: point.field, adjust: -step }), { disabled: !active, cls: ["workspace-control-step-button"] }),
       entry(box, spell(point.value), (value) => {
         const wanted = Number(value);
-        return Number.isFinite(wanted) ? documentAction(doc, "set", { field: point.field, value: wanted }) : undefined;
+        return Number.isFinite(wanted) ? documentAction(doc, "set", { field: point.field, value: stored(wanted) }) : undefined;
       }, { cls: ["workspace-setpoint-input"], disabled: !active, label: labelText(point.label) }),
-      text(`${key}/unit`, point.unit, ["workspace-control-unit"]),
+      text(`${key}/unit`, unit, ["workspace-control-unit"]),
       press(`${key}/up`, S.RAISE, documentAction(doc, "set", { field: point.field, adjust: step }), { disabled: !active, cls: ["workspace-control-step-button"] }),
     ], { cls: ["workspace-setpoint-controls"] }),
   ], { cls: ["workspace-control-row", "workspace-setpoint-row"] });

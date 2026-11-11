@@ -187,7 +187,7 @@ local r = n2_c / (n2_c + C_BATH)
 assert(r > 0.2 and r < 0.25, "which puts this run's pass fraction near a fifth: " .. r)
 
 ui_controls.set(p, "temperature", 150)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(6, 1)).state == "running", "the unit is running")
 
@@ -284,7 +284,7 @@ assert(
 )
 
 ui_controls.set(heavy, "temperature", 150)
-ui_controls.toggle(heavy, "power")
+ui_controls.toggle(heavy, "on")
 t.run_ticks(2)
 for _ = 1, 3 do
     pass()
@@ -407,7 +407,7 @@ t.tick()
 local mouth = word(ui_controls.rows(ui_controls.state(d).readouts)[1].value)
 assert(mouth ~= "thermo.pipe.none", "the unit's mouth found the new length: " .. mouth)
 ui_controls.set(d, "temperature", 500)
-ui_controls.toggle(d, "power")
+ui_controls.toggle(d, "on")
 t.run_seconds(60)
 
 assert(

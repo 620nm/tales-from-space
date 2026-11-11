@@ -199,7 +199,7 @@ assert(assert(t.structure_at(2, 2)).state == "anchored", "and reads as connected
 t.swap_hands(p)
 t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "canister")))
 t.tick()
-ui_controls.set(p, "release", 400)
+ui_controls.set(p, "release_kpa", 400)
 t.tick()
 
 local room_before = t.room_pressure(1, 1)

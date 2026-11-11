@@ -57,7 +57,7 @@ end
 
 local function sensor_toggle(value: unknown, inverted: boolean)
     local panel = ui_controls.record(value)
-    local toggles = ui_controls.pressable(panel, "invert")
+    local toggles = ui_controls.pressable(panel, "inverted")
     assert(#toggles == 1, "the gate panel has one disclosed sensor switch")
     local toggle = toggles[1]
     assert(toggle.on == inverted, "the sensor switch reflects the gate mode")
@@ -221,7 +221,7 @@ near(ui_controls.number(setpoint.max), 4500.0, 0.01, "tg's max_temperature")
 assert(ui_controls.number(setpoint.min) < 3.0, "and its floor is TCMB, not zero")
 sensor_toggle(panel, false)
 
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "armed", "the gate is armed")
 
@@ -245,7 +245,7 @@ assert(
     "the tool says which way round the gate now reads"
 )
 assert(
-    t.ledger_has("MachineToggled", "invert", "Player"),
+    t.ledger_has("MachineToggled", "inverted", "Player"),
     "and reversing a gate's sensor is an attributed act"
 )
 
@@ -285,10 +285,10 @@ local authored_supply, authored_delivery = charge_gate_map(authored)
 t.click(authored, 3, 1, assert(t.target_at(authored, 3, 1, "temperature_gate")))
 t.tick()
 sensor_toggle(ui_controls.state(authored), true)
-ui_controls.toggle(authored, "invert")
+ui_controls.toggle(authored, "inverted")
 t.run_ticks(2)
 sensor_toggle(ui_controls.state(authored), false)
-ui_controls.toggle(authored, "power")
+ui_controls.toggle(authored, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "armed", "the authored gate is armed")
 t.run_seconds(30)
@@ -305,7 +305,7 @@ near(
     "blocked gas leaves the authored gate's supply untouched"
 )
 
-ui_controls.toggle(authored, "invert")
+ui_controls.toggle(authored, "inverted")
 t.run_ticks(2)
 sensor_toggle(ui_controls.state(authored), true)
 local reversed_supply = assert(network_matter.pressure(1, 1))
@@ -338,7 +338,7 @@ local cold_books = moles(cold_supply_0, SUPPLY_M3) + moles(cold_delivery_0, DELI
 t.click(c, 3, 1, assert(t.target_at(c, 3, 1, "temperature_gate")))
 t.tick()
 ui_controls.set(c, "temperature", 400)
-ui_controls.toggle(c, "power")
+ui_controls.toggle(c, "on")
 t.run_seconds(60)
 
 local cold_out = assert(network_matter.pressure(6, 1))
@@ -452,8 +452,8 @@ t.click(q, 3, 1, assert(t.target_at(q, 3, 1, "temperature_pump")))
 t.tick()
 local pump_panel = ui_controls.record(assert(t.ui(q), "panel opens"))
 local throttle = ui_controls.rows(pump_panel.setpoints)[1]
-assert(throttle.field == "share", "the pump's dial is a throttle")
-assert(throttle.unit == "%")
+assert(throttle.field == "ratio", "the pump's dial is a throttle")
+assert(throttle.unit == "" and ui_controls.record(throttle.shown).unit == "%", "a fraction shown as percent")
 near(ui_controls.number(throttle.value), 0.0, 0.01, "and tg ships it shut at zero")
 
 -- ---- switched on with the throttle shut: still nothing ----
@@ -461,7 +461,7 @@ near(ui_controls.number(throttle.value), 0.0, 0.01, "and tg ships it shut at zer
 -- tg's `heat_transfer_rate = 0` (temperature_pump.dm:11) is a real trap
 -- and is kept: a pump somebody has only switched on does nothing at
 -- all, forever.
-ui_controls.toggle(q, "power")
+ui_controls.toggle(q, "on")
 t.run_seconds(20)
 assert(assert(t.structure_at(3, 1)).state == "running", "the pump is running")
 near(
@@ -472,7 +472,7 @@ near(
 )
 
 -- ---- open the throttle ----
-ui_controls.set(q, "share", 100)
+ui_controls.set(q, "ratio", 1)
 t.run_seconds(30)
 local hot_1 = assert(network_matter.temperature(1, 1))
 local cold_1 = assert(network_matter.temperature(5, 1))
@@ -546,8 +546,8 @@ assert(
     readout(ui_controls.state(d), "flow.supply") == "flow.supply.dead",
     "the panel says the mains are not behind it"
 )
-ui_controls.set(d, "share", 100)
-ui_controls.toggle(d, "power")
+ui_controls.set(d, "ratio", 1)
+ui_controls.toggle(d, "on")
 t.run_seconds(60)
 assert(ui_controls.rows(ui_controls.state(d).toggles)[1].on == true, "the switch is on")
 assert(
@@ -747,7 +747,7 @@ t.tick()
 local function throw_pump_switch(want: string)
     t.click(s, 3, 1, assert(t.target_at(s, 3, 1, "temperature_pump")))
     t.tick()
-    ui_controls.toggle(s, "power")
+    ui_controls.toggle(s, "on")
     t.run_ticks(2)
     t.ui_close(s)
     t.tick()

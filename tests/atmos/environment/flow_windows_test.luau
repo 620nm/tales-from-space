@@ -210,7 +210,7 @@ assert(
     "and it is a valve, not a pump"
 )
 
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(9, 2)).state == "open", "no wheel: it throws on the command")
 assert(
@@ -289,8 +289,8 @@ assert(
 
 -- Wind the setpoint up so a working pump would have plenty to do, and
 -- throw the switch.
-ui_controls.set(d, "target", 300)
-ui_controls.toggle(d, "power")
+ui_controls.set(d, "target_kpa", 300)
+ui_controls.toggle(d, "on")
 t.run_ticks(2)
 assert(ui_controls.rows(ui_controls.state(d).toggles)[1].on == true, "the switch is on")
 assert(
@@ -385,7 +385,7 @@ assert(network_matter.pressure(3, 1) == nil, "no net claims the tile the machine
 -- Switch it on through its panel, then pick the wrench up.
 t.click(w, 3, 1, assert(t.target_at(w, 3, 1, "pump")))
 t.tick()
-ui_controls.toggle(w, "power")
+ui_controls.toggle(w, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "running", "the pump is running")
 
@@ -401,7 +401,7 @@ assert(assert(t.structure_at(3, 1)).id == "pump", "and the pump is still bolted 
 
 -- The panel is still open and still in reach, so the switch is right
 -- there -- which is the whole point of it being a windowed machine.
-ui_controls.toggle(w, "power")
+ui_controls.toggle(w, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "off", "switched off")
 

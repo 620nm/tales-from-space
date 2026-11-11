@@ -220,9 +220,9 @@ t.click(p, 5, 2, assert(t.target_at(p, 5, 2, "dewar")))
 t.tick()
 local ui = ui_controls.record(assert(t.ui(p), "empty-hand click opens dewar inspector"))
 local valve_row = ui_controls.rows(ui.toggles)[1]
-assert(valve_row.field == "valve" and valve_row.on == false, "drain valve starts shut")
+assert(valve_row.field == "open" and valve_row.on == false, "drain valve starts shut")
 local rate_row = ui_controls.rows(ui.setpoints)[1]
-assert(rate_row.field == "rate" and rate_row.unit == "L/s", "liquid dewar setpoint is rate in L/s")
+assert(rate_row.field == "rate_lps" and rate_row.unit == "L/s", "liquid dewar setpoint is rate in L/s")
 near(ui_controls.number(rate_row.value), 10.0, 1e-3, "default drain rate is 10 L/s")
 near(ui_controls.number(rate_row.max), 50.0, 1e-3, "max drain rate is 50 L/s")
 
@@ -239,8 +239,8 @@ assert(port_word == "canister.port.loose", "loose dewar reports loose port statu
 assert(relief_word == "1200 kPa", "dewar reports 1200 kPa relief valve: " .. tostring(relief_word))
 
 -- Drain at 50 L/s and step through g2 (40..75%), g1 (10..40%), and g0 (<10% and empty).
-ui_controls.set(p, "rate", 50)
-ui_controls.toggle(p, "valve")
+ui_controls.set(p, "rate_lps", 50)
+ui_controls.toggle(p, "open")
 t.tick()
 
 t.run_seconds(3) -- ~650 L left (65%)
@@ -333,9 +333,9 @@ t.click(q, 3, 1, assert(t.target_at(q, 3, 1, "canister")))
 t.tick()
 local can_ui = ui_controls.record(assert(t.ui(q)))
 local can_setpoint = ui_controls.rows(can_ui.setpoints)[1]
-assert(can_setpoint.field == "release" and can_setpoint.unit == "kPa", "ordinary gas canister keeps release kPa setpoint")
-ui_controls.set(q, "release", 400)
-ui_controls.toggle(q, "valve")
+assert(can_setpoint.field == "release_kpa" and can_setpoint.unit == "kPa", "ordinary gas canister keeps release kPa setpoint")
+ui_controls.set(q, "release_kpa", 400)
+ui_controls.toggle(q, "open")
 t.run_seconds(3)
 assert(assert(t.canister_pressure(3, 1)) < 4000.0, "ordinary gas canister still releases gas through its regulator")
 t.ui_close(q)

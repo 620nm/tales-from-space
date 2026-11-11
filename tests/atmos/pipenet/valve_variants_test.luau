@@ -305,7 +305,7 @@ assert(
     ui_controls.record(ui_controls.rows(panel.toggles)[1].label).id == "flow.switch.valve",
     "the digital valve answers with a panel"
 )
-ui_controls.toggle(v, "power")
+ui_controls.toggle(v, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(4, 3)).state == "open", "which throws on the command, with no wheel")
 t.run_seconds(1)
@@ -334,7 +334,7 @@ near(
 t.click(v, 4, 1, assert(t.target_at(v, 4, 1, "manual_valve")))
 t.run_seconds(2)
 assert(assert(t.structure_at(4, 1)).state == "shut", "the wheel is back")
-ui_controls.toggle(v, "power")
+ui_controls.toggle(v, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(4, 3)).state == "shut", "and the panel's valve with it")
 t.run_seconds(1)

@@ -184,7 +184,7 @@ near(
 -- way. A machine that clamped its panel and not its arithmetic would
 -- pass every assertion above and freeze this run solid.
 -- ---------------------------------------------------------------
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "running", "the unit is running")
 
@@ -386,7 +386,7 @@ t.tick()
 assert(t.ui(e), "the unit at the far end of the line answers an empty hand")
 
 ui_controls.set(e, "temperature", 573.15)
-ui_controls.toggle(e, "power")
+ui_controls.toggle(e, "on")
 t.run_ticks(2)
 near(
     ui_controls.number(ui_controls.rows(ui_controls.state(e).setpoints)[1].value),

@@ -372,7 +372,9 @@ change a draft; a `"change"` or `"submit"` gesture commits it. Disabled or
 missing controls cannot be pressed. Import returned helper tables with
 `local ui_controls = require("@helpers/ui_controls")`; `ui_controls` selects
 module switches, setpoints, inputs and stocked products from the rendered
-pack interface. `ui_controls.build(p, item, recipe, x, y)` opens that
+pack interface, by the row's `field` (the map key: `on`, `target_kpa`).
+`ui_controls.set` takes stored units (a ratio as a fraction, `0.79`) and
+types what the panel shows (`79` %). `ui_controls.build(p, item, recipe, x, y)` opens that
 interface, arms a disclosed recipe through its button, calls
 `t.place_build(p, x, y)`, then closes the window. Native placement accepts
 only the currently armed document and recipe. `laptop` boots and takes a

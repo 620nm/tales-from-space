@@ -136,14 +136,14 @@ assert(t.ui(p), "a scrubber wears a panel")
 -- posture to show and stays exactly as dark as it was. Setting a
 -- machine up before you start it must not paint a purge warning on an
 -- occupied room.
-ui_controls.toggle(p, "roster")
+ui_controls.toggle(p, "whole_air")
 t.run_ticks(2)
 local armed = assert(t.structure_at(2, 1))
-assert(toggle(p, "roster").on == true, "the dial moved")
+assert(toggle(p, "whole_air").on == true, "the dial moved")
 assert(armed.state == "off", "and the machine did not: " .. tostring(armed.state))
 assert(armed.sprite == "scrubber_off_e", "nor its picture: " .. tostring(armed.sprite))
 
-ui_controls.toggle(p, "roster")
+ui_controls.toggle(p, "whole_air")
 t.run_ticks(2)
 
 -- ---- switched on: the everyday picture ----
@@ -154,9 +154,9 @@ t.run_ticks(2)
 -- clean air at one atmosphere satisfies at once -- and a machine that
 -- has ARRIVED is drawn idle now, which is the next scenario rather than
 -- this one.
-ui_controls.set(p, "floor", 0)
-ui_controls.toggle(p, "roster")
-ui_controls.toggle(p, "power")
+ui_controls.set(p, "floor_kpa", 0)
+ui_controls.toggle(p, "whole_air")
+ui_controls.toggle(p, "on")
 t.run_seconds(1)
 local running = assert(t.structure_at(2, 1))
 assert(running.state == "scrubbing", "the fan is turning")
@@ -192,7 +192,7 @@ assert(drawn[3] == "pipe_cap_scrub_l2_8", "capped, on top: " .. tostring(drawn[3
 -- which a wide-open fan draws down well below the rest of the room.
 assert(assert(t.room_pressure(2, 1)) > 85.0, "the air at the grille is comfortable to start with")
 local emptying = assert(t.structure_at(2, 1))
-assert(toggle(p, "roster").on == true, "the panel says whole air")
+assert(toggle(p, "whole_air").on == true, "the panel says whole air")
 assert(
     emptying.sprite == "scrubber_on_e",
     "and the corridor is told nothing it does not need to know yet: " .. tostring(emptying.sprite)
@@ -234,7 +234,7 @@ assert(
 -- ...and back, because a warning you cannot clear is not a warning:
 -- narrow the roster to its named gases and the bulk draw -- the thing
 -- the warning was about -- stops with it.
-ui_controls.toggle(p, "roster")
+ui_controls.toggle(p, "whole_air")
 t.run_seconds(1)
 local calm = assert(t.structure_at(2, 1))
 assert(
@@ -300,9 +300,9 @@ local unplumbed = assert(t.target_at(lone, 2, 1, "air_scrubber"))
 t.click(lone, 2, 1, unplumbed)
 t.tick()
 assert(readout(lone, "room.supply") == "room.supply.fed", "the mains are behind it")
-ui_controls.toggle(lone, "power")
+ui_controls.toggle(lone, "on")
 t.run_seconds(1)
-assert(toggle(lone, "power").on == true, "the switch is thrown")
+assert(toggle(lone, "on").on == true, "the switch is thrown")
 local nothing = assert(t.structure_at(2, 1))
 assert(
     nothing.state == "off",
@@ -385,7 +385,7 @@ local JUNCTION = [==[(
 local ARM = {
     filter = function() end,
     mixer = function(q)
-        ui_controls.set(q, "pressure", 4500)
+        ui_controls.set(q, "target_kpa", 4500)
     end,
 }
 
@@ -406,7 +406,7 @@ for _, machine in ipairs({ "filter", "mixer" }) do
     t.tick()
     assert(t.ui(q), machine .. " answers an empty hand with a window")
     ARM[machine](q)
-    ui_controls.toggle(q, "power")
+    ui_controls.toggle(q, "on")
     t.run_seconds(1)
 
     local hot = assert(t.structure_at(3, 1))
@@ -428,7 +428,7 @@ for _, machine in ipairs({ "filter", "mixer" }) do
 
     -- ...and off again. A one-way picture change would pass every
     -- assertion above.
-    ui_controls.toggle(q, "power")
+    ui_controls.toggle(q, "on")
     t.run_seconds(1)
     local back = assert(assert(t.structure_at(3, 1)).sprite)
     assert(back == machine .. "_off_e", machine .. " goes dark again: " .. back)
@@ -506,11 +506,11 @@ local m = t.join()
 t.tick()
 t.click(m, 3, 1, assert(t.target_at(m, 3, 1, "mixer")))
 t.tick()
-ui_controls.set(m, "pressure", 4500)
-ui_controls.toggle(m, "power")
+ui_controls.set(m, "target_kpa", 4500)
+ui_controls.toggle(m, "on")
 t.run_seconds(1)
 local starved = assert(t.structure_at(3, 1))
-assert(toggle(m, "power").on == true, "the switch is thrown and stays thrown")
+assert(toggle(m, "on").on == true, "the switch is thrown and stays thrown")
 assert(
     starved.state == "off",
     "a mixer that cannot reach one of its two supplies is drawn off: " .. tostring(starved.state)
@@ -582,9 +582,9 @@ assert(readout(e, "room.supply") == "room.supply.fed", "the mains are behind it"
 -- the SUPPLY, and a machine that has reached its floor is drawn idle
 -- for a reason of its own -- which would make the last assertion in
 -- the file ambiguous.
-ui_controls.set(e, "floor", 0)
-ui_controls.toggle(e, "roster")
-ui_controls.toggle(e, "power")
+ui_controls.set(e, "floor_kpa", 0)
+ui_controls.toggle(e, "whole_air")
+ui_controls.toggle(e, "on")
 t.run_seconds(1)
 assert(assert(t.structure_at(4, 2)).sprite == "scrubber_on_w", "and it runs")
 t.ui_close(e)
@@ -613,7 +613,7 @@ assert(
 -- line is what changed.
 t.click(e, 4, 2, assert(t.target_at(e, 4, 2, "air_scrubber")))
 t.tick()
-assert(toggle(e, "power").on == true, "the switch is still thrown")
+assert(toggle(e, "on").on == true, "the switch is still thrown")
 assert(
     readout(e, "room.supply") == "room.supply.dead",
     "and the panel names what is actually wrong"

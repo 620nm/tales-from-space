@@ -67,7 +67,7 @@ local function build(rotations: number, want_sprite: string, drained: { number }
     t.swap_hands(q)
     t.click(q, 2, 2, assert(t.target_at(q, 2, 2, "volume_pump")))
     t.tick()
-    ui_controls.toggle(q, "power")
+    ui_controls.toggle(q, "on")
     t.run_seconds(20)
     assert(
         assert(network_matter.pressure(drained[1], drained[2])) < 1.0,

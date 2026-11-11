@@ -231,7 +231,7 @@ assert(pump.sprite == "pump_off_e", "dark: " .. tostring(pump.sprite))
 t.click(q, 3, 1, assert(t.target_at(q, 3, 1, "pump")))
 t.tick()
 assert(t.ui(q), "a pump answers an empty hand with a panel")
-ui_controls.toggle(q, "power")
+ui_controls.toggle(q, "on")
 t.run_ticks(2)
 
 local running = assert(t.structure_at(3, 1))

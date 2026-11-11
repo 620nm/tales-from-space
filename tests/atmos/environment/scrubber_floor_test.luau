@@ -178,9 +178,9 @@ t.tick()
 local panel = ui_controls.state(p)
 local setpoints = ui_controls.rows(panel.setpoints)
 assert(panel ~= nil, "a scrubber wears a panel")
-assert(setpoints[1].field == "rate", "a rate")
+assert(setpoints[1].field == "rate_lps", "a rate")
 near(ui_controls.number(setpoints[1].value), PLACED_RATE, 0.001, "gentle, not tg's 200")
-assert(setpoints[2].field == "floor", "and a floor")
+assert(setpoints[2].field == "floor_kpa", "and a floor")
 near(ui_controls.number(setpoints[2].value), PLACED_FLOOR, 0.001, "just under the vent's line")
 assert(
     ui_controls.number(setpoints[2].value) < SUPPLIES_UNDER,
@@ -192,7 +192,7 @@ assert(
 )
 local shape = nil
 for _, sw in ipairs(ui_controls.rows(panel.toggles)) do
-    if sw.field == "roster" then
+    if sw.field == "whole_air" then
         shape = sw
     end
 end

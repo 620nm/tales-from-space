@@ -346,9 +346,9 @@ assert(proxied(panel, "radio transceiver") == nil, "the transceiver is in nobody
 --
 -- The whole point of the box, in one press. The row key is the
 -- machine's address and the machine's own field name, so the alarm
--- invents no vocabulary: `setpoint` here is `setpoint` there.
+-- invents no vocabulary: `target_kpa` here is `target_kpa` there.
 -- ---------------------------------------------------------------
-local key = vent .. "/setpoint"
+local key = vent .. "/target_kpa"
 near(
     ui_controls.number(assert(dial(panel, key)).value),
     ONE_ATM,
@@ -356,7 +356,7 @@ near(
     "the vent opens on tg's external_pressure_bound"
 )
 
-ui_controls.set(p, vent .. "/siphon", 200.0)
+ui_controls.set(p, vent .. "/siphon_above_kpa", 200.0)
 t.run_ticks(2)
 ui_controls.set(p, key, TUNED)
 t.run_ticks(2)
@@ -373,7 +373,7 @@ near(
 local turned = t.ledger_rows("machine_setpoint")
 local moved = false
 for _, row in ipairs(turned) do
-    if row.field == "setpoint" and math.abs(ui_controls.number(row.value) - TUNED) < 0.001 then
+    if row.field == "target_kpa" and math.abs(ui_controls.number(row.value) - TUNED) < 0.001 then
         moved = true
     end
 end

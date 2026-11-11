@@ -285,7 +285,7 @@ eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
 ui_controls.set(p, "temperature", 800)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 
 -- Two minutes of sim time, heating included. The thermostat closes a
 -- twentieth of its gap every atmos pass, so the plateau arrives inside
@@ -299,7 +299,7 @@ near(amount(jar, "libital"), 3.0 * LEG, 1e-4, "three of libital for one of saltp
 near(amount(jar, "saltpeter"), 0.0, 1e-4, "which spent every mole of it")
 near(amount(jar, "phenol"), 2.0 * LEG, 1e-4, "and two thirds of the phenol is still standing")
 
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 eject()
 put_down()
 
@@ -329,7 +329,7 @@ eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
 ui_controls.set(p, "temperature", 370)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_seconds(120)
 
 -- The thermostat approaches its setpoint asymptotically and never
@@ -348,7 +348,7 @@ near(amount(b, "multiver"), 2.0 * LEG, 1e-4, "two of multiver for one of each le
 near(amount(b, "ash"), 0.0, 1e-4, "which spent all the ash")
 near(amount(b, "salt"), 0.0, 1e-4, "and all the salt")
 
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 eject()
 put_down()
 
@@ -548,7 +548,7 @@ eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
 ui_controls.set(p, "temperature", 320)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_seconds(600)
 assert(
     amount(flask, "aiuri") > 1.5 * LEG,

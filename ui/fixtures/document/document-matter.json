@@ -38,7 +38,7 @@
               "label": "Output pressure",
               "unit": "kPa",
               "value": 101,
-              "field": "pressure",
+              "field": "target_kpa",
               "min": 0,
               "max": 4500,
               "step": 10,

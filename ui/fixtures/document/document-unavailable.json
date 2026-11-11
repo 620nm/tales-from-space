@@ -33,7 +33,7 @@
               "on": false,
               "on_text": "On",
               "off_text": "Off",
-              "field": "power"
+              "field": "on"
             }
           ]
         }

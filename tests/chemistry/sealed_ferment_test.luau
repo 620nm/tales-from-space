@@ -464,7 +464,7 @@ assert(t.hands(p).held == nil, "into the chamber")
 t.click(p, 3, 1, oven)
 t.tick()
 ui_controls.set(p, "temperature", 340)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_seconds(60)
 
 local warmed = assert(t.holder_k(flask))

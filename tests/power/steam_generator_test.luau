@@ -169,7 +169,7 @@ assert(
 -- Dialed over water's boiling point, because the dial it opens at is
 -- Bay's warm-room number and this spec is about steam.
 ui_controls.set(p, "temperature", 400)
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the element is on")
 
@@ -196,7 +196,7 @@ t.run_ticks(5)
 local injector = assert(t.target_at(p, 1, 1, "air_injector"))
 t.click(p, 1, 1, injector)
 t.tick()
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(1, 1)).state == "injecting", "the injector is running")
 t.ui_close(p)

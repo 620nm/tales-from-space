@@ -155,7 +155,7 @@ local books = moles(volume_in, IN_M3) + moles(volume_out, OUT_M3)
 -- Both on, through the panel every machine with a dial on it wears.
 t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "pump")))
 t.tick()
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "running", "the pressure pump is on")
 
@@ -167,7 +167,7 @@ t.click(p, 9, 2, assert(t.target_at(p, 9, 2, "volume_pump")))
 t.tick()
 local panel = ui_controls.record(assert(t.ui(p)))
 assert(panel, "a volume pump wears the same panel")
-assert(ui_controls.rows(panel.setpoints)[1].field == "rate", "with a rate knob, not a pressure one")
+assert(ui_controls.rows(panel.setpoints)[1].field == "rate_lps", "with a rate knob, not a pressure one")
 assert(ui_controls.rows(panel.setpoints)[1].unit == "L/s")
 near(
     ui_controls.number(ui_controls.rows(panel.setpoints)[1].value),
@@ -175,7 +175,7 @@ near(
     0.001,
     "MAX_TRANSFER_RATE out of the box"
 )
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(9, 2)).state == "running", "and it is on")
 
@@ -315,7 +315,7 @@ for _, r in ipairs(ui_controls.rows(ui_controls.state(q).readouts)) do
     end
 end
 assert(limits == "flow.limiters.defeated", "and the panel says so: " .. tostring(limits))
-ui_controls.toggle(q, "power")
+ui_controls.toggle(q, "on")
 t.run_seconds(60)
 
 local supply_after = moles(assert(network_matter.pressure(1, 1)), LEAK_IN_M3)
@@ -441,7 +441,7 @@ end
 t.click(g, 3, 1, assert(t.target_at(g, 3, 1, "passive_gate")))
 t.tick()
 assert(t.ui(g), "a gate wears the panel")
-ui_controls.toggle(g, "power")
+ui_controls.toggle(g, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "open", "the gate is open")
 t.run_seconds(30)
@@ -549,7 +549,7 @@ for _ = 1, 2 do
 end
 t.click(d, 3, 1, assert(t.target_at(d, 3, 1, "passive_gate")))
 t.tick()
-ui_controls.toggle(d, "power")
+ui_controls.toggle(d, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "open", "the gate is open")
 t.run_seconds(60)
@@ -698,8 +698,8 @@ near(
 
 -- Arm it, trip pressure well above the supply. Nothing crosses, because
 -- nothing upstream is over the line.
-ui_controls.set(v, "target", 400)
-ui_controls.toggle(v, "power")
+ui_controls.set(v, "target_kpa", 400)
+ui_controls.toggle(v, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "armed", "the valve is armed")
 t.run_seconds(30)
@@ -708,7 +708,7 @@ near(assert(network_matter.pressure(1, 1)), relief_in, 0.5, "and holds the suppl
 
 -- Wind the trip pressure under the supply. Same valve, same position,
 -- and now it relieves.
-ui_controls.set(v, "target", 50)
+ui_controls.set(v, "target_kpa", 50)
 t.run_seconds(60)
 assert(
     assert(network_matter.pressure(5, 1)) > relief_out + 10.0,
@@ -719,6 +719,6 @@ assert(
     "and the supply is what paid for it: " .. assert(network_matter.pressure(1, 1))
 )
 assert(
-    t.ledger_has("MachineSetpoint", "target", "Player"),
+    t.ledger_has("MachineSetpoint", "target_kpa", "Player"),
     "re-dialing a relief valve is an attributed act"
 )

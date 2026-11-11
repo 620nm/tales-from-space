@@ -186,7 +186,7 @@ assert(
     "an air mixer is an ordinary module document"
 )
 assert(
-    ui_controls.rows(ui.toggles)[1].field == "power" and ui_controls.rows(ui.toggles)[1].on == true,
+    ui_controls.rows(ui.toggles)[1].field == "on" and ui_controls.rows(ui.toggles)[1].on == true,
     "shipped switched on"
 )
 near(
@@ -197,7 +197,7 @@ near(
 )
 near(
     ui_controls.number(ui_controls.rows(ui.setpoints)[2].value),
-    79.0,
+    0.79,
     0.001,
     "and the split at tg's N2STANDARD"
 )
@@ -359,7 +359,7 @@ assert(
     "the filter's declared module document"
 )
 assert(
-    ui_controls.rows(panel.toggles)[1].field == "power"
+    ui_controls.rows(panel.toggles)[1].field == "on"
         and ui_controls.rows(panel.toggles)[1].on == true,
     "shipped switched on"
 )

@@ -144,11 +144,11 @@ t.tick()
 local ui = ui_controls.record(t.ui(p))
 assert(ui ~= nil, "clicking a bottle opens its panel")
 assert(
-    ui_controls.rows(ui.toggles)[1].field == "valve" and ui_controls.rows(ui.toggles)[1].on == false,
+    ui_controls.rows(ui.toggles)[1].field == "open" and ui_controls.rows(ui.toggles)[1].on == false,
     "it arrives shut, because a map that said nothing said nothing"
 )
-ui_controls.set(p, "release", 400)
-ui_controls.toggle(p, "valve")
+ui_controls.set(p, "release_kpa", 400)
+ui_controls.toggle(p, "open")
 t.run_seconds(10)
 
 -- ---------------------------------------------------------------

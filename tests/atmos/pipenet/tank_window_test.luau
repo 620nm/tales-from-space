@@ -148,7 +148,7 @@ assert(
 -- the server's -- a client can dial anything it likes and gets the
 -- range back.
 -- ---------------------------------------------------------------
-local dial = setpoint(ui, "release")
+local dial = setpoint(ui, "release_kpa")
 assert(dial, "the release valve is a dial")
 assert(
     math.abs(ui_controls.number(dial.value) - 16.0) < 0.001,
@@ -160,35 +160,35 @@ assert(
     "and tg's maximum, three atmospheres"
 )
 
-ui_controls.set(p, "release", 30)
+ui_controls.set(p, "release_kpa", 30)
 t.tick()
 assert(
-    math.abs(ui_controls.number(assert(setpoint(ui_controls.state(p), "release")).value) - 30.0)
+    math.abs(ui_controls.number(assert(setpoint(ui_controls.state(p), "release_kpa")).value) - 30.0)
         < 0.001,
     "the valve took 30 kPa"
 )
-ui_controls.set(p, "release", 9000)
+ui_controls.set(p, "release_kpa", 9000)
 t.tick()
 assert(
     math.abs(
-        ui_controls.number(assert(setpoint(ui_controls.state(p), "release")).value) - 3 * 101.325
+        ui_controls.number(assert(setpoint(ui_controls.state(p), "release_kpa")).value) - 3 * 101.325
     ) < 0.001,
     "and a client cannot dial past three atmospheres"
 )
-ui_controls.set(p, "release", "min")
+ui_controls.set(p, "release_kpa", "min")
 t.tick()
 assert(
-    ui_controls.number(assert(setpoint(ui_controls.state(p), "release")).value) == 0.0,
+    ui_controls.number(assert(setpoint(ui_controls.state(p), "release_kpa")).value) == 0.0,
     "nor below nothing"
 )
 assert(t.ledger_has("MachineSetpoint"), "and every setting is on the record")
 
 -- Nothing else on this panel is a control, so nothing else answers.
-assert(ui_controls.find(p, "/toggle/valve/switch") == nil, "no valve control")
-assert(ui_controls.find(p, "/set/pressure/value") == nil, "no pressure dial")
+assert(ui_controls.find(p, "/toggle/open/switch") == nil, "no valve control")
+assert(ui_controls.find(p, "/set/target_kpa/value") == nil, "no pressure dial")
 t.tick()
 assert(
-    ui_controls.number(assert(setpoint(ui_controls.state(p), "release")).value) == 0.0,
+    ui_controls.number(assert(setpoint(ui_controls.state(p), "release_kpa")).value) == 0.0,
     "a field the panel never offered moves nothing"
 )
 

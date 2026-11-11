@@ -69,11 +69,11 @@ assert(ui, "clicking a canister opens its window")
 assert(ui.document == "modules" and ui.presentation == "modules", "the generic module document")
 
 local valve = ui_controls.rows(ui.toggles)[1]
-assert(valve.field == "valve", "the one switch is the release valve")
+assert(valve.field == "open", "the one switch is the release valve")
 assert(valve.on == true, "which starts open")
 
 local reg = ui_controls.rows(ui.setpoints)[1]
-assert(reg.field == "release", "the one knob is the regulator")
+assert(reg.field == "release_kpa", "the one knob is the regulator")
 assert(
     math.abs(ui_controls.number(reg.value) - 101.325) < 0.001,
     "at tg's CAN_DEFAULT_RELEASE_PRESSURE: " .. ui_controls.number(reg.value)
@@ -112,7 +112,7 @@ assert(
     "at the default setpoint nothing moves: " .. assert(t.room_pressure(1, 1))
 )
 
-ui_controls.set(p, "release", 400)
+ui_controls.set(p, "release_kpa", 400)
 t.tick()
 assert(
     math.abs(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value) - 400.0)
@@ -139,7 +139,7 @@ assert(
 -- The switch. Shut the valve and the same over-pressure demand buys
 -- nothing at all -- which is the whole point of a valve.
 -- ---------------------------------------------------------------
-ui_controls.toggle(p, "valve")
+ui_controls.toggle(p, "open")
 t.tick()
 assert(
     ui_controls.rows(ui_controls.state(p).toggles)[1].on == false,
@@ -155,7 +155,7 @@ local room_held = assert(t.room_pressure(1, 1))
 -- maximum (tg's "max" word, the same one the panel's button sends). A
 -- setpoint is not a tap: the largest number this machine will accept
 -- still moves nothing through a closed valve.
-ui_controls.set(p, "release", "max")
+ui_controls.set(p, "release_kpa", "max")
 t.run_seconds(30)
 assert(
     math.abs(assert(t.canister_pressure(2, 2)) - held) < 1.0,
@@ -173,7 +173,7 @@ assert(
 -- fill leaves 3896.2 kPa in the bottle, and "max" blows the loose bottle
 -- off its tile within a second (room 909.7 kPa at 20 s), so this step
 -- holds on 3 m3 cells only.
-ui_controls.toggle(p, "valve")
+ui_controls.toggle(p, "open")
 t.run_seconds(20)
 local can_end = assert(t.canister_pressure(2, 2))
 local room_end = assert(t.room_pressure(1, 1))
@@ -205,16 +205,16 @@ assert(
 -- this is the accountability the ledger exists for.
 -- ---------------------------------------------------------------
 assert(
-    t.ledger_has("MachineSetpoint", "release", "Player"),
+    t.ledger_has("MachineSetpoint", "release_kpa", "Player"),
     "re-dialing the regulator is an attributed act"
 )
-assert(t.ledger_has("MachineToggled", "valve", "Player"), "so is throwing the valve")
+assert(t.ledger_has("MachineToggled", "open", "Player"), "so is throwing the valve")
 
 -- ---------------------------------------------------------------
 -- Out-of-range typed numbers clamp to the published range.
 -- Controls belonging to other machines are absent from this window.
 -- ---------------------------------------------------------------
-ui_controls.set(p, "release", -1000)
+ui_controls.set(p, "release_kpa", -1000)
 t.tick()
 assert(
     math.abs(
@@ -224,7 +224,7 @@ assert(
         .. ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value)
 )
 
-ui_controls.set(p, "release", 999999)
+ui_controls.set(p, "release_kpa", 999999)
 t.tick()
 assert(
     math.abs(
@@ -236,7 +236,7 @@ assert(
 
 -- The pump's rate and an invented action have no rendered controls.
 local before = ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value)
-assert(ui_controls.find(p, "/set/rate/value") == nil, "no pump dial is rendered")
+assert(ui_controls.find(p, "/set/rate_lps/value") == nil, "no pump dial is rendered")
 assert(ui_controls.find(p, "/detonate") == nil, "no invented action is rendered")
 t.tick()
 assert(
@@ -247,7 +247,7 @@ assert(
 -- NEGATIVE: no window, no verbs -- the same rule the vendor follows.
 local valve_before = ui_controls.rows(ui_controls.state(p).toggles)[1].on
 t.ui_close(p)
-assert(ui_controls.find(p, "/toggle/valve/switch") == nil, "closing removes the valve control")
+assert(ui_controls.find(p, "/toggle/open/switch") == nil, "closing removes the valve control")
 t.run_ticks(2)
 t.click(p, 2, 2, assert(t.target_at(p, 2, 2)))
 t.tick()

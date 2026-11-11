@@ -195,7 +195,7 @@ t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "air_scrubber")))
 t.tick()
 local panel = ui_controls.state(p)
 assert(panel, "a scrubber wears a panel of its own")
-assert(ui_controls.rows(panel.setpoints)[1].field == "rate", "with a rate on it")
+assert(ui_controls.rows(panel.setpoints)[1].field == "rate_lps", "with a rate on it")
 near(
     ui_controls.number(ui_controls.rows(panel.setpoints)[1].value),
     200.0,
@@ -205,7 +205,7 @@ near(
 -- And a second dial, which tg has no equivalent of: the pressure the
 -- machine works down to and stops at. Zero is tg exactly, and zero is
 -- what this one was placed with.
-assert(ui_controls.rows(panel.setpoints)[2].field == "floor", "and a floor under it")
+assert(ui_controls.rows(panel.setpoints)[2].field == "floor_kpa", "and a floor under it")
 assert(ui_controls.rows(panel.setpoints)[2].unit == "kPa", "which is a pressure, not a rate")
 near(
     ui_controls.number(ui_controls.rows(panel.setpoints)[2].value),
@@ -222,7 +222,7 @@ for _, sw in ipairs(ui_controls.rows(panel.toggles)) do
         roster[ui_controls.text(sw.option)] = sw.on
     elseif sw.field == "service" then
         service[ui_controls.text(sw.option)] = sw.on
-    elseif sw.field == "roster" then
+    elseif sw.field == "whole_air" then
         shape = sw
     end
 end
@@ -239,7 +239,7 @@ assert(
     "one tile of reach out of the box"
 )
 
-ui_controls.toggle(p, "power")
+ui_controls.toggle(p, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(2, 1)).state == "scrubbing", "it is running")
 
@@ -276,10 +276,10 @@ near(
 -- tg's siphon, spelled in the dials the machine already has: the
 -- placement shipped with the floor at zero, so the roster switch alone
 -- is the whole emergency.
-ui_controls.toggle(p, "roster")
+ui_controls.toggle(p, "whole_air")
 t.run_ticks(2)
 assert(
-    t.ledger_has("MachineToggled", "roster", "Player"),
+    t.ledger_has("MachineToggled", "whole_air", "Player"),
     "and setting a scrubber to take everything is an attributed act"
 )
 -- The PICTURE is a different question and it has not changed yet: the
@@ -403,7 +403,7 @@ assert(room_0 > 90.0 and room_0 < 110.0, "the room opens at about an atmosphere:
 t.click(q, 3, 1, assert(t.target_at(q, 3, 1, "air_injector")))
 t.tick()
 local inj = ui_controls.state(q)
-assert(ui_controls.rows(inj.setpoints)[1].field == "rate", "the injector's dial is a volume rate")
+assert(ui_controls.rows(inj.setpoints)[1].field == "rate_lps", "the injector's dial is a volume rate")
 assert(ui_controls.rows(inj.setpoints)[1].unit == "L/s")
 near(
     ui_controls.number(ui_controls.rows(inj.setpoints)[1].value),
@@ -432,7 +432,7 @@ assert(labels["flow.room"] ~= nil, "and the other end is a ROOM, so it reads one
 -- Left at tg's default fifty liters a second: enough to overfill a
 -- room, calm enough to stand next to while it does. (The dial goes to
 -- two hundred, and what THAT is like is the next paragraph.)
-ui_controls.toggle(q, "power")
+ui_controls.toggle(q, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "injecting", "it is running")
 
@@ -455,7 +455,7 @@ assert(
 )
 
 -- Switched off, it stops dead — no coasting, no setpoint to settle to.
-ui_controls.toggle(q, "power")
+ui_controls.toggle(q, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "off", "and off is off")
 local settled = room_air()
@@ -470,8 +470,8 @@ near(room_air(), settled, 0.5, "a stopped injector injects nothing")
 -- and the wind on the engineer's tile peaks near 2e-3 Pa, far under
 -- `wind_drag_pa` (content/tuning.luau). The machine stays in reach
 -- while it runs, and the same hand switches it off.
-ui_controls.set(q, "rate", 200)
-ui_controls.toggle(q, "power")
+ui_controls.set(q, "rate_lps", 200)
+ui_controls.toggle(q, "on")
 t.run_ticks(2)
 local before_x, before_y = t.pos(q)
 t.run_seconds(30)
@@ -488,7 +488,7 @@ assert(
         .. after_y
 )
 assert(room_air() > settled, "and the room is still climbing, with nothing in the machine to stop it")
-ui_controls.toggle(q, "power")
+ui_controls.toggle(q, "on")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "off", "and the engineer switches it off from the panel")
 
@@ -553,7 +553,7 @@ for _, job in ipairs({
         end
     end
     assert(supply == job.supply .. ".dead", job.id .. " says the mains are not behind it")
-    ui_controls.toggle(d, "power")
+    ui_controls.toggle(d, "on")
     t.run_ticks(2)
     assert(
         assert(t.structure_at(job.x, 1)).state == "off",
