@@ -1,10 +1,40 @@
-// The toolbelt and what shows on it, and the third power line.
+// The toolbelt and what shows on it, the plumbing phase power tools, and the
+// third power line.
 //
 // One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
 // this directory is baked, in FILE-NAME order and then expansion order,
 // so the atlas layout is a function of the manifest and not of the
 // filesystem. Two files claiming one sprite name is a bake error.
 (
+    sprites: [
+        // First-party plumbing phase-scrubbing power tools and their fixed-station
+        // belt-slot overlays (`stowed`): solid_scrubber (rotary ice-pig launcher,
+        // left-hip strap tuck x=4..9), bilge_siphon (brass-coupled liquid sump
+        // pump, center-left clip x=12..16), gas_bleeder (headspace vapor relief
+        // lance, right-front pouch clip x=17..20), and the Chief Engineer's
+        // four-mode phase_lance (center clasp holster x=10..17).
+        ("solid_scrubber", Ase("@solid_scrubber", "idle")),
+        ("solid_scrubber_on", AseAnim("@solid_scrubber", "active")),
+        ("belt_solid_scrubber", Ase("@solid_scrubber", "stowed")),
+
+        ("bilge_siphon", Ase("@bilge_siphon", "idle")),
+        ("bilge_siphon_on", AseAnim("@bilge_siphon", "active")),
+        ("belt_bilge_siphon", Ase("@bilge_siphon", "stowed")),
+
+        ("gas_bleeder", Ase("@gas_bleeder", "idle")),
+        ("gas_bleeder_on", AseAnim("@gas_bleeder", "active")),
+        ("belt_gas_bleeder", Ase("@gas_bleeder", "stowed")),
+
+        ("phase_lance_pig", Ase("@phase_lance", "pig")),
+        ("phase_lance_pig_on", AseAnim("@phase_lance", "pig_active")),
+        ("phase_lance_bilge", Ase("@phase_lance", "bilge")),
+        ("phase_lance_bilge_on", AseAnim("@phase_lance", "bilge_active")),
+        ("phase_lance_bleed", Ase("@phase_lance", "bleed")),
+        ("phase_lance_bleed_on", AseAnim("@phase_lance", "bleed_active")),
+        ("phase_lance_vacuum", Ase("@phase_lance", "vacuum")),
+        ("phase_lance_vacuum_on", AseAnim("@phase_lance", "vacuum_active")),
+        ("belt_phase_lance", Ase("@phase_lance", "stowed")),
+    ],
     sheets: [
         ("worn_belt", "mob/clothing/belt.dmi"),
         ("belt_l", "mob/inhands/equipment/belt_lefthand.dmi"),
@@ -15,6 +45,10 @@
         ("belts", "obj/clothing/belts.dmi"),
         ("device_tool", "obj/devices/tool.dmi"),
         ("cable", "art/subfloor/electrical/layer_cable.aseprite"),
+        ("solid_scrubber", "art/items/tools/solid_scrubber.aseprite"),
+        ("bilge_siphon", "art/items/tools/bilge_siphon.aseprite"),
+        ("gas_bleeder", "art/items/tools/gas_bleeder.aseprite"),
+        ("phase_lance", "art/items/tools/phase_lance.aseprite"),
     ],
     groups: [
         // tg's /obj/item/storage/belt/utility: one icon_state,
@@ -42,6 +76,51 @@
         (sheet: "device_tool", sprites: [Sprite("multitool", "multitool", s)]),
         (sheet: "tools_l", sprites: [Directions("held_multitool_l", "multitool")]),
         (sheet: "tools_r", sprites: [Directions("held_multitool_r", "multitool")]),
+
+        // Four-cardinal left/right inhands and hip-belt overlays for the
+        // plumbing phase power tools; their floor stills, active loops and
+        // stowed belt-slot icons sit in `sprites` above.
+        (
+            sheet: "solid_scrubber",
+            sprites: [
+                Directions("held_solid_scrubber_l", "held_l"),
+                Directions("held_solid_scrubber_r", "held_r"),
+                Directions("worn_solid_scrubber", "worn"),
+            ],
+        ),
+        (
+            sheet: "bilge_siphon",
+            sprites: [
+                Directions("held_bilge_siphon_l", "held_l"),
+                Directions("held_bilge_siphon_r", "held_r"),
+                Directions("worn_bilge_siphon", "worn"),
+            ],
+        ),
+        (
+            sheet: "gas_bleeder",
+            sprites: [
+                Directions("held_gas_bleeder_l", "held_l"),
+                Directions("held_gas_bleeder_r", "held_r"),
+                Directions("worn_gas_bleeder", "worn"),
+            ],
+        ),
+        (
+            sheet: "phase_lance",
+            sprites: [
+                Directions("held_phase_lance_pig_l", "held_pig_l"),
+                Directions("held_phase_lance_pig_r", "held_pig_r"),
+                Directions("held_phase_lance_bilge_l", "held_bilge_l"),
+                Directions("held_phase_lance_bilge_r", "held_bilge_r"),
+                Directions("held_phase_lance_bleed_l", "held_bleed_l"),
+                Directions("held_phase_lance_bleed_r", "held_bleed_r"),
+                Directions("held_phase_lance_vacuum_l", "held_vacuum_l"),
+                Directions("held_phase_lance_vacuum_r", "held_vacuum_r"),
+                Directions("worn_phase_lance_pig", "worn_pig"),
+                Directions("worn_phase_lance_bilge", "worn_bilge"),
+                Directions("worn_phase_lance_bleed", "worn_bleed"),
+                Directions("worn_phase_lance_vacuum", "worn_vacuum"),
+            ],
+        ),
 
         // The third power line, blue. tg draws it from the `l4-` states
         // (cable.dm:43-48 -- /obj/structure/cable/layer3 wears
