@@ -2,6 +2,7 @@
   "map": "world-pointer.ron",
   "mode": "free_build",
   "ledgerKey": "lunatic/tfs:button_sequence",
+  "hoverLift": true,
   "targets": [
     { "orientation": "north", "x": 3, "y": 2, "sprite": "airlock_button_n" },
     { "orientation": "east", "x": 4, "y": 3, "sprite": "airlock_button_e" },
