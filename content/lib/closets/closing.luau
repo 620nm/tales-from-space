@@ -137,7 +137,7 @@ end
 -- tray's tile goes in, as tg's tray `close()` takes any living mob that is
 -- not incorporeal (`morgue.dm:157-167`).
 local function body_taken(container: Handle, readout: { [any]: any }, on_tray: boolean): boolean
-	local size = data.plan_containment_size[readout.plan]
+	local size = readout.containment_size
 	return size ~= nil
 		and size <= data.max_body_size
 		and (on_tray or not standing_in_horizontal(container, readout))
@@ -154,6 +154,12 @@ function closing.gather(ev: ContainerClosingPayload)
 	local container: Handle = ev.subject
 	local entrant = pending_entrant(container, ev.actor)
 	forget_entrant(container)
+	-- Distance is this handler's rule: an entry outlives a refused close
+	-- by up to a second, so judge where the body stands at this close,
+	-- not where the drag left it.
+	if entrant ~= nil and not actor_context.adjacent(entrant, container) then
+		entrant = nil
+	end
 	if entrant ~= nil then
 		sim.container.insert({ container = container, entity = entrant })
 	end

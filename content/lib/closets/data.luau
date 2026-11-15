@@ -19,13 +19,6 @@ data.item_capacity = 30
 data.body_capacity = 3
 data.max_body_size = 2
 
--- The `containment_size` of each body plan a close may take in (the engine
--- exposes no read of it): `bodies/human.luau`, tg's MOB_SIZE_HUMAN
--- (`code/__DEFINES/mobs.dm:62-66`). A plan absent here is sizeless and
--- stays out of a gather, as tg refuses a mob over `max_mob_size`
--- (`closets.dm:585`).
-data.plan_containment_size = { human = 2 } :: { [string]: number }
-
 -- Tg paralyzes a body stuffed into a closet by another for 40 deciseconds
 -- (`closets.dm:1014`; silicons are exempt there and not modeled here).
 data.stuff_knockdown_seconds = 4.0
