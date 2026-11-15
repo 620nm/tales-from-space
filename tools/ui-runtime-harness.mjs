@@ -85,10 +85,16 @@ export async function createGuest(pkg, { locale } = {}) {
   const waiting = [];
   let stderr = "";
   let ended = null;
+  // Whether a caller already saw this guest fail, so `dispose` adds nothing.
+  let reported = false;
+  let stopped = false;
   const end = (reason) => {
     ended ??= reason;
     live.delete(child);
-    for (const turn of waiting.splice(0)) turn.reject(Error(`${ended}${stderr ? `\n${stderr}` : ""}`));
+    for (const turn of waiting.splice(0)) {
+      reported = true;
+      turn.reject(Error(`${ended}${stderr ? `\n${stderr}` : ""}`));
+    }
   };
   child.stderr.setEncoding("utf8");
   child.stderr.on("data", (chunk) => {
@@ -97,7 +103,11 @@ export async function createGuest(pkg, { locale } = {}) {
   child.stdin.on("error", () => {});
   child.on("error", (error) => end(`guest host did not run: ${error.message}`));
   // `close` follows the last stdout line, so a fatal line reaches its turn first.
-  child.on("close", (code, signal) => end(`guest host exited (${signal ?? code})`));
+  let clean = false;
+  child.on("close", (code, signal) => {
+    clean = stopped && code === 0;
+    end(`guest host exited (${signal ?? code})`);
+  });
   createInterface({ input: child.stdout }).on("line", (text) => {
     const turn = waiting.shift();
     if (!turn) return end(`guest host wrote an unasked line: ${text}`);
@@ -107,8 +117,10 @@ export async function createGuest(pkg, { locale } = {}) {
     } catch {
       return turn.reject(Error(`guest host wrote a line that is not JSON: ${text}`));
     }
-    if (typeof line?.error === "string") turn.reject(guestError(line));
-    else turn.resolve(line);
+    if (typeof line?.error === "string") {
+      reported = true;
+      turn.reject(guestError(line));
+    } else turn.resolve(line);
   });
   const ask = (request) =>
     new Promise((resolve, reject) => {
@@ -117,14 +129,21 @@ export async function createGuest(pkg, { locale } = {}) {
       child.stdin.write(`${JSON.stringify(request)}\n`);
     });
   const disposed = new Promise((resolve) => child.once("close", resolve));
+  /** Stops the guest. Exit 0 after `stop` is clean; any other end no
+   *  caller has seen yet (a nonzero exit, no exit within 5 s) rejects. */
   const dispose = async () => {
     if (!ended && child.stdin.writable) {
+      stopped = true;
       child.stdin.write(`${JSON.stringify({ kind: "stop" })}\n`);
       child.stdin.end();
     }
     const timer = setTimeout(() => child.kill("SIGKILL"), 5000);
     await disposed;
     clearTimeout(timer);
+    if (!clean && !reported) {
+      reported = true;
+      throw Error(`${ended}${stopped ? " after stop" : ""}${stderr ? `\n${stderr}` : ""}`);
+    }
   };
   try {
     await ask({ kind: "start", package: pkg, ...(locale ? { locale } : {}) });
