@@ -21,7 +21,7 @@ This standalone repository is loaded by the lunatic engine through
 | `tests/`         | Luau specs (`tests/**/*_test.luau`) run by the engine's spec runner, with focused RON fixtures in `tests/maps/` or embedded inline where needed. |
 | `locale/`        | One flat catalog per language, `<tag>.json`, holding every word this pack writes: its interface, its key bindings, a rendering for every settings-module label id, its own message keys, and its wording for the engine keys it overrides (`docs/WORDS.md`). |
 | `docs/`          | This pack's own contracts — what it ships and the numbers it chose: `ART.md` (art direction and the station, department and enemy palettes), `ATMOS.md` (airs, atmos components and their focused specs), `BIOLOGY.md` (body and surgery tuning), `CHEMISTRY.md` (the shelf), `GAMEMODES.md` (the two modes and preparation policy), `POWER.md` (load classes, the panel ladder and emergency cells), `UI.md` (gameplay surfaces), plus controls, terminology and `scripting/` for guest controllers and reference files. A bare `docs/…` citation names a file HERE; an engine contract is always written "the engine's `docs/…`". |
-| `tools/`         | `sh tools/check.sh` is this pack's gate (§Running). `node tools/test.mjs <engine>` is its `pack-node` lane and runs every node check: `theme-lint.mjs` (colors only in `ui/theme/tokens.ts`, inline style is placement only), `keyed-messages.mjs --check`, and the `test-*.mjs` tests (`ui/` surfaces, the editor declaration, the roster, the bake, and `map-fixture-coverage.mjs`). To preview a surface, run the engine's lab from the engine checkout, `node tools/ui-lab.mjs serve --watch` or `shot <fixture>` (the engine's `docs/pack-ui/lab.md`). |
+| `tools/`         | `sh tools/check.sh` is this pack's gate (§Running). `node tools/test.mjs <engine>` is its `pack-node` lane and runs every node check: `theme-lint.mjs` (colors only in `ui/theme/tokens.ts`, inline style is placement only), `keyed-messages.mjs --check`, and the `test-*.mjs` tests (`ui/` surfaces, the editor declaration, the roster, the bake, and `map-fixture-coverage.mjs`). To preview a surface, draw its fixture with the engine's GPUI `ui_shot` (`docs/UI.md` §Acceptance loop). |
 
 How many files and subdirectories a directory holds, and how deep a tree
 goes, is `AGENTS.md` §Code Organization.
@@ -87,7 +87,10 @@ Quiet is the default: a green lane prints one `ok` line and a failing one its
 whole log at the end. A lane that
 cannot run says so by name, both in place and in the closing
 `SKIPPED, SO UNVERIFIED` line; a lane whose prerequisite failed reads
-`BLOCKED`, which is unverified rather than green.
+`BLOCKED`, which is unverified rather than green. A run selecting
+`pack-node` or `specs` refuses to start without the engine's
+`web/node_modules` (`npm --prefix <engine>/web ci`): those lanes run the
+engine's esbuild and spec UI sidecar. No other lane needs it.
 
 Every run keeps its own log folder, written by the engine's
 `tools/gate/run-log.sh` exactly as the engine gate writes its own (the
@@ -115,7 +118,6 @@ to `target/gate/log/`, which the next run replaces.
 | `pack-ui-build` | `ui/` compiles against that engine's SDK, and every font `ui/fonts.json` declares is published in this pack's bake (`--web`). |
 | `pack-node` | `tools/test.mjs`: the theme and message lints and every `tools/test-*.mjs`. |
 | `specs` | `tests/**/*_test.luau` through the engine's spec runner, including the actual boot/step assertions for focused map fixtures; its `--json` report proves each fixture was booted: every named spec ran once, passed, and lists the fixture in an untruncated `maps_loaded` (`tools/map-fixture-coverage.mjs`). |
-| `ui-shots` | Every `ui/fixtures` and `ui/staff/fixtures` baseline, drawn through the real host against this pack's bake (`--web`). |
 | `world-pointer`, `push-motion` | The fixtures in `tests/fixtures/`, driven in the real client against this pack's bake. |
 
 The `maps` command checks both roots independently and prints their separate
@@ -150,13 +152,12 @@ only a run that ran all four records its greens: a filtered run may read
 an older bake. `GATE_FRESH=1` keeps nothing. The contract is the engine's
 `docs/gates.md` (Kept gates).
 
-Three lanes need an engine new enough to be pointed at a served root — the
-lab's `--web`, `build-ui`'s `--web` and the palette test's `LUNATIC_WEB_ROOT`.
-Each is probed rather than assumed, because an older engine ignores all three
-silently and would then judge this pack against whichever pack that checkout
-last baked. Against one, `ui-shots` skips by name, `placeable` keeps its shape
-rules and skips its art half, and `pack-ui-build` still compiles but says in
-the closing line that it matched this pack's fonts against the engine's bake.
+`placeable` needs an engine whose palette test can be pointed at a served
+root (`LUNATIC_WEB_ROOT`). That is probed rather than assumed, because an
+older engine ignores it silently and would then judge this pack's art against
+whichever pack that checkout last baked; against one, `placeable` keeps its
+shape rules and skips its art half by name. `pack-ui-build` always passes
+`build-ui` this pack's bake (`--web`) and needs no node.
 
 The gate's scratch — the bake, its state directory and the browser lanes'
 recordings — is `target/`, which is gitignored. Cargo builds in the engine's

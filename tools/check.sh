@@ -67,17 +67,8 @@ if [ -z "$ENGINE" ] || [ ! -f "$ENGINE/Cargo.toml" ] || [ ! -f "$ENGINE/tools/ch
   echo "  e.g. LUNATIC_ENGINE=/absolute/path/to/lunatic sh tools/check.sh" >&2
   exit 1
 fi
-# Unbuilt engine tooling is refused rather than skipped lane by lane: the
-# node checks, the UI runtime and the lab all need this one install, and
-# a gate whose interface half all skipped would prove nothing.
-if [ ! -d "$ENGINE/web/node_modules" ]; then
-  echo "$ENGINE/web/node_modules is missing: the engine's node tooling is not installed" >&2
-  echo "  npm --prefix \"$ENGINE/web\" ci" >&2
-  exit 1
-fi
 for tool in tools/luau.mjs tools/lint-units.sh tools/lint-tree.sh tools/lint-terms.sh \
-  tools/ui-lab.mjs tools/staff-ui-status.mjs tools/world-pointer-live.mjs \
-  tools/ui-lab/push-motion-live.mjs tools/gate/run-log.sh; do
+  tools/world-pointer-live.mjs tools/ui-lab/push-motion-live.mjs tools/gate/run-log.sh; do
   [ -f "$ENGINE/$tool" ] && continue
   echo "$ENGINE/$tool is missing: that engine checkout cannot run this gate" >&2
   exit 1
@@ -93,6 +84,26 @@ GATE=${GATE:-$PACK/target/gate}
 LOCK=$GATE.lock
 VERBOSE=${VERBOSE:-0}
 ONLY=$*
+
+# want NAME -- whether this run selected the lane NAME.
+want() {
+  [ -z "$ONLY" ] && return 0
+  for pat in $ONLY; do
+    case "$1" in *"$pat"*) return 0 ;; esac
+  done
+  return 1
+}
+
+# Unbuilt engine node tooling is refused rather than skipped lane by lane
+# wherever a selected lane runs the engine's node packages: the pack's
+# node checks bundle with its esbuild and the spec run's UI gestures run
+# in its node sidecar. A gate whose interface half all skipped would
+# prove nothing. The pack's own build (`xtask build-ui`) needs no node.
+if { want pack-node || want specs; } && [ ! -d "$ENGINE/web/node_modules" ]; then
+  echo "$ENGINE/web/node_modules is missing: the engine's node tooling is not installed" >&2
+  echo "  npm --prefix \"$ENGINE/web\" ci" >&2
+  exit 1
+fi
 # This pack's served document root: the whole bake, inside this
 # repository, never the engine's. Read back by every headless
 # subcommand and by both live browser runners as `--web`. Overridable
@@ -263,14 +274,6 @@ status_line() {
   printf "$@" >> "$RUN_LOG"
 }
 
-want() {
-  [ -z "$ONLY" ] && return 0
-  for pat in $ONLY; do
-    case "$1" in *"$pat"*) return 0 ;; esac
-  done
-  return 1
-}
-
 # run NAME COMMAND... -- one status line, output to a log, status returned.
 # A lane green on these inputs before is kept instead. While it runs,
 # SKIPPED is its own file, so the skips it declares are kept with its green.
@@ -417,31 +420,14 @@ bake_check() {
     bake-atlas --content "$PACK/assets" --web "$PACK_WEB"
 }
 
-# Whether this engine's `build-ui` can be pointed at a served root. The
-# binary's own usage line answers it, in the `build-ui` clause alone:
-# the `--web` earlier in that line is the baker's, which every engine
-# has had for as long as this gate has existed.
-build_ui_takes_web() {
-  engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p xtask -- 2>&1 \
-    | grep -q 'build-ui[^|]*--web'
-}
-
-# This pack's interface, compiled against that engine's SDK. It reads
-# the bake: a declared font must already be published as an object, so
-# an engine that cannot be pointed at this pack's served root looks for
-# this pack's fonts in the object store of whichever pack the engine
-# checkout last baked (web/scripts/build-pack-ui.mjs, `packFonts`,
-# which resolves `assets/obj` against its own working directory).
+# This pack's interface, compiled against that engine's SDK by the
+# engine's Rust build (no node). It reads this pack's bake through
+# `--web`: every face `ui/fonts.json` declares must already be published
+# as an object in `$PACK_WEB/assets/obj`, or the build fails naming the
+# font (the engine's crates/xtask/src/ui/package.rs, `pack_fonts`).
 pack_ui_build_check() {
-  if build_ui_takes_web; then
-    engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p xtask -- \
-      build-ui --pack "$PACK" --web "$PACK_WEB"
-  else
-    echo "pack interface fonts (matched against the engine checkout's bake, not --web)" \
-      >> "$SKIPPED"
-    engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p xtask -- \
-      build-ui --pack "$PACK"
-  fi
+  engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p xtask -- \
+    build-ui --pack "$PACK" --web "$PACK_WEB"
 }
 
 # The binaries the live browser runners launch with `--no-build`, and
@@ -553,65 +539,9 @@ browser_skip() {
 live_pair_skip() {
   [ -f "$ENGINE/web/pkg/lunatic_web_bg.wasm" ] \
     || { echo "no compiled client (sh $ENGINE/tools/build-web.sh)"; return; }
-  [ -f "$ENGINE/web/dist/pack-ui/worker.js" ] \
+  [ -f "$ENGINE/web/dist/main.js" ] \
     || { echo "no built web shell (npm --prefix $ENGINE/web run build)"; return; }
   browser_skip
-}
-
-# Without `--web`, `shot` reads the atlas out of the engine checkout's
-# own served root (tools/ui-lab/routes.mjs, `bakeRoot`), which after the
-# gate split holds the engine's demo bake -- this pack's fixtures would
-# be drawn against another pack's art. An engine that cannot be pointed
-# at this pack's bake does not draw it at all.
-ui_lab_takes_web() {
-  node "$ENGINE/tools/ui-lab.mjs" --help 2>/dev/null | grep -q -- '--web'
-}
-UI_SHOTS_RUNNER=host
-# The lab's own words, either straight or through the pinned image. The
-# wrapper reads `--pack` and `--web` out of these and mounts both at
-# their canonical paths, rewriting the command to match -- which it does
-# only for the `shot ...` form, not for `--run`.
-ui_shots_run() {
-  if [ "$UI_SHOTS_RUNNER" = reference ]; then
-    node tools/ui-lab/reference.mjs "$@"
-  else
-    node tools/ui-lab.mjs "$@"
-  fi
-}
-# The lab draws through the engine's compiled shell and worker whichever
-# runner shoots, and the pinned image carries its own browser -- so a
-# host Chromium is wanted only where the host is the runner.
-ui_shots_skip() {
-  [ -f "$ENGINE/web/dist/pack-ui/worker.js" ] \
-    || { echo "no built worker (npm --prefix $ENGINE/web run build)"; return; }
-  [ "$UI_SHOTS_RUNNER" = host ] || return 0
-  browser_skip
-}
-ui_shots_shoot() (
-  # A subshell: the wrapper and the lab both address the engine's own
-  # files relatively, and this gate's cwd stays the pack.
-  cd "$ENGINE" || exit 1
-  ui_shots_run shot all --check --lint \
-    --pack "$PACK" --web "$PACK_WEB" > "$GATE/ui-shots.out" 2>&1
-  rc=$?
-  if node tools/staff-ui-status.mjs; then
-    ui_shots_run shot all --check --lint \
-      --pack "$PACK" --web "$PACK_WEB" --audience staff >> "$GATE/ui-shots.out" 2>&1 || rc=1
-  else
-    status=$?
-    case "$status" in
-      3) echo "SKIP ui-shots: this pack declares no optional staff UI" >> "$GATE/ui-shots.out" ;;
-      *) rc=$status ;;
-    esac
-  fi
-  exit $rc
-)
-ui_shots_check() {
-  ui_shots_shoot
-  rc=$?
-  cat "$GATE/ui-shots.out"
-  sed -n 's/^SKIP ui-shots: /pack UI shots (/p' "$GATE/ui-shots.out" | sed 's/$/)/' >> "$SKIPPED"
-  return $rc
 }
 
 # Trusted pointer input and a held shove, in the real client against
@@ -648,7 +578,7 @@ BAKE=$BUILD
 # that cares and withheld from one that does not.
 wants_the_bake() {
   for reader in content maps lint-assets roster placeable pack-node specs \
-    ui-shots world-pointer push-motion; do
+    world-pointer push-motion; do
     want "$reader" && return 0
   done
   return 1
@@ -724,32 +654,7 @@ UI_BUILT=${UI_BUILT:-$BAKE}
 # reading an earlier run's leavings.
 gated "$UI_BUILT" pack-node node "$PACK/tools/test.mjs" "$ENGINE"
 
-# The pack's shots read the bake and the built interface, never the spec
-# run, so they shoot while the specs run: one Chrome beside the spec
-# pool. The live pair below still runs alone, after both.
-ui_shots_lane() {
-  if want ui-shots; then
-    if [ -n "$UI_BUILT" ]; then
-      blocked ui-shots "$UI_BUILT"
-    elif ! ui_lab_takes_web; then
-      skip ui-shots "ui-lab has no --web: it reads the engine's own bake" \
-        "pack UI shots (ui-lab reads the engine checkout's bake; it needs --web <root>)"
-    elif ! UI_SHOTS_RUNNER=$(cd "$ENGINE" && node tools/ui-lab/reference.mjs --runner 2>&1); then
-      skip ui-shots "no ui-lab runner: $UI_SHOTS_RUNNER" \
-        "pack UI shots (no ui-lab runner)"
-    else
-      reason=$(ui_shots_skip)
-      if [ -n "$reason" ]; then
-        skip ui-shots "$reason" "pack UI shots ($reason)"
-      else
-        run ui-shots ui_shots_check
-      fi
-    fi
-  fi
-}
-ui_shots_lane & p_shots=$!
 gated "$BAKE" specs spec_fixture_check
-wait "$p_shots"
 
 # Serial, and after the builders: several headless Chrome/SwiftShader
 # instances at once flaked a pixel-diff baseline on the engine's gate.
