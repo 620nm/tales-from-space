@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test } from "node:test";
+import { createGuest } from "./ui-runtime-harness.mjs";
 
 const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw new Error("Pass the engine checkout path.");
@@ -37,20 +37,9 @@ const formatterBundle = await build({
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
   bundle: true, format: "esm", platform: "node", write: false,
 });
-const runtimeBundle = await build({
-  entryPoints: [resolve(engine, "web/src/pack-ui/runtime.ts")],
-  bundle: true, format: "esm", packages: "bundle", platform: "node", write: false,
-});
 const { ui, readStaff, conversationFor, eventFrom, profileView, readRef, identityCard, historicalEventTime } = await import(
   `data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString("base64")}`,
 );
-const scratchRoot = process.env.LUNATIC_TEST_TMP ?? tmpdir();
-await mkdir(scratchRoot, { recursive: true });
-const runtimeDir = await mkdtemp(join(scratchRoot, "staff-history-"));
-const runtimePath = join(runtimeDir, "runtime-test.mjs");
-await writeFile(runtimePath, runtimeBundle.outputFiles[0].text);
-const { GuestRuntime } = await import(pathToFileURL(runtimePath).href);
-await rm(runtimeDir, { recursive: true, force: true });
 globalThis.__lunaticLocale = {
   tag: "en",
   catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))),
@@ -162,16 +151,14 @@ test("historical item spawns keep their root target, timestamp and cursors", () 
 });
 
 test("historical timestamps format deterministically without Date", async () => {
-  const quickJs = await GuestRuntime.create({
+  const guest = await createGuest({
     version: uiVersion,
     id: "staff-history-test",
     slot: "staff",
     audience: "staff",
     entry: "main.js",
-      modules: { "main.js": formatterBundle.outputFiles[0].text },
-  }, resolve(engine, "web/node_modules/@jitl/quickjs-wasmfile-release-sync/dist/emscripten-module.wasm"), {
-    tag: "en", catalog: globalThis.__lunaticLocale.catalog,
-  });
+    modules: { "main.js": formatterBundle.outputFiles[0].text },
+  }, { locale: { tag: "en", catalog: globalThis.__lunaticLocale.catalog } });
   const originalDate = globalThis.Date;
   try {
     globalThis.Date = undefined;
@@ -184,14 +171,14 @@ test("historical timestamps format deterministically without Date", async () => 
     assert.equal(liveSession.audit.find((event) => event.id === "905")?.time, "2026-09-12 22:20:50.531 UTC");
     const liveRow = liveFixture.view.state.staff.payload.audit.find((event) => event.reference?.id === "905");
     assert(liveRow);
-    assert.equal(quickJs.render({ timestamp: liveRow.created_at_ms }).text, "2026-09-12 22:20:50.531 UTC");
+    assert.equal((await guest.render({ timestamp: liveRow.created_at_ms })).text, "2026-09-12 22:20:50.531 UTC");
     assert.equal(historicalEventTime(undefined, -8640000000000001), "—");
     assert.equal(historicalEventTime(undefined, 8640000000000001), "—");
     assert.equal(historicalEventTime(undefined, Number.MAX_SAFE_INTEGER), "—");
     assert.equal(historicalEventTime(undefined, Number.NaN), "—");
   } finally {
     globalThis.Date = originalDate;
-    quickJs.dispose();
+    await guest.dispose();
   }
 });
 

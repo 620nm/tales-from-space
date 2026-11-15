@@ -1,10 +1,13 @@
 // The engine seams every pack UI test shares: esbuild from the engine's
-// web install, the pinned QuickJS guest runtime and layout lint built from
-// the engine's own source, and the helpers that read one render. The engine
+// web install, guests in the engine's own guest host (`xtask spec-ui
+// --raw`, one process per package), the layout lint built from the
+// engine's source, and the helpers that read one render. The engine
 // checkout is argv[2] or LUNATIC_ENGINE, resolved as tools/test.mjs does.
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { spawn } from "node:child_process";
+import { existsSync } from "node:fs";
+import { readFile } from "node:fs/promises";
+import { createInterface } from "node:readline";
 import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -46,40 +49,98 @@ export const guestPackage = (source) => ({
   modules: { "main.js": source },
 });
 
-/** The interpreter the engine pins; a bundled runtime cannot find it itself. */
-const wasmLocation = join(
+/** The engine's guest host binary, from the debug build the pack gate's
+ *  `build` lane makes in the engine's own `target/`. */
+const xtaskBinary = join(
   engineRoot,
-  "web/node_modules/@jitl/quickjs-wasmfile-release-sync/dist/emscripten-module.wasm",
+  "target/debug",
+  process.platform === "win32" ? "xtask.exe" : "xtask",
 );
 
-let runtime;
-/** The engine's QuickJS host, built once per process from its source. */
-function guestRuntime() {
-  return (runtime ??= (async () => {
-    const bundle = await build({
-      entryPoints: [join(engineRoot, "web/src/pack-ui/runtime.ts")],
-      bundle: true,
-      format: "esm",
-      platform: "node",
-      packages: "bundle",
-      write: false,
-    });
-    const scratch = process.env.LUNATIC_TEST_TMP ?? tmpdir();
-    await mkdir(scratch, { recursive: true });
-    const dir = await mkdtemp(join(scratch, "pack-ui-runtime-"));
-    const file = join(dir, "runtime-test.mjs");
-    await writeFile(file, bundle.outputFiles[0].text);
-    try {
-      return (await import(pathToFileURL(file).href)).GuestRuntime;
-    } finally {
-      await rm(dir, { recursive: true, force: true });
-    }
-  })());
+/** Every guest process still running, killed if this test exits early. */
+const live = new Set();
+process.on("exit", () => {
+  for (const child of live) child.kill("SIGKILL");
+});
+
+/** A guest error line as an Error; `.fault` names a guest fault's kind. */
+function guestError(line) {
+  const error = Error(line.error);
+  if (line.fault !== undefined) error.fault = line.fault;
+  return error;
 }
 
-/** One guest package running in that host, on the pinned interpreter. */
-export async function createGuest(pkg) {
-  return (await guestRuntime()).create(pkg, wasmLocation);
+/** One guest package in the engine's guest host (`xtask spec-ui --raw`,
+ *  the engine's docs/pack-ui/authoring.md, "Testing a panel outside a
+ *  round"). `locale` is `{tag, catalog}` or absent. Every call is one
+ *  round trip; a refused or fatal line rejects. Call `dispose()` always. */
+export async function createGuest(pkg, { locale } = {}) {
+  if (!existsSync(xtaskBinary))
+    throw Error(
+      `${xtaskBinary} is missing: build it with \`cargo build -p xtask\` in ${engineRoot} ` +
+        "(the pack gate's `build` lane, `sh tools/check.sh build`)",
+    );
+  const child = spawn(xtaskBinary, ["spec-ui", "--raw"], { stdio: ["pipe", "pipe", "pipe"] });
+  live.add(child);
+  const waiting = [];
+  let stderr = "";
+  let ended = null;
+  const end = (reason) => {
+    ended ??= reason;
+    live.delete(child);
+    for (const turn of waiting.splice(0)) turn.reject(Error(`${ended}${stderr ? `\n${stderr}` : ""}`));
+  };
+  child.stderr.setEncoding("utf8");
+  child.stderr.on("data", (chunk) => {
+    stderr = (stderr + chunk).slice(-8192);
+  });
+  child.stdin.on("error", () => {});
+  child.on("error", (error) => end(`guest host did not run: ${error.message}`));
+  // `close` follows the last stdout line, so a fatal line reaches its turn first.
+  child.on("close", (code, signal) => end(`guest host exited (${signal ?? code})`));
+  createInterface({ input: child.stdout }).on("line", (text) => {
+    const turn = waiting.shift();
+    if (!turn) return end(`guest host wrote an unasked line: ${text}`);
+    let line;
+    try {
+      line = JSON.parse(text);
+    } catch {
+      return turn.reject(Error(`guest host wrote a line that is not JSON: ${text}`));
+    }
+    if (typeof line?.error === "string") turn.reject(guestError(line));
+    else turn.resolve(line);
+  });
+  const ask = (request) =>
+    new Promise((resolve, reject) => {
+      if (ended) return reject(Error(ended));
+      waiting.push({ resolve, reject });
+      child.stdin.write(`${JSON.stringify(request)}\n`);
+    });
+  const disposed = new Promise((resolve) => child.once("close", resolve));
+  const dispose = async () => {
+    if (!ended && child.stdin.writable) {
+      child.stdin.write(`${JSON.stringify({ kind: "stop" })}\n`);
+      child.stdin.end();
+    }
+    const timer = setTimeout(() => child.kill("SIGKILL"), 5000);
+    await disposed;
+    clearTimeout(timer);
+  };
+  try {
+    await ask({ kind: "start", package: pkg, ...(locale ? { locale } : {}) });
+  } catch (error) {
+    await dispose();
+    throw error;
+  }
+  return {
+    /** `onView(view)` then `render(view)`: both answers. */
+    update: (view) => ask({ kind: "update", view }),
+    /** `onView(view)` then the admitted render tree. */
+    render: async (view) => (await ask({ kind: "update", view })).tree,
+    /** `onEvent(event, view)`'s reply; it needs one earlier update. */
+    event: async (event, view) => (await ask({ kind: "event", event, view })).reply,
+    dispose,
+  };
 }
 
 let lint;

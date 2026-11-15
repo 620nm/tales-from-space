@@ -1,6 +1,6 @@
-// This pack's laptop desktop, in the pinned interpreter: every assertion
+// This pack's laptop desktop, in the engine's guest host: every assertion
 // below names this pack's own documents, windows, wallpapers and catalog
-// keys. The engine's own runtime coverage is its `web/tests/pack-ui/kit/`.
+// keys. The engine's own guest coverage is its `crates/lunatic-ui-guest`.
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -56,7 +56,7 @@ const vm = await createGuest(bundle);
 try {
   // `render` validates before it answers, so an accepted tree is the
   // assertion: no duplicate id, nothing over a limit.
-  const tree = vm.render(view);
+  const tree = await vm.render(view);
   assert.ok(tree, "the pack renders a tree with a laptop open");
   const seen = assertUniqueIds(tree, "laptop desktop");
   // Power is a glyph press in the heading; the lid closes only by the
@@ -77,10 +77,10 @@ try {
   assert.equal(find(tree, "doc/1/1/drive/host/create").type, "button");
   for (const wallpaper of ["wallpaper_bliss", "wallpaper_moonlake"]) {
     view.documents[1].state.script.data.wallpaper = wallpaper;
-    assert.equal(find(vm.render(view), "doc/1/1/wallpaper").asset, wallpaper);
+    assert.equal(find(await vm.render(view), "doc/1/1/wallpaper").asset, wallpaper);
   }
   view.documents[1].state.stores.pop();
-  const withoutMedia = vm.render(view);
+  const withoutMedia = await vm.render(view);
   assert.equal(find(withoutMedia, "doc/1/1/panes").split.panes.length, 2);
   assert.equal(find(withoutMedia, "doc/1/1/drive/media"), undefined);
   view.documents[1].state = {
@@ -88,19 +88,19 @@ try {
     data: { kind: "desktop", powered: false, card: true, cartridge: true },
     actions: [{ id: "power" }, { id: "eject_id" }, { id: "eject_cartridge" }, { id: "close" }],
   };
-  const off = vm.render(view);
+  const off = await vm.render(view);
   assert.equal(find(off, "doc/1/1/panes"), undefined);
   assert.equal(find(off, "doc/1/1/wallpaper"), undefined);
   assert.ok(find(off, "doc/1/1/eject_cartridge"));
   assert.equal(find(off, "doc/1/1/power").label, "lunatic/tfs:ui.desktop.power_on");
   // Two full stores and a long Markdown reader stay inside the 2048-node
   // tree budget: the reader yields to the drives rather than fault the desktop.
-  const crowded = vm.render(full);
+  const crowded = await vm.render(full);
   assert.ok(crowded, "two full stores plus a long reader still validate");
   assert.ok(ids(crowded).length <= 2048);
   assert.ok(find(crowded, "doc/1/1/reader/content/truncated"), "the reader says what it left out");
   assert.ok(ids(crowded).filter((id) => id.startsWith("doc/1/1/reader/content/line/")).length >= 32, "the reader still shows something");
 } finally {
-  vm.dispose();
+  await vm.dispose();
 }
-console.log("Laptop desktop: 25 pinned-interpreter checks passed");
+console.log("Laptop desktop: 25 guest host checks passed");

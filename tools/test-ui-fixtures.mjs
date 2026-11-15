@@ -1,4 +1,4 @@
-// Every fixture this pack ships renders in the pinned interpreter: the
+// Every fixture this pack ships renders in the engine's guest host: the
 // primary package and each addon the view wakes answer a tree the contract
 // accepts, with no id used twice, and clean under the layout lint (the
 // engine's docs/pack-ui/lab.md and docs/pack-ui/authoring-lint.md).
@@ -43,7 +43,7 @@ if (hasStaff) {
   if (checked.skipped) skips.push(checked.skipped);
 }
 for (const reason of skips) reportSkip(`pack fixture checks: ${reason}`);
-console.log(`Shipped fixtures: ${tests} rendered clean in the pinned interpreter`);
+console.log(`Shipped fixtures: ${tests} rendered clean in the guest host`);
 
 async function checkFixtures(primary, audience) {
   const rows = await loadFixtures(packRoot, { audience });
@@ -59,7 +59,7 @@ async function checkFixtures(primary, audience) {
     for (const fixture of rows) {
       // `render` validates before it answers, so an accepted tree is the
       // assertion: nothing over a limit, nothing the contract refuses.
-      const tree = vm.render(fixture.view);
+      const tree = await vm.render(fixture.view);
       assert.ok(tree, `${audience} fixture ${fixture.name}: the primary renders a tree`);
       assertUniqueIds(tree, `${audience} fixture ${fixture.name}`);
       assertLintClean(lintTree, tree, primary, `${audience} fixture ${fixture.name}`);
@@ -71,15 +71,14 @@ async function checkFixtures(primary, audience) {
         }
         const addon = addons.get(row.bundle);
         const where = `${audience} fixture ${fixture.name}, addon ${row.slot}`;
-        const rendered = addon.vm.render(fixture.view);
+        const rendered = await addon.vm.render(fixture.view);
         assertUniqueIds(rendered, where);
         assertLintClean(lintTree, rendered, addon.bundle, where);
       }
       checked++;
     }
   } finally {
-    vm.dispose();
-    for (const addon of addons.values()) addon.vm.dispose();
+    await Promise.all([vm, ...[...addons.values()].map((addon) => addon.vm)].map((guest) => guest.dispose()));
   }
   return { tests: checked };
 }
