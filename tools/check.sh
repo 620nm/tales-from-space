@@ -96,10 +96,11 @@ want() {
 
 # Unbuilt engine node tooling is refused rather than skipped lane by lane
 # wherever a selected lane runs the engine's node packages: the pack's
-# node checks bundle with its esbuild and the spec run's UI gestures run
-# in its node sidecar. A gate whose interface half all skipped would
-# prove nothing. The pack's own build (`xtask build-ui`) needs no node.
-if { want pack-node || want specs; } && [ ! -d "$ENGINE/web/node_modules" ]; then
+# node checks bundle with its esbuild. A gate whose interface half all
+# skipped would prove nothing. The pack's own build (`xtask build-ui`),
+# the specs and the guests the node checks run (`xtask spec-ui`) need no
+# node packages.
+if want pack-node && [ ! -d "$ENGINE/web/node_modules" ]; then
   echo "$ENGINE/web/node_modules is missing: the engine's node tooling is not installed" >&2
   echo "  npm --prefix \"$ENGINE/web\" ci" >&2
   exit 1
@@ -646,12 +647,13 @@ gated "$BAKE" pack-ui-build pack_ui_build_check \
 UI_BUILT=${UI_BUILT:-$BAKE}
 
 # Every node check this pack owns, against that engine's SDK: the theme
-# and message lints, the UI runtime tests, the baked-art lints and the
-# checks over the served roster document. The last two read what the
-# `bake` and `roster` lanes produced, through LUNATIC_PACK_WEB and
-# LUNATIC_ROSTER -- each exported only where this run produced it, so a
-# check this run cannot supply takes its own fallback rather than
-# reading an earlier run's leavings.
+# and message lints, the UI tests (their guests run in the `build`
+# lane's xtask, which this lane waits on through the bake), the
+# baked-art lints and the checks over the served roster document. The
+# last two read what the `bake` and `roster` lanes produced, through
+# LUNATIC_PACK_WEB and LUNATIC_ROSTER -- each exported only where this
+# run produced it, so a check this run cannot supply takes its own
+# fallback rather than reading an earlier run's leavings.
 gated "$UI_BUILT" pack-node node "$PACK/tools/test.mjs" "$ENGINE"
 
 gated "$BAKE" specs spec_fixture_check

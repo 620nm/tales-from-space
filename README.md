@@ -88,9 +88,10 @@ whole log at the end. A lane that
 cannot run says so by name, both in place and in the closing
 `SKIPPED, SO UNVERIFIED` line; a lane whose prerequisite failed reads
 `BLOCKED`, which is unverified rather than green. A run selecting
-`pack-node` or `specs` refuses to start without the engine's
-`web/node_modules` (`npm --prefix <engine>/web ci`): those lanes run the
-engine's esbuild and spec UI sidecar. No other lane needs it.
+`pack-node` refuses to start without the engine's `web/node_modules`
+(`npm --prefix <engine>/web ci`): that lane bundles with the engine's
+esbuild, and runs its panels in the engine's guest host (`xtask spec-ui
+--raw`, from the `build` lane). No other lane needs node packages.
 
 Every run keeps its own log folder, written by the engine's
 `tools/gate/run-log.sh` exactly as the engine gate writes its own (the
