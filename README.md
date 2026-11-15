@@ -347,6 +347,7 @@ set as in §Running. First produce the pack's `target/web` with
 
 ```sh
 export LUNATIC_CUSTODY_INVARIANT=1                              # match the specs gate
+cargo build -q -p lunatic-server -p xtask # specs run UI gestures in this xtask
 cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" --web "$LUNATIC_PACK/target/web" # every tests/**/*_test.luau
 cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" vendor --web "$LUNATIC_PACK/target/web" # name contains "vendor"
 cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" --json out.json --web "$LUNATIC_PACK/target/web" # CI result document

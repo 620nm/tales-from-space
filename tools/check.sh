@@ -351,8 +351,12 @@ gated() {
 engine_cargo() {
   (cd "$ENGINE" && cargo "$@")
 }
+# The engine server, built with the xtask its specs run UI gestures in
+# (`xtask spec-ui`) in one invocation and profile, so a spec never runs
+# against an older xtask than the server beside it.
 server() {
-  engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p lunatic-server -- "$@"
+  engine_cargo build -q --manifest-path "$ENGINE/Cargo.toml" -p lunatic-server -p xtask &&
+    engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p lunatic-server -- "$@"
 }
 
 # ---------------------------------------------------------------- lanes
