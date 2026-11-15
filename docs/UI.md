@@ -134,35 +134,29 @@ Native providers validate actions. UI guests own only local presentation.
 ## Acceptance loop
 
 [surface/state acceptance](ui/surfaces-acceptance.md) lists required states.
-Fixtures under `ui/fixtures/` use disclosed provider data, bounded real-browser
-input and result assertions. No fixture writes private guest state. Minimum
+Fixtures under `ui/fixtures/` use disclosed provider data, bounded input steps
+and result assertions. No fixture writes private guest state. Minimum
 usable viewport is 1024×768; regular and wide checks use 1366×768 and 1600×1000.
 
 From the engine checkout with `LUNATIC_PACK` set to this pack, built engine
 tools and the pack's atlas baked under `target/web`:
 
 ```sh
-target/debug/xtask build-ui --pack "$LUNATIC_PACK" --web "$LUNATIC_PACK/target/web"
-node tools/ui-lab.mjs shot <fixture> --pack "$LUNATIC_PACK" --web "$LUNATIC_PACK/target/web" --lint
-node tools/ui-lab.mjs shot all --pack "$LUNATIC_PACK" --web "$LUNATIC_PACK/target/web" --check --lint
+cargo run -q -p xtask -- build-ui --pack "$LUNATIC_PACK" --web "$LUNATIC_PACK/target/web"
+cargo run -p lunatic-gui --features shots --bin ui_shot -- \
+  "$LUNATIC_PACK/ui/fixtures/<fixture>.json" --out <dir> --web "$LUNATIC_PACK/target/web"
 ```
 
-Read the resulting image, geometry and tree under `ui/fixtures/out/`.
-Intended art changes update reviewed baselines with `shot <fixture> --update`.
-Pack-art shots require a baked delivered atlas; synthetic engine assets verify
-mechanism only. A rendering-environment mismatch skips pixel comparison while
-mount, lint and interactions still run. Missing required baselines fail.
-UI edits rebuild only the package. `serve --watch` with the same `--pack` and
-`--web` flags rebuilds and reloads it while authoring. Sprite composites use
-the baked atlas; rebaking artwork does not require recompiling the engine.
-The engine's `docs/pack-ui/lab.md` owns fixture syntax and screenshot environment.
+`build-ui` compiles `ui/` in Rust (no node) and refuses a declared font the
+bake has not published. UI edits rebuild only the package; sprite composites
+use the baked atlas, so rebaking artwork does not require recompiling the
+engine. `ui_shot` draws a fixture, or every fixture under a directory, in the
+GPUI client with no browser and writes its image, geometry and tree to
+`--out`; `--steps` also keeps one frame after each input step. Pack-art shots require a baked
+delivered atlas; synthetic engine assets verify mechanism only. No gate lane
+draws this pack's fixtures. The engine's `docs/pack-ui/lab.md` owns fixture
+syntax and its `docs/pack-ui/windowless-shots.md` the `ui_shot` contract.
 
 From this checkout, `node tools/test.mjs <engine>` checks theme rules,
-localization and behavior. The pack gate runs these checks against its named engine.
-
-`LUNATIC_PACK=$PWD node tools/review-device-workspace.mjs <engine> --out <dir>`
-starts an isolated free-build bench using the built engine and pack. Trusted
-browser input opens an Air Alarm, joins devices, changes a setpoint, toggles
-power, and saves then reopens a file. Screenshots cover all three acceptance viewports;
-downloaded provider fixtures verify native results. The tool stops its own
-server and browser and leaves existing development instances running.
+localization and behavior, and renders every shipped fixture's tree through
+the engine's runtime. The pack gate runs these checks against its named engine.
