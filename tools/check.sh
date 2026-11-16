@@ -563,6 +563,57 @@ push_motion_check() {
     "$PACK/tests/fixtures/push-motion.json" --web "$PACK_WEB"
 }
 
+# ------------------------------------------------- windowless UI shots
+
+# The windowless shot tool draws with the GPUI client, whose gates run
+# on Linux only (the engine's docs/gates/gui-lane.md).
+ui_shot_skip() {
+  host=$(uname -s 2>/dev/null)
+  [ "$host" = Linux ] || echo "windowless UI shots run on Linux only; host is ${host:-unknown}"
+}
+
+# Every disclosed-view fixture this pack ships, drawn windowless by the
+# engine's ui_shot through the real coordinator and guests: a guest
+# fault or a failed step expectation fails the lane. Recorded geometry
+# is compared where this pack has recorded it; a fixture without a
+# recorded baseline is named skipped by ui_shot itself, and the lane
+# says so in the closing banner. Exit 3 is the tool's "no headless GPU
+# adapter" (the engine's docs/pack-ui/windowless-shots.md): named in
+# the banner as unverified, never a pass.
+ui_shots_check() {
+  rm -rf "$GATE/ui-shots" "$GATE/ui-shots-staff"
+  engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p lunatic-gui \
+    --features shots --bin ui_shot -- \
+    "$PACK/ui/fixtures" --out "$GATE/ui-shots" \
+    --pack "$PACK" --web "$PACK_WEB" --check --allow-missing-baselines
+  rc=$?
+  if [ "$rc" -eq 3 ]; then
+    printf '%s\n' "pack panel pictures (no headless GPU adapter)" >> "$SKIPPED"
+    return 0
+  fi
+  [ "$rc" -eq 0 ] || return "$rc"
+  if [ -d "$PACK/ui/staff/fixtures" ]; then
+    engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p lunatic-gui \
+      --features shots --bin ui_shot -- \
+      "$PACK/ui/staff/fixtures" --out "$GATE/ui-shots-staff" \
+      --pack "$PACK" --web "$PACK_WEB" --audience staff \
+      --check --allow-missing-baselines
+    rc=$?
+    if [ "$rc" -eq 3 ]; then
+      printf '%s\n' "staff panel pictures (no headless GPU adapter)" >> "$SKIPPED"
+      return 0
+    fi
+    [ "$rc" -eq 0 ] || return "$rc"
+  fi
+  # Geometry is compared only where this pack has recorded baselines;
+  # until it records any, the banner says that half went unverified.
+  recorded=$(find "$PACK/ui/fixtures/baselines" "$PACK/ui/staff/fixtures/baselines" \
+    -name '*.rects.json' 2>/dev/null | head -1)
+  [ -n "$recorded" ] || printf '%s\n' \
+    "pack panel geometry (no recorded baselines in this pack)" >> "$SKIPPED"
+  return 0
+}
+
 # ------------------------------------------------------------- the run
 
 gate_start=$(now_ms)
@@ -583,7 +634,7 @@ BAKE=$BUILD
 # that cares and withheld from one that does not.
 wants_the_bake() {
   for reader in content maps lint-assets roster placeable pack-node specs \
-    world-pointer push-motion; do
+    ui-shots world-pointer push-motion; do
     want "$reader" && return 0
   done
   return 1
@@ -661,6 +712,19 @@ UI_BUILT=${UI_BUILT:-$BAKE}
 gated "$UI_BUILT" pack-node node "$PACK/tools/test.mjs" "$ENGINE"
 
 gated "$BAKE" specs spec_fixture_check
+
+if want ui-shots; then
+  if [ -n "$UI_BUILT" ]; then
+    blocked ui-shots "$UI_BUILT"
+  else
+    reason=$(ui_shot_skip)
+    if [ -n "$reason" ]; then
+      skip ui-shots "$reason" "pack panel pictures ($reason)"
+    else
+      run ui-shots ui_shots_check
+    fi
+  fi
+fi
 
 # Serial, and after the builders: several headless Chrome/SwiftShader
 # instances at once flaked a pixel-diff baseline on the engine's gate.
