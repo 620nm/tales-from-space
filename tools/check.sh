@@ -286,6 +286,7 @@ run() {
   start=$(now_ms)
   SKIPPED=$RUN_DIR/skipped.$name
   : > "$SKIPPED"
+  rm -f "$RUN_DIR/lane-skip.$name"
   if [ "$VERBOSE" = 1 ]; then
     printf '\n== %s ==\n' "$name"
     "$@"
@@ -297,7 +298,10 @@ run() {
   SKIPPED=$RUN_DIR/skipped
   cat "$SKIPPED.$name" >> "$SKIPPED"
   elapsed=$(took "$(( $(now_ms) - start ))")
-  if [ "$rc" -eq 0 ]; then
+  if [ "$rc" -eq 0 ] && [ -f "$RUN_DIR/lane-skip.$name" ]; then
+    status_line 'skip  %-22s %8s  (%s)\n' "$name" "$elapsed" \
+      "$(cat "$RUN_DIR/lane-skip.$name")"
+  elif [ "$rc" -eq 0 ]; then
     status_line 'ok    %-22s %8s\n' "$name" "$elapsed"
     printf '%s\n' "$name" >> "$RAN"
     carry_green "$name" "$SKIPPED.$name"
@@ -314,6 +318,14 @@ run() {
 skip() {
   want "$1" || return 0
   status_line 'skip  %-22s %8s  (%s)\n' "$1" - "$2"
+  printf '%s\n' "$3" >> "$SKIPPED"
+}
+
+# lane_skip NAME REASON PHRASE -- from inside a `run` lane that found it
+# cannot verify anything here: `run` prints it as `skip`, never `ok`,
+# and neither counts it as ran nor carries it green.
+lane_skip() {
+  printf '%s\n' "$2" > "$RUN_DIR/lane-skip.$1"
   printf '%s\n' "$3" >> "$SKIPPED"
 }
 
@@ -575,43 +587,52 @@ ui_shot_skip() {
 # Every disclosed-view fixture this pack ships, drawn windowless by the
 # engine's ui_shot through the real coordinator and guests: a guest
 # fault or a failed step expectation fails the lane. Recorded geometry
-# is compared where this pack has recorded it; a fixture without a
-# recorded baseline is named skipped by ui_shot itself, and the lane
-# says so in the closing banner. Exit 3 is the tool's "no headless GPU
-# adapter" (the engine's docs/pack-ui/windowless-shots.md): named in
-# the banner as unverified, never a pass.
+# is compared where this pack has recorded it; ui_shot names each
+# fixture without a baseline on a `SKIP ui-shots: ` line, and the lane
+# counts them into one banner entry. Exit 3 is the tool's "no headless
+# GPU adapter" (the engine's docs/pack-ui/windowless-shots.md): the
+# lane reads `skip`, never `ok`.
 ui_shots_check() {
   rm -rf "$GATE/ui-shots" "$GATE/ui-shots-staff"
-  engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p lunatic-gui \
-    --features shots --bin ui_shot -- \
-    "$PACK/ui/fixtures" --out "$GATE/ui-shots" \
-    --pack "$PACK" --web "$PACK_WEB" --check --allow-missing-baselines
+  rm -f "$GATE/ui-shots-staff.out"
+  ui_shot_pass "$PACK/ui/fixtures" "$GATE/ui-shots"
   rc=$?
-  if [ "$rc" -eq 3 ]; then
-    printf '%s\n' "pack panel pictures (no headless GPU adapter)" >> "$SKIPPED"
-    return 0
-  fi
+  [ "$rc" -eq 3 ] && return 0
   [ "$rc" -eq 0 ] || return "$rc"
   if [ -d "$PACK/ui/staff/fixtures" ]; then
-    engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p lunatic-gui \
-      --features shots --bin ui_shot -- \
-      "$PACK/ui/staff/fixtures" --out "$GATE/ui-shots-staff" \
-      --pack "$PACK" --web "$PACK_WEB" --audience staff \
-      --check --allow-missing-baselines
+    ui_shot_pass "$PACK/ui/staff/fixtures" "$GATE/ui-shots-staff" --audience staff
     rc=$?
-    if [ "$rc" -eq 3 ]; then
-      printf '%s\n' "staff panel pictures (no headless GPU adapter)" >> "$SKIPPED"
-      return 0
-    fi
+    [ "$rc" -eq 3 ] && return 0
     [ "$rc" -eq 0 ] || return "$rc"
   fi
-  # Geometry is compared only where this pack has recorded baselines;
-  # until it records any, the banner says that half went unverified.
-  recorded=$(find "$PACK/ui/fixtures/baselines" "$PACK/ui/staff/fixtures/baselines" \
-    -name '*.rects.json' 2>/dev/null | head -1)
-  [ -n "$recorded" ] || printf '%s\n' \
-    "pack panel geometry (no recorded baselines in this pack)" >> "$SKIPPED"
+  unrecorded=$(cat "$GATE/ui-shots.out" "$GATE/ui-shots-staff.out" 2>/dev/null \
+    | grep -c '^SKIP ui-shots: ')
+  [ "$unrecorded" -eq 0 ] || printf '%s\n' \
+    "panel geometry of $unrecorded fixture(s) (no recorded baseline; named in ui-shots.log)" \
+    >> "$SKIPPED"
   return 0
+}
+
+# ui_shot_pass FIXTURES OUT [ARGS...] -- one ui_shot check, its output
+# kept beside OUT for the skip count and echoed into the lane log. Exit
+# 3 declares the whole lane skipped and returns 3 for the caller to stop.
+ui_shot_pass() {
+  fixtures=$1
+  out=$2
+  shift 2
+  rm -f "$out.out"
+  engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p lunatic-gui \
+    --features shots --bin ui_shot -- \
+    "$fixtures" --out "$out" --pack "$PACK" --web "$PACK_WEB" "$@" \
+    --check --allow-missing-baselines > "$out.out" 2>&1
+  rc=$?
+  cat "$out.out"
+  if [ "$rc" -eq 3 ]; then
+    lane_skip ui-shots "no headless GPU adapter" \
+      "panel pictures and geometry (no headless GPU adapter)"
+    return 3
+  fi
+  return "$rc"
 }
 
 # ------------------------------------------------------------- the run
