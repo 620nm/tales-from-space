@@ -164,5 +164,11 @@ export const MARK_THROW = tfs("ui.tray.mark_throw");
 export const MARK_WORN = tfs("ui.tray.mark_worn");
 export const MARK_STATUS = tfs("ui.tray.mark_status");
 export const ITEMS = tfs("ui.tray.items");
+
+// The top-right status cluster: the staff mark and the session holds.
+export const STAFF_MARK = tfs("ui.status.staff");
+export const STATUS_FROZEN = tfs("ui.status.frozen");
+export const STATUS_HELD = tfs("ui.status.held");
+export const STATUS_DELAYED = tfs("ui.status.delayed");
 export const storageFill = (count: number, cap: number): string =>
   tfs("ui.tray.storage_fill", { count, cap });

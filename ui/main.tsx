@@ -1,9 +1,10 @@
 // Two coordinated regions keep communication and body controls clear of
 // each other; host windows contain expandable documents and storage.
-import type { GuestUi, UiNode } from "@lunatic/ui";
-import { Pane, Stack } from "@lunatic/ui";
+import type { GuestUi, Json, UiNode } from "@lunatic/ui";
+import { Pane, Stack, clientReport, recentLines } from "@lunatic/ui";
 import type { GameplayView } from "./model";
 import { begin, column, event, panel, row, some, text } from "./view";
+import { STAFF_MARK, STATUS_DELAYED, STATUS_FROZEN, STATUS_HELD } from "./strings";
 import { crewPanels } from "./lobby";
 import { chatPanel } from "./chat";
 import { inspectionPanels } from "./inspect";
@@ -16,20 +17,44 @@ import { documents } from "./documents";
 import { actionGroups } from "./actions";
 import { contactOnView, contactPanel } from "./contact/actions";
 
-/** Where this body is, and who it is: two spans over the station, no
- *  pane behind them. A viewer whose projection names no place gets the
- *  name alone rather than a dot with nothing after it. */
-function statusLine(view: GameplayView): UiNode {
+/** Where this body is and who it is, a staff mark, this session's hold,
+ *  and the last few refusals and faults the client reported: lettering
+ *  over the station, no pane. A line keys on its seq and the host clock
+ *  retires it; nothing here keeps time. */
+function statusCluster(view: GameplayView): UiNode | null {
   const place = (view.state as { location?: { name?: string } }).location?.name;
-  return row("status", some(
-    place
+  const report = clientReport(view as unknown as Json);
+  const where = some(
+    view.state.staff_view ? text("status-staff", STAFF_MARK, ["statusmark"]) : null,
+    view.body && place
       ? Stack("status-place", [
           panel("status-dot", [], { cls: ["statusdot"] }),
           text("status-place/name", place),
         ], { cls: ["hudgroup"], gap: 8, align: "center" })
       : null,
-    text("identity", view.state.identity?.name ?? "", ["statusname"]),
-  ), { cls: ["hudgroup", "statusline"], style: { position: "absolute", right: 14, top: 14 } });
+    view.body ? text("identity", view.state.identity?.name ?? "", ["statusname"]) : null,
+  );
+  const hold = report?.hold.frozen ? STATUS_FROZEN : report?.hold.control_held ? STATUS_HELD : null;
+  const note = hold
+    ? text("status-hold", hold, ["statusnote", "statusnote-hold"])
+    : report?.connection.delayed ? text("status-hold", STATUS_DELAYED, ["statusnote"]) : null;
+  // The tray already shows throwing, so its toggle line is not repeated here.
+  const lines = report
+    ? recentLines(report, 3, ["refused", "fault"]).filter((line) => line.key !== "engine.client.throw_off").reverse()
+    : [];
+  const rows = some(
+    where.length ? row("status-where", where, { cls: ["hudgroup", "statusline"] }) : null,
+    note,
+    ...lines.map((line): UiNode => ({
+      ...text(`status-line/${line.seq}`, line.text,
+        line.kind === "refused" ? ["statusnote", "statusnote-refused"] : ["statusnote"]),
+      expires: 4000,
+    })),
+  );
+  if (!rows.length) return null;
+  return column("status", rows, { cls: ["hudgroup", "statusline"], style: {
+    position: "absolute", right: 14, top: 14, alignItems: "flex-end", gap: 3,
+  } });
 }
 
 const ui: GuestUi = {
@@ -71,7 +96,7 @@ const ui: GuestUi = {
     ], { cls: ["hudgroup", "hud-controls-region"], style: {
       position: "absolute", left: "35%", right: 12, bottom: 12,
     } }));
-    children.push(...some(storageRegion(view), view.body ? statusLine(view) : null));
+    children.push(...some(storageRegion(view), statusCluster(view)));
     children.push(...documents(view));
     children.push(...worldOverlays(view));
     return Pane("gameplay", children, { cls: ["hud", "centered"] });

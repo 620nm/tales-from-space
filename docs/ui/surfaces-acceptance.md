@@ -7,6 +7,7 @@ A fixture is evidence for its disclosed state, not for live station rendering.
 | Surface | Required states | Acceptance evidence |
 |---|---|---|
 | HUD controls | empty hands, worn equipment, busy action groups, unavailable body | compact/regular/wide HUD and expanded-action fixtures; hands and action targets remain visible |
+| Session status | staff mark, frozen/held/delayed hold, refused and fault lines, client absent | `hud-client-status` fixture; at most three lines, refused in amber, the throw toggle line never drawn, nothing taking pointer input |
 | Chat and inspection | empty, long log, expanded history, pinned/full receipt | separate bounded scrolling; chat input remains visible |
 | Round preparation | empty, valid draft, invalid draft, countdown, waiting, admitted | draft and ready actions echo round/revision; controls explain server issues |
 | OOC | bodyless session, long history, reconnect/cutover | opaque display name, bounded log, text preserved and composer remains available |

@@ -1,4 +1,4 @@
-import type { Json } from "@lunatic/ui";
+import type { ClientReport, Json } from "@lunatic/ui";
 import type { PanelDocument } from "./document-model";
 import type { StaffState } from "./staff/model";
 import type { StaffContactState } from "./contact/model";
@@ -111,6 +111,9 @@ export interface GameplayView {
   state: {
     /** Presentation only; privileged state is delivered to the staff audience. */
     staff_view?: boolean;
+    /** Host-published session status (the engine's `docs/pack-ui/client-report.md`);
+     *  absent on hosts that do not publish it. Read through `clientReport`. */
+    client?: ClientReport;
     round?: RoundStatus;
     preparation?: PreparationState;
     preparationPending?: boolean;
