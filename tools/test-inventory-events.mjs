@@ -7,7 +7,7 @@ const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw new Error("Set LUNATIC_ENGINE or pass the absolute engine checkout path.");
 const { build } = await import(pathToFileURL(resolve(engine, "web/node_modules/esbuild/lib/main.js")));
 const result = await build({
-  stdin: { contents: `export { inventory, wornGroup } from './inventory';
+  stdin: { contents: `export { inventory, wornGroup, shortcut } from './inventory';
     export { actionGroups } from './actions';
     export { openStorage, closeStorage, storageRegion } from './inventory-storage';
     export { begin, event } from './view';
@@ -136,4 +136,11 @@ test("Rest and Stand are rendered controls only for a controllable body", () => 
   UI.begin(); UI.actionGroups(view);
   assert.equal(UI.event({ id: "rest", type: "activate" }).action, undefined);
   assert.equal(UI.event({ id: "stand", type: "activate" }).action, undefined);
+});
+
+
+test("target bindings use slash-free ids", () => {
+  const view = render();
+  assert.deepEqual(UI.shortcut("target.1", view), { kind: "target_slot", slot: 1 });
+  assert.equal(UI.shortcut("target/1", view), undefined);
 });

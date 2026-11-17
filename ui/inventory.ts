@@ -176,7 +176,7 @@ export function targetMeta(view: GameplayView): UiNode | null {
 }
 
 export function shortcut(id: string, view: GameplayView): Command | undefined {
-  if (id.startsWith("target/"))
+  if (id.startsWith("target."))
     return { kind: "target_slot", slot: Number(id.slice(7)) };
   if (id === "quick_store") {
     const slot = view.state.equipment?.slots?.find((row) => row.quick_store);

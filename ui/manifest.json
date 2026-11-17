@@ -62,7 +62,7 @@
       "control": "move.east"
     },
     {
-      "id": "focus/chat",
+      "id": "focus.chat",
       "label": "lunatic/tfs:ui.binding.focus_chat",
       "key": "Enter"
     },
@@ -112,47 +112,47 @@
       "key": "KeyC"
     },
     {
-      "id": "target/1",
+      "id": "target.1",
       "label": "lunatic/tfs:ui.binding.target_1",
       "key": "Numpad1"
     },
     {
-      "id": "target/2",
+      "id": "target.2",
       "label": "lunatic/tfs:ui.binding.target_2",
       "key": "Numpad2"
     },
     {
-      "id": "target/3",
+      "id": "target.3",
       "label": "lunatic/tfs:ui.binding.target_3",
       "key": "Numpad3"
     },
     {
-      "id": "target/4",
+      "id": "target.4",
       "label": "lunatic/tfs:ui.binding.target_4",
       "key": "Numpad4"
     },
     {
-      "id": "target/5",
+      "id": "target.5",
       "label": "lunatic/tfs:ui.binding.target_5",
       "key": "Numpad5"
     },
     {
-      "id": "target/6",
+      "id": "target.6",
       "label": "lunatic/tfs:ui.binding.target_6",
       "key": "Numpad6"
     },
     {
-      "id": "target/7",
+      "id": "target.7",
       "label": "lunatic/tfs:ui.binding.target_7",
       "key": "Numpad7"
     },
     {
-      "id": "target/8",
+      "id": "target.8",
       "label": "lunatic/tfs:ui.binding.target_8",
       "key": "Numpad8"
     },
     {
-      "id": "target/9",
+      "id": "target.9",
       "label": "lunatic/tfs:ui.binding.target_9",
       "key": "Numpad9"
     }
