@@ -188,7 +188,7 @@
     "lunatic/tfs/doc/1/1/heading": {
       "x": 45,
       "y": 84,
-      "w": 153.640625,
+      "w": 146.828125,
       "h": 21
     },
     "lunatic/tfs/doc/1/1/matter/0": {
@@ -212,7 +212,7 @@
     "lunatic/tfs/doc/1/1/matter/0/shell/0/label": {
       "x": 49,
       "y": 376.578125,
-      "w": 29.90625,
+      "w": 29.46875,
       "h": 18.1875
     },
     "lunatic/tfs/doc/1/1/matter/0/shell/0/value": {
@@ -230,7 +230,7 @@
     "lunatic/tfs/doc/1/1/matter/0/shell/1/label": {
       "x": 49,
       "y": 401.765625,
-      "w": 69.875,
+      "w": 64.9375,
       "h": 18.1875
     },
     "lunatic/tfs/doc/1/1/matter/0/shell/1/value": {
@@ -248,7 +248,7 @@
     "lunatic/tfs/doc/1/1/matter/0/shell/2/label": {
       "x": 49,
       "y": 426.953125,
-      "w": 78.265625,
+      "w": 74.96875,
       "h": 18.1875
     },
     "lunatic/tfs/doc/1/1/matter/0/shell/2/value": {
@@ -266,7 +266,7 @@
     "lunatic/tfs/doc/1/1/matter/0/shell/3/label": {
       "x": 49,
       "y": 452.140625,
-      "w": 26.5,
+      "w": 25.109375,
       "h": 18.1875
     },
     "lunatic/tfs/doc/1/1/matter/0/shell/3/value": {
@@ -290,13 +290,13 @@
     "lunatic/tfs/doc/1/1/matter/0/state/0/row/0/name": {
       "x": 49,
       "y": 501.71875,
-      "w": 262.921875,
+      "w": 270.359375,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/matter/0/state/0/row/0/value": {
-      "x": 317.921875,
+      "x": 325.359375,
       "y": 501.71875,
-      "w": 105.078125,
+      "w": 97.640625,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/part/0": {
@@ -404,23 +404,23 @@
     "lunatic/tfs/doc/1/1/set/target_kpa/label": {
       "x": 56,
       "y": 269.390625,
-      "w": 283.53125,
+      "w": 290,
       "h": 18.1875
     },
     "lunatic/tfs/doc/1/1/set/target_kpa/range": {
-      "x": 347.53125,
+      "x": 354,
       "y": 270.796875,
-      "w": 68.46875,
+      "w": 62,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/set/target_kpa/unit": {
       "x": 180,
       "y": 301.890625,
-      "w": 19.234375,
+      "w": 17.671875,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/set/target_kpa/up": {
-      "x": 203.234375,
+      "x": 201.671875,
       "y": 295.578125,
       "w": 28,
       "h": 28
@@ -434,7 +434,7 @@
     "lunatic/tfs/doc/1/1/status": {
       "x": 45,
       "y": 523.609375,
-      "w": 32.59375,
+      "w": 30.5625,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/toolbar": {

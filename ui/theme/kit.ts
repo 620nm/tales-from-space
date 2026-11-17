@@ -71,7 +71,7 @@ export const kitRules: UiStyleRule[] = [
   rule("area", { outline: edge(teal), outlineOffset: -1 }, "focus"),
 
   // Words and pictures in a row.
-  rule("hint", { color: dim, fontSize: 11, fontStyle: "italic" }),
+  rule("hint", { color: dim, fontFamily: "sans", fontSize: 11, fontStyle: "italic" }),
   rule("marker", { color: amber, fontSize: 11 }),
   rule("grow", { flexGrow: 1, minWidth: 0 }),
   rule("mono", { fontFamily: "mono" }),

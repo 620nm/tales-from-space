@@ -6,9 +6,9 @@
   },
   "boxes": {
     "lunatic/tfs/body-label": {
-      "x": 476.828125,
+      "x": 480.421875,
       "y": 387.5,
-      "w": 70.328125,
+      "w": 63.15625,
       "h": 18.390625
     },
     "lunatic/tfs/body-state": {

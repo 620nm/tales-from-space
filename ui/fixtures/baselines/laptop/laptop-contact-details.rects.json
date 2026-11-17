@@ -422,7 +422,7 @@
     "lunatic/tfs/doc/1/1/link": {
       "x": 169,
       "y": 100.3125,
-      "w": 697.796875,
+      "w": 705.109375,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/link/address": {
@@ -450,9 +450,9 @@
       "h": 21
     },
     "lunatic/tfs/doc/1/1/machine-status": {
-      "x": 872.796875,
+      "x": 880.109375,
       "y": 100.3125,
-      "w": 59.40625,
+      "w": 52.09375,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/program-summary": {

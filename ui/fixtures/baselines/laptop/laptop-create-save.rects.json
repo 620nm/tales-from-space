@@ -272,7 +272,7 @@
     "lunatic/tfs/doc/1/1/drive/host/name": {
       "x": 71,
       "y": 194.8125,
-      "w": 33,
+      "w": 26.28125,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/drive/host/toolbar": {
@@ -315,7 +315,7 @@
       "x": 969,
       "y": 223,
       "w": 142,
-      "h": 30.78125
+      "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/drive/media/foot": {
       "x": 969,
@@ -338,7 +338,7 @@
     "lunatic/tfs/doc/1/1/drive/media/name": {
       "x": 991,
       "y": 194.8125,
-      "w": 26.40625,
+      "w": 21.15625,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/drive/media/toolbar": {
@@ -366,7 +366,7 @@
       "h": 349
     },
     "lunatic/tfs/doc/1/1/editor/budget": {
-      "x": 365.796875,
+      "x": 344.671875,
       "y": 654.3125,
       "w": 79.203125,
       "h": 15.390625
@@ -380,7 +380,7 @@
     "lunatic/tfs/doc/1/1/editor/clear": {
       "x": 239,
       "y": 654.3125,
-      "w": 118.796875,
+      "w": 97.671875,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/editor/footer": {
@@ -542,13 +542,13 @@
     "lunatic/tfs/doc/1/1/machine-name": {
       "x": 87,
       "y": 97.5,
-      "w": 852.796875,
+      "w": 860.109375,
       "h": 21
     },
     "lunatic/tfs/doc/1/1/machine-status": {
-      "x": 945.796875,
+      "x": 953.109375,
       "y": 100.3125,
-      "w": 39.59375,
+      "w": 32.28125,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/panes": {

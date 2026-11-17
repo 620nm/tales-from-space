@@ -57,7 +57,7 @@ export const surfaceRules: UiStyleRule[] = [
   rule("who-ooc", { color: teal }),
   rule("said", { flexGrow: 1, minWidth: 0, color: ink, whiteSpace: "pre-wrap" }),
   rule("ooc", { color: bright }),
-  rule("sys", { color: dim, fontStyle: "italic" }),
+  rule("sys", { color: dim, fontFamily: "sans", fontStyle: "italic" }),
   rule("composer-label", { flexShrink: 0, fontFamily: "mono", fontSize: 11, color: teal }),
   rule("chat-channel-label", { flexShrink: 0, fontFamily: "mono", fontSize: 11, color: teal }),
   rule("chat-channel", {

@@ -5606,7 +5606,7 @@
     "lunatic/tfs/doc/1/1/drive/host/name": {
       "x": 39,
       "y": 194.8125,
-      "w": 33,
+      "w": 26.28125,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/drive/host/toolbar": {
@@ -11048,7 +11048,7 @@
     "lunatic/tfs/doc/1/1/drive/media/name": {
       "x": 863,
       "y": 194.8125,
-      "w": 26.40625,
+      "w": 21.15625,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/drive/media/toolbar": {
@@ -11168,13 +11168,13 @@
     "lunatic/tfs/doc/1/1/machine-name": {
       "x": 55,
       "y": 97.5,
-      "w": 756.796875,
+      "w": 764.109375,
       "h": 21
     },
     "lunatic/tfs/doc/1/1/machine-status": {
-      "x": 817.796875,
+      "x": 825.109375,
       "y": 100.3125,
-      "w": 39.59375,
+      "w": 32.28125,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/panes": {

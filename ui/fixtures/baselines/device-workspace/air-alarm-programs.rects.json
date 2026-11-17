@@ -260,7 +260,7 @@
     "lunatic/tfs/doc/1/1/program/0/id": {
       "x": 56,
       "y": 273,
-      "w": 898.796875,
+      "w": 901.0625,
       "h": 18.1875
     },
     "lunatic/tfs/doc/1/1/program/0/load": {
@@ -276,9 +276,9 @@
       "h": 28
     },
     "lunatic/tfs/doc/1/1/program/0/state": {
-      "x": 962.796875,
+      "x": 965.0625,
       "y": 274.40625,
-      "w": 33,
+      "w": 30.75,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/program/0/stats": {

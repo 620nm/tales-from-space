@@ -120,7 +120,7 @@
       "h": 15.390625
     },
     "lunatic/tfs/contact/composer": {
-      "x": 50.59375,
+      "x": 49.28125,
       "y": 467,
       "w": 200,
       "h": 28
@@ -128,19 +128,19 @@
     "lunatic/tfs/contact/composer/field": {
       "x": 13,
       "y": 467,
-      "w": 237.59375,
+      "w": 236.28125,
       "h": 28
     },
     "lunatic/tfs/contact/composer/field/label": {
       "x": 13,
       "y": 472.609375,
-      "w": 31.59375,
+      "w": 30.28125,
       "h": 16.796875
     },
     "lunatic/tfs/contact/composer/send": {
-      "x": 254.59375,
+      "x": 253.28125,
       "y": 467,
-      "w": 47.140625,
+      "w": 45.34375,
       "h": 28
     },
     "lunatic/tfs/contact/history": {
@@ -272,7 +272,7 @@
     "lunatic/tfs/contact/history/staff": {
       "x": 13,
       "y": 278.59375,
-      "w": 62.6875,
+      "w": 61.265625,
       "h": 15.390625
     },
     "lunatic/tfs/contact/history/title": {
@@ -318,9 +318,9 @@
       "h": 293
     },
     "lunatic/tfs/contact/window/close": {
-      "x": 288.484375,
+      "x": 291.359375,
       "y": 137,
-      "w": 50.203125,
+      "w": 47.328125,
       "h": 28
     },
     "lunatic/tfs/contact/window/content": {
@@ -338,7 +338,7 @@
     "lunatic/tfs/contact/window/title": {
       "x": 13,
       "y": 141.90625,
-      "w": 222.25,
+      "w": 226.984375,
       "h": 18.1875
     },
     "lunatic/tfs/contact/window/toolbar": {
@@ -348,9 +348,9 @@
       "h": 32
     },
     "lunatic/tfs/contact/window/unread": {
-      "x": 239.25,
+      "x": 243.984375,
       "y": 143.3125,
-      "w": 45.234375,
+      "w": 43.375,
       "h": 15.390625
     },
     "lunatic/tfs/gameplay": {

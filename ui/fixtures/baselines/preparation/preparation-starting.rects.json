@@ -122,7 +122,7 @@
     "lunatic/tfs/lobby/setup/title": {
       "x": 426.84375,
       "y": 20,
-      "w": 155.875,
+      "w": 148.765625,
       "h": 21
     },
     "lunatic/tfs/lobby/status-footer": {
@@ -150,15 +150,15 @@
       "h": 19.5
     },
     "lunatic/tfs/log/0/text": {
-      "x": 107.125,
+      "x": 97.25,
       "y": 50,
-      "w": 279.71875,
+      "w": 289.578125,
       "h": 19.5
     },
     "lunatic/tfs/log/0/who": {
       "x": 20,
       "y": 50,
-      "w": 82.125,
+      "w": 72.25,
       "h": 19.5
     },
     "lunatic/tfs/preparation/add": {

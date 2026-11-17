@@ -284,7 +284,7 @@
     "lunatic/tfs/doc/1/1/drive/host/name": {
       "x": 285,
       "y": 184.8125,
-      "w": 33,
+      "w": 26.28125,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/drive/host/toolbar": {
@@ -380,13 +380,13 @@
     "lunatic/tfs/doc/1/1/machine-name": {
       "x": 301,
       "y": 87.5,
-      "w": 852.796875,
+      "w": 860.109375,
       "h": 21
     },
     "lunatic/tfs/doc/1/1/machine-status": {
-      "x": 1159.796875,
+      "x": 1167.109375,
       "y": 90.3125,
-      "w": 39.59375,
+      "w": 32.28125,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/panes": {

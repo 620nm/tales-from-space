@@ -122,7 +122,7 @@
     "lunatic/tfs/contact/composer/disabled": {
       "x": 13,
       "y": 479.609375,
-      "w": 162.234375,
+      "w": 154.421875,
       "h": 15.390625
     },
     "lunatic/tfs/contact/window": {
@@ -138,9 +138,9 @@
       "h": 305.609375
     },
     "lunatic/tfs/contact/window/close": {
-      "x": 288.484375,
+      "x": 291.359375,
       "y": 137,
-      "w": 50.203125,
+      "w": 47.328125,
       "h": 28
     },
     "lunatic/tfs/contact/window/footer": {
@@ -152,7 +152,7 @@
     "lunatic/tfs/contact/window/title": {
       "x": 13,
       "y": 141.90625,
-      "w": 271.484375,
+      "w": 274.359375,
       "h": 18.1875
     },
     "lunatic/tfs/contact/window/toolbar": {

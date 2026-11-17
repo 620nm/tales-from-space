@@ -266,7 +266,7 @@
     "lunatic/tfs/doc/1/1/drive/host/name": {
       "x": 71,
       "y": 237.8125,
-      "w": 59.40625,
+      "w": 45.46875,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/drive/host/toolbar": {
@@ -294,7 +294,7 @@
       "h": 339
     },
     "lunatic/tfs/doc/1/1/editor/budget": {
-      "x": 365.796875,
+      "x": 344.671875,
       "y": 654.3125,
       "w": 72.59375,
       "h": 15.390625
@@ -308,7 +308,7 @@
     "lunatic/tfs/doc/1/1/editor/clear": {
       "x": 239,
       "y": 654.3125,
-      "w": 118.796875,
+      "w": 97.671875,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/editor/footer": {

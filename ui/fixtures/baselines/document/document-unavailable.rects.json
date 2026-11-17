@@ -188,7 +188,7 @@
     "lunatic/tfs/doc/1/1/heading": {
       "x": 45,
       "y": 84,
-      "w": 153.640625,
+      "w": 146.828125,
       "h": 21
     },
     "lunatic/tfs/doc/1/1/part/0": {
@@ -222,9 +222,9 @@
       "h": 23
     },
     "lunatic/tfs/doc/1/1/part/0/toggle/on/switch": {
-      "x": 387.40625,
+      "x": 388.65625,
       "y": 190.390625,
-      "w": 35.59375,
+      "w": 34.34375,
       "h": 28
     },
     "lunatic/tfs/doc/1/1/part/0/toggle/on/switch/box": {
@@ -236,13 +236,13 @@
     "lunatic/tfs/doc/1/1/part/0/toggle/on/switch/label": {
       "x": 49,
       "y": 195.296875,
-      "w": 330.40625,
+      "w": 331.65625,
       "h": 18.1875
     },
     "lunatic/tfs/doc/1/1/status": {
       "x": 45,
       "y": 523.609375,
-      "w": 263.390625,
+      "w": 251.125,
       "h": 15.390625
     },
     "lunatic/tfs/doc/1/1/toolbar": {
