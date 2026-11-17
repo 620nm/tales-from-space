@@ -1,5 +1,5 @@
 {
-  "note": "The top-right status cluster in a compact HUD: staff mark beside place and name, the frozen hold (it outranks control held and delayed), then the refused line over the fault line; the throw toggle line is not drawn.",
+  "note": "The top-right status cluster in a compact HUD for an ordinary session: place and name, the frozen hold (it outranks control held and delayed), then the refused line over the fault line; the notice-kind throw line is not drawn. A staff-mode session gets no hold, so the staff mark is not shown here.",
   "viewport": {
     "width": 1024,
     "height": 768,
@@ -137,7 +137,6 @@
           }
         ]
       },
-      "staff_view": true,
       "location": {
         "name": "Engineering"
       },

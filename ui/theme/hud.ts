@@ -172,7 +172,9 @@ export const hudRules: UiStyleRule[] = [
   }),
   rule("statusdot", { width: 5, height: 5, flexShrink: 0, backgroundColor: teal, borderRadius: 0 }),
   rule("statusname", { marginLeft: 3, paddingLeft: 11, borderLeft: edge(faint), fontFamily: "mono", fontSize: 11, color: dim, textShadow: stroke }),
-  // Session notes under it: lettering only, no pane.
+  // The column holding that line and the session notes under it, right-aligned.
+  rule("statuscluster", { alignItems: "end", gap: 3 }),
+  // Session notes: lettering only, no pane.
   rule("statusnote", { fontFamily: "mono", fontSize: 11, color: dim, textShadow: stroke, textAlign: "right", maxWidth: 360 }),
   rule("statusnote-refused", { color: amber }),
   rule("statusnote-hold", { color: amber }),

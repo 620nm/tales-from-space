@@ -38,10 +38,7 @@ function statusCluster(view: GameplayView): UiNode | null {
   const note = hold
     ? text("status-hold", hold, ["statusnote", "statusnote-hold"])
     : report?.connection.delayed ? text("status-hold", STATUS_DELAYED, ["statusnote"]) : null;
-  // The tray already shows throwing, so its toggle line is not repeated here.
-  const lines = report
-    ? recentLines(report, 3, ["refused", "fault"]).filter((line) => line.key !== "engine.client.throw_off").reverse()
-    : [];
+  const lines = report ? recentLines(report, 3, ["refused", "fault"]).reverse() : [];
   const rows = some(
     where.length ? row("status-where", where, { cls: ["hudgroup", "statusline"] }) : null,
     note,
@@ -52,8 +49,8 @@ function statusCluster(view: GameplayView): UiNode | null {
     })),
   );
   if (!rows.length) return null;
-  return column("status", rows, { cls: ["hudgroup", "statusline"], style: {
-    position: "absolute", right: 14, top: 14, alignItems: "flex-end", gap: 3,
+  return column("status", rows, { cls: ["hudgroup", "statusline", "statuscluster"], style: {
+    position: "absolute", right: 14, top: 14,
   } });
 }
 
