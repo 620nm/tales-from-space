@@ -79,6 +79,7 @@ export const surfaceRules: UiStyleRule[] = [
   rule("actions-bar", { alignItems: "end", gap: 4 }),
   rule("actions-row", { minWidth: 0, maxWidth: "100%" }),
   rule("actions-list", { minWidth: 0, maxWidth: "100%", maxHeight: 240, overflowY: "auto" }),
+  rule("scrollbar-thumb", { backgroundColor: alpha(teal, 0.85), border: none, borderRadius: 2 }, { within: "actions-list" }),
   rule("actions-control", {
     width: "auto", height: 34, minWidth: 34, paddingTop: 0, paddingBottom: 0, paddingLeft: 8, paddingRight: 8,
     alignItems: "center", justifyContent: "center", fontFamily: "mono", fontSize: 11, color: ink,
