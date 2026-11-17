@@ -102,7 +102,7 @@ repository's gitignored `target/`, never the engine's served root.
   layer at 20–30 files, never exceed 50. Measure depth from the repository root:
   target 3–5 levels of handwritten source, at most 7.
 - Apply those counts to `content/`, `ui/`, `tests/` and `tools/`. Generated
-  trees (`ui/fixtures/out/`, the `ui/*.json` build products) are excluded.
+  trees (`ui/fixtures/out/`, fixture `baselines/`, `ui/*.json` build products) are excluded.
 - Target files below 300 lines; split before exceeding 1000. Keep this guide
   and `docs/**/*.md` at most 200 lines. Partition by feature and responsibility;
   shared typed modules belong in `content/lib/`, declarations in roster files.
