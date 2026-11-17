@@ -79,11 +79,11 @@
     "lunatic/tfs/staff/header/operator/avatar/fallback": [
       {
         "start": 0,
-        "x": 1269.984375,
-        "y": 22.5,
+        "x": 1282.8125,
+        "y": 31.5,
         "w": 8.34375,
         "h": 16,
-        "slack": 25.65625,
+        "slack": 0,
         "need": null
       }
     ],
@@ -288,11 +288,11 @@
     "lunatic/tfs/staff/live/read/profile/avatar/fallback": [
       {
         "start": 0,
-        "x": 1264,
-        "y": 576,
+        "x": 1270.640625,
+        "y": 585,
         "w": 20.71875,
         "h": 16,
-        "slack": 13.28125,
+        "slack": 0,
         "need": null
       }
     ],

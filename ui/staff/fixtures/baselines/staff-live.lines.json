@@ -79,11 +79,11 @@
     "lunatic/tfs/staff/header/operator/avatar/fallback": [
       {
         "start": 0,
-        "x": 693.984375,
-        "y": 22.5,
+        "x": 706.8125,
+        "y": 31.5,
         "w": 8.34375,
         "h": 16,
-        "slack": 25.65625,
+        "slack": 0,
         "need": null
       }
     ],

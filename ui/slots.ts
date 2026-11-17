@@ -15,23 +15,28 @@ export function hudSlot(id: string, opts: SlotOpts, slot = "", cls?: string): Ui
   const node = Slot(id, opts);
   const silhouette = !!opts.empty && silhouettes.has(slot);
   const frame = silhouette ? slot : small.has(slot) ? "template_small" : "template";
-  return {
-    ...node,
-    class: [...(node.class ?? []), "midnight-slot", ...(cls ? [cls] : [])],
+  const boxId = `${id}/box`;
+  const cellChildren = (node.children ?? [])
+    .filter((child) => !(silhouette && child.id === `${id}/label`));
+  const box = (node.id === boxId ? node : cellChildren.find((child) => child.id === boxId))!;
+  const label = cellChildren.find((child) => child.id === `${id}/label`);
+  const contents = (box.children ?? []).map((child) =>
+    cls === "hand-slot" && child.id === `${id}/fill`
+      ? { ...child, style: { ...(child.style ?? {}), left: 14, top: 14 } }
+      : child);
+  const framedBox = {
+    ...box,
     children: [
       ...(opts.active ? [{ id: `${id}/active`, type: "panel" as const, class: ["slot-active-ring"] }] : []),
-      { id: `${id}/frame`, type: "image", asset: `hud_${frame}`, class: ["slot-frame"] },
-      // The drawn silhouette already says which slot this is; a caption
-      // over it repeats the art it sits on.
-      ...(node.children ?? [])
-        .filter((child) => !(silhouette && child.id === `${id}/label`))
-        .map((child) => {
-          if (cls !== "hand-slot") return child;
-          if (child.id === `${id}/fill`) return { ...child, style: { left: 14, top: 14 } };
-          if (child.id === `${id}/label`)
-            return { ...child, style: { ...(child.style ?? {}), ...handCaption } };
-          return child;
-        }),
+      { id: `${id}/frame`, type: "image" as const, asset: `hud_${frame}`, class: ["slot-frame"] },
+      ...contents,
+      ...(label ? [{ ...label, style: cls === "hand-slot"
+        ? { ...(label.style ?? {}), ...handCaption }
+        : label.style }] : []),
     ],
   };
+  const classes = [...(node.class ?? []), "midnight-slot", ...(cls ? [cls] : [])];
+  return node.id === boxId
+    ? { ...framedBox, class: classes }
+    : { ...node, class: classes, children: [framedBox] };
 }

@@ -50,6 +50,7 @@ export const hudRules: UiStyleRule[] = [
   // One clipped line: a name will not fit a 40px square, and a wrapped
   // one climbs over the sprite it belongs to.
   rule("slot-label", {
+    position: "absolute", left: 0, right: 0, bottom: 0, width: "auto",
     zIndex: 3, fontFamily: "mono", fontSize: 11, lineHeight: 1.2, maxHeight: 14,
     paddingLeft: 1, paddingRight: 1, letterSpacing: 0, textTransform: "uppercase", color: ink,
     backgroundColor: "transparent", overflow: "hidden", textShadow: stroke,
@@ -65,8 +66,6 @@ export const hudRules: UiStyleRule[] = [
   }),
   rule("slot-active-ring", { ...cover, pointerEvents: "none", zIndex: 5, border: edge(amber), backgroundColor: "transparent" }),
 
-  // A labeled cell contains the frame and selection ring layered over it.
-  rule("slot-cell", { position: "relative" }),
   // Two 60x61 hand cells share a row above their labeled controls.
   rule("hand-cluster", { gap: 4, marginLeft: 0, pointerEvents: "none" }),
   rule("hand-slot", {

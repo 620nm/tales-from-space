@@ -19,9 +19,9 @@
     },
     "lunatic/tfs/carry": {
       "x": 1376,
-      "y": 988,
+      "y": 904,
       "w": 40,
-      "h": 0
+      "h": 84
     },
     "lunatic/tfs/chat": {
       "x": 183.203125,
@@ -173,6 +173,78 @@
       "w": 45.90625,
       "h": 34
     },
+    "lunatic/tfs/equipment/back/pick": {
+      "x": 1376,
+      "y": 904,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/box": {
+      "x": 1376,
+      "y": 904,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/cell": {
+      "x": 1376,
+      "y": 904,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/frame": {
+      "x": 1376,
+      "y": 904,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/icon": {
+      "x": 1380,
+      "y": 908,
+      "w": 32,
+      "h": 32
+    },
+    "lunatic/tfs/equipment/back/pick/label": {
+      "x": 1376,
+      "y": 930.8125,
+      "w": 40,
+      "h": 13.1875
+    },
+    "lunatic/tfs/equipment/belt/pick": {
+      "x": 1376,
+      "y": 948,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/box": {
+      "x": 1376,
+      "y": 948,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/cell": {
+      "x": 1376,
+      "y": 948,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/frame": {
+      "x": 1376,
+      "y": 948,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/icon": {
+      "x": 1380,
+      "y": 952,
+      "w": 32,
+      "h": 32
+    },
+    "lunatic/tfs/equipment/belt/pick/label": {
+      "x": 1376,
+      "y": 974.8125,
+      "w": 40,
+      "h": 13.1875
+    },
     "lunatic/tfs/equipment/ears/pick": {
       "x": 1236,
       "y": 860,
@@ -189,13 +261,13 @@
       "x": 1236,
       "y": 860,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/ears/pick/frame": {
       "x": 1236,
       "y": 860,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/ears/pick/icon": {
       "x": 1240,
@@ -205,7 +277,7 @@
     },
     "lunatic/tfs/equipment/ears/pick/label": {
       "x": 1236,
-      "y": 902,
+      "y": 886.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -225,13 +297,13 @@
       "x": 1236,
       "y": 904,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/gloves/pick/frame": {
       "x": 1236,
       "y": 904,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/gloves/pick/icon": {
       "x": 1240,
@@ -241,7 +313,7 @@
     },
     "lunatic/tfs/equipment/gloves/pick/label": {
       "x": 1236,
-      "y": 946,
+      "y": 930.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -261,13 +333,13 @@
       "x": 1280,
       "y": 860,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/head/pick/frame": {
       "x": 1280,
       "y": 860,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/head/pick/icon": {
       "x": 1284,
@@ -277,7 +349,7 @@
     },
     "lunatic/tfs/equipment/head/pick/label": {
       "x": 1280,
-      "y": 902,
+      "y": 886.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -297,13 +369,13 @@
       "x": 1324,
       "y": 948,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/id/pick/frame": {
       "x": 1324,
       "y": 948,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/id/pick/icon": {
       "x": 1328,
@@ -313,7 +385,7 @@
     },
     "lunatic/tfs/equipment/id/pick/label": {
       "x": 1324,
-      "y": 990,
+      "y": 974.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -333,13 +405,13 @@
       "x": 1324,
       "y": 860,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/mask/pick/frame": {
       "x": 1324,
       "y": 860,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/mask/pick/icon": {
       "x": 1328,
@@ -349,7 +421,7 @@
     },
     "lunatic/tfs/equipment/mask/pick/label": {
       "x": 1324,
-      "y": 902,
+      "y": 886.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -369,13 +441,13 @@
       "x": 1280,
       "y": 948,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/shoes/pick/frame": {
       "x": 1280,
       "y": 948,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/shoes/pick/icon": {
       "x": 1284,
@@ -385,7 +457,7 @@
     },
     "lunatic/tfs/equipment/shoes/pick/label": {
       "x": 1280,
-      "y": 990,
+      "y": 974.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -405,13 +477,13 @@
       "x": 1324,
       "y": 904,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/suit/pick/frame": {
       "x": 1324,
       "y": 904,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/suit/pick/icon": {
       "x": 1328,
@@ -421,7 +493,7 @@
     },
     "lunatic/tfs/equipment/suit/pick/label": {
       "x": 1324,
-      "y": 946,
+      "y": 930.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -441,13 +513,13 @@
       "x": 1280,
       "y": 904,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/uniform/pick/frame": {
       "x": 1280,
       "y": 904,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/uniform/pick/icon": {
       "x": 1284,
@@ -457,7 +529,7 @@
     },
     "lunatic/tfs/equipment/uniform/pick/label": {
       "x": 1280,
-      "y": 946,
+      "y": 930.8125,
       "w": 40,
       "h": 13.1875
     },

@@ -19,9 +19,9 @@
     },
     "lunatic/tfs/carry": {
       "x": 1376,
-      "y": 988,
+      "y": 904,
       "w": 40,
-      "h": 0
+      "h": 84
     },
     "lunatic/tfs/chat": {
       "x": 183.203125,
@@ -172,6 +172,54 @@
       "y": 814,
       "w": 45.90625,
       "h": 34
+    },
+    "lunatic/tfs/equipment/back/pick": {
+      "x": 1376,
+      "y": 904,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/box": {
+      "x": 1376,
+      "y": 904,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/cell": {
+      "x": 1376,
+      "y": 904,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/frame": {
+      "x": 1376,
+      "y": 904,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick": {
+      "x": 1376,
+      "y": 948,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/box": {
+      "x": 1376,
+      "y": 948,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/cell": {
+      "x": 1376,
+      "y": 948,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/frame": {
+      "x": 1376,
+      "y": 948,
+      "w": 40,
+      "h": 40
     },
     "lunatic/tfs/equipment/ears/pick": {
       "x": 1236,

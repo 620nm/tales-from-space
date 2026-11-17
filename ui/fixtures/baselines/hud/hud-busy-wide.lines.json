@@ -1,6 +1,28 @@
 {
   "version": 1,
   "lines": {
+    "lunatic/tfs/action/90/1/flash": [
+      {
+        "start": 0,
+        "x": 1434.640625,
+        "y": 822.609375,
+        "w": 30.15625,
+        "h": 15,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/action/90/1/light": [
+      {
+        "start": 0,
+        "x": 1483.75,
+        "y": 822.609375,
+        "w": 28.078125,
+        "h": 15,
+        "slack": 1.921875,
+        "need": null
+      }
+    ],
     "lunatic/tfs/actions/tools/title": [
       {
         "start": 0,
@@ -125,11 +147,33 @@
     "lunatic/tfs/equip": [
       {
         "start": 0,
-        "x": 1356.484375,
+        "x": 1264.53125,
         "y": 822.609375,
         "w": 31.90625,
         "h": 15,
         "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/equipment/back/pick/label": [
+      {
+        "start": 0,
+        "x": 1264.796875,
+        "y": 929.8125,
+        "w": 26.40625,
+        "h": 14,
+        "slack": 11.59375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/equipment/belt/pick/label": [
+      {
+        "start": 0,
+        "x": 1264.796875,
+        "y": 973.8125,
+        "w": 26.40625,
+        "h": 14,
+        "slack": 11.59375,
         "need": null
       }
     ],
@@ -378,7 +422,7 @@
     "lunatic/tfs/item-actions/title": [
       {
         "start": 0,
-        "x": 1473.59375,
+        "x": 1381.640625,
         "y": 794.609375,
         "w": 38,
         "h": 14,
@@ -3119,7 +3163,7 @@
     "lunatic/tfs/open_build": [
       {
         "start": 0,
-        "x": 1407.34375,
+        "x": 1315.375,
         "y": 822.609375,
         "w": 28.109375,
         "h": 15,
@@ -3185,7 +3229,7 @@
     "lunatic/tfs/use_other": [
       {
         "start": 0,
-        "x": 1217.46875,
+        "x": 1125.5,
         "y": 822.609375,
         "w": 73.03125,
         "h": 15,
@@ -3196,7 +3240,7 @@
     "lunatic/tfs/use_self": [
       {
         "start": 0,
-        "x": 1312.34375,
+        "x": 1220.390625,
         "y": 822.609375,
         "w": 22.265625,
         "h": 15,

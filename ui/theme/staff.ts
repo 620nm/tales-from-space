@@ -115,7 +115,7 @@ export const staffRules: UiStyleRule[] = [
   rule("staff-economy-evidence", { gap: 4, padding: 5, backgroundColor: alpha(surface, 0.55), border: edge(ruleLine) }),
   rule("staff-economy-anomaly-panel", { gap: 5, padding: 7, backgroundColor: alpha(amber, 0.1), border: edge(amber) }),
   rule("staff-economy-anomaly", { gap: 4, padding: 5, backgroundColor: alpha(face, 0.72), border: edge(alpha(amber, 0.45)) }),
-  rule("staff-record-button", { minHeight: 29, textAlign: "left", justifyContent: "start", ...press }),
+  rule("staff-record-button", { minHeight: 29, textAlign: "left", justifyContent: "start", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", ...press }),
   rule("staff-timeline-heading", { flexShrink: 0, paddingBottom: 5, borderBottom: edge(ruleLine) }),
   rule("staff-evidence-chain", { gap: 5, padding: 7, backgroundColor: alpha(amber, 0.08), border: edge(alpha(amber, 0.55)) }),
   rule("staff-chain", { flexWrap: "wrap" }),

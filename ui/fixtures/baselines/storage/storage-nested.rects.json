@@ -19,9 +19,9 @@
     },
     "lunatic/tfs/carry": {
       "x": 800,
-      "y": 756,
+      "y": 672,
       "w": 40,
-      "h": 0
+      "h": 84
     },
     "lunatic/tfs/chat": {
       "x": 183.203125,
@@ -172,6 +172,54 @@
       "y": 581,
       "w": 45.90625,
       "h": 34
+    },
+    "lunatic/tfs/equipment/back/pick": {
+      "x": 800,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/box": {
+      "x": 800,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/cell": {
+      "x": 800,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/frame": {
+      "x": 800,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick": {
+      "x": 800,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/box": {
+      "x": 800,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/cell": {
+      "x": 800,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/frame": {
+      "x": 800,
+      "y": 716,
+      "w": 40,
+      "h": 40
     },
     "lunatic/tfs/equipment/ears/pick": {
       "x": 660,
@@ -687,7 +735,7 @@
       "x": 705,
       "y": 543,
       "w": 306,
-      "h": 63.1875
+      "h": 48
     },
     "lunatic/tfs/storage/hand/0//store": {
       "x": 712,
@@ -801,7 +849,7 @@
       "x": 705,
       "y": 663,
       "w": 306,
-      "h": 63.1875
+      "h": 48
     },
     "lunatic/tfs/storage/hand/0/0/store": {
       "x": 712,
@@ -837,13 +885,13 @@
       "x": 712,
       "y": 663,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/stored/hand/0/0-0/take/frame": {
       "x": 712,
       "y": 663,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/stored/hand/0/0-0/take/icon": {
       "x": 716,
@@ -853,7 +901,7 @@
     },
     "lunatic/tfs/stored/hand/0/0-0/take/label": {
       "x": 712,
-      "y": 705,
+      "y": 689.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -873,13 +921,13 @@
       "x": 712,
       "y": 543,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/stored/hand/0/0/take/frame": {
       "x": 712,
       "y": 543,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/stored/hand/0/0/take/icon": {
       "x": 716,
@@ -889,7 +937,7 @@
     },
     "lunatic/tfs/stored/hand/0/0/take/label": {
       "x": 712,
-      "y": 585,
+      "y": 569.8125,
       "w": 40,
       "h": 13.1875
     },

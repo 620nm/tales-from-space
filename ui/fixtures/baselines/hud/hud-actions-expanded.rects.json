@@ -19,769 +19,769 @@
     },
     "lunatic/tfs/action/90/1/tool0": {
       "x": 514.40625,
-      "y": 376,
+      "y": -639.1875,
       "w": 85.65625,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool0#earlier": {
-      "x": 637.859375,
-      "y": 376,
+      "x": 651.046875,
+      "y": -639.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool0#pin": {
       "x": 600.046875,
-      "y": 376,
-      "w": 37.796875,
+      "y": -639.1875,
+      "w": 51,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool0#row": {
       "x": 514.40625,
-      "y": 376,
+      "y": -639.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool1": {
       "x": 514.40625,
-      "y": 414,
+      "y": -601.1875,
       "w": 82.96875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool1#earlier": {
-      "x": 635.171875,
-      "y": 414,
+      "x": 648.359375,
+      "y": -601.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool1#pin": {
       "x": 597.359375,
-      "y": 414,
-      "w": 37.796875,
+      "y": -601.1875,
+      "w": 51,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool1#row": {
       "x": 514.40625,
-      "y": 414,
+      "y": -601.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool10": {
       "x": 514.40625,
-      "y": 756,
+      "y": -259.1875,
       "w": 90.53125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool10#earlier": {
       "x": 642.734375,
-      "y": 756,
+      "y": -259.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool10#pin": {
       "x": 604.9375,
-      "y": 756,
+      "y": -259.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool10#row": {
       "x": 514.40625,
-      "y": 756,
+      "y": -259.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool11": {
       "x": 514.40625,
-      "y": 794,
+      "y": -221.1875,
       "w": 87.84375,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool11#earlier": {
       "x": 640.046875,
-      "y": 794,
+      "y": -221.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool11#pin": {
       "x": 602.25,
-      "y": 794,
+      "y": -221.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool11#row": {
       "x": 514.40625,
-      "y": 794,
+      "y": -221.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool12": {
       "x": 514.40625,
-      "y": 832,
+      "y": -183.1875,
       "w": 90.28125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool12#earlier": {
       "x": 642.484375,
-      "y": 832,
+      "y": -183.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool12#pin": {
       "x": 604.6875,
-      "y": 832,
+      "y": -183.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool12#row": {
       "x": 514.40625,
-      "y": 832,
+      "y": -183.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool13": {
       "x": 514.40625,
-      "y": 870,
+      "y": -145.1875,
       "w": 90.375,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool13#earlier": {
       "x": 642.578125,
-      "y": 870,
+      "y": -145.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool13#pin": {
       "x": 604.78125,
-      "y": 870,
+      "y": -145.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool13#row": {
       "x": 514.40625,
-      "y": 870,
+      "y": -145.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool14": {
       "x": 514.40625,
-      "y": 908,
+      "y": -107.1875,
       "w": 90.71875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool14#earlier": {
       "x": 642.921875,
-      "y": 908,
+      "y": -107.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool14#pin": {
       "x": 605.109375,
-      "y": 908,
+      "y": -107.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool14#row": {
       "x": 514.40625,
-      "y": 908,
+      "y": -107.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool15": {
       "x": 514.40625,
-      "y": 946,
+      "y": -69.1875,
       "w": 90.078125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool15#earlier": {
       "x": 642.28125,
-      "y": 946,
+      "y": -69.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool15#pin": {
       "x": 604.484375,
-      "y": 946,
+      "y": -69.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool15#row": {
       "x": 514.40625,
-      "y": 946,
+      "y": -69.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool16": {
       "x": 514.40625,
-      "y": 984,
+      "y": -31.1875,
       "w": 90.40625,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool16#earlier": {
       "x": 642.609375,
-      "y": 984,
+      "y": -31.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool16#pin": {
       "x": 604.8125,
-      "y": 984,
+      "y": -31.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool16#row": {
       "x": 514.40625,
-      "y": 984,
+      "y": -31.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool17": {
       "x": 514.40625,
-      "y": 1022,
+      "y": 6.8125,
       "w": 89.75,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool17#earlier": {
       "x": 641.953125,
-      "y": 1022,
+      "y": 6.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool17#pin": {
       "x": 604.15625,
-      "y": 1022,
+      "y": 6.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool17#row": {
       "x": 514.40625,
-      "y": 1022,
+      "y": 6.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool18": {
       "x": 514.40625,
-      "y": 1060,
+      "y": 44.8125,
       "w": 90.390625,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool18#earlier": {
       "x": 642.59375,
-      "y": 1060,
+      "y": 44.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool18#pin": {
       "x": 604.78125,
-      "y": 1060,
+      "y": 44.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool18#row": {
       "x": 514.40625,
-      "y": 1060,
+      "y": 44.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool19": {
       "x": 514.40625,
-      "y": 1098,
+      "y": 82.8125,
       "w": 90.40625,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool19#earlier": {
       "x": 642.609375,
-      "y": 1098,
+      "y": 82.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool19#pin": {
       "x": 604.8125,
-      "y": 1098,
+      "y": 82.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool19#row": {
       "x": 514.40625,
-      "y": 1098,
+      "y": 82.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool2": {
       "x": 514.40625,
-      "y": 452,
+      "y": -563.1875,
       "w": 85.40625,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool2#earlier": {
       "x": 637.609375,
-      "y": 452,
+      "y": -563.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool2#pin": {
       "x": 599.796875,
-      "y": 452,
+      "y": -563.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool2#row": {
       "x": 514.40625,
-      "y": 452,
+      "y": -563.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool20": {
       "x": 514.40625,
-      "y": 1136,
+      "y": 120.8125,
       "w": 92.96875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool20#earlier": {
       "x": 645.171875,
-      "y": 1136,
+      "y": 120.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool20#pin": {
       "x": 607.375,
-      "y": 1136,
+      "y": 120.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool20#row": {
       "x": 514.40625,
-      "y": 1136,
+      "y": 120.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool21": {
       "x": 514.40625,
-      "y": 1174,
+      "y": 158.8125,
       "w": 90.28125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool21#earlier": {
       "x": 642.484375,
-      "y": 1174,
+      "y": 158.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool21#pin": {
       "x": 604.6875,
-      "y": 1174,
+      "y": 158.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool21#row": {
       "x": 514.40625,
-      "y": 1174,
+      "y": 158.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool22": {
       "x": 514.40625,
-      "y": 1212,
+      "y": 196.8125,
       "w": 92.71875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool22#earlier": {
       "x": 644.921875,
-      "y": 1212,
+      "y": 196.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool22#pin": {
       "x": 607.125,
-      "y": 1212,
+      "y": 196.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool22#row": {
       "x": 514.40625,
-      "y": 1212,
+      "y": 196.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool23": {
       "x": 514.40625,
-      "y": 1250,
+      "y": 234.8125,
       "w": 92.8125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool23#earlier": {
       "x": 645.015625,
-      "y": 1250,
+      "y": 234.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool23#pin": {
       "x": 607.21875,
-      "y": 1250,
+      "y": 234.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool23#row": {
       "x": 514.40625,
-      "y": 1250,
+      "y": 234.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool24": {
       "x": 514.40625,
-      "y": 1288,
+      "y": 272.8125,
       "w": 92.96875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool24#earlier": {
       "x": 645.171875,
-      "y": 1288,
+      "y": 272.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool24#pin": {
       "x": 607.359375,
-      "y": 1288,
+      "y": 272.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool24#row": {
       "x": 514.40625,
-      "y": 1288,
+      "y": 272.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool25": {
       "x": 514.40625,
-      "y": 1326,
+      "y": 310.8125,
       "w": 92.515625,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool25#earlier": {
       "x": 644.71875,
-      "y": 1326,
+      "y": 310.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool25#pin": {
       "x": 606.921875,
-      "y": 1326,
+      "y": 310.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool25#row": {
       "x": 514.40625,
-      "y": 1326,
+      "y": 310.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool26": {
       "x": 514.40625,
-      "y": 1364,
+      "y": 348.8125,
       "w": 92.84375,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool26#earlier": {
       "x": 645.046875,
-      "y": 1364,
+      "y": 348.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool26#pin": {
       "x": 607.25,
-      "y": 1364,
+      "y": 348.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool26#row": {
       "x": 514.40625,
-      "y": 1364,
+      "y": 348.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool27": {
       "x": 514.40625,
-      "y": 1402,
+      "y": 386.8125,
       "w": 92.1875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool27#earlier": {
       "x": 644.390625,
-      "y": 1402,
+      "y": 386.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool27#pin": {
       "x": 606.59375,
-      "y": 1402,
+      "y": 386.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool27#row": {
       "x": 514.40625,
-      "y": 1402,
+      "y": 386.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool28": {
       "x": 514.40625,
-      "y": 1440,
+      "y": 424.8125,
       "w": 92.828125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool28#earlier": {
       "x": 645.03125,
-      "y": 1440,
+      "y": 424.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool28#pin": {
       "x": 607.21875,
-      "y": 1440,
+      "y": 424.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool28#row": {
       "x": 514.40625,
-      "y": 1440,
+      "y": 424.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool29": {
       "x": 514.40625,
-      "y": 1478,
+      "y": 462.8125,
       "w": 92.84375,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool29#earlier": {
       "x": 645.046875,
-      "y": 1478,
+      "y": 462.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool29#pin": {
       "x": 607.25,
-      "y": 1478,
+      "y": 462.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool29#row": {
       "x": 514.40625,
-      "y": 1478,
+      "y": 462.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool3": {
       "x": 514.40625,
-      "y": 490,
+      "y": -525.1875,
       "w": 85.5,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool3#earlier": {
       "x": 637.703125,
-      "y": 490,
+      "y": -525.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool3#pin": {
       "x": 599.890625,
-      "y": 490,
+      "y": -525.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool3#row": {
       "x": 514.40625,
-      "y": 490,
+      "y": -525.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool30": {
       "x": 514.40625,
-      "y": 1516,
+      "y": 500.8125,
       "w": 93.0625,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool30#earlier": {
       "x": 645.265625,
-      "y": 1516,
+      "y": 500.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool30#pin": {
       "x": 607.46875,
-      "y": 1516,
+      "y": 500.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool30#row": {
       "x": 514.40625,
-      "y": 1516,
+      "y": 500.8125,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool31": {
       "x": 514.40625,
-      "y": 1554,
+      "y": 538.8125,
       "w": 180,
       "h": 77.1875
     },
     "lunatic/tfs/action/90/1/tool31#earlier": {
       "x": 732.203125,
-      "y": 1554,
+      "y": 538.8125,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool31#pin": {
       "x": 694.40625,
-      "y": 1554,
+      "y": 538.8125,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool31#row": {
       "x": 514.40625,
-      "y": 1554,
+      "y": 538.8125,
       "w": 315,
       "h": 77.1875
     },
     "lunatic/tfs/action/90/1/tool4": {
       "x": 514.40625,
-      "y": 528,
+      "y": -487.1875,
       "w": 85.84375,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool4#earlier": {
       "x": 638.03125,
-      "y": 528,
+      "y": -487.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool4#pin": {
       "x": 600.234375,
-      "y": 528,
+      "y": -487.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool4#row": {
       "x": 514.40625,
-      "y": 528,
+      "y": -487.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool5": {
       "x": 514.40625,
-      "y": 566,
+      "y": -449.1875,
       "w": 85.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool5#earlier": {
       "x": 637.40625,
-      "y": 566,
+      "y": -449.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool5#pin": {
       "x": 599.609375,
-      "y": 566,
+      "y": -449.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool5#row": {
       "x": 514.40625,
-      "y": 566,
+      "y": -449.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool6": {
       "x": 514.40625,
-      "y": 604,
+      "y": -411.1875,
       "w": 85.53125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool6#earlier": {
       "x": 637.71875,
-      "y": 604,
+      "y": -411.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool6#pin": {
       "x": 599.921875,
-      "y": 604,
+      "y": -411.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool6#row": {
       "x": 514.40625,
-      "y": 604,
+      "y": -411.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool7": {
       "x": 514.40625,
-      "y": 642,
+      "y": -373.1875,
       "w": 84.875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool7#earlier": {
       "x": 637.078125,
-      "y": 642,
+      "y": -373.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool7#pin": {
       "x": 599.28125,
-      "y": 642,
+      "y": -373.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool7#row": {
       "x": 514.40625,
-      "y": 642,
+      "y": -373.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool8": {
       "x": 514.40625,
-      "y": 680,
+      "y": -335.1875,
       "w": 85.515625,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool8#earlier": {
       "x": 637.703125,
-      "y": 680,
+      "y": -335.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool8#pin": {
       "x": 599.90625,
-      "y": 680,
+      "y": -335.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool8#row": {
       "x": 514.40625,
-      "y": 680,
+      "y": -335.1875,
       "w": 315,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool9": {
       "x": 514.40625,
-      "y": 718,
+      "y": -297.1875,
       "w": 85.53125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool9#earlier": {
       "x": 637.71875,
-      "y": 718,
+      "y": -297.1875,
       "w": 97.203125,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool9#pin": {
       "x": 599.921875,
-      "y": 718,
+      "y": -297.1875,
       "w": 37.796875,
       "h": 34
     },
     "lunatic/tfs/action/90/1/tool9#row": {
       "x": 514.40625,
-      "y": 718,
+      "y": -297.1875,
       "w": 315,
       "h": 34
     },
@@ -829,9 +829,9 @@
     },
     "lunatic/tfs/carry": {
       "x": 682,
-      "y": 756,
+      "y": 672,
       "w": 40,
-      "h": 0
+      "h": 84
     },
     "lunatic/tfs/chat": {
       "x": 183.203125,
@@ -983,6 +983,78 @@
       "w": 45.90625,
       "h": 34
     },
+    "lunatic/tfs/equipment/back/pick": {
+      "x": 682,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/box": {
+      "x": 682,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/cell": {
+      "x": 682,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/frame": {
+      "x": 682,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/icon": {
+      "x": 686,
+      "y": 676,
+      "w": 32,
+      "h": 32
+    },
+    "lunatic/tfs/equipment/back/pick/label": {
+      "x": 682,
+      "y": 698.8125,
+      "w": 40,
+      "h": 13.1875
+    },
+    "lunatic/tfs/equipment/belt/pick": {
+      "x": 682,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/box": {
+      "x": 682,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/cell": {
+      "x": 682,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/frame": {
+      "x": 682,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/icon": {
+      "x": 686,
+      "y": 720,
+      "w": 32,
+      "h": 32
+    },
+    "lunatic/tfs/equipment/belt/pick/label": {
+      "x": 682,
+      "y": 742.8125,
+      "w": 40,
+      "h": 13.1875
+    },
     "lunatic/tfs/equipment/ears/pick": {
       "x": 542,
       "y": 628,
@@ -999,13 +1071,13 @@
       "x": 542,
       "y": 628,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/ears/pick/frame": {
       "x": 542,
       "y": 628,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/ears/pick/icon": {
       "x": 546,
@@ -1015,7 +1087,7 @@
     },
     "lunatic/tfs/equipment/ears/pick/label": {
       "x": 542,
-      "y": 670,
+      "y": 654.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -1035,13 +1107,13 @@
       "x": 542,
       "y": 672,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/gloves/pick/frame": {
       "x": 542,
       "y": 672,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/gloves/pick/icon": {
       "x": 546,
@@ -1051,7 +1123,7 @@
     },
     "lunatic/tfs/equipment/gloves/pick/label": {
       "x": 542,
-      "y": 714,
+      "y": 698.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -1071,13 +1143,13 @@
       "x": 586,
       "y": 628,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/head/pick/frame": {
       "x": 586,
       "y": 628,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/head/pick/icon": {
       "x": 590,
@@ -1087,7 +1159,7 @@
     },
     "lunatic/tfs/equipment/head/pick/label": {
       "x": 586,
-      "y": 670,
+      "y": 654.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -1107,13 +1179,13 @@
       "x": 630,
       "y": 716,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/id/pick/frame": {
       "x": 630,
       "y": 716,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/id/pick/icon": {
       "x": 634,
@@ -1123,7 +1195,7 @@
     },
     "lunatic/tfs/equipment/id/pick/label": {
       "x": 630,
-      "y": 758,
+      "y": 742.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -1143,13 +1215,13 @@
       "x": 630,
       "y": 628,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/mask/pick/frame": {
       "x": 630,
       "y": 628,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/mask/pick/icon": {
       "x": 634,
@@ -1159,7 +1231,7 @@
     },
     "lunatic/tfs/equipment/mask/pick/label": {
       "x": 630,
-      "y": 670,
+      "y": 654.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -1179,13 +1251,13 @@
       "x": 586,
       "y": 716,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/shoes/pick/frame": {
       "x": 586,
       "y": 716,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/shoes/pick/icon": {
       "x": 590,
@@ -1195,7 +1267,7 @@
     },
     "lunatic/tfs/equipment/shoes/pick/label": {
       "x": 586,
-      "y": 758,
+      "y": 742.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -1215,13 +1287,13 @@
       "x": 630,
       "y": 672,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/suit/pick/frame": {
       "x": 630,
       "y": 672,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/suit/pick/icon": {
       "x": 634,
@@ -1231,7 +1303,7 @@
     },
     "lunatic/tfs/equipment/suit/pick/label": {
       "x": 630,
-      "y": 714,
+      "y": 698.8125,
       "w": 40,
       "h": 13.1875
     },
@@ -1251,13 +1323,13 @@
       "x": 586,
       "y": 672,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/uniform/pick/frame": {
       "x": 586,
       "y": 672,
       "w": 40,
-      "h": 55.1875
+      "h": 40
     },
     "lunatic/tfs/equipment/uniform/pick/icon": {
       "x": 590,
@@ -1267,7 +1339,7 @@
     },
     "lunatic/tfs/equipment/uniform/pick/label": {
       "x": 586,
-      "y": 714,
+      "y": 698.8125,
       "w": 40,
       "h": 13.1875
     },

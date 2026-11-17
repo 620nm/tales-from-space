@@ -115,7 +115,7 @@ export function wornGroup(view: GameplayView, carry = false): UiNode | null {
     const position = anatomy[slot.id] ?? [index % 3, Math.floor(index / 3) + 3];
     return [{ ...square, ...(!carry ? { style: { position: "absolute" as const, left: position[0] * 44, top: position[1] * 44 } } : {}) }];
   });
-  if (carry) return Stack("carry", ["back", "belt"].flatMap((slot) => squares.filter((square) => square.id === `equipment/${slot}/pick/box`)), {
+  if (carry) return Stack("carry", squares, {
     dir: "column", gap: 4, cls: ["hudgroup"], style: { width: 40, minWidth: 40 },
   });
   return column(
