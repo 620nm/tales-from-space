@@ -1,0 +1,181 @@
+{
+  "version": 1,
+  "lines": {
+    "lunatic/tfs/chat-history": [
+      {
+        "start": 0,
+        "x": 355.59375,
+        "y": 749.8125,
+        "w": 59.40625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/all": [
+      {
+        "start": 0,
+        "x": 29,
+        "y": 749.3125,
+        "w": 19.796875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/local": [
+      {
+        "start": 0,
+        "x": 68.796875,
+        "y": 749.3125,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/ooc": [
+      {
+        "start": 0,
+        "x": 174.796875,
+        "y": 749.3125,
+        "w": 19.796875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/radio": [
+      {
+        "start": 0,
+        "x": 121.796875,
+        "y": 749.3125,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/system": [
+      {
+        "start": 0,
+        "x": 214.59375,
+        "y": 749.3125,
+        "w": 39.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/composer-label": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 962.3125,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/job/assistant/count": [
+      {
+        "start": 0,
+        "x": 912.625,
+        "y": 482.3125,
+        "w": 46.375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/job/assistant/name": [
+      {
+        "start": 0,
+        "x": 629,
+        "y": 481.921875,
+        "w": 56.25,
+        "h": 16,
+        "slack": 211.375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/job/doctor/count": [
+      {
+        "start": 0,
+        "x": 935.4375,
+        "y": 550.6875,
+        "w": 23.5625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/job/doctor/name": [
+      {
+        "start": 0,
+        "x": 629,
+        "y": 550.296875,
+        "w": 93.5,
+        "h": 16,
+        "slack": 196.921875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/job/engineer/count": [
+      {
+        "start": 0,
+        "x": 937.578125,
+        "y": 516.5,
+        "w": 21.421875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/job/engineer/name": [
+      {
+        "start": 0,
+        "x": 629,
+        "y": 516.109375,
+        "w": 100.84375,
+        "h": 16,
+        "slack": 191.734375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/lobby-hint": [
+      {
+        "start": 0,
+        "x": 619,
+        "y": 449.53125,
+        "w": 179.390625,
+        "h": 14,
+        "slack": 182.609375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/lobby-title": [
+      {
+        "start": 0,
+        "x": 619,
+        "y": 427.53125,
+        "w": 106.15625,
+        "h": 19,
+        "slack": 255.84375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log-empty": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 776,
+        "w": 96.125,
+        "h": 14,
+        "slack": 295.875,
+        "need": null
+      }
+    ]
+  }
+}

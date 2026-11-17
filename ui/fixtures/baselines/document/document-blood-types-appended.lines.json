@@ -1,0 +1,872 @@
+{
+  "version": 1,
+  "lines": {
+    "lunatic/tfs/chat-history": [
+      {
+        "start": 0,
+        "x": 355.59375,
+        "y": 517.8125,
+        "w": 59.40625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/all": [
+      {
+        "start": 0,
+        "x": 29,
+        "y": 517.3125,
+        "w": 19.796875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/local": [
+      {
+        "start": 0,
+        "x": 68.796875,
+        "y": 517.3125,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/ooc": [
+      {
+        "start": 0,
+        "x": 174.796875,
+        "y": 517.3125,
+        "w": 19.796875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/radio": [
+      {
+        "start": 0,
+        "x": 121.796875,
+        "y": 517.3125,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/system": [
+      {
+        "start": 0,
+        "x": 214.59375,
+        "y": 517.3125,
+        "w": 39.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/composer-label": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 730.3125,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/heading": [
+      {
+        "start": 0,
+        "x": 759,
+        "y": 75,
+        "w": 153.234375,
+        "h": 19,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/commit": [
+      {
+        "start": 0,
+        "x": 1035.109375,
+        "y": 502.5625,
+        "w": 29.765625,
+        "h": 15,
+        "slack": 526.234375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/fragment/1/part/0": [
+      {
+        "start": 0,
+        "x": 777,
+        "y": 392.453125,
+        "w": 524.375,
+        "h": 30,
+        "slack": 21.625,
+        "need": 39.8125
+      },
+      {
+        "start": 66,
+        "x": 777,
+        "y": 419.953125,
+        "w": 56.390625,
+        "h": 30,
+        "slack": 489.609375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/caption": [
+      {
+        "start": 0,
+        "x": 777,
+        "y": 157.5,
+        "w": 32.765625,
+        "h": 14,
+        "slack": 513.234375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/heading": [
+      {
+        "start": 0,
+        "x": 777,
+        "y": 136,
+        "w": 183.796875,
+        "h": 19,
+        "slack": 362.203125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/paragraph/0": [
+      {
+        "start": 0,
+        "x": 777,
+        "y": 356.859375,
+        "w": 453.546875,
+        "h": 16,
+        "slack": 92.453125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/paragraph/1": [
+      {
+        "start": 0,
+        "x": 777,
+        "y": 375.15625,
+        "w": 213.625,
+        "h": 16,
+        "slack": 332.375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/0/0/text": [
+      {
+        "start": 0,
+        "x": 779,
+        "y": 189.890625,
+        "w": 15.59375,
+        "h": 17,
+        "slack": 71.40625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/0/1/text": [
+      {
+        "start": 0,
+        "x": 886.84375,
+        "y": 189.890625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/0/2/text": [
+      {
+        "start": 0,
+        "x": 932.34375,
+        "y": 189.890625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/0/7/text": [
+      {
+        "start": 0,
+        "x": 1159.84375,
+        "y": 189.890625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/0/8/text": [
+      {
+        "start": 0,
+        "x": 1205.34375,
+        "y": 189.890625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/1/0/text": [
+      {
+        "start": 0,
+        "x": 779,
+        "y": 206.1875,
+        "w": 15.59375,
+        "h": 17,
+        "slack": 71.40625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/1/2/text": [
+      {
+        "start": 0,
+        "x": 932.34375,
+        "y": 206.1875,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/1/8/text": [
+      {
+        "start": 0,
+        "x": 1205.34375,
+        "y": 206.1875,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/2/0/text": [
+      {
+        "start": 0,
+        "x": 779,
+        "y": 222.484375,
+        "w": 15.59375,
+        "h": 17,
+        "slack": 71.40625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/2/3/text": [
+      {
+        "start": 0,
+        "x": 977.84375,
+        "y": 222.484375,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/2/4/text": [
+      {
+        "start": 0,
+        "x": 1023.34375,
+        "y": 222.484375,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/2/7/text": [
+      {
+        "start": 0,
+        "x": 1159.84375,
+        "y": 222.484375,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/2/8/text": [
+      {
+        "start": 0,
+        "x": 1205.34375,
+        "y": 222.484375,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/3/0/text": [
+      {
+        "start": 0,
+        "x": 779,
+        "y": 238.78125,
+        "w": 15.59375,
+        "h": 17,
+        "slack": 71.40625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/3/4/text": [
+      {
+        "start": 0,
+        "x": 1023.34375,
+        "y": 238.78125,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/3/8/text": [
+      {
+        "start": 0,
+        "x": 1205.34375,
+        "y": 238.78125,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/4/0/text": [
+      {
+        "start": 0,
+        "x": 779,
+        "y": 255.078125,
+        "w": 23.40625,
+        "h": 17,
+        "slack": 63.59375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/4/1/text": [
+      {
+        "start": 0,
+        "x": 886.84375,
+        "y": 255.078125,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/4/2/text": [
+      {
+        "start": 0,
+        "x": 932.34375,
+        "y": 255.078125,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/4/3/text": [
+      {
+        "start": 0,
+        "x": 977.84375,
+        "y": 255.078125,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/4/4/text": [
+      {
+        "start": 0,
+        "x": 1023.34375,
+        "y": 255.078125,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/4/5/text": [
+      {
+        "start": 0,
+        "x": 1068.84375,
+        "y": 255.078125,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/4/6/text": [
+      {
+        "start": 0,
+        "x": 1114.34375,
+        "y": 255.078125,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/4/7/text": [
+      {
+        "start": 0,
+        "x": 1159.84375,
+        "y": 255.078125,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/4/8/text": [
+      {
+        "start": 0,
+        "x": 1205.34375,
+        "y": 255.078125,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/5/0/text": [
+      {
+        "start": 0,
+        "x": 779,
+        "y": 271.375,
+        "w": 23.40625,
+        "h": 17,
+        "slack": 63.59375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/5/2/text": [
+      {
+        "start": 0,
+        "x": 932.34375,
+        "y": 271.375,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/5/4/text": [
+      {
+        "start": 0,
+        "x": 1023.34375,
+        "y": 271.375,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/5/6/text": [
+      {
+        "start": 0,
+        "x": 1114.34375,
+        "y": 271.375,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/5/8/text": [
+      {
+        "start": 0,
+        "x": 1205.34375,
+        "y": 271.375,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/6/0/text": [
+      {
+        "start": 0,
+        "x": 779,
+        "y": 287.671875,
+        "w": 15.59375,
+        "h": 17,
+        "slack": 71.40625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/6/7/text": [
+      {
+        "start": 0,
+        "x": 1159.84375,
+        "y": 287.671875,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/6/8/text": [
+      {
+        "start": 0,
+        "x": 1205.34375,
+        "y": 287.671875,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/7/0/text": [
+      {
+        "start": 0,
+        "x": 779,
+        "y": 303.96875,
+        "w": 15.59375,
+        "h": 17,
+        "slack": 71.40625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/7/8/text": [
+      {
+        "start": 0,
+        "x": 1205.34375,
+        "y": 303.96875,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/8/0/text": [
+      {
+        "start": 0,
+        "x": 779,
+        "y": 320.265625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 79.203125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/8/9/text": [
+      {
+        "start": 0,
+        "x": 1250.84375,
+        "y": 320.265625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/9/0/text": [
+      {
+        "start": 0,
+        "x": 779,
+        "y": 336.5625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 79.203125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/9/1/text": [
+      {
+        "start": 0,
+        "x": 886.84375,
+        "y": 336.5625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/9/10/text": [
+      {
+        "start": 0,
+        "x": 1296.34375,
+        "y": 336.5625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/9/2/text": [
+      {
+        "start": 0,
+        "x": 932.34375,
+        "y": 336.5625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/9/3/text": [
+      {
+        "start": 0,
+        "x": 977.84375,
+        "y": 336.5625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/9/4/text": [
+      {
+        "start": 0,
+        "x": 1023.34375,
+        "y": 336.5625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/9/5/text": [
+      {
+        "start": 0,
+        "x": 1068.84375,
+        "y": 336.5625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/9/6/text": [
+      {
+        "start": 0,
+        "x": 1114.34375,
+        "y": 336.5625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/9/7/text": [
+      {
+        "start": 0,
+        "x": 1159.84375,
+        "y": 336.5625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/9/8/text": [
+      {
+        "start": 0,
+        "x": 1205.34375,
+        "y": 336.5625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/9/9/text": [
+      {
+        "start": 0,
+        "x": 1250.84375,
+        "y": 336.5625,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/head/0/text": [
+      {
+        "start": 0,
+        "x": 791.296875,
+        "y": 173.59375,
+        "w": 62.40625,
+        "h": 17,
+        "slack": 24.59375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/head/1/text": [
+      {
+        "start": 0,
+        "x": 882.9375,
+        "y": 173.59375,
+        "w": 15.59375,
+        "h": 17,
+        "slack": 25.90625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/head/10/text": [
+      {
+        "start": 0,
+        "x": 1296.34375,
+        "y": 173.59375,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/head/2/text": [
+      {
+        "start": 0,
+        "x": 928.4375,
+        "y": 173.59375,
+        "w": 15.59375,
+        "h": 17,
+        "slack": 25.90625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/head/3/text": [
+      {
+        "start": 0,
+        "x": 973.9375,
+        "y": 173.59375,
+        "w": 15.59375,
+        "h": 17,
+        "slack": 25.90625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/head/4/text": [
+      {
+        "start": 0,
+        "x": 1019.4375,
+        "y": 173.59375,
+        "w": 15.59375,
+        "h": 17,
+        "slack": 25.90625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/head/5/text": [
+      {
+        "start": 0,
+        "x": 1061.046875,
+        "y": 173.59375,
+        "w": 23.40625,
+        "h": 17,
+        "slack": 18.09375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/head/6/text": [
+      {
+        "start": 0,
+        "x": 1106.546875,
+        "y": 173.59375,
+        "w": 23.40625,
+        "h": 17,
+        "slack": 18.09375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/head/7/text": [
+      {
+        "start": 0,
+        "x": 1155.9375,
+        "y": 173.59375,
+        "w": 15.59375,
+        "h": 17,
+        "slack": 25.90625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/head/8/text": [
+      {
+        "start": 0,
+        "x": 1201.4375,
+        "y": 173.59375,
+        "w": 15.59375,
+        "h": 17,
+        "slack": 25.90625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/committed/markup/0/table/head/9/text": [
+      {
+        "start": 0,
+        "x": 1250.84375,
+        "y": 173.59375,
+        "w": 7.796875,
+        "h": 17,
+        "slack": 33.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/paper/hint": [
+      {
+        "start": 0,
+        "x": 763,
+        "y": 530.953125,
+        "w": 343.171875,
+        "h": 14,
+        "slack": 230.828125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/doc/1/1/status": [
+      {
+        "start": 0,
+        "x": 759,
+        "y": 513.609375,
+        "w": 32.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/item-actions/title": [
+      {
+        "start": 0,
+        "x": 1316,
+        "y": 690.609375,
+        "w": 38,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log-empty": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 544,
+        "w": 96.125,
+        "h": 14,
+        "slack": 295.875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/open_build": [
+      {
+        "start": 0,
+        "x": 1249.734375,
+        "y": 718.609375,
+        "w": 28.109375,
+        "h": 15,
+        "slack": 1.890625,
+        "need": null
+      }
+    ]
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "version": 1,
+  "viewport": {
+    "w": 1366,
+    "h": 768
+  },
+  "boxes": {
+    "lunatic/tfs/action-anchor": {
+      "x": 478.09375,
+      "y": 690.609375,
+      "w": 875.90625,
+      "h": 53.390625
+    },
+    "lunatic/tfs/action-strip": {
+      "x": 478.09375,
+      "y": 690.609375,
+      "w": 875.90625,
+      "h": 53.390625
+    },
+    "lunatic/tfs/chat": {
+      "x": 57,
+      "y": 724,
+      "w": 367,
+      "h": 28
+    },
+    "lunatic/tfs/chat-history": {
+      "x": 346.59375,
+      "y": 511.5,
+      "w": 77.40625,
+      "h": 28
+    },
+    "lunatic/tfs/chat-pane": {
+      "x": 12,
+      "y": 506,
+      "w": 420,
+      "h": 250
+    },
+    "lunatic/tfs/chat-pane/body": {
+      "x": 20,
+      "y": 544,
+      "w": 404,
+      "h": 175
+    },
+    "lunatic/tfs/chat-pane/footer": {
+      "x": 20,
+      "y": 719,
+      "w": 404,
+      "h": 33
+    },
+    "lunatic/tfs/chat-pane/toolbar": {
+      "x": 20,
+      "y": 511,
+      "w": 404,
+      "h": 33
+    },
+    "lunatic/tfs/chat-tabs": {
+      "x": 20,
+      "y": 511,
+      "w": 243.203125,
+      "h": 29
+    },
+    "lunatic/tfs/chat-tabs/all": {
+      "x": 20,
+      "y": 511,
+      "w": 37.796875,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/local": {
+      "x": 59.796875,
+      "y": 511,
+      "w": 51,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/ooc": {
+      "x": 165.796875,
+      "y": 511,
+      "w": 37.796875,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/radio": {
+      "x": 112.796875,
+      "y": 511,
+      "w": 51,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/system": {
+      "x": 205.59375,
+      "y": 511,
+      "w": 57.59375,
+      "h": 28
+    },
+    "lunatic/tfs/composer-label": {
+      "x": 20,
+      "y": 730.3125,
+      "w": 33,
+      "h": 15.390625
+    },
+    "lunatic/tfs/gameplay": {
+      "x": 0,
+      "y": 0,
+      "w": 1366,
+      "h": 768
+    },
+    "lunatic/tfs/hud-comms": {
+      "x": 12,
+      "y": 18,
+      "w": 420,
+      "h": 738
+    },
+    "lunatic/tfs/hud-controls": {
+      "x": 1354,
+      "y": 756,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/hud-origin": {
+      "x": 478.09375,
+      "y": 690.609375,
+      "w": 875.90625,
+      "h": 65.390625
+    },
+    "lunatic/tfs/identity": {
+      "x": 1300.40625,
+      "y": 14,
+      "w": 51.59375,
+      "h": 15.390625
+    },
+    "lunatic/tfs/item-actions": {
+      "x": 1241.796875,
+      "y": 690.609375,
+      "w": 112.203125,
+      "h": 53.390625
+    },
+    "lunatic/tfs/item-actions/buttons": {
+      "x": 1241.796875,
+      "y": 710,
+      "w": 112.203125,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons#rows": {
+      "x": 1241.796875,
+      "y": 710,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons#toolbar": {
+      "x": 1289.796875,
+      "y": 710,
+      "w": 64.203125,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons/more": {
+      "x": 1289.796875,
+      "y": 710,
+      "w": 64.203125,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons/search": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/item-actions/title": {
+      "x": 1316,
+      "y": 690.609375,
+      "w": 38,
+      "h": 15.390625
+    },
+    "lunatic/tfs/log/2": {
+      "x": 20,
+      "y": 544,
+      "w": 392,
+      "h": 19.5
+    },
+    "lunatic/tfs/log/2/text": {
+      "x": 107.125,
+      "y": 544,
+      "w": 304.875,
+      "h": 19.5
+    },
+    "lunatic/tfs/log/2/who": {
+      "x": 20,
+      "y": 544,
+      "w": 82.125,
+      "h": 19.5
+    },
+    "lunatic/tfs/open_build": {
+      "x": 1241.796875,
+      "y": 710,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/open_build#earlier": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/open_build#pin": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/open_build#row": {
+      "x": 1241.796875,
+      "y": 710,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/status": {
+      "x": 1297.40625,
+      "y": 14,
+      "w": 54.59375,
+      "h": 15.390625
+    },
+    "lunatic/tfs/status-where": {
+      "x": 1297.40625,
+      "y": 14,
+      "w": 54.59375,
+      "h": 15.390625
+    },
+    "lunatic/tfs/target-block": {
+      "x": 1354,
+      "y": 756,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/target-meta": {
+      "x": 1354,
+      "y": 756,
+      "w": 0,
+      "h": 0
+    }
+  }
+}

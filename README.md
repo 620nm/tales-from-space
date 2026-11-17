@@ -118,6 +118,7 @@ to `target/gate/log/`, which the next run replaces.
 | `placeable` | Everything declared is offered in the map editor, and its art is in this pack's bake (`LUNATIC_WEB_ROOT`). |
 | `pack-ui-build` | `ui/` compiles against that engine's SDK, and every font `ui/fonts.json` declares is published in this pack's bake (`--web`). |
 | `pack-node` | `tools/test.mjs`: the theme and message lints and every `tools/test-*.mjs`. |
+| `ui-shots` | Every ordinary and staff fixture renders through GPUI and matches its recorded boxes and text lines; missing or incomplete geometry pairs, orphaned recordings and differences fail. |
 | `specs` | `tests/**/*_test.luau` through the engine's spec runner, including the actual boot/step assertions for focused map fixtures; its `--json` report proves each fixture was booted: every named spec ran once, passed, and lists the fixture in an untruncated `maps_loaded` (`tools/map-fixture-coverage.mjs`). |
 | `world-pointer`, `push-motion` | The fixtures in `tests/fixtures/`, driven in the real client against this pack's bake. |
 

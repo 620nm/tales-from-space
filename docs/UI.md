@@ -152,10 +152,15 @@ bake has not published. UI edits rebuild only the package; sprite composites
 use the baked atlas, so rebaking artwork does not require recompiling the
 engine. `ui_shot` draws a fixture, or every fixture under a directory, in the
 GPUI client with no browser and writes its image, geometry and tree to
-`--out`; `--steps` also keeps one frame after each input step. Pack-art shots require a baked
-delivered atlas; synthetic engine assets verify mechanism only. No gate lane
-draws this pack's fixtures. The engine's `docs/pack-ui/lab.md` owns fixture
-syntax and its `docs/pack-ui/windowless-shots.md` the `ui_shot` contract.
+`--out`; `--steps` also keeps one frame after each input step. Pack-art shots
+require a baked delivered atlas; synthetic engine assets verify mechanism only.
+The `ui-shots` gate draws every ordinary and staff fixture and compares its
+boxes and text lines with the GPUI recordings under each fixture root's
+`baselines/`; a missing or incomplete geometry pair, an orphaned recording or
+a geometry difference fails. Record a reviewed render by copying its PNG,
+`.rects.json` and `.lines.json` there. Pictures are review artifacts, never a
+pixel comparison. The engine's `docs/pack-ui/lab.md` owns fixture syntax and
+its `docs/pack-ui/windowless-shots.md` the `ui_shot` contract.
 
 From this checkout, `node tools/test.mjs <engine>` checks theme rules,
 localization and behavior, and renders every shipped fixture's tree through

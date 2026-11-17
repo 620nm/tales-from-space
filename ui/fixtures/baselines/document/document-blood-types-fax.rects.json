@@ -1,0 +1,1977 @@
+{
+  "version": 1,
+  "viewport": {
+    "w": 1366,
+    "h": 768
+  },
+  "boxes": {
+    "lunatic/tfs/action-anchor": {
+      "x": 478.09375,
+      "y": 690.609375,
+      "w": 875.90625,
+      "h": 53.390625
+    },
+    "lunatic/tfs/action-strip": {
+      "x": 478.09375,
+      "y": 690.609375,
+      "w": 875.90625,
+      "h": 53.390625
+    },
+    "lunatic/tfs/chat": {
+      "x": 57,
+      "y": 724,
+      "w": 367,
+      "h": 28
+    },
+    "lunatic/tfs/chat-history": {
+      "x": 346.59375,
+      "y": 511.5,
+      "w": 77.40625,
+      "h": 28
+    },
+    "lunatic/tfs/chat-pane": {
+      "x": 12,
+      "y": 506,
+      "w": 420,
+      "h": 250
+    },
+    "lunatic/tfs/chat-pane/body": {
+      "x": 20,
+      "y": 544,
+      "w": 404,
+      "h": 175
+    },
+    "lunatic/tfs/chat-pane/footer": {
+      "x": 20,
+      "y": 719,
+      "w": 404,
+      "h": 33
+    },
+    "lunatic/tfs/chat-pane/toolbar": {
+      "x": 20,
+      "y": 511,
+      "w": 404,
+      "h": 33
+    },
+    "lunatic/tfs/chat-tabs": {
+      "x": 20,
+      "y": 511,
+      "w": 243.203125,
+      "h": 29
+    },
+    "lunatic/tfs/chat-tabs/all": {
+      "x": 20,
+      "y": 511,
+      "w": 37.796875,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/local": {
+      "x": 59.796875,
+      "y": 511,
+      "w": 51,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/ooc": {
+      "x": 165.796875,
+      "y": 511,
+      "w": 37.796875,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/radio": {
+      "x": 112.796875,
+      "y": 511,
+      "w": 51,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/system": {
+      "x": 205.59375,
+      "y": 511,
+      "w": 57.59375,
+      "h": 28
+    },
+    "lunatic/tfs/composer-label": {
+      "x": 20,
+      "y": 730.3125,
+      "w": 33,
+      "h": 15.390625
+    },
+    "lunatic/tfs/doc/2/1": {
+      "x": 606,
+      "y": 22,
+      "w": 760,
+      "h": 520
+    },
+    "lunatic/tfs/doc/2/1#body": {
+      "x": 607,
+      "y": 62,
+      "w": 758,
+      "h": 479
+    },
+    "lunatic/tfs/doc/2/1#caret": {
+      "x": 1340.5,
+      "y": 542,
+      "w": 8,
+      "h": 4
+    },
+    "lunatic/tfs/doc/2/1#close": {
+      "x": 1328,
+      "y": 28,
+      "w": 28,
+      "h": 28
+    },
+    "lunatic/tfs/doc/2/1#grip-e": {
+      "x": 1357,
+      "y": 31,
+      "w": 8,
+      "h": 502
+    },
+    "lunatic/tfs/doc/2/1#grip-n": {
+      "x": 615,
+      "y": 23,
+      "w": 742,
+      "h": 8
+    },
+    "lunatic/tfs/doc/2/1#grip-ne": {
+      "x": 1357,
+      "y": 23,
+      "w": 8,
+      "h": 8
+    },
+    "lunatic/tfs/doc/2/1#grip-nw": {
+      "x": 607,
+      "y": 23,
+      "w": 8,
+      "h": 8
+    },
+    "lunatic/tfs/doc/2/1#grip-s": {
+      "x": 615,
+      "y": 533,
+      "w": 742,
+      "h": 8
+    },
+    "lunatic/tfs/doc/2/1#grip-se": {
+      "x": 1357,
+      "y": 533,
+      "w": 8,
+      "h": 8
+    },
+    "lunatic/tfs/doc/2/1#grip-sw": {
+      "x": 607,
+      "y": 533,
+      "w": 8,
+      "h": 8
+    },
+    "lunatic/tfs/doc/2/1#grip-w": {
+      "x": 607,
+      "y": 31,
+      "w": 8,
+      "h": 502
+    },
+    "lunatic/tfs/doc/2/1#label": {
+      "x": 616,
+      "y": 34.3125,
+      "w": 704,
+      "h": 15.390625
+    },
+    "lunatic/tfs/doc/2/1#title": {
+      "x": 607,
+      "y": 23,
+      "w": 758,
+      "h": 39
+    },
+    "lunatic/tfs/doc/2/1#window": {
+      "x": 606,
+      "y": 22,
+      "w": 760,
+      "h": 520
+    },
+    "lunatic/tfs/doc/2/1/body": {
+      "x": 607,
+      "y": 108,
+      "w": 758,
+      "h": 392.609375
+    },
+    "lunatic/tfs/doc/2/1/content": {
+      "x": 623,
+      "y": 191.1875,
+      "w": 714,
+      "h": 405.234375
+    },
+    "lunatic/tfs/doc/2/1/controls": {
+      "x": 623,
+      "y": 148.1875,
+      "w": 714,
+      "h": 37
+    },
+    "lunatic/tfs/doc/2/1/controls/advertise": {
+      "x": 623,
+      "y": 148.1875,
+      "w": 72.0625,
+      "h": 28
+    },
+    "lunatic/tfs/doc/2/1/controls/eject": {
+      "x": 1254.671875,
+      "y": 148.1875,
+      "w": 82.34375,
+      "h": 28
+    },
+    "lunatic/tfs/doc/2/1/controls/name": {
+      "x": 701.0625,
+      "y": 148.1875,
+      "w": 359.28125,
+      "h": 28
+    },
+    "lunatic/tfs/doc/2/1/controls/name/set": {
+      "x": 1066.328125,
+      "y": 148.1875,
+      "w": 71.328125,
+      "h": 28
+    },
+    "lunatic/tfs/doc/2/1/controls/paper": {
+      "x": 1202.46875,
+      "y": 154.5,
+      "w": 46.203125,
+      "h": 15.390625
+    },
+    "lunatic/tfs/doc/2/1/controls/toner": {
+      "x": 1143.671875,
+      "y": 154.5,
+      "w": 52.796875,
+      "h": 15.390625
+    },
+    "lunatic/tfs/doc/2/1/directory": {
+      "x": 623,
+      "y": 487.640625,
+      "w": 714,
+      "h": 72.78125
+    },
+    "lunatic/tfs/doc/2/1/directory-side": {
+      "x": 623,
+      "y": 487.640625,
+      "w": 714,
+      "h": 108.78125
+    },
+    "lunatic/tfs/doc/2/1/directory/empty": {
+      "x": 623,
+      "y": 507.03125,
+      "w": 714,
+      "h": 15.390625
+    },
+    "lunatic/tfs/doc/2/1/directory/nav": {
+      "x": 623,
+      "y": 526.421875,
+      "w": 714,
+      "h": 34
+    },
+    "lunatic/tfs/doc/2/1/directory/next": {
+      "x": 1301,
+      "y": 532.421875,
+      "w": 36,
+      "h": 28
+    },
+    "lunatic/tfs/doc/2/1/directory/page": {
+      "x": 953,
+      "y": 538.734375,
+      "w": 76,
+      "h": 15.390625
+    },
+    "lunatic/tfs/doc/2/1/directory/previous": {
+      "x": 623,
+      "y": 532.421875,
+      "w": 58,
+      "h": 28
+    },
+    "lunatic/tfs/doc/2/1/directory/title": {
+      "x": 623,
+      "y": 487.640625,
+      "w": 714,
+      "h": 15.390625
+    },
+    "lunatic/tfs/doc/2/1/document": {
+      "x": 607,
+      "y": 108,
+      "w": 746,
+      "h": 504.421875
+    },
+    "lunatic/tfs/doc/2/1/footer": {
+      "x": 607,
+      "y": 500.609375,
+      "w": 758,
+      "h": 40.390625
+    },
+    "lunatic/tfs/doc/2/1/heading": {
+      "x": 619,
+      "y": 74,
+      "w": 92.421875,
+      "h": 21
+    },
+    "lunatic/tfs/doc/2/1/identity": {
+      "x": 623,
+      "y": 124,
+      "w": 714,
+      "h": 18.1875
+    },
+    "lunatic/tfs/doc/2/1/identity/address": {
+      "x": 796.15625,
+      "y": 125.40625,
+      "w": 87.53125,
+      "h": 15.390625
+    },
+    "lunatic/tfs/doc/2/1/identity/name": {
+      "x": 895.6875,
+      "y": 125.40625,
+      "w": 89.953125,
+      "h": 15.390625
+    },
+    "lunatic/tfs/doc/2/1/identity/network": {
+      "x": 698.6875,
+      "y": 125.40625,
+      "w": 85.46875,
+      "h": 15.390625
+    },
+    "lunatic/tfs/doc/2/1/identity/power": {
+      "x": 623,
+      "y": 124,
+      "w": 63.6875,
+      "h": 18.1875
+    },
+    "lunatic/tfs/doc/2/1/loaded": {
+      "x": 623,
+      "y": 201.1875,
+      "w": 714,
+      "h": 276.453125
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup": {
+      "x": 635,
+      "y": 213.1875,
+      "w": 690,
+      "h": 252.453125
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/caption": {
+      "x": 635,
+      "y": 233.6875,
+      "w": 690,
+      "h": 12.09375
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/heading": {
+      "x": 635,
+      "y": 213.1875,
+      "w": 690,
+      "h": 16.5
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/paragraph/0": {
+      "x": 635,
+      "y": 433.046875,
+      "w": 690,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/paragraph/1": {
+      "x": 635,
+      "y": 451.34375,
+      "w": 690,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table": {
+      "x": 635,
+      "y": 249.78125,
+      "w": 690,
+      "h": 179.265625
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/0": {
+      "x": 635,
+      "y": 266.078125,
+      "w": 115,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/0/text": {
+      "x": 637,
+      "y": 267.078125,
+      "w": 111,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/1": {
+      "x": 750,
+      "y": 266.078125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/1/text": {
+      "x": 752,
+      "y": 267.078125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/10": {
+      "x": 1267.5,
+      "y": 273.234375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/10/text": {
+      "x": 1269.5,
+      "y": 274.234375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/2": {
+      "x": 807.5,
+      "y": 266.078125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/2/text": {
+      "x": 809.5,
+      "y": 267.078125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/3": {
+      "x": 865,
+      "y": 273.234375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/3/text": {
+      "x": 867,
+      "y": 274.234375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/4": {
+      "x": 922.5,
+      "y": 273.234375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/4/text": {
+      "x": 924.5,
+      "y": 274.234375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/5": {
+      "x": 980,
+      "y": 273.234375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/5/text": {
+      "x": 982,
+      "y": 274.234375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/6": {
+      "x": 1037.5,
+      "y": 273.234375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/6/text": {
+      "x": 1039.5,
+      "y": 274.234375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/7": {
+      "x": 1095,
+      "y": 266.078125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/7/text": {
+      "x": 1097,
+      "y": 267.078125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/8": {
+      "x": 1152.5,
+      "y": 266.078125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/8/text": {
+      "x": 1154.5,
+      "y": 267.078125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/9": {
+      "x": 1210,
+      "y": 273.234375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/0/9/text": {
+      "x": 1212,
+      "y": 274.234375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/0": {
+      "x": 635,
+      "y": 282.375,
+      "w": 115,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/0/text": {
+      "x": 637,
+      "y": 283.375,
+      "w": 111,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/1": {
+      "x": 750,
+      "y": 289.53125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/1/text": {
+      "x": 752,
+      "y": 290.53125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/10": {
+      "x": 1267.5,
+      "y": 289.53125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/10/text": {
+      "x": 1269.5,
+      "y": 290.53125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/2": {
+      "x": 807.5,
+      "y": 282.375,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/2/text": {
+      "x": 809.5,
+      "y": 283.375,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/3": {
+      "x": 865,
+      "y": 289.53125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/3/text": {
+      "x": 867,
+      "y": 290.53125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/4": {
+      "x": 922.5,
+      "y": 289.53125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/4/text": {
+      "x": 924.5,
+      "y": 290.53125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/5": {
+      "x": 980,
+      "y": 289.53125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/5/text": {
+      "x": 982,
+      "y": 290.53125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/6": {
+      "x": 1037.5,
+      "y": 289.53125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/6/text": {
+      "x": 1039.5,
+      "y": 290.53125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/7": {
+      "x": 1095,
+      "y": 289.53125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/7/text": {
+      "x": 1097,
+      "y": 290.53125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/8": {
+      "x": 1152.5,
+      "y": 282.375,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/8/text": {
+      "x": 1154.5,
+      "y": 283.375,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/9": {
+      "x": 1210,
+      "y": 289.53125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/1/9/text": {
+      "x": 1212,
+      "y": 290.53125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/0": {
+      "x": 635,
+      "y": 298.671875,
+      "w": 115,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/0/text": {
+      "x": 637,
+      "y": 299.671875,
+      "w": 111,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/1": {
+      "x": 750,
+      "y": 305.828125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/1/text": {
+      "x": 752,
+      "y": 306.828125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/10": {
+      "x": 1267.5,
+      "y": 305.828125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/10/text": {
+      "x": 1269.5,
+      "y": 306.828125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/2": {
+      "x": 807.5,
+      "y": 305.828125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/2/text": {
+      "x": 809.5,
+      "y": 306.828125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/3": {
+      "x": 865,
+      "y": 298.671875,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/3/text": {
+      "x": 867,
+      "y": 299.671875,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/4": {
+      "x": 922.5,
+      "y": 298.671875,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/4/text": {
+      "x": 924.5,
+      "y": 299.671875,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/5": {
+      "x": 980,
+      "y": 305.828125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/5/text": {
+      "x": 982,
+      "y": 306.828125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/6": {
+      "x": 1037.5,
+      "y": 305.828125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/6/text": {
+      "x": 1039.5,
+      "y": 306.828125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/7": {
+      "x": 1095,
+      "y": 298.671875,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/7/text": {
+      "x": 1097,
+      "y": 299.671875,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/8": {
+      "x": 1152.5,
+      "y": 298.671875,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/8/text": {
+      "x": 1154.5,
+      "y": 299.671875,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/9": {
+      "x": 1210,
+      "y": 305.828125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/2/9/text": {
+      "x": 1212,
+      "y": 306.828125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/0": {
+      "x": 635,
+      "y": 314.96875,
+      "w": 115,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/0/text": {
+      "x": 637,
+      "y": 315.96875,
+      "w": 111,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/1": {
+      "x": 750,
+      "y": 322.125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/1/text": {
+      "x": 752,
+      "y": 323.125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/10": {
+      "x": 1267.5,
+      "y": 322.125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/10/text": {
+      "x": 1269.5,
+      "y": 323.125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/2": {
+      "x": 807.5,
+      "y": 322.125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/2/text": {
+      "x": 809.5,
+      "y": 323.125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/3": {
+      "x": 865,
+      "y": 322.125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/3/text": {
+      "x": 867,
+      "y": 323.125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/4": {
+      "x": 922.5,
+      "y": 314.96875,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/4/text": {
+      "x": 924.5,
+      "y": 315.96875,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/5": {
+      "x": 980,
+      "y": 322.125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/5/text": {
+      "x": 982,
+      "y": 323.125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/6": {
+      "x": 1037.5,
+      "y": 322.125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/6/text": {
+      "x": 1039.5,
+      "y": 323.125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/7": {
+      "x": 1095,
+      "y": 322.125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/7/text": {
+      "x": 1097,
+      "y": 323.125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/8": {
+      "x": 1152.5,
+      "y": 314.96875,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/8/text": {
+      "x": 1154.5,
+      "y": 315.96875,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/9": {
+      "x": 1210,
+      "y": 322.125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/3/9/text": {
+      "x": 1212,
+      "y": 323.125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/0": {
+      "x": 635,
+      "y": 331.265625,
+      "w": 115,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/0/text": {
+      "x": 637,
+      "y": 332.265625,
+      "w": 111,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/1": {
+      "x": 750,
+      "y": 331.265625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/1/text": {
+      "x": 752,
+      "y": 332.265625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/10": {
+      "x": 1267.5,
+      "y": 338.421875,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/10/text": {
+      "x": 1269.5,
+      "y": 339.421875,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/2": {
+      "x": 807.5,
+      "y": 331.265625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/2/text": {
+      "x": 809.5,
+      "y": 332.265625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/3": {
+      "x": 865,
+      "y": 331.265625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/3/text": {
+      "x": 867,
+      "y": 332.265625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/4": {
+      "x": 922.5,
+      "y": 331.265625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/4/text": {
+      "x": 924.5,
+      "y": 332.265625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/5": {
+      "x": 980,
+      "y": 331.265625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/5/text": {
+      "x": 982,
+      "y": 332.265625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/6": {
+      "x": 1037.5,
+      "y": 331.265625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/6/text": {
+      "x": 1039.5,
+      "y": 332.265625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/7": {
+      "x": 1095,
+      "y": 331.265625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/7/text": {
+      "x": 1097,
+      "y": 332.265625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/8": {
+      "x": 1152.5,
+      "y": 331.265625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/8/text": {
+      "x": 1154.5,
+      "y": 332.265625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/9": {
+      "x": 1210,
+      "y": 338.421875,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/4/9/text": {
+      "x": 1212,
+      "y": 339.421875,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/0": {
+      "x": 635,
+      "y": 347.5625,
+      "w": 115,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/0/text": {
+      "x": 637,
+      "y": 348.5625,
+      "w": 111,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/1": {
+      "x": 750,
+      "y": 354.71875,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/1/text": {
+      "x": 752,
+      "y": 355.71875,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/10": {
+      "x": 1267.5,
+      "y": 354.71875,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/10/text": {
+      "x": 1269.5,
+      "y": 355.71875,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/2": {
+      "x": 807.5,
+      "y": 347.5625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/2/text": {
+      "x": 809.5,
+      "y": 348.5625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/3": {
+      "x": 865,
+      "y": 354.71875,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/3/text": {
+      "x": 867,
+      "y": 355.71875,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/4": {
+      "x": 922.5,
+      "y": 347.5625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/4/text": {
+      "x": 924.5,
+      "y": 348.5625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/5": {
+      "x": 980,
+      "y": 354.71875,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/5/text": {
+      "x": 982,
+      "y": 355.71875,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/6": {
+      "x": 1037.5,
+      "y": 347.5625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/6/text": {
+      "x": 1039.5,
+      "y": 348.5625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/7": {
+      "x": 1095,
+      "y": 354.71875,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/7/text": {
+      "x": 1097,
+      "y": 355.71875,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/8": {
+      "x": 1152.5,
+      "y": 347.5625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/8/text": {
+      "x": 1154.5,
+      "y": 348.5625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/9": {
+      "x": 1210,
+      "y": 354.71875,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/5/9/text": {
+      "x": 1212,
+      "y": 355.71875,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/0": {
+      "x": 635,
+      "y": 363.859375,
+      "w": 115,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/0/text": {
+      "x": 637,
+      "y": 364.859375,
+      "w": 111,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/1": {
+      "x": 750,
+      "y": 371.015625,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/1/text": {
+      "x": 752,
+      "y": 372.015625,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/10": {
+      "x": 1267.5,
+      "y": 371.015625,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/10/text": {
+      "x": 1269.5,
+      "y": 372.015625,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/2": {
+      "x": 807.5,
+      "y": 371.015625,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/2/text": {
+      "x": 809.5,
+      "y": 372.015625,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/3": {
+      "x": 865,
+      "y": 371.015625,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/3/text": {
+      "x": 867,
+      "y": 372.015625,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/4": {
+      "x": 922.5,
+      "y": 371.015625,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/4/text": {
+      "x": 924.5,
+      "y": 372.015625,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/5": {
+      "x": 980,
+      "y": 371.015625,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/5/text": {
+      "x": 982,
+      "y": 372.015625,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/6": {
+      "x": 1037.5,
+      "y": 371.015625,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/6/text": {
+      "x": 1039.5,
+      "y": 372.015625,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/7": {
+      "x": 1095,
+      "y": 363.859375,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/7/text": {
+      "x": 1097,
+      "y": 364.859375,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/8": {
+      "x": 1152.5,
+      "y": 363.859375,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/8/text": {
+      "x": 1154.5,
+      "y": 364.859375,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/9": {
+      "x": 1210,
+      "y": 371.015625,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/6/9/text": {
+      "x": 1212,
+      "y": 372.015625,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/0": {
+      "x": 635,
+      "y": 380.15625,
+      "w": 115,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/0/text": {
+      "x": 637,
+      "y": 381.15625,
+      "w": 111,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/1": {
+      "x": 750,
+      "y": 387.3125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/1/text": {
+      "x": 752,
+      "y": 388.3125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/10": {
+      "x": 1267.5,
+      "y": 387.3125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/10/text": {
+      "x": 1269.5,
+      "y": 388.3125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/2": {
+      "x": 807.5,
+      "y": 387.3125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/2/text": {
+      "x": 809.5,
+      "y": 388.3125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/3": {
+      "x": 865,
+      "y": 387.3125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/3/text": {
+      "x": 867,
+      "y": 388.3125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/4": {
+      "x": 922.5,
+      "y": 387.3125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/4/text": {
+      "x": 924.5,
+      "y": 388.3125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/5": {
+      "x": 980,
+      "y": 387.3125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/5/text": {
+      "x": 982,
+      "y": 388.3125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/6": {
+      "x": 1037.5,
+      "y": 387.3125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/6/text": {
+      "x": 1039.5,
+      "y": 388.3125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/7": {
+      "x": 1095,
+      "y": 387.3125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/7/text": {
+      "x": 1097,
+      "y": 388.3125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/8": {
+      "x": 1152.5,
+      "y": 380.15625,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/8/text": {
+      "x": 1154.5,
+      "y": 381.15625,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/9": {
+      "x": 1210,
+      "y": 387.3125,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/7/9/text": {
+      "x": 1212,
+      "y": 388.3125,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/0": {
+      "x": 635,
+      "y": 396.453125,
+      "w": 115,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/0/text": {
+      "x": 637,
+      "y": 397.453125,
+      "w": 111,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/1": {
+      "x": 750,
+      "y": 403.609375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/1/text": {
+      "x": 752,
+      "y": 404.609375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/10": {
+      "x": 1267.5,
+      "y": 403.609375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/10/text": {
+      "x": 1269.5,
+      "y": 404.609375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/2": {
+      "x": 807.5,
+      "y": 403.609375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/2/text": {
+      "x": 809.5,
+      "y": 404.609375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/3": {
+      "x": 865,
+      "y": 403.609375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/3/text": {
+      "x": 867,
+      "y": 404.609375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/4": {
+      "x": 922.5,
+      "y": 403.609375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/4/text": {
+      "x": 924.5,
+      "y": 404.609375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/5": {
+      "x": 980,
+      "y": 403.609375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/5/text": {
+      "x": 982,
+      "y": 404.609375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/6": {
+      "x": 1037.5,
+      "y": 403.609375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/6/text": {
+      "x": 1039.5,
+      "y": 404.609375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/7": {
+      "x": 1095,
+      "y": 403.609375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/7/text": {
+      "x": 1097,
+      "y": 404.609375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/8": {
+      "x": 1152.5,
+      "y": 403.609375,
+      "w": 57.5,
+      "h": 2
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/8/text": {
+      "x": 1154.5,
+      "y": 404.609375,
+      "w": 53.5,
+      "h": 0
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/9": {
+      "x": 1210,
+      "y": 396.453125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/8/9/text": {
+      "x": 1212,
+      "y": 397.453125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/0": {
+      "x": 635,
+      "y": 412.75,
+      "w": 115,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/0/text": {
+      "x": 637,
+      "y": 413.75,
+      "w": 111,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/1": {
+      "x": 750,
+      "y": 412.75,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/1/text": {
+      "x": 752,
+      "y": 413.75,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/10": {
+      "x": 1267.5,
+      "y": 412.75,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/10/text": {
+      "x": 1269.5,
+      "y": 413.75,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/2": {
+      "x": 807.5,
+      "y": 412.75,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/2/text": {
+      "x": 809.5,
+      "y": 413.75,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/3": {
+      "x": 865,
+      "y": 412.75,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/3/text": {
+      "x": 867,
+      "y": 413.75,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/4": {
+      "x": 922.5,
+      "y": 412.75,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/4/text": {
+      "x": 924.5,
+      "y": 413.75,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/5": {
+      "x": 980,
+      "y": 412.75,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/5/text": {
+      "x": 982,
+      "y": 413.75,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/6": {
+      "x": 1037.5,
+      "y": 412.75,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/6/text": {
+      "x": 1039.5,
+      "y": 413.75,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/7": {
+      "x": 1095,
+      "y": 412.75,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/7/text": {
+      "x": 1097,
+      "y": 413.75,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/8": {
+      "x": 1152.5,
+      "y": 412.75,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/8/text": {
+      "x": 1154.5,
+      "y": 413.75,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/9": {
+      "x": 1210,
+      "y": 412.75,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/9/9/text": {
+      "x": 1212,
+      "y": 413.75,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/0": {
+      "x": 635,
+      "y": 249.78125,
+      "w": 115,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/0/text": {
+      "x": 637,
+      "y": 250.78125,
+      "w": 111,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/1": {
+      "x": 750,
+      "y": 249.78125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/1/text": {
+      "x": 752,
+      "y": 250.78125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/10": {
+      "x": 1267.5,
+      "y": 249.78125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/10/text": {
+      "x": 1269.5,
+      "y": 250.78125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/2": {
+      "x": 807.5,
+      "y": 249.78125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/2/text": {
+      "x": 809.5,
+      "y": 250.78125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/3": {
+      "x": 865,
+      "y": 249.78125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/3/text": {
+      "x": 867,
+      "y": 250.78125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/4": {
+      "x": 922.5,
+      "y": 249.78125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/4/text": {
+      "x": 924.5,
+      "y": 250.78125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/5": {
+      "x": 980,
+      "y": 249.78125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/5/text": {
+      "x": 982,
+      "y": 250.78125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/6": {
+      "x": 1037.5,
+      "y": 249.78125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/6/text": {
+      "x": 1039.5,
+      "y": 250.78125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/7": {
+      "x": 1095,
+      "y": 249.78125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/7/text": {
+      "x": 1097,
+      "y": 250.78125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/8": {
+      "x": 1152.5,
+      "y": 249.78125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/8/text": {
+      "x": 1154.5,
+      "y": 250.78125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/9": {
+      "x": 1210,
+      "y": 249.78125,
+      "w": 57.5,
+      "h": 16.296875
+    },
+    "lunatic/tfs/doc/2/1/loaded/markup/0/table/head/9/text": {
+      "x": 1212,
+      "y": 250.78125,
+      "w": 53.5,
+      "h": 14.296875
+    },
+    "lunatic/tfs/doc/2/1/send": {
+      "x": 623,
+      "y": 568.421875,
+      "w": 714,
+      "h": 28
+    },
+    "lunatic/tfs/doc/2/1/status": {
+      "x": 619,
+      "y": 513.609375,
+      "w": 32.59375,
+      "h": 15.390625
+    },
+    "lunatic/tfs/doc/2/1/toolbar": {
+      "x": 607,
+      "y": 62,
+      "w": 758,
+      "h": 46
+    },
+    "lunatic/tfs/gameplay": {
+      "x": 0,
+      "y": 0,
+      "w": 1366,
+      "h": 768
+    },
+    "lunatic/tfs/hud-comms": {
+      "x": 12,
+      "y": 18,
+      "w": 420,
+      "h": 738
+    },
+    "lunatic/tfs/hud-controls": {
+      "x": 1354,
+      "y": 756,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/hud-origin": {
+      "x": 478.09375,
+      "y": 690.609375,
+      "w": 875.90625,
+      "h": 65.390625
+    },
+    "lunatic/tfs/identity": {
+      "x": 1340,
+      "y": 14,
+      "w": 12,
+      "h": 0
+    },
+    "lunatic/tfs/item-actions": {
+      "x": 1241.796875,
+      "y": 690.609375,
+      "w": 112.203125,
+      "h": 53.390625
+    },
+    "lunatic/tfs/item-actions/buttons": {
+      "x": 1241.796875,
+      "y": 710,
+      "w": 112.203125,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons#rows": {
+      "x": 1241.796875,
+      "y": 710,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons#toolbar": {
+      "x": 1289.796875,
+      "y": 710,
+      "w": 64.203125,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons/more": {
+      "x": 1289.796875,
+      "y": 710,
+      "w": 64.203125,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons/search": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/item-actions/title": {
+      "x": 1316,
+      "y": 690.609375,
+      "w": 38,
+      "h": 15.390625
+    },
+    "lunatic/tfs/log-empty": {
+      "x": 20,
+      "y": 544,
+      "w": 392,
+      "h": 15.390625
+    },
+    "lunatic/tfs/open_build": {
+      "x": 1241.796875,
+      "y": 710,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/open_build#earlier": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/open_build#pin": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/open_build#row": {
+      "x": 1241.796875,
+      "y": 710,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/status": {
+      "x": 1337,
+      "y": 14,
+      "w": 15,
+      "h": 0
+    },
+    "lunatic/tfs/status-where": {
+      "x": 1337,
+      "y": 14,
+      "w": 15,
+      "h": 0
+    },
+    "lunatic/tfs/target-block": {
+      "x": 1354,
+      "y": 756,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/target-meta": {
+      "x": 1354,
+      "y": 756,
+      "w": 0,
+      "h": 0
+    }
+  }
+}

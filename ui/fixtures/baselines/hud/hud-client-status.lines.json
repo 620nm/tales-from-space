@@ -1,0 +1,324 @@
+{
+  "version": 1,
+  "lines": {
+    "lunatic/tfs/chat-channel-label": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 730.3125,
+        "w": 46.203125,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-history": [
+      {
+        "start": 0,
+        "x": 263.28125,
+        "y": 550.3125,
+        "w": 59.40625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/all": [
+      {
+        "start": 0,
+        "x": 29,
+        "y": 517.3125,
+        "w": 19.796875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/local": [
+      {
+        "start": 0,
+        "x": 68.796875,
+        "y": 517.3125,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/ooc": [
+      {
+        "start": 0,
+        "x": 174.796875,
+        "y": 517.3125,
+        "w": 19.796875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/radio": [
+      {
+        "start": 0,
+        "x": 121.796875,
+        "y": 517.3125,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/system": [
+      {
+        "start": 0,
+        "x": 214.59375,
+        "y": 517.3125,
+        "w": 39.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/composer-label": [
+      {
+        "start": 0,
+        "x": 146.203125,
+        "y": 730.3125,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/drop/cap": [
+      {
+        "start": 0,
+        "x": 909.5,
+        "y": 740.0625,
+        "w": 26.40625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/drop/glyph": [
+      {
+        "start": 0,
+        "x": 919.40625,
+        "y": 725.765625,
+        "w": 6.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/equip": [
+      {
+        "start": 0,
+        "x": 856.890625,
+        "y": 590.609375,
+        "w": 31.90625,
+        "h": 15,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/hand/0/pick/label": [
+      {
+        "start": 0,
+        "x": 862.1875,
+        "y": 662,
+        "w": 39.59375,
+        "h": 14,
+        "slack": 8.40625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/hand/1/pick/label": [
+      {
+        "start": 0,
+        "x": 926.1875,
+        "y": 662,
+        "w": 39.59375,
+        "h": 14,
+        "slack": 8.40625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/identity": [
+      {
+        "start": 0,
+        "x": 871.40625,
+        "y": 14,
+        "w": 138.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/item-actions/title": [
+      {
+        "start": 0,
+        "x": 974,
+        "y": 562.609375,
+        "w": 38,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log-empty": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 576,
+        "w": 96.125,
+        "h": 14,
+        "slack": 203.546875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/open_build": [
+      {
+        "start": 0,
+        "x": 907.734375,
+        "y": 590.609375,
+        "w": 28.109375,
+        "h": 15,
+        "slack": 1.890625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/status-hold": [
+      {
+        "start": 0,
+        "x": 911,
+        "y": 32.390625,
+        "w": 99,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/status-line/7": [
+      {
+        "start": 0,
+        "x": 732.796875,
+        "y": 50.78125,
+        "w": 277.203125,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/status-line/8": [
+      {
+        "start": 0,
+        "x": 792.203125,
+        "y": 69.171875,
+        "w": 217.796875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/status-place/name": [
+      {
+        "start": 0,
+        "x": 775.796875,
+        "y": 14,
+        "w": 72.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/swap/cap": [
+      {
+        "start": 0,
+        "x": 861.359375,
+        "y": 740.0625,
+        "w": 26.40625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/swap/glyph": [
+      {
+        "start": 0,
+        "x": 871.265625,
+        "y": 725.765625,
+        "w": 6.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/throw_mode/cap": [
+      {
+        "start": 0,
+        "x": 957.640625,
+        "y": 740.0625,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/throw_mode/glyph": [
+      {
+        "start": 0,
+        "x": 970.828125,
+        "y": 725.765625,
+        "w": 6.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/use_other": [
+      {
+        "start": 0,
+        "x": 717.859375,
+        "y": 590.609375,
+        "w": 73.03125,
+        "h": 15,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/use_self": [
+      {
+        "start": 0,
+        "x": 812.75,
+        "y": 590.609375,
+        "w": 22.265625,
+        "h": 15,
+        "slack": 7.734375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/worn-toggle/cap": [
+      {
+        "start": 0,
+        "x": 664.796875,
+        "y": 740.203125,
+        "w": 30.40625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/worn-toggle/glyph": [
+      {
+        "start": 0,
+        "x": 674.59375,
+        "y": 716.609375,
+        "w": 10.796875,
+        "h": 23,
+        "slack": 0,
+        "need": null
+      }
+    ]
+  }
+}

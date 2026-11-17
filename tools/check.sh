@@ -585,13 +585,11 @@ ui_shot_skip() {
 }
 
 # Every disclosed-view fixture this pack ships, drawn windowless by the
-# engine's ui_shot through the real coordinator and guests: a guest
-# fault or a failed step expectation fails the lane. Recorded geometry
-# is compared where this pack has recorded it; ui_shot names each
-# fixture without a baseline on a `SKIP ui-shots: ` line, and the lane
-# counts them into one banner entry. Exit 3 is the tool's "no headless
-# GPU adapter" (the engine's docs/pack-ui/windowless-shots.md): the
-# lane reads `skip`, never `ok`.
+# engine's ui_shot through the real coordinator and guests: a guest fault,
+# failed step expectation, geometry difference, or missing, half or orphaned
+# baseline fails the lane. Exit 3 is the tool's "no headless GPU adapter"
+# (the engine's docs/pack-ui/windowless-shots.md): the lane reads `skip`,
+# never `ok`.
 ui_shots_check() {
   rm -rf "$GATE/ui-shots" "$GATE/ui-shots-staff"
   rm -f "$GATE/ui-shots-staff.out"
@@ -605,17 +603,11 @@ ui_shots_check() {
     [ "$rc" -eq 3 ] && return 0
     [ "$rc" -eq 0 ] || return "$rc"
   fi
-  unrecorded=$(cat "$GATE/ui-shots.out" "$GATE/ui-shots-staff.out" 2>/dev/null \
-    | grep -c '^SKIP ui-shots: ')
-  [ "$unrecorded" -eq 0 ] || printf '%s\n' \
-    "panel geometry of $unrecorded fixture(s) (no recorded baseline; named in ui-shots.log)" \
-    >> "$SKIPPED"
-  return 0
 }
 
 # ui_shot_pass FIXTURES OUT [ARGS...] -- one ui_shot check, its output
-# kept beside OUT for the skip count and echoed into the lane log. Exit
-# 3 declares the whole lane skipped and returns 3 for the caller to stop.
+# kept beside OUT and echoed into the lane log. Exit 3 declares the whole
+# lane skipped and returns 3 for the caller to stop.
 ui_shot_pass() {
   fixtures=$1
   out=$2
@@ -624,7 +616,7 @@ ui_shot_pass() {
   engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p lunatic-gui \
     --features shots --bin ui_shot -- \
     "$fixtures" --out "$out" --pack "$PACK" --web "$PACK_WEB" "$@" \
-    --check --allow-missing-baselines > "$out.out" 2>&1
+    --check > "$out.out" 2>&1
   rc=$?
   cat "$out.out"
   if [ "$rc" -eq 3 ]; then

@@ -1,0 +1,237 @@
+{
+  "version": 1,
+  "viewport": {
+    "w": 1600,
+    "h": 1000
+  },
+  "boxes": {
+    "lunatic/tfs/chat": {
+      "x": 57,
+      "y": 956,
+      "w": 367,
+      "h": 28
+    },
+    "lunatic/tfs/chat-history": {
+      "x": 346.59375,
+      "y": 743.5,
+      "w": 77.40625,
+      "h": 28
+    },
+    "lunatic/tfs/chat-pane": {
+      "x": 12,
+      "y": 738,
+      "w": 420,
+      "h": 250
+    },
+    "lunatic/tfs/chat-pane/body": {
+      "x": 20,
+      "y": 776,
+      "w": 404,
+      "h": 175
+    },
+    "lunatic/tfs/chat-pane/footer": {
+      "x": 20,
+      "y": 951,
+      "w": 404,
+      "h": 33
+    },
+    "lunatic/tfs/chat-pane/toolbar": {
+      "x": 20,
+      "y": 743,
+      "w": 404,
+      "h": 33
+    },
+    "lunatic/tfs/chat-tabs": {
+      "x": 20,
+      "y": 743,
+      "w": 243.203125,
+      "h": 29
+    },
+    "lunatic/tfs/chat-tabs/all": {
+      "x": 20,
+      "y": 743,
+      "w": 37.796875,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/local": {
+      "x": 59.796875,
+      "y": 743,
+      "w": 51,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/ooc": {
+      "x": 165.796875,
+      "y": 743,
+      "w": 37.796875,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/radio": {
+      "x": 112.796875,
+      "y": 743,
+      "w": 51,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/system": {
+      "x": 205.59375,
+      "y": 743,
+      "w": 57.59375,
+      "h": 28
+    },
+    "lunatic/tfs/composer-label": {
+      "x": 20,
+      "y": 962.3125,
+      "w": 33,
+      "h": 15.390625
+    },
+    "lunatic/tfs/gameplay": {
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 1000
+    },
+    "lunatic/tfs/hud-comms": {
+      "x": 12,
+      "y": 18,
+      "w": 420,
+      "h": 970
+    },
+    "lunatic/tfs/hud-controls": {
+      "x": 1588,
+      "y": 988,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/hud-origin": {
+      "x": 560,
+      "y": 988,
+      "w": 1028,
+      "h": 0
+    },
+    "lunatic/tfs/job/assistant": {
+      "x": 620,
+      "y": 475.921875,
+      "w": 348,
+      "h": 28.1875
+    },
+    "lunatic/tfs/job/assistant/box": {
+      "x": 619,
+      "y": 474.921875,
+      "w": 350,
+      "h": 30.1875
+    },
+    "lunatic/tfs/job/assistant/count": {
+      "x": 912.625,
+      "y": 482.3125,
+      "w": 46.375,
+      "h": 15.390625
+    },
+    "lunatic/tfs/job/assistant/name": {
+      "x": 629,
+      "y": 480.921875,
+      "w": 267.625,
+      "h": 18.1875
+    },
+    "lunatic/tfs/job/doctor": {
+      "x": 620,
+      "y": 544.296875,
+      "w": 348,
+      "h": 28.1875
+    },
+    "lunatic/tfs/job/doctor/box": {
+      "x": 619,
+      "y": 543.296875,
+      "w": 350,
+      "h": 30.1875
+    },
+    "lunatic/tfs/job/doctor/count": {
+      "x": 935.4375,
+      "y": 550.6875,
+      "w": 23.5625,
+      "h": 15.390625
+    },
+    "lunatic/tfs/job/doctor/name": {
+      "x": 629,
+      "y": 549.296875,
+      "w": 290.4375,
+      "h": 18.1875
+    },
+    "lunatic/tfs/job/engineer": {
+      "x": 620,
+      "y": 510.109375,
+      "w": 348,
+      "h": 28.1875
+    },
+    "lunatic/tfs/job/engineer/box": {
+      "x": 619,
+      "y": 509.109375,
+      "w": 350,
+      "h": 30.1875
+    },
+    "lunatic/tfs/job/engineer/count": {
+      "x": 937.578125,
+      "y": 516.5,
+      "w": 21.421875,
+      "h": 15.390625
+    },
+    "lunatic/tfs/job/engineer/name": {
+      "x": 629,
+      "y": 515.109375,
+      "w": 292.578125,
+      "h": 18.1875
+    },
+    "lunatic/tfs/lobby": {
+      "x": 610,
+      "y": 417.53125,
+      "w": 380,
+      "h": 164.953125
+    },
+    "lunatic/tfs/lobby-head": {
+      "x": 619,
+      "y": 426.53125,
+      "w": 362,
+      "h": 38.390625
+    },
+    "lunatic/tfs/lobby-hint": {
+      "x": 619,
+      "y": 449.53125,
+      "w": 362,
+      "h": 15.390625
+    },
+    "lunatic/tfs/lobby-jobs": {
+      "x": 619,
+      "y": 474.921875,
+      "w": 350,
+      "h": 98.5625
+    },
+    "lunatic/tfs/lobby-title": {
+      "x": 619,
+      "y": 426.53125,
+      "w": 362,
+      "h": 21
+    },
+    "lunatic/tfs/lobby/body": {
+      "x": 619,
+      "y": 474.921875,
+      "w": 362,
+      "h": 98.5625
+    },
+    "lunatic/tfs/lobby/toolbar": {
+      "x": 619,
+      "y": 426.53125,
+      "w": 362,
+      "h": 42.390625
+    },
+    "lunatic/tfs/log-empty": {
+      "x": 20,
+      "y": 776,
+      "w": 392,
+      "h": 15.390625
+    },
+    "lunatic/tfs/target-block": {
+      "x": 1588,
+      "y": 988,
+      "w": 0,
+      "h": 0
+    }
+  }
+}

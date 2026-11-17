@@ -1,0 +1,3274 @@
+{
+  "version": 1,
+  "lines": {
+    "lunatic/tfs/actions/tools/title": [
+      {
+        "start": 0,
+        "x": 1285.59375,
+        "y": 562.609375,
+        "w": 68.40625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-channel-label": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 730.3125,
+        "w": 46.203125,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-history": [
+      {
+        "start": 0,
+        "x": 355.59375,
+        "y": 347.8125,
+        "w": 59.40625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/all": [
+      {
+        "start": 0,
+        "x": 29,
+        "y": 347.3125,
+        "w": 19.796875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/local": [
+      {
+        "start": 0,
+        "x": 68.796875,
+        "y": 347.3125,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/ooc": [
+      {
+        "start": 0,
+        "x": 174.796875,
+        "y": 347.3125,
+        "w": 19.796875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/radio": [
+      {
+        "start": 0,
+        "x": 121.796875,
+        "y": 347.3125,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/chat-tabs/system": [
+      {
+        "start": 0,
+        "x": 214.59375,
+        "y": 347.3125,
+        "w": 39.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/composer-label": [
+      {
+        "start": 0,
+        "x": 146.203125,
+        "y": 730.3125,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/drop/cap": [
+      {
+        "start": 0,
+        "x": 1133.5,
+        "y": 740.0625,
+        "w": 26.40625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/drop/glyph": [
+      {
+        "start": 0,
+        "x": 1143.40625,
+        "y": 725.765625,
+        "w": 6.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/equip": [
+      {
+        "start": 0,
+        "x": 1122.484375,
+        "y": 590.609375,
+        "w": 31.90625,
+        "h": 15,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/hand/0/pick/label": [
+      {
+        "start": 0,
+        "x": 1086.1875,
+        "y": 662,
+        "w": 39.59375,
+        "h": 14,
+        "slack": 8.40625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/hand/1/pick/label": [
+      {
+        "start": 0,
+        "x": 1150.1875,
+        "y": 662,
+        "w": 39.59375,
+        "h": 14,
+        "slack": 8.40625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/identity": [
+      {
+        "start": 0,
+        "x": 1213.40625,
+        "y": 14,
+        "w": 138.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/1/close": [
+      {
+        "start": 0,
+        "x": 391.390625,
+        "y": 317.609375,
+        "w": 7.203125,
+        "h": 15,
+        "slack": 2.796875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/1/full": [
+      {
+        "start": 0,
+        "x": 33,
+        "y": 404.3125,
+        "w": 132,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/1/line/0/0": [
+      {
+        "start": 0,
+        "x": 24,
+        "y": 346,
+        "w": 307.578125,
+        "h": 16,
+        "slack": 77.421875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/1/line/1/0": [
+      {
+        "start": 0,
+        "x": 24,
+        "y": 368.5,
+        "w": 307.578125,
+        "h": 16,
+        "slack": 77.421875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/1/pin": [
+      {
+        "start": 0,
+        "x": 347.34375,
+        "y": 317.609375,
+        "w": 17.65625,
+        "h": 15,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/1/title": [
+      {
+        "start": 0,
+        "x": 55,
+        "y": 316.5,
+        "w": 163.65625,
+        "h": 19,
+        "slack": 112.6875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/2/close": [
+      {
+        "start": 0,
+        "x": 391.390625,
+        "y": 175.609375,
+        "w": 7.203125,
+        "h": 15,
+        "slack": 2.796875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/2/full": [
+      {
+        "start": 0,
+        "x": 33,
+        "y": 262.3125,
+        "w": 132,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/2/line/0/0": [
+      {
+        "start": 0,
+        "x": 24,
+        "y": 204,
+        "w": 307.578125,
+        "h": 16,
+        "slack": 77.421875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/2/line/1/0": [
+      {
+        "start": 0,
+        "x": 24,
+        "y": 226.5,
+        "w": 307.578125,
+        "h": 16,
+        "slack": 77.421875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/2/pin": [
+      {
+        "start": 0,
+        "x": 347.34375,
+        "y": 175.609375,
+        "w": 17.65625,
+        "h": 15,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/2/title": [
+      {
+        "start": 0,
+        "x": 55,
+        "y": 174.5,
+        "w": 166.640625,
+        "h": 19,
+        "slack": 109.703125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/3/close": [
+      {
+        "start": 0,
+        "x": 391.390625,
+        "y": 33.609375,
+        "w": 7.203125,
+        "h": 15,
+        "slack": 2.796875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/3/full": [
+      {
+        "start": 0,
+        "x": 33,
+        "y": 120.3125,
+        "w": 132,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/3/line/0/0": [
+      {
+        "start": 0,
+        "x": 24,
+        "y": 62,
+        "w": 307.578125,
+        "h": 16,
+        "slack": 77.421875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/3/line/1/0": [
+      {
+        "start": 0,
+        "x": 24,
+        "y": 84.5,
+        "w": 307.578125,
+        "h": 16,
+        "slack": 77.421875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/3/pin": [
+      {
+        "start": 0,
+        "x": 347.34375,
+        "y": 33.609375,
+        "w": 17.65625,
+        "h": 15,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspect/3/title": [
+      {
+        "start": 0,
+        "x": 55,
+        "y": 32.5,
+        "w": 166.875,
+        "h": 19,
+        "slack": 109.46875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/inspection-history": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 450.3125,
+        "w": 138.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/item-actions/title": [
+      {
+        "start": 0,
+        "x": 1239.59375,
+        "y": 562.609375,
+        "w": 38,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/0/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 375,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/0/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 399.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 419,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/0/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 375,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/1/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 438.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/1/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 463,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 482.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/1/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 438.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/10/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1010,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/10/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1034.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1054,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/10/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1010,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/11/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1073.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/11/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1098,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1117.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/11/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1073.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/12/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1137,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/12/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1161.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1181,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/12/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1137,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/13/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1200.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/13/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1225,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1244.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/13/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1200.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/14/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1264,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/14/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1288.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1308,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/14/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1264,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/15/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1327.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/15/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1352,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1371.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/15/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1327.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/16/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1391,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/16/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1415.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1435,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/16/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1391,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/17/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1454.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/17/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1479,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1498.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/17/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1454.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/18/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1518,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/18/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1542.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1562,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/18/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1518,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/19/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1581.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/19/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1606,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1625.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/19/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1581.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/2/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 502,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/2/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 526.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 546,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/2/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 502,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/20/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1645,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/20/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1669.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1689,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/20/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1645,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/21/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1708.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/21/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1733,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1752.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/21/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1708.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/22/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1772,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/22/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1796.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1816,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/22/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1772,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/23/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1835.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/23/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1860,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1879.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/23/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1835.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/24/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1899,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/24/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1923.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 1943,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/24/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1899,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/25/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1962.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/25/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 1987,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2006.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/25/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 1962.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/26/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2026,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/26/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2050.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2070,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/26/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2026,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/27/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2089.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/27/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2114,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2133.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/27/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2089.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/28/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2153,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/28/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2177.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2197,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/28/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2153,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/29/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2216.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/29/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2241,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2260.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/29/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2216.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/3/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 565.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/3/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 590,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 609.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/3/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 565.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/30/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2280,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/30/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2304.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2324,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/30/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2280,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/31/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2343.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/31/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2368,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2387.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/31/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2343.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/32/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2407,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/32/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2431.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2451,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/32/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2407,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/33/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2470.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/33/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2495,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2514.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/33/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2470.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/34/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2534,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/34/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2558.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2578,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/34/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2534,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/35/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2597.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/35/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2622,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2641.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/35/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2597.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/36/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2661,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/36/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2685.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2705,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/36/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2661,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/37/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2724.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/37/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2749,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2768.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/37/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2724.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/38/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2788,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/38/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2812.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2832,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/38/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2788,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/39/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2851.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/39/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2876,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2895.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/39/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2851.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/4/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 629,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/4/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 653.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 673,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/4/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 629,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/40/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2915,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/40/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2939.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 2959,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/40/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2915,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/41/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 2978.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/41/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3003,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3022.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/41/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 2978.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/42/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3042,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/42/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3066.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3086,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/42/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3042,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/43/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3105.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/43/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3130,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3149.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/43/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3105.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/44/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3169,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/44/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3193.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3213,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/44/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3169,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/45/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3232.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/45/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3257,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3276.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/45/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3232.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/46/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3296,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/46/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3320.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3340,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/46/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3296,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/47/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3359.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/47/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3384,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3403.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/47/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3359.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/48/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3423,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/48/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3447.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3467,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/48/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3423,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/49/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3486.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/49/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3511,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3530.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/49/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3486.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/5/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 692.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/5/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 717,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 736.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/5/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 692.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/50/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3550,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/50/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3574.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3594,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/50/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3550,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/51/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3613.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/51/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3638,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3657.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/51/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3613.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/52/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3677,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/52/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3701.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3721,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/52/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3677,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/53/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3740.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/53/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3765,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3784.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/53/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3740.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/54/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3804,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/54/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3828.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3848,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/54/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3804,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/55/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3867.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/55/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3892,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3911.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/55/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3867.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/56/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3931,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/56/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3955.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 3975,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/56/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3931,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/57/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 3994.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/57/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4019,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 4038.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/57/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 3994.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/58/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4058,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/58/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4082.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 4102,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/58/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 4058,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/59/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4121.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/59/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4146,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 4165.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/59/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 4121.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/6/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 756,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/6/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 780.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 800,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/6/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 756,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/60/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4185,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/60/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4209.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 4229,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/60/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 4185,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/61/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4248.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/61/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4273,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 4292.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/61/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 4248.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/62/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4312,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/62/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4336.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 4356,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/62/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 4312,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/63/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4375.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/63/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4400,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 4419.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/63/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 4375.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/64/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4439,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/64/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 4463.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 4483,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/64/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 4439,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/7/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 819.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/7/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 844,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 863.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/7/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 819.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/8/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 883,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/8/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 907.5,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 927,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/8/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 883,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/9/at": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 946.5,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/9/text": [
+      {
+        "start": 0,
+        "x": 20,
+        "y": 971,
+        "w": 391.5625,
+        "h": 16,
+        "slack": 0.4375,
+        "need": 43.234375
+      },
+      {
+        "start": 64,
+        "x": 20,
+        "y": 990.5,
+        "w": 186.6875,
+        "h": 16,
+        "slack": 205.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/log/9/who": [
+      {
+        "start": 0,
+        "x": 58,
+        "y": 946.5,
+        "w": 109.25,
+        "h": 16,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/open_build": [
+      {
+        "start": 0,
+        "x": 1173.34375,
+        "y": 590.609375,
+        "w": 28.109375,
+        "h": 15,
+        "slack": 1.890625,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/swap/cap": [
+      {
+        "start": 0,
+        "x": 1085.359375,
+        "y": 740.0625,
+        "w": 26.40625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/swap/glyph": [
+      {
+        "start": 0,
+        "x": 1095.265625,
+        "y": 725.765625,
+        "w": 6.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/target-status/dot": [
+      {
+        "start": 0,
+        "x": 1236,
+        "y": 724.21875,
+        "w": 7.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/throw_mode/cap": [
+      {
+        "start": 0,
+        "x": 1181.640625,
+        "y": 740.0625,
+        "w": 33,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/throw_mode/glyph": [
+      {
+        "start": 0,
+        "x": 1194.828125,
+        "y": 725.765625,
+        "w": 6.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/use_other": [
+      {
+        "start": 0,
+        "x": 983.46875,
+        "y": 590.609375,
+        "w": 73.03125,
+        "h": 15,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/use_self": [
+      {
+        "start": 0,
+        "x": 1078.34375,
+        "y": 590.609375,
+        "w": 22.265625,
+        "h": 15,
+        "slack": 7.734375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/vital/0/key": [
+      {
+        "start": 0,
+        "x": 1247.59375,
+        "y": 724.21875,
+        "w": 45.59375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/vital/0/value": [
+      {
+        "start": 0,
+        "x": 1297.203125,
+        "y": 724.21875,
+        "w": 22.796875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/vital/1/key": [
+      {
+        "start": 0,
+        "x": 1236,
+        "y": 740.609375,
+        "w": 60.796875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/vital/1/value": [
+      {
+        "start": 0,
+        "x": 1300.796875,
+        "y": 740.609375,
+        "w": 53.203125,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/worn-toggle/cap": [
+      {
+        "start": 0,
+        "x": 888.796875,
+        "y": 740.203125,
+        "w": 30.40625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/worn-toggle/glyph": [
+      {
+        "start": 0,
+        "x": 898.59375,
+        "y": 716.609375,
+        "w": 10.796875,
+        "h": 23,
+        "slack": 0,
+        "need": null
+      }
+    ]
+  }
+}
