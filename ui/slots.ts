@@ -9,7 +9,7 @@ const small = new Set(["id", "back", "belt"]);
 // A hand cell names itself in its top-left corner. The caption is the
 // SLOT, not what is in it, so it neither moves nor changes as items come
 // and go.
-const handCaption = { left: 5, top: 4, bottom: "auto" } as const;
+const handCaption = { position: "absolute", left: 5, right: 5, top: 4, bottom: "auto", width: "auto" } as const;
 
 export function hudSlot(id: string, opts: SlotOpts, slot = "", cls?: string): UiNode {
   const node = Slot(id, opts);

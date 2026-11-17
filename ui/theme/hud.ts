@@ -65,12 +65,15 @@ export const hudRules: UiStyleRule[] = [
   }),
   rule("slot-active-ring", { ...cover, pointerEvents: "none", zIndex: 5, border: edge(amber), backgroundColor: "transparent" }),
 
+  // A labeled cell contains the frame and selection ring layered over it.
+  rule("slot-cell", { position: "relative" }),
   // Two 60x61 hand cells share a row above their labeled controls.
   rule("hand-cluster", { gap: 4, marginLeft: 0, pointerEvents: "none" }),
   rule("hand-slot", {
     width: 60, height: 61, backgroundColor: alpha(titleFace, 0.9), border: none, borderRadius: 0,
     boxShadow: [{ x: 0, y: 0, blur: 0, spread: 2, color: surface, inset: true }],
   }),
+  rule("slot", { width: "100%", height: "100%" }, { within: "hand-slot" }),
   // A glyph over its word: each line box holds the face's whole ascent
   // and descent (mono runs past 1.2em), and the control is the two plus a gap.
   rule("hand-actions", { gap: 3, height: 32, pointerEvents: "none" }),
