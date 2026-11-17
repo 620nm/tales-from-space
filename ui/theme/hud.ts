@@ -83,6 +83,7 @@ export const hudRules: UiStyleRule[] = [
   rule("hand-action", { backgroundColor: alpha(face, 0.9) }, "hover"),
   rule("hand-action-on", { backgroundColor: alpha(amber, 0.3), outline: edge(amber) }),
   rule("hud-glyph", { fontFamily: "mono", fontSize: 11, lineHeight: 1.3, color: ink }),
+  rule("hud-mark-swap", { width: 16, height: 14, flexShrink: 0, imageRendering: "pixelated", pointerEvents: "none" }),
   rule("hud-cap", { fontFamily: "mono", fontSize: 11, lineHeight: 1.2, letterSpacing: 0, textTransform: "uppercase", color: ink }),
   // The transparent press stretched over a box that draws itself.
   rule("hud-hit", {
@@ -101,7 +102,7 @@ export const hudRules: UiStyleRule[] = [
     borderRadius: 0, overflow: "hidden",
   }),
   rule("worn-on", { backgroundColor: alpha(skyLine, 0.6), outline: edge(sky) }),
-  rule("worn-glyph", { fontFamily: "mono", fontSize: 18, lineHeight: 1.2, color: sky }),
+  rule("worn-mark", { width: 20, height: 20, flexShrink: 0, imageRendering: "pixelated", pointerEvents: "none" }),
   rule("worn-cap", { fontFamily: "mono", fontSize: 11, lineHeight: 1.2, letterSpacing: 1, textTransform: "uppercase", color: sky }),
 
   // The target figure: one atlas cell at twice its size, so a hand and a

@@ -18,7 +18,7 @@ export function inventory(view: GameplayView): UiNode | null {
     some(
       Stack("hands", handSquares(current), { gap: 4 }),
       row("hand-controls", [
-        glyphControl("swap", S.MARK_SWAP, S.SWAP, { kind: "swap" }),
+        glyphControl("swap", { asset: "ui_mark_swap", cls: "hud-mark-swap" }, S.SWAP, { kind: "swap" }),
         glyphControl("drop", S.MARK_DROP, S.DROP, { kind: "drop" }),
         glyphControl("throw_mode", S.MARK_THROW,
           view.state.throwing ? S.THROWING : S.THROW, { kind: "throw_mode" },
@@ -33,10 +33,18 @@ export function inventory(view: GameplayView): UiNode | null {
   );
 }
 
-/** A glyph over its word, with the press stretched across both. */
+interface AssetMark { asset: string; cls: string }
+
+function isAssetMark(glyph: unknown): glyph is AssetMark {
+  return typeof glyph === "object" && glyph !== null && "asset" in glyph;
+}
+
+/** A glyph or drawn mark over its word, with the press stretched across both. */
 function glyphControl(id: string, glyph: unknown, caption: unknown, action: Command, on = false): UiNode {
   return panel(`${id}/box`, some(
-    text(`${id}/glyph`, glyph, ["hud-glyph"]),
+    isAssetMark(glyph)
+      ? { id: `${id}/glyph`, type: "image", asset: glyph.asset, class: [glyph.cls] }
+      : text(`${id}/glyph`, glyph, ["hud-glyph"]),
     text(`${id}/cap`, caption, ["hud-cap"]),
     // The press is a bare hit box over a glyph and a word, so the word
     // is what it is read out as.
@@ -128,7 +136,7 @@ export function wornGroup(view: GameplayView, carry = false): UiNode | null {
 /** The one square in the grid that never moves and never holds an item. */
 function wornToggle(): UiNode {
   return panel("worn-toggle/box", some(
-    text("worn-toggle/glyph", S.MARK_WORN, ["worn-glyph"]),
+    { id: "worn-toggle/glyph", type: "image", asset: "ui_mark_worn", class: ["worn-mark"] },
     text("worn-toggle/cap", S.WORN, ["worn-cap"]),
     press("worn-toggle", "", () => { wornVisible = !wornVisible; return undefined; }, {
       // The lit edge belongs to the box, which wears `worn-on`; the press

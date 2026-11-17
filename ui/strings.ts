@@ -158,10 +158,8 @@ export const matterRow = (
 // The HUD's glyphs. A mark is as catalog-owned as a word: a script that
 // reads right to left may want another arrow (`ui.chrome.close_mark` is
 // the same rule).
-export const MARK_SWAP = tfs("ui.tray.mark_swap");
 export const MARK_DROP = tfs("ui.tray.mark_drop");
 export const MARK_THROW = tfs("ui.tray.mark_throw");
-export const MARK_WORN = tfs("ui.tray.mark_worn");
 export const MARK_STATUS = tfs("ui.tray.mark_status");
 export const ITEMS = tfs("ui.tray.items");
 
