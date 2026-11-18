@@ -1,0 +1,261 @@
+{
+  "version": 1,
+  "viewport": {
+    "w": 800,
+    "h": 500
+  },
+  "boxes": {
+    "lunatic/tfs/action-anchor": {
+      "x": 280,
+      "y": 422.609375,
+      "w": 508,
+      "h": 53.390625
+    },
+    "lunatic/tfs/action-strip": {
+      "x": 280,
+      "y": 422.609375,
+      "w": 508,
+      "h": 53.390625
+    },
+    "lunatic/tfs/chat": {
+      "x": 183.203125,
+      "y": 456,
+      "w": 140.796875,
+      "h": 28
+    },
+    "lunatic/tfs/chat-channel": {
+      "x": 70.203125,
+      "y": 456,
+      "w": 72,
+      "h": 28
+    },
+    "lunatic/tfs/chat-channel-label": {
+      "x": 20,
+      "y": 462.3125,
+      "w": 46.203125,
+      "h": 15.390625
+    },
+    "lunatic/tfs/chat-channel/option/0": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/chat-channel/option/1": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/chat-history": {
+      "x": 246.59375,
+      "y": 276,
+      "w": 77.40625,
+      "h": 28
+    },
+    "lunatic/tfs/chat-pane": {
+      "x": 12,
+      "y": 238,
+      "w": 320,
+      "h": 250
+    },
+    "lunatic/tfs/chat-pane/body": {
+      "x": 20,
+      "y": 308,
+      "w": 304,
+      "h": 143
+    },
+    "lunatic/tfs/chat-pane/footer": {
+      "x": 20,
+      "y": 451,
+      "w": 304,
+      "h": 33
+    },
+    "lunatic/tfs/chat-pane/toolbar": {
+      "x": 20,
+      "y": 243,
+      "w": 304,
+      "h": 65
+    },
+    "lunatic/tfs/chat-tabs": {
+      "x": 20,
+      "y": 243,
+      "w": 243.203125,
+      "h": 29
+    },
+    "lunatic/tfs/chat-tabs/all": {
+      "x": 20,
+      "y": 243,
+      "w": 37.796875,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/local": {
+      "x": 59.796875,
+      "y": 243,
+      "w": 51,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/ooc": {
+      "x": 165.796875,
+      "y": 243,
+      "w": 37.796875,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/radio": {
+      "x": 112.796875,
+      "y": 243,
+      "w": 51,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/system": {
+      "x": 205.59375,
+      "y": 243,
+      "w": 57.59375,
+      "h": 28
+    },
+    "lunatic/tfs/composer-label": {
+      "x": 146.203125,
+      "y": 462.3125,
+      "w": 33,
+      "h": 15.390625
+    },
+    "lunatic/tfs/gameplay": {
+      "x": 0,
+      "y": 0,
+      "w": 800,
+      "h": 500
+    },
+    "lunatic/tfs/hud-comms": {
+      "x": 12,
+      "y": 18,
+      "w": 320,
+      "h": 470
+    },
+    "lunatic/tfs/hud-controls": {
+      "x": 788,
+      "y": 488,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/hud-origin": {
+      "x": 280,
+      "y": 422.609375,
+      "w": 508,
+      "h": 65.390625
+    },
+    "lunatic/tfs/identity": {
+      "x": 675,
+      "y": 14,
+      "w": 111,
+      "h": 15.390625
+    },
+    "lunatic/tfs/item-actions": {
+      "x": 675.796875,
+      "y": 422.609375,
+      "w": 112.203125,
+      "h": 53.390625
+    },
+    "lunatic/tfs/item-actions/buttons": {
+      "x": 675.796875,
+      "y": 442,
+      "w": 112.203125,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons#rows": {
+      "x": 675.796875,
+      "y": 442,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons#toolbar": {
+      "x": 723.796875,
+      "y": 442,
+      "w": 64.203125,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons/more": {
+      "x": 723.796875,
+      "y": 442,
+      "w": 64.203125,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons/search": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/item-actions/title": {
+      "x": 750,
+      "y": 422.609375,
+      "w": 38,
+      "h": 15.390625
+    },
+    "lunatic/tfs/log-empty": {
+      "x": 20,
+      "y": 308,
+      "w": 292,
+      "h": 15.390625
+    },
+    "lunatic/tfs/open_build": {
+      "x": 675.796875,
+      "y": 442,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/open_build#earlier": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/open_build#pin": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/open_build#row": {
+      "x": 675.796875,
+      "y": 442,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/speech/1/7": {
+      "x": 316,
+      "y": 193,
+      "w": 168,
+      "h": 11
+    },
+    "lunatic/tfs/speech/1/7/text": {
+      "x": 347.5,
+      "y": 193,
+      "w": 105,
+      "h": 11
+    },
+    "lunatic/tfs/status": {
+      "x": 672,
+      "y": 14,
+      "w": 114,
+      "h": 15.390625
+    },
+    "lunatic/tfs/status-where": {
+      "x": 672,
+      "y": 14,
+      "w": 114,
+      "h": 15.390625
+    },
+    "lunatic/tfs/target-block": {
+      "x": 788,
+      "y": 488,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/target-meta": {
+      "x": 788,
+      "y": 488,
+      "w": 0,
+      "h": 0
+    }
+  }
+}

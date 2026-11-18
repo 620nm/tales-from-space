@@ -1,0 +1,20 @@
+{
+  "note": "Speech at 100ms: the pack's linear 200ms spawn is half opacity and halfway through its 8px rise; host expiry is unchanged.",
+  "viewport": { "width": 800, "height": 500, "dpr": 1 },
+  "timeMs": 100,
+  "anchors": { "1": { "x": 400, "y": 200 } },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": true,
+    "state": {
+      "identity": { "you": 1, "name": "Fixture speaker" },
+      "speech": [
+        { "id": 1, "sequence": 7, "name": "Speaker", "text": "Motion midpoint" }
+      ]
+    },
+    "documents": {},
+    "log": []
+  }
+}

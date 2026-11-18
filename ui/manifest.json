@@ -1,5 +1,6 @@
 {
   "styles": "theme.ts",
+  "motions": "motions.ts",
   "notifications": {
     "staff_contact": { "kind": "sound", "name": "bwoink" }
   },

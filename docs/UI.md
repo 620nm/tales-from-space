@@ -116,7 +116,7 @@ and Ready remain available for one follow-up click behind the name save.
 
 Every player-visible sentence names a catalog key; [WORDS.md](WORDS.md) owns
 the grammar. Inline style is placement only: position, edges, dimensions,
-grid tracks/cells and animation. Data colors use an explicit `theme-lint:
+grid tracks/cells and a named motion reference. Data colors use an explicit `theme-lint:
 allow` annotation. Every other look is a class in its theme sheet.
 
 The engine kit class vocabulary is reserved. Pack classes are grouped by

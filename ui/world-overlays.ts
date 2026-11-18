@@ -15,14 +15,10 @@ import * as S from "./strings";
 
 const bounded = (ms: number): number => Math.max(1, Math.min(3600000, ms));
 
-// tg CHAT_MESSAGE_SPAWN_TIME (0.2s) as this kit spells it: the words
-// fade up while they rise off the head. tg CHAT_MESSAGE_LIFESPAN is 5s
+// tg CHAT_MESSAGE_SPAWN_TIME (0.2s): the words fade linearly while rising
+// 8px (tgstation/code/datums/chatmessage.dm:293). CHAT_MESSAGE_LIFESPAN is 5s
 // and CHAT_MESSAGE_EOL_FADE the last 0.7s of it, which is exactly what
 // the host does to an expiring node — so the lifetime is the whole 5s.
-const SPAWN = [
-  { name: "fade-in" as const, ms: 200 },
-  { name: "rise" as const, ms: 200 },
-];
 const LIFESPAN = 5000;
 
 export function worldOverlays(view: GameplayView): UiNode[] {
@@ -64,7 +60,7 @@ export function worldOverlays(view: GameplayView): UiNode[] {
             ...(paint ? { color: paint } : {}),
           }),
         ),
-        { cls: ["rune"], style: { animation: SPAWN } },
+        { cls: ["rune"], style: { motion: { name: "speech-spawn" } } },
       ),
       anchor: String(speech.id),
       expires: LIFESPAN,

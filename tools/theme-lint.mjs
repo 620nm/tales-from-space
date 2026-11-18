@@ -4,9 +4,9 @@
 // A hex color lives in `ui/theme/tokens.ts` and nowhere else: every
 // other file draws with a token, so a repaint is one edit. An inline
 // `style` on a node says only where the node goes and how big it is —
-// position, offsets, size, grid placement, and the `animation` the host
-// composes its own fade over (docs/pack-ui/styles.md) — and never how
-// it looks: that belongs to a class in `ui/theme/`. A line that must
+// position, offsets, size, grid placement, and the named `motion` reference
+// (the engine's docs/pack-ui/motions.md) — and never how it looks: that
+// belongs to a class in `ui/theme/`. A line that must
 // carry a value from data (a substance's color, a heading's level)
 // says so with `theme-lint: allow` on its own line or the one before.
 //
@@ -22,7 +22,7 @@ const PLACEMENT = new Set([
   "position", "left", "top", "right", "bottom",
   "width", "height", "minWidth", "maxWidth", "minHeight", "maxHeight",
   "gridColumn", "gridRow", "gridTemplateColumns", "gridTemplateRows",
-  "animation",
+  "motion",
 ]);
 const HEX = /#[0-9a-fA-F]{3,8}\b/g;
 const ALLOW = /theme-lint:\s*allow/;
