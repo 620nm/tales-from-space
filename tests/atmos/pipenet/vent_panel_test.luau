@@ -31,15 +31,8 @@ local ONE_ATM = 101.325
 local FEEDS_UNDER = 101.325
 local EMPTIES_OVER = 109.431
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label: unknown): unknown
-    if type(label) ~= "table" then
-        return label
-    end
-    local record = ui_controls.record(label)
-    return record.id or record.text
-end
+-- Read plain wording or a public key from a typed UI label.
+local word = ui_controls.word
 
 local function near(a: number?, b: number?, slack: number, what: string)
     assert(a ~= nil and b ~= nil, what .. ": both readings are present")

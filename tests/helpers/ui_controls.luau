@@ -129,14 +129,16 @@ function controls.word(value: unknown): string
     if label.plain ~= nil then
         return controls.text(label.plain)
     end
-    return assert(controls.label_reference(value), "expected a plain or keyed UI label")
+    local reference = assert(controls.label_reference(value), "expected a plain or keyed UI label")
+    return reference
 end
 
 function controls.primary_label(player: number, target: SpecObservedTarget, key: string)
     local labels = {}
     for _, hint in ipairs(t.action_hints(player, target)) do
         if hint.gesture == "primary" and hint.group ~= "suggestion" then
-            table.insert(labels, assert(controls.label_reference(hint.label), "primary action is keyed"))
+            local label = assert(controls.label_reference(hint.label), "primary action is keyed")
+            table.insert(labels, label)
         end
     end
     assert(
@@ -216,7 +218,8 @@ function controls.find(p: number, suffix: string, scope: Scope?): Node?
 end
 
 function controls.node(p: number, suffix: string, scope: Scope?): Node
-    return assert(controls.find(p, suffix, scope), "missing rendered control: " .. suffix)
+    local node = assert(controls.find(p, suffix, scope), "missing rendered control: " .. suffix)
+    return node
 end
 
 function controls.press(p: number, suffix: string, gesture: string?, scope: Scope?): ()

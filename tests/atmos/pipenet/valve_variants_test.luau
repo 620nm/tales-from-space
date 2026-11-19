@@ -1,6 +1,5 @@
 local network_matter = require("@helpers/network_matter")
 local network_channels = require("@helpers/network_channels")
-local ui_controls = require("@helpers/ui_controls")
 
 -- The valve roster: the two layer-pinned wheels, and the digital twin.
 --

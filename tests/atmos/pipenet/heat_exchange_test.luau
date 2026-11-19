@@ -51,9 +51,8 @@ local function moles(kpa: number, m3: number)
     return kpa * 1000.0 * m3 / (8.314 * T20C)
 end
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local word = ui_controls.word
+-- Shelf labels are plain authored public names.
+local label_plain = ui_controls.label_plain
 
 local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
@@ -596,8 +595,14 @@ for _, rec in ipairs(ui_controls.rows(ui_controls.state(e).products)) do
 end
 assert(shelf.radiator_pipe, "the dispenser stocks a length of radiator pipe")
 assert(shelf.radiator_pipe.category == "Heat Exchange", "under tg's own heading")
-assert(shelf.radiator_pipe.label == "Pipe", "by tg's own word for it")
-assert(shelf.radiator_junction_fitting.label == "Junction", "and the junction beside it")
+assert(
+    label_plain(shelf.radiator_pipe.label) == "Pipe",
+    "by tg's own word for it"
+)
+assert(
+    label_plain(shelf.radiator_junction_fitting.label) == "Junction",
+    "and the junction beside it"
+)
 assert(shelf.radiator_junction_fitting.category == "Heat Exchange")
 assert(
     shelf.heat_exchanger_fitting.category == "Heat Exchange",
@@ -616,7 +621,7 @@ t.tick()
 local offered: { [string]: unknown } = {}
 for _, tog in ipairs(ui_controls.rows(ui_controls.state(e).toggles)) do
     if tog.field == RECIPE and tog.option ~= nil and tog.group == "Heat Exchange" then
-        offered[word(tog.label)] = tog.icon
+        offered[label_plain(tog.label)] = tog.icon
     end
 end
 assert(offered["Pipe"] == "radiator_pipe", "the shelf offers a length, with its own picture")

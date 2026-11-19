@@ -62,7 +62,9 @@ local function row(
     for _, r in ipairs(ui_controls.rows(ui.readouts)) do
         local actual = if kind == "structural"
             then ui_controls.label_reference(r.label, "structural")
-            else ui_controls.label_plain(r.label)
+            elseif ui_controls.label_reference(r.label) == nil
+            then ui_controls.label_plain(r.label)
+            else nil
         if actual == label then
             return r
         end
@@ -73,7 +75,8 @@ end
 local function rows_named(ui: ui_controls.Record, label: string)
     local n = 0
     for _, r in ipairs(ui_controls.rows(ui.readouts)) do
-        if ui_controls.label_plain(r.label) == label then
+        local reference = ui_controls.label_reference(r.label)
+        if reference == nil and ui_controls.label_plain(r.label) == label then
             n = n + 1
         end
     end
@@ -163,7 +166,8 @@ assert(rows_named(ui, "chest") == 2, "the open chest and the aimed one")
 local opened: ui_controls.Record? = nil
 local untouched: ui_controls.Record? = nil
 for _, r in ipairs(ui_controls.rows(ui.readouts)) do
-    if ui_controls.label_plain(r.label) == "chest" then
+    local reference = ui_controls.label_reference(r.label)
+    if reference == nil and ui_controls.label_plain(r.label) == "chest" then
         if has(ui_controls.label_plain(r.value), "skin_cut") then
             opened = r
         else
@@ -185,8 +189,28 @@ assert(
     "and the other is holding nothing: "
         .. tostring(untouched and ui_controls.label_plain(untouched.value))
 )
-local blood = row(ui, "procedure.blood", "structural")
-assert(blood ~= nil, "and how much blood is left to lose")
+-- Each patient's blood row follows its own heading. The cut chest bleeds;
+-- the untouched chest keeps the stable, volume-only reading.
+local blood_by_section: { [string]: ui_controls.Record } = {}
+local blood_count = 0
+for _, readout in ipairs(ui_controls.rows(ui.readouts)) do
+    if ui_controls.label_reference(readout.label, "structural") == "procedure.blood" then
+        local section = ui_controls.label_plain(readout.section)
+        assert(blood_by_section[section] == nil, "one blood row per patient")
+        blood_by_section[section] = readout
+        blood_count += 1
+    end
+end
+assert(blood_count == 2, "both patient blocks have blood rows: " .. blood_count)
+
+local bleeding_section = ui_controls.label_plain(assert(opened).section)
+local stable_section = ui_controls.label_plain(assert(untouched).section)
+local bleeding_blood = blood_by_section[bleeding_section]
+assert(bleeding_blood ~= nil, "the cut patient's blood row follows its heading")
+local stable_blood = blood_by_section[stable_section]
+assert(stable_blood ~= nil, "the untouched patient's blood row follows its heading")
+local stable_volume = ui_controls.label_plain(stable_blood.value)
+
 -- IN LITERS, and bleeding in milliliters a second. tg counts blood in
 -- bare units -- a number with no unit on it, which is only a scale if
 -- you already know it -- and a surgeon deciding whether to clamp is
@@ -194,13 +218,23 @@ assert(blood ~= nil, "and how much blood is left to lose")
 -- One row, two facts: `procedure.blood.bleeding` carries the volume and
 -- the rate as arguments, and a body that is not losing any carries the
 -- volume alone.
-local blood_value = ui_controls.record(blood.value)
+local blood_value = ui_controls.record(bleeding_blood.value)
 assert(
     ui_controls.label_reference(blood_value, "structural") == "procedure.blood.bleeding",
-    "the amount and bleed rate use the engine label"
+    "the bleeding patient carries both measurements in its structural label"
 )
 local volume = assert(ui_controls.label_argument(blood_value, "volume", "plain"))
-assert(volume:match("^%d+%.%d%d L") ~= nil, "the blood row is in liters: " .. tostring(volume))
+local function liters(reading: string): number
+    local digits = assert(reading:match("^(%d+%.%d%d) L$"), "expected liters: " .. reading)
+    return assert(tonumber(digits))
+end
+assert(liters(volume) < liters(stable_volume), "the cut patient has lost blood")
+local rate = assert(ui_controls.label_argument(blood_value, "rate", "plain"))
+local rate_value = tonumber(rate:match("^(%d+%.%d+) mL$"))
+assert(
+    rate_value ~= nil and rate_value > 0,
+    "the bleeding patient has a positive milliliter rate: " .. rate
+)
 -- Nothing is wrong with the head and nobody is aiming at it, so the head
 -- is not on the panel.
 assert(row(ui, "head", "plain") == nil, "a part with nothing wrong with it is not a row")

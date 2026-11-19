@@ -84,7 +84,10 @@ for _, row in ipairs(products) do
     local product = ui_controls.text(ui_controls.record(row.payload).product)
     local want = WANT[product]
     assert(want ~= nil, "the shelf stocks nothing undeclared: " .. tostring(product))
-    assert(row.label == want.name, product .. " is called " .. want.name)
+    assert(
+        ui_controls.label_plain(row.label) == want.name,
+        product .. " is called " .. want.name
+    )
     assert(row.category == want.category, product .. " is on the " .. want.category .. " shelf")
     assert(row.sprite ~= "missing", product .. " resolves to atlas art")
     assert(

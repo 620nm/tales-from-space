@@ -103,7 +103,10 @@ for i, want in ipairs(NANOMED) do
     local row = ui_controls.rows(ui.products)[i]
     local item = want.item
     assert(ui_controls.record(row.payload).product == item, "NanoMed row " .. i .. " is " .. item)
-    assert(row.label == want.label, item .. " has its shelf name")
+    assert(
+        ui_controls.label_plain(row.label) == want.label,
+        item .. " has its shelf name"
+    )
     assert(row.category == want.category, item .. " is under " .. want.category)
     assert(row.stock == want.stock, item .. " keeps its declared stock")
     assert(row.sprite ~= "missing", item .. " resolves to atlas art")
@@ -209,7 +212,8 @@ for i, want in ipairs(CHEMDROBE) do
     local row = ui_controls.rows(ui.products)[i]
     local item = want.item
     assert(
-        ui_controls.record(row.payload).product == item and row.label == want.label,
+        ui_controls.record(row.payload).product == item
+            and ui_controls.label_plain(row.label) == want.label,
         "ChemDrobe row " .. i .. " is " .. item
     )
     assert(

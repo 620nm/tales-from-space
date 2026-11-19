@@ -26,15 +26,8 @@ local ONE_ATM = 101.325
 local SUPPLIES_UNDER = ONE_ATM * 0.99
 -- tg's five piping layers as a bitmask; 4 is layer 3, the distro run.
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label: unknown): unknown
-    if type(label) ~= "table" then
-        return label
-    end
-    local record = ui_controls.record(label)
-    return record.id or record.text
-end
+-- RPD shelf labels are plain authored public names.
+local label_plain = ui_controls.label_plain
 
 local function said(p: number, line: string)
     for _, m in ipairs(t.messages(p)) do
@@ -64,7 +57,7 @@ local RECIPE = "dial1"
 
 local function pick(p: number, label: string): string
     for _, tog in ipairs(ui_controls.rows(ui_controls.state(p).toggles)) do
-        if tog.field == RECIPE and tog.option ~= nil and word(tog.label) == label then
+        if tog.field == RECIPE and tog.option ~= nil and label_plain(tog.label) == label then
             assert(type(tog.option) == "string", "a fitting button names its option")
             return tog.option
         end

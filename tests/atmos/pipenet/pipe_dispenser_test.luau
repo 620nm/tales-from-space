@@ -8,6 +8,7 @@
 -- handouts, and it swallows what it handed out.
 
 local ui_controls = require("@helpers/ui_controls")
+local label_plain = ui_controls.label_plain
 
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
@@ -92,19 +93,31 @@ end
 assert(cats.Pipes and cats.Binary and cats.Devices, "three of tg's four categories")
 assert(cats["Heat Exchange"], "and the fourth, now that a plate lives on it")
 assert(shelf.pump_fitting.category == "Binary", "a pump is binary")
-assert(shelf.pump_fitting.label == "Pump", "listed by the MACHINE's name")
+assert(label_plain(shelf.pump_fitting.label) == "Pump", "listed by the MACHINE's name")
 assert(shelf.pipe_meter.category == "Devices", "the meter is a device")
 assert(shelf.mixer_flipped_fitting, "both mirror images are on the shelf")
 assert(shelf.pipe.category == "Pipes", "and plain pipe leads")
 -- The two vents, which are the commonest thing an engineer comes here
 -- for: every room the crew stands in wants one, and both are ordinary
 -- fittings you carry away and bolt down.
-assert(shelf.vent_fitting.label == "Air Vent", "a vent is stocked like any other machine")
+assert(
+    label_plain(shelf.vent_fitting.label) == "Air Vent",
+    "a vent is stocked like any other machine"
+)
 assert(shelf.vent_fitting.category == "Devices", "on the shelf with the other room devices")
-assert(shelf.passive_vent_fitting.label == "Passive Vent", "and so is its unpowered twin")
-assert(shelf.floor_drain_fitting.label == "Floor Drain", "the deck's plumbing is on it too")
-assert(shelf.scupper_fitting.label == "Scupper", "and the fitting that hangs on a wall")
-assert(shelf.sump_pump_fitting.label == "Sump Pump", "and the powered one")
+assert(
+    label_plain(shelf.passive_vent_fitting.label) == "Passive Vent",
+    "and so is its unpowered twin"
+)
+assert(
+    label_plain(shelf.floor_drain_fitting.label) == "Floor Drain",
+    "the deck's plumbing is on it too"
+)
+assert(
+    label_plain(shelf.scupper_fitting.label) == "Scupper",
+    "and the fitting that hangs on a wall"
+)
+assert(label_plain(shelf.sump_pump_fitting.label) == "Sump Pump", "and the powered one")
 assert(shelf.cola == nil, "a pipe dispenser sells no softdrinks")
 
 -- ---- it dispenses onto its OWN tile, free ----

@@ -186,12 +186,15 @@ t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "programming_terminal")))
 t.tick()
 local ui = record(assert(t.ui(p), "a bare-handed click opens the terminal's window"))
 assert(ui.presentation == "panes", "the files module is the panes one")
-assert(record(ui.media_slot).id == "files.media.loaded", "and it knows there is a disk in it")
+assert(
+    ui_controls.label_reference(ui.media_slot, "structural") == "files.media.loaded",
+    "and it knows there is a disk in it"
+)
 
 local stores = rows(ui.stores)
 assert(#stores == 2, "two stores in reach: " .. #stores)
 assert(
-    stores[1].key == "host" and ui_controls.word(stores[1].label) == "programming terminal",
+    stores[1].key == "host" and ui_controls.label_plain(stores[1].label) == "programming terminal",
     "the host store comes first, under the machine's own name"
 )
 assert(
@@ -199,7 +202,7 @@ assert(
     "the terminal is scratch space: " .. number(stores[1].capacity)
 )
 assert(
-    stores[2].key == "media" and ui_controls.word(stores[2].label) == "floppy disk",
+    stores[2].key == "media" and ui_controls.label_plain(stores[2].label) == "floppy disk",
     "the medium is the second store, under its own name"
 )
 -- The two numbers this pack's fiction is actually about: a
@@ -382,7 +385,10 @@ local eject_control = ui_controls.node(p, "/drive/media/eject").id
 ui_controls.press(p, "/drive/media/eject")
 t.tick()
 ui = ui_controls.state(p)
-assert(record(ui.media_slot).id == "files.media.empty", "the slot is empty")
+assert(
+    ui_controls.label_reference(ui.media_slot, "structural") == "files.media.empty",
+    "the slot is empty"
+)
 assert(#rows(ui.stores) == 1, "and the disk's store left with it")
 assert(
     not has(listing(ui), "media:tank_room.md"),
@@ -449,7 +455,7 @@ t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "programming_terminal")))
 t.tick()
 ui = ui_controls.state(p)
 assert(
-    record(ui.media_slot).id ~= "files.media.empty",
+    ui_controls.label_reference(ui.media_slot, "structural") == "files.media.loaded",
     "the mounted Strange Disk is present in the opened panel"
 )
 local strange_files: { ui_controls.Record } = {}
@@ -512,7 +518,10 @@ t.tick()
 t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "programming_terminal")))
 t.tick()
 ui = ui_controls.state(p)
-assert(record(ui.media_slot).id ~= "files.media.empty", "the second site's disk docks")
+assert(
+    ui_controls.label_reference(ui.media_slot, "structural") == "files.media.loaded",
+    "the second site's disk docks"
+)
 local second_disk_files: { ui_controls.Record } = {}
 for _, row in ipairs(rows(ui.files)) do
     if row.store == "media" then

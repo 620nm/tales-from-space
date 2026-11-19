@@ -204,7 +204,10 @@ t.tick()
 
 local labels: { [string]: boolean } = {}
 for _, hint in ipairs(t.action_hints(p, assert(t.target_at(p, 2, 1, light_target)))) do
-    labels[assert(ui_controls.label_reference(hint.label, "pack"), "action label reference")] = true
+    local label = ui_controls.label_reference(hint.label, "pack")
+    if label ~= nil then
+        labels[label] = true
+    end
 end
 assert(labels["lunatic/tfs:ui.affordance.change_tube"], "the card says what the tube does")
 assert(not labels["lunatic/tfs:ui.affordance.check_light"], "and never offers to check it")

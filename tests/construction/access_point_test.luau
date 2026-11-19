@@ -387,8 +387,10 @@ assert(#denials == 1 and denials[1].why == "access", "the refusal names the rule
 -- ...and the presser is told, in a modal over the lock screen, until OK.
 assert(
     panel.refusal
-        and ui_controls.record(ui_controls.record(panel.refusal).text).id
-            == "link.access_denied",
+        and ui_controls.label_reference(
+            ui_controls.record(panel.refusal).text,
+            "structural"
+        ) == "link.access_denied",
     "the refusal rides the presser's window"
 )
 local scope = t.ui_document(eng, "programming")
