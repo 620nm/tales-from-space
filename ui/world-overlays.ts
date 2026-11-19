@@ -15,10 +15,11 @@ import * as S from "./strings";
 
 const bounded = (ms: number): number => Math.max(1, Math.min(3600000, ms));
 
-// tg CHAT_MESSAGE_SPAWN_TIME (0.2s): the words fade linearly while rising
-// 8px (tgstation/code/datums/chatmessage.dm:293). CHAT_MESSAGE_LIFESPAN is 5s
-// and CHAT_MESSAGE_EOL_FADE the last 0.7s of it, which is exactly what
-// the host does to an expiring node — so the lifetime is the whole 5s.
+// tg CHAT_MESSAGE_SPAWN_TIME (0.2s) fades linearly
+// (tgstation/code/datums/chatmessage.dm:293); this pack pairs that fade with
+// its own 8px rise. tg CHAT_MESSAGE_LIFESPAN is 5s and CHAT_MESSAGE_EOL_FADE
+// the last 0.7s of it, which is exactly what the host does to an expiring node
+// — so the lifetime is the whole 5s.
 const LIFESPAN = 5000;
 
 export function worldOverlays(view: GameplayView): UiNode[] {
