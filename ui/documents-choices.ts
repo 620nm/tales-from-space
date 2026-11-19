@@ -2,11 +2,11 @@
 // and ends the block before it; toggles sharing a `field` and a `group`
 // are one block of choices, which is how the server says "these are
 // positions of one selector" (docs/tgui/documents.md).
-import type { ChoiceOpts, UiNode } from "@lunatic/ui";
+import type { ChoiceOpts, UiLabel, UiNode } from "@lunatic/ui";
 import { Choice, ChoiceGrid } from "@lunatic/ui";
 import type { DocumentIdentity, Subject, Toggle } from "./document-model";
 import { documentAction } from "./document-action";
-import { labelId, labelText, type Label } from "./labels";
+import { renderLabel, structuralLabelId } from "./labels";
 import { tfs } from "./strings";
 import { bind, row, text } from "./view";
 
@@ -19,17 +19,17 @@ const CARD_MIN = 248;
  *  diagnosis (`link.state.*`), or gone once the forest forgot it. A node
  *  merely not joined (`unbound`) is neither good nor bad news: no tone. */
 export function subjectBadge(subject: Subject): Badge {
-  const text = subject.state == null ? tfs("ui.device.gone") : labelText(subject.state);
-  if (labelId(subject.state) === "link.state.unbound") return { text };
+  const text = subject.state == null ? tfs("ui.device.gone") : renderLabel(subject.state);
+  if (structuralLabelId(subject.state) === "link.state.unbound") return { text };
   return { text, tone: subject.online ? "on" : "off" };
 }
 
 /** A row about another node as a two-line card: its name and sprite over
  *  its address (or `detail`) and `badge` (engine `subject`). */
-export function subjectCard(subject: Subject, fallback: Label, detail?: string,
+export function subjectCard(subject: Subject, fallback: UiLabel, detail?: string,
   badge: Badge = subjectBadge(subject)): Pick<ChoiceOpts, "label" | "sprite" | "detail" | "badge"> {
   return {
-    label: subject.name || labelText(fallback),
+    label: subject.name || renderLabel(fallback),
     ...(subject.sprite ? { sprite: subject.sprite } : {}),
     detail: detail ?? subject.address,
     badge,
@@ -39,14 +39,13 @@ export function subjectCard(subject: Subject, fallback: Label, detail?: string,
 /** A joinable row's detail is its own label, the address with the kind
  *  of node it is; a member's is its bare address. */
 const cardDetail = (toggle: Toggle): string | undefined =>
-  labelId(toggle.label)?.startsWith("link.candidate.") ? labelText(toggle.label) : undefined;
+  structuralLabelId(toggle.label)?.startsWith("link.candidate.") ? renderLabel(toggle.label) : undefined;
 
-/** A row the server drew without a press to take: the reason it names,
- *  in the badge, toned off. Undefined for an ordinary control, and the
- *  bare id for a reason this pack has no word for. */
+/** A row the server drew without a press to take, with its disclosed
+ *  reason in an off badge. Absent on every ordinary control. */
 export function unavailableBadge(toggle: Toggle): Badge | undefined {
   if (!toggle.unavailable) return undefined;
-  return { text: labelText({ id: toggle.unavailable }), tone: "off" };
+  return { text: renderLabel(toggle.unavailable), tone: "off" };
 }
 
 /** Such a card also LOOKS unavailable, which its own class paints: a
@@ -70,17 +69,18 @@ function switchRow(
   toggle: Toggle,
   active: boolean,
 ): UiNode {
-  const word = labelText(toggle.on ? toggle.on_text : toggle.off_text);
+  const word = renderLabel(toggle.on ? toggle.on_text : toggle.off_text);
   const blocked = unavailableBadge(toggle);
   return row(
     `${id}/box`,
     [
-      text(`${id}/label`, labelText(toggle.label), ["grow", "list-label"]),
+      text(`${id}/label`, renderLabel(toggle.label), ["grow", "list-label"]),
       ...(blocked ? [text(`${id}/unavailable`, blocked.text, ["hint"])] : []),
       {
         id,
         type: "button",
         text: word,
+        label: word,
         class: ["btn", toggle.on ? "btn-selected" : "btn-default"],
         ...(blocked ? {} : { event: bind(id, toggleAction(doc, toggle)) }),
         ...(active && !blocked ? {} : { disabled: true }),
@@ -119,7 +119,7 @@ export function toggleRows(
       out.push(switchRow(key, doc, toggle, active));
       continue;
     }
-    const group = labelText(toggle.group);
+    const group = toggle.group ?? "";
     const blockKey = `${toggle.field} ${group}`;
     if (!open || open.key !== blockKey) {
       if (group) out.push(text(`${key}/group`, group, ["section-title"]));
@@ -130,7 +130,7 @@ export function toggleRows(
     const blocked = unavailableBadge(toggle);
     open.choices.push(grayedCard(
       Choice(key, {
-        label: labelText(toggle.label),
+        label: renderLabel(toggle.label),
         ...(toggle.icon ? { sprite: toggle.icon } : {}),
         ...(toggle.color ? { color: toggle.color } : {}),
         ...(toggle.subject

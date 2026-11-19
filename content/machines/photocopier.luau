@@ -3,6 +3,8 @@
 -- tg code/modules/paperwork/photocopier.dm:60-65, :140-152, :281-379.
 local printing = require("@lib/printing")
 
+local ui_label = require("@lib/ui_label")
+
 return {
     id = "photocopier",
     entity_class = "installed",
@@ -23,10 +25,10 @@ return {
         modules = { "actions" },
         opens_on_click = false,
         actions = {
-            { key = "copy", label = "lunatic/tfs:action.photocopier.copy" },
-            { key = "eject", label = "lunatic/tfs:action.photocopier.eject" },
-            { key = "set_count", label = "lunatic/tfs:action.photocopier.set_count" },
-            { key = "set_color", label = "lunatic/tfs:action.photocopier.set_color" },
+            { key = "copy", label = ui_label.pack("lunatic/tfs:action.photocopier.copy") },
+            { key = "eject", label = ui_label.pack("lunatic/tfs:action.photocopier.eject") },
+            { key = "set_count", label = ui_label.pack("lunatic/tfs:action.photocopier.set_count") },
+            { key = "set_color", label = ui_label.pack("lunatic/tfs:action.photocopier.set_color") },
         },
     },
     script = "photocopier",

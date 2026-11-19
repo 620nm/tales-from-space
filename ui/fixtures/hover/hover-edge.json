@@ -178,18 +178,12 @@
         "kind": "item",
         "name": "Exposed component",
         "appearance": "hover",
-        "name_label": {
-          "key": "lunatic/tfs:entity.machine_frame.name",
-          "args": {}
-        },
+        "name_label": {"keyed": {"reference": {"pack": "lunatic/tfs:entity.machine_frame.name"}, "args": []}},
         "actions": [
           {
             "id": "face",
             "gesture": "primary",
-            "label": {
-              "key": "lunatic/tfs:ui.look.face",
-              "args": {}
-            },
+            "label": {"keyed": {"reference": {"pack": "lunatic/tfs:ui.look.face"}, "args": []}},
             "available": true,
             "group": "action",
             "implement": null,
@@ -200,10 +194,7 @@
           {
             "id": "self",
             "gesture": "self",
-            "label": {
-              "key": "lunatic/tfs:ui.affordance.view_interface",
-              "args": {}
-            },
+            "label": {"keyed": {"reference": {"pack": "lunatic/tfs:ui.affordance.view_interface"}, "args": []}},
             "available": true,
             "group": "action",
             "implement": null,
@@ -214,10 +205,7 @@
           {
             "id": "examine",
             "gesture": "shift_primary",
-            "label": {
-              "key": "lunatic/tfs:ui.look.examine",
-              "args": {}
-            },
+            "label": {"keyed": {"reference": {"pack": "lunatic/tfs:ui.look.examine"}, "args": []}},
             "available": true,
             "group": "action",
             "implement": null,
@@ -228,51 +216,33 @@
           {
             "id": "range",
             "gesture": "shift_ctrl_primary",
-            "label": {
-              "key": "lunatic/tfs:ui.affordance.dismantle_frame",
-              "args": {}
-            },
+            "label": {"keyed": {"reference": {"pack": "lunatic/tfs:ui.affordance.dismantle_frame"}, "args": []}},
             "available": false,
             "group": "range",
             "implement": {
               "sprite": "welder",
-              "name": {
-                "key": "lunatic/tfs:entity.welder.name",
-                "args": {}
-              },
+              "name": {"keyed": {"reference": {"pack": "lunatic/tfs:entity.welder.name"}, "args": []}},
               "suggested": false
             },
             "requirements": [],
             "style": null,
             "presentation_group": null,
-            "detail": {
-              "key": "lunatic/tfs:ui.look.out_of_range",
-              "args": {}
-            }
+            "detail": {"keyed": {"reference": {"pack": "lunatic/tfs:ui.look.out_of_range"}, "args": []}}
           },
           {
             "id": "suggestion",
             "gesture": "primary",
-            "label": {
-              "key": "lunatic/tfs:ui.affordance.wire_frame",
-              "args": {}
-            },
+            "label": {"keyed": {"reference": {"pack": "lunatic/tfs:ui.affordance.wire_frame"}, "args": []}},
             "available": false,
             "group": "suggestion",
             "implement": {
               "sprite": "coil",
-              "name": {
-                "key": "lunatic/tfs:entity.cable_coil.name",
-                "args": {}
-              },
+              "name": {"keyed": {"reference": {"pack": "lunatic/tfs:entity.cable_coil.name"}, "args": []}},
               "suggested": true
             },
             "requirements": [
               {
-                "label": {
-                  "key": "lunatic/tfs:entity.cable_coil.name",
-                  "args": {}
-                },
+                "label": {"keyed": {"reference": {"pack": "lunatic/tfs:entity.cable_coil.name"}, "args": []}},
                 "sprite": "coil",
                 "count": 5
               }

@@ -10,7 +10,7 @@ const { build } = await import(pathToFileURL(resolve(engine, "web/node_modules/e
 const result = await build({
   stdin: {
     contents: `export { controlWorkspace } from './documents-controls';
-      export { begin, event } from './view';`,
+      export { begin, event } from './view'; export { renderLabel } from './labels';`,
     resolveDir: fileURLToPath(new URL("../ui", import.meta.url)), loader: "ts",
   },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
@@ -25,13 +25,15 @@ const fixture = JSON.parse(await readFile(new URL("../ui/fixtures/device-workspa
 const fixtureState = fixture.view.documents["1"].state;
 
 const doc = { id: 7, generation: 2, title: "Air alarm" };
-const label = (text) => text;
+const label = (plain) => ({ plain });
+const packLabel = (pack, args = []) => ({ keyed: { reference: { pack }, args } });
 const panel = (address, name, extra = {}) => ({
   address, name, online: true,
   readouts: [
-    { section: label("Power"), label: label("Room pressure"), value: label("101.3 kPa"), tone: "on" },
-    { section: label("Power"), label: label("Supply line pressure"), value: label("300 kPa") },
-    { section: label("Power"), label: label("Power supply"), value: label("On"), tone: "on" },
+    { section: label("Power"), label: label("Room pressure"), value: "101.3 kPa", tone: "on" },
+    { section: label("Power"), label: label("Supply line pressure"), value: 300 },
+    { section: label("Power"), label: label("Power supply"), value: "On", tone: "on" },
+    { section: label("Power"), label: label("Reported measurement"), value: "lunatic/tfs:module.link.state.online" },
   ],
   toggles: [
     { section: label("Power"), field: `${address}/on`, label: label("Power"), on: true, on_text: label("On"), off_text: label("Off") },
@@ -47,7 +49,7 @@ const panel = (address, name, extra = {}) => ({
     { section: label("Pressure"), field: `${address}/hold`, label: label("Hold at"), unit: "kPa", value: 101.33, min: 0, max: 4500, step: 0.01, decimals: 2 },
   ],
   notice: label("Provider notice"),
-  matter: [{ section: "Air", volume_l: 10, headspace_l: 8, temperature_k: 293, states: [{ phase: "gas", moles: 1, measure: 101, mass_g: 0, rows: [{ key: "oxygen", name: "Oxygen", moles: 1, measure: 21, mass_g: 32 }] }] }],
+  matter: [{ section: label("Air"), volume_l: 10, headspace_l: 8, temperature_k: 293, states: [{ phase: "gas", moles: 1, measure: 101, mass_g: 0, rows: [{ key: "oxygen", name: "Oxygen", moles: 1, measure: 21, mass_g: 32 }] }] }],
   ...extra,
 });
 
@@ -69,6 +71,8 @@ test("same-address controls stay under their source panel and keep scoped payloa
   assert(buttons.some((node) => node.id.includes("scr-02")));
   assert(ids.every((id) => id.length <= 120), "control ids stay within the protocol budget");
   const first = buttons.find((node) => node.id.includes("vnt-01"));
+  assert.equal(first.text, "On");
+  assert.equal(first.label, first.text, "the switch hit label matches its visible caption");
   assert.deepEqual(command(first.id), { kind: "document", document: 7, generation: 2, act: "toggle", payload: { field: "vnt-01/on" } });
 });
 
@@ -90,7 +94,7 @@ test("inactive documents disclose sections but expose no active controls", () =>
 
 test("panel sections retain readouts, choice groups, setpoints, notice and matter", () => {
   const nodes = render({ document: "modules", control_panels: [panel("scr-02", "Air scrubber")] });
-  for (const word of ["Power", "Reach", "Gas", "Room pressure", "Cardinals (5×)", "Hold at", "Provider notice", "Oxygen"]) {
+  for (const word of ["Power", "Reach", "Gas", "Room pressure", "300", "Cardinals (5×)", "Hold at", "Provider notice", "Oxygen", "lunatic/tfs:module.link.state.online"]) {
     assert(nodes.some((node) => node.text === word), `missing ${word}`);
   }
   const selection = nodes.find((node) => node.type === "button" && command(node.id)?.payload?.option === "carbon_dioxide");
@@ -106,7 +110,14 @@ test("the full disclosed gas roster keeps every provider row and section", () =>
   const nodes = render(fixtureState);
   const gases = target.toggles.filter((toggle) => toggle.field.endsWith("/filter"));
   assert(gases.length >= 15, "native fixture should exercise the full roster");
-  for (const gas of gases) assert(nodes.some((node) => node.text === gas.label.text), `missing ${gas.label.text}`);
+  for (const gas of gases) {
+    const button = nodes.find((node) => node.type === "button" && command(node.id)?.payload?.option === gas.option);
+    assert(button, `missing control for ${gas.option}`);
+    const expected = U.renderLabel(gas.label);
+    assert.equal(nodes.find((node) => node.id === `${button.id}/label`)?.text, expected,
+      `${gas.option} visible caption is localized from its typed label`);
+    assert.equal(button.label, expected, `${gas.option} hit name matches its caption`);
+  }
   for (const section of ["Station atmosphere", "Atmospheric poisons", "Volatiles"])
     assert(nodes.some((node) => node.text === section), `missing ${section}`);
   const firstGas = nodes.find((node) => node.type === "button" && command(node.id)?.payload?.option === "o2");
@@ -133,15 +144,15 @@ test("panel status follows native online state and explains disabled controls", 
   assert(!nodes.some((node) => node.id === "doc/7/2/controls/unknown/status"));
 });
 
-test("same rendered section text keeps distinct native label identities", () => {
+test("same rendered section text keeps distinct typed label identities", () => {
   const nodes = render({ document: "modules", control_panels: [panel("labels", "Label unit", {
     readouts: [
-      { section: "Same heading", label: "one", value: "1" },
-      { section: { text: "Same heading" }, label: "two", value: "2" },
+      { section: label("Equipment"), label: label("one"), value: "1" },
+      { section: packLabel("lunatic/tfs:ui.actions.equipment"), label: label("two"), value: "2" },
     ],
     toggles: [], labels: [], setpoints: [], matter: [],
   })] });
-  assert.equal(nodes.filter((node) => node.text === "Same heading").length, 2);
+  assert.equal(nodes.filter((node) => node.text === "Equipment").length, 2);
   assert(nodes.some((node) => node.text === "one"));
   assert(nodes.some((node) => node.text === "two"));
 });

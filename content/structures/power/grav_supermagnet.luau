@@ -5,6 +5,7 @@
 -- `grav_supermagnet_ring` (lib/power/grav_smes.luau). No recipe makes one: a map
 -- places it.
 local grav_smes = require("@lib/power/grav_smes")
+local ui_label = require("@lib/ui_label")
 
 return {
     id = "grav_supermagnet",
@@ -49,12 +50,12 @@ return {
             label = "lunatic/tfs:ui.affordance.anchor",
             held = { fact = "held.proto", value = "wrench" },
             uses_held = true,
-            needs = "lunatic/tfs:lib.grav_smes.ring_needs_wrench",
+            needs = ui_label.pack("lunatic/tfs:lib.grav_smes.ring_needs_wrench"),
             suggest_implement = { item = "wrench" },
             refuse = {
                 {
                     when = { ["not"] = { fact = "target.flag", value = grav_smes.RING_FITS } },
-                    label = "lunatic/tfs:lib.grav_smes.ring_unfit",
+                    label = ui_label.pack("lunatic/tfs:lib.grav_smes.ring_unfit"),
                     hint_only = true,
                 },
             },

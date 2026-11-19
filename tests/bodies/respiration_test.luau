@@ -205,14 +205,12 @@ local function face(label: unknown): string
     if type(label) ~= "table" then
         return tostring(label)
     end
-    local row = ui_controls.record(label)
-    if row.args then
-        local args = ui_controls.record(row.args)
-        if args.organ then
-            return tostring(args.operation) .. " " .. tostring(args.organ)
-        end
+    local operation = ui_controls.label_argument(label, "operation")
+    local organ = ui_controls.label_argument(label, "organ")
+    if operation and organ then
+        return operation .. " " .. organ
     end
-    return tostring(row.text or row.id)
+    return ui_controls.word(label)
 end
 
 local function hold(id: string)

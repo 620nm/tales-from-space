@@ -4,6 +4,8 @@
 -- `meter_layers_test.luau`; the refusal on bare deck is
 -- `meter_test.luau`.
 
+local ui_controls = require("@helpers/ui_controls")
+
 local function said(p: number, line: string): boolean
     for _, message in ipairs(t.messages(p)) do
         if message == line then
@@ -109,7 +111,10 @@ assert(said(p, "Meter layer set to 5. Drop it before fastening."), "and turns it
 local self_row: SpecActionDescriptor? = nil
 for _, view in ipairs(t.actions(p)) do
     for _, action in ipairs(view.actions) do
-        if action.gesture == "self" and action.label.key == "lunatic/tfs:ui.affordance.set_layer" then
+        if action.gesture == "self"
+            and ui_controls.label_reference(action.label, "pack")
+                == "lunatic/tfs:ui.affordance.set_layer"
+        then
             self_row = action
         end
     end

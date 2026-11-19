@@ -389,7 +389,10 @@ assert(#t.ledger_rows("file_copied") == copied, "an ejected disk cannot supply a
 ui_files.program(p, "carry")
 t.run_ticks(2)
 assert(
-    record(rows(workspace().program_slots)[1].state).id == "program_slots.state.empty",
+    ui_controls.label_reference(
+        rows(workspace().program_slots)[1].state,
+        "structural"
+    ) == "program_slots.state.empty",
     "contact unloads the target slot"
 )
 

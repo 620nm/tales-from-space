@@ -14,8 +14,8 @@
 -- things a crewman could see: the panel, the bag, the round record,
 -- and the beaker.
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local ui_controls = require("@helpers/ui_controls")
 
 local word = ui_controls.word
@@ -23,7 +23,7 @@ local word = ui_controls.word
 local function rows_in(ui: unknown, section: string)
     local out = {}
     for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
-        if r.section and word(r.section) == section then
+        if r.section and ui_controls.label_reference(r.section, "structural") == section then
             table.insert(out, r)
         end
     end
@@ -32,21 +32,23 @@ end
 
 local function row(ui: unknown, label: string)
     for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
-        if word(r.label) == label then
+        if ui_controls.label_reference(r.label, "structural") == label then
             return r
         end
     end
     error("missing expected panel row")
 end
 
--- A socket row's two numbers ride one label id, as ARGUMENTS the pack
--- frames into a sentence (sim/ui/settings/parts.rs).
+-- A socket row's two numbers ride the structural `parts.tier` label as
+-- plain arguments (sim/ui/settings/parts_panel.rs).
 local function worth(raw: unknown): (number, number)
     local value = ui_controls.record(raw)
-    assert(value.id == "parts.tier", "the numbers ride a label id: " .. word(value))
-    local args = ui_controls.record(value.args)
-    return assert(tonumber(ui_controls.text(args.tier))),
-        assert(tonumber(ui_controls.text(args.efficiency)))
+    assert(
+        ui_controls.label_reference(value, "structural") == "parts.tier",
+        "the numbers ride a structural reference: " .. word(value)
+    )
+    return assert(tonumber(ui_controls.label_argument(value, "tier", "plain"))),
+        assert(tonumber(ui_controls.label_argument(value, "efficiency", "plain")))
 end
 
 -- The chamber's one part row, read off a panel opened with a BARE hand
@@ -151,7 +153,10 @@ t.run_ticks(2)
 assert(t.hands(p).held == nil, "and clicking the chamber with it puts it in")
 
 local before = socket(p, 2, 1)
-assert(word(before.label) == "micro-laser", "nobody has upgraded it: " .. word(before.label))
+assert(
+    ui_controls.label_plain(before.label) == "micro-laser",
+    "nobody has upgraded it: " .. ui_controls.label_plain(before.label)
+)
 local tier, eff = worth(before.value)
 assert(
     tier == 1 and math.abs(eff - 1.0) < 1e-9,
@@ -160,7 +165,10 @@ assert(
 
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
-assert(word(row(t.ui(p), "dock.vessel").value) == "beaker (libital)", "with the beaker docked")
+assert(
+    ui_controls.label_plain(row(t.ui(p), "dock.vessel").value) == "beaker (libital)",
+    "with the beaker docked"
+)
 ui_controls.set(p, "temperature", 350)
 ui_controls.toggle(p, "on")
 t.run_ticks(2)
@@ -217,8 +225,8 @@ assert(
 t.swap_hands(p)
 local after = socket(p, 2, 1)
 assert(
-    word(after.label) == "ultra-high-power micro-laser",
-    "and the panel names what is in there now: " .. word(after.label)
+    ui_controls.label_plain(after.label) == "ultra-high-power micro-laser",
+    "and the panel names what is in there now: " .. ui_controls.label_plain(after.label)
 )
 local after_tier, after_eff = worth(after.value)
 assert(

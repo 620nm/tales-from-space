@@ -681,16 +681,16 @@
             "groups": [
               {
                 "id": "tools",
-                "label": "Equipment",
+                "label": {"plain": "Equipment"},
                 "actions": [
                   {
                     "id": "flash",
-                    "label": "Flash",
+                    "label": {"plain": "Flash"},
                     "sprite": "toolbox"
                   },
                   {
                     "id": "light",
-                    "label": "Light",
+                    "label": {"plain": "Light"},
                     "sprite": "headset"
                   }
                 ]

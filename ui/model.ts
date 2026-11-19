@@ -1,28 +1,22 @@
-import type { Json } from "@lunatic/ui";
+import type { Json, UiLabel } from "@lunatic/ui";
 import type { PanelDocument } from "./document-model";
 import type { StaffState } from "./staff/model";
 import type { StaffContactState } from "./contact/model";
 
-export interface ActionLabel {
-  key: string;
-  args?: Record<string, string>;
-  arg_keys?: string[];
-  text?: string | null;
-}
 export interface HoverAction {
   id: string;
   gesture: string;
-  label: ActionLabel;
-  implement?: { sprite: string; name: ActionLabel; suggested: boolean } | null;
+  label: UiLabel;
+  implement?: { sprite: string; name: UiLabel; suggested: boolean } | null;
   available: boolean;
   group: string;
   style?: string | null;
   order?: number;
   presentation_group?: string | null;
-  requirements?: { label: ActionLabel; sprite?: string | null; count: number }[];
+  requirements?: { label: UiLabel; sprite?: string | null; count: number }[];
   /** Second line: why a disabled row cannot run, or how an available one
    *  is invoked ("In other hand"). */
-  detail?: ActionLabel | null;
+  detail?: UiLabel | null;
 }
 
 // Consumed engine projections: `crates/lunatic-client/src/ui.rs`,
@@ -158,7 +152,7 @@ export interface GameplayView {
       entity?: number | null;
       kind: string;
       name: string;
-      name_label?: ActionLabel | null;
+      name_label?: UiLabel | null;
       appearance?: string | null;
       sprite?: string | null;
       actions?: HoverAction[];

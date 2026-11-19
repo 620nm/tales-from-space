@@ -65,8 +65,8 @@ t.tick()
 local ui = ui_controls.state(p)
 assert(ui.document == "modules" and ui.presentation == "shelf", "the clean-room shelf document")
 assert(
-    ui_controls.record(ui.notice).text == "Roll for initiative!",
-    "the content-authored slogan across the top: " .. tostring(ui_controls.record(ui.notice).text)
+    ui_controls.record(ui.notice).plain == "Roll for initiative!",
+    "the content-authored slogan across the top: " .. tostring(ui_controls.record(ui.notice).plain)
 )
 
 -- Every declared product is on the window, in its declared category,

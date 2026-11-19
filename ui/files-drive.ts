@@ -6,7 +6,7 @@ import type { DocumentIdentity, FileRow, ModuleState, StoreRow } from "./documen
 import { documentAction } from "./document-action";
 import { bodyId, guard } from "./files-buffer";
 import { createFilePress } from "./files-create";
-import { labelText } from "./labels";
+import { renderLabel } from "./labels";
 import { column, icon, press, row, screen, some, text } from "./view";
 import * as S from "./strings";
 
@@ -41,7 +41,7 @@ export function drivePane(id: string, doc: DocumentIdentity, state: Partial<Modu
   return screen(key, {
     toolbar: [
       text(`${key}/letter`, S.tfs(driveLetter(driveOf(store))), ["workspace-drive-title"]),
-      text(`${key}/name`, labelText(store.label), ["hint"]),
+      text(`${key}/name`, renderLabel(store.label), ["hint"]),
     ],
     body: files.length ? files.map((file, index) => fileRow(id, doc, `${key}/file/${index}`, file, side, active, copy))
       : [text(`${key}/empty`, S.tfs("ui.workspace.empty"), ["hint"])],

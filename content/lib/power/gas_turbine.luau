@@ -1,5 +1,6 @@
 local assembly = require("@lib/assembly")
 local ignition = require("@lib/ignition")
+local ui_label = require("@lib/ui_label")
 
 -- The gas turbine's three sections and its console: what each section
 -- declares, and the discrete verbs tg's turbine.dm runs at a click. A
@@ -106,7 +107,7 @@ function gas_turbine.section_transitions(prototype: string): { { [string]: any }
             at = CLOSED,
             tool = "screwdriver",
             to = OPEN,
-            hint = { label = "lunatic/tfs:ui.affordance.open_panel" },
+            hint = { label = ui_label.pack("lunatic/tfs:ui.affordance.open_panel") },
             done = "lunatic/tfs:lib.gas_turbine.panel_opened",
         },
         {
@@ -114,20 +115,20 @@ function gas_turbine.section_transitions(prototype: string): { { [string]: any }
             at = OPEN,
             tool = "screwdriver",
             to = CLOSED,
-            hint = { label = "lunatic/tfs:ui.affordance.close_panel" },
+            hint = { label = ui_label.pack("lunatic/tfs:ui.affordance.close_panel") },
             done = "lunatic/tfs:lib.gas_turbine.panel_closed",
         },
         {
             at = RUNNING,
             tool = "screwdriver",
-            hint = { label = "lunatic/tfs:ui.affordance.open_panel" },
-            refuse = { { when = true, label = STOP_FIRST } },
+            hint = { label = ui_label.pack("lunatic/tfs:ui.affordance.open_panel") },
+            refuse = { { when = true, label = ui_label.pack(STOP_FIRST) } },
         },
         {
             sound = "crowbar",
             at = OPEN,
             tool = "crowbar",
-            hint = assembly.back("lunatic/tfs:ui.affordance.deconstruct"),
+            hint = assembly.back(ui_label.pack("lunatic/tfs:ui.affordance.deconstruct")),
             gone = true,
             leaves = "machine_frame",
             yields = {

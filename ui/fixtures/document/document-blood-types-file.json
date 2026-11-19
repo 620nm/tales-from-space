@@ -26,9 +26,7 @@
             {
               "key": "host",
               "binding": "host-1",
-              "label": {
-                "text": "Local"
-              },
+              "label": {"plain": "Local"},
               "used": 3486,
               "capacity": 65536,
               "count": 1,

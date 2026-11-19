@@ -1,4 +1,5 @@
 local assembly = require("@lib/assembly")
+local ui_label = require("@lib/ui_label")
 
 -- The pyrolyzer (methane cracker): a stepped twin-block thermal retort and
 -- condenser column with a right half-height beaker bay and lower ash hatch,
@@ -31,7 +32,7 @@ return {
             at = "standby",
             tool = "screwdriver",
             to = "open",
-            hint = { label = "lunatic/tfs:ui.affordance.open_panel" },
+            hint = { label = ui_label.pack("lunatic/tfs:ui.affordance.open_panel") },
             done = "lunatic/tfs:structures.pyrolyzer.panel_opened",
         },
         {
@@ -39,14 +40,14 @@ return {
             at = "open",
             tool = "screwdriver",
             to = "standby",
-            hint = { label = "lunatic/tfs:ui.affordance.close_panel" },
+            hint = { label = ui_label.pack("lunatic/tfs:ui.affordance.close_panel") },
             done = "lunatic/tfs:structures.pyrolyzer.panel_closed",
         },
         {
             sound = "crowbar",
             at = "open",
             tool = "crowbar",
-            hint = assembly.back("lunatic/tfs:ui.affordance.deconstruct"),
+            hint = assembly.back(ui_label.pack("lunatic/tfs:ui.affordance.deconstruct")),
             secs = 4.0,
             gone = true,
             leaves = "machine_frame",

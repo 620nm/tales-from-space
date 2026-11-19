@@ -12,7 +12,7 @@ import { moduleBody } from "./documents-modules";
 import { controlWorkspace } from "./documents-controls";
 import { linkMeta, refusalDialog } from "./documents-device";
 import { documentAction } from "./document-action";
-import { labelText } from "./labels";
+import { renderLabel } from "./labels";
 import { tfs } from "./strings";
 import { bodyId, currentBuffer, fileOption, localGuard, retainOpenFileBuffers, pollContinuation, guard } from "./files-buffer";
 import { bind, column, icon, nodeCount, panel, press, some, text } from "./view";
@@ -152,7 +152,7 @@ export function filePanes(id: string, doc: DocumentIdentity, state: Partial<Modu
     bodyAxis: page === "files" ? "x" : "y",
     toolbar,
     body,
-    ...(state.notice ? { footer: [text(`${id}/notice`, labelText(state.notice), ["mod-foot"])] } : {}),
+    ...(state.notice ? { footer: [text(`${id}/notice`, renderLabel(state.notice), ["mod-foot"])] } : {}),
     overlay: refusal ? [refusal] : confirmation ? [confirmation] : stores.map((store) =>
       createFileDialog(id, doc, store, state.create?.[store.key ?? "host"] ?? [], active))
       .filter((node): node is UiNode => node !== null),

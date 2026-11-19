@@ -52,6 +52,29 @@ if (absent.length) {
 }
 // One open laptop, plus the little a HUD render reads besides.
 const [view, full] = views;
+// The English file is 126,249 bytes, below GuestLocale's 262,144-byte cap.
+// Install the pack's actual catalog on Start so this click proves a real
+// caption, while the guest below keeps the deliberate no-locale fallback.
+const catalog = JSON.parse(await readFile(join(packRoot, "locale/en.json"), "utf8"));
+const localized = await createGuest(bundle, { locale: { tag: "en", catalog } });
+try {
+  const tree = await localized.render(view);
+  assert.ok(tree, "the English guest renders the open desktop");
+  const power = find(tree, "doc/1/1/power");
+  const powerCaption = catalog["lunatic/tfs:ui.desktop.power_off"];
+  assert.equal(powerCaption, "Power off", "the English catalog supplies the expected public caption");
+  assert.equal(power.text, "⏻", "the visible power glyph stays in the button");
+  assert.equal(power.label, powerCaption,
+    "the clickable glyph carries the translated English caption");
+  assert.equal(power.event, power.id, "the caption remains on the original action target");
+  const click = await localized.event({ id: power.id, type: "activate" }, view);
+  assert.deepEqual(click.action, {
+    kind: "document", document: 1, generation: 1, act: "power", payload: {},
+  }, "localization leaves the action identity and payload intact");
+} finally {
+  await localized.dispose();
+}
+
 const vm = await createGuest(bundle);
 try {
   // `render` validates before it answers, so an accepted tree is the
@@ -103,4 +126,4 @@ try {
 } finally {
   await vm.dispose();
 }
-console.log("Laptop desktop: 25 guest host checks passed");
+console.log("Laptop desktop: 31 guest host checks passed");

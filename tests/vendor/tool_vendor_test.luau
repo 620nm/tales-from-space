@@ -60,7 +60,7 @@ t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 local ui = ui_controls.record(assert(t.ui(p), "clicking the tool vendor opens its window"))
 assert(ui.document == "modules" and ui.presentation == "shelf", "the generic shelf document")
-assert(ui_controls.record(ui.notice).text == "Tools for tools.", "and its own ad copy")
+assert(ui_controls.record(ui.notice).plain == "Tools for tools.", "and its own ad copy")
 local shelf: { [string]: ui_controls.Record } = {}
 for _, rec in ipairs(ui_controls.rows(ui.products)) do
     shelf[ui_controls.text(ui_controls.record(rec.payload).product)] = rec

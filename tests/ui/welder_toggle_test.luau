@@ -42,7 +42,7 @@ end
 
 local function assert_label(row: SpecActionDescriptor?, key: string, context: string)
     assert(row ~= nil, context .. ": gesture is advertised")
-    assert(row.label.key == key, context .. ": state-aware label")
+    assert(ui_controls.label_reference(row.label) == key, context .. ": state-aware label")
     return row
 end
 

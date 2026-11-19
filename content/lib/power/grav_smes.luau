@@ -1,4 +1,5 @@
 local ignition = require("@lib/ignition")
+local ui_label = require("@lib/ui_label")
 
 -- The gravity battery's assembly rules: where the eight parts must stand
 -- and face, the wrench that sets a packed ring between two emitters, and the
@@ -275,7 +276,7 @@ function grav_smes.weld_row(): { [string]: any }
         refuse = {
             {
                 when = { ["not"] = { fact = "target.flag", value = grav_smes.ASSEMBLY_READY } },
-                label = MESSAGE .. "weld_incomplete",
+                label = ui_label.pack(MESSAGE .. "weld_incomplete"),
                 hint_only = true,
             },
             {
@@ -285,7 +286,7 @@ function grav_smes.weld_row(): { [string]: any }
                         { ["not"] = { fact = "held.state", value = LIT } },
                     },
                 },
-                label = MESSAGE .. "torch_unlit",
+                label = ui_label.pack(MESSAGE .. "torch_unlit"),
                 hint_only = true,
             },
         },

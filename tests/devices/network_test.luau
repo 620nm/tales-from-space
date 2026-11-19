@@ -55,8 +55,7 @@ local function row_for(ui: ui_controls.Record, field: string, option: string): u
 end
 
 local function roster_state(row: ui_controls.Record): string
-    local label = ui_controls.record(row.label)
-    return ui_controls.text(ui_controls.record(label.args).state)
+    return assert(ui_controls.label_argument(row.label, "state"), "state label argument")
 end
 
 -- The bench: a plant, a controller and a port along the back wall, an
@@ -273,7 +272,7 @@ assert(rows(panel, "link_lock")[1].on, "it opens for whoever is standing at it")
 local offer = row_for(panel, "link_join", point)
 assert(offer ~= nil, "the access point is on offer: " .. #rows(panel, "link_join") .. " candidates")
 assert(
-    ui_controls.record(offer.label).id == "link.candidate.hub",
+    ui_controls.label_reference(offer.label, "structural") == "link.candidate.hub",
     "named by what it is: " .. word(offer.label)
 )
 

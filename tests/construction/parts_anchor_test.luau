@@ -37,14 +37,14 @@ local function expected_factor(room_k: number)
     return math.max(FLOOR, 1.0 - LOSS_PER_K * math.abs(room_k - IDEAL_K))
 end
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local word = ui_controls.word
 
 local function rows_in(ui: unknown, section: string)
     local out = {}
     for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
-        if r.section and word(r.section) == section then
+        if r.section and ui_controls.label_reference(r.section, "structural") == section then
             table.insert(out, r)
         end
     end
@@ -65,10 +65,12 @@ end
 
 local function worth(row: ui_controls.Record): (number, number)
     local value = ui_controls.record(row.value)
-    assert(value.id == "parts.tier", "the row reads as a rung and a worth: " .. word(value))
-    local args = ui_controls.record(value.args)
-    return assert(tonumber(ui_controls.text(args.tier))),
-        assert(tonumber(ui_controls.text(args.efficiency)))
+    assert(
+        ui_controls.label_reference(value, "structural") == "parts.tier",
+        "the row reads as a rung and a worth: " .. word(value)
+    )
+    return assert(tonumber(ui_controls.label_argument(value, "tier", "plain"))),
+        assert(tonumber(ui_controls.label_argument(value, "efficiency", "plain")))
 end
 
 -- Every "element" a chamber's script has written since the shift began,
@@ -237,7 +239,10 @@ local cold_k = assert(t.room_temperature(2, 1))
 assert(math.abs(cold_k - T20C) < 0.5, "the west bench is at twenty degrees: " .. cold_k)
 
 local row = socket(west, 2, 1)
-assert(word(row.label) == "micro-laser", "the plain part, by its own name: " .. word(row.label))
+assert(
+    ui_controls.label_plain(row.label) == "micro-laser",
+    "the plain part, by its own name: " .. ui_controls.label_plain(row.label)
+)
 local tier, eff = worth(row)
 assert(
     tier == 1 and math.abs(eff - 1.0) < 1e-9,
@@ -246,7 +251,10 @@ assert(
 assert(row.tone == "idle", "a neutral part reads neutral: " .. tostring(row.tone))
 
 row = socket(west, 4, 1)
-assert(word(row.label) == "ultra-high-power micro-laser", "the better part: " .. word(row.label))
+assert(
+    ui_controls.label_plain(row.label) == "ultra-high-power micro-laser",
+    "the better part: " .. ui_controls.label_plain(row.label)
+)
 tier, eff = worth(row)
 assert(
     tier == 3 and math.abs(eff - 2.0) < 1e-9,

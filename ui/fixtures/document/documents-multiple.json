@@ -46,7 +46,7 @@
           "presentation": "shelf",
           "products": [
             {
-              "label": "Emergency tool kit",
+              "label": {"plain": "Emergency tool kit"},
               "stock": 0,
               "act": "vend",
               "payload": {

@@ -23,31 +23,31 @@
           "name": "Distribution manifold",
           "readouts": [
             {
-              "label": "Pressure",
+              "label": {"plain": "Pressure"},
               "value": "101.3 kPa",
-              "section": "Readings"
+              "section": {"plain": "Readings"}
             },
             {
-              "label": "Temperature",
+              "label": {"plain": "Temperature"},
               "value": "293.2 K",
-              "section": "Readings"
+              "section": {"plain": "Readings"}
             }
           ],
           "setpoints": [
             {
-              "label": "Output pressure",
+              "label": {"plain": "Output pressure"},
               "unit": "kPa",
               "value": 101,
               "field": "target_kpa",
               "min": 0,
               "max": 4500,
               "step": 10,
-              "section": "Controls"
+              "section": {"plain": "Controls"}
             }
           ],
           "matter": [
             {
-              "section": "Contents",
+              "section": {"plain": "Contents"},
               "volume_l": 100,
               "headspace_l": 100,
               "temperature_k": 293,

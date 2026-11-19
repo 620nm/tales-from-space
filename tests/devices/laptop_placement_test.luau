@@ -67,7 +67,7 @@ assert(
 local EJECT = "lunatic/tfs:ui.affordance.eject_cartridge"
 local function offers_eject(target: SpecObservedTarget)
     for _, action in ipairs(t.action_hints(p, target)) do
-        if action.label and action.label.key == EJECT then
+        if ui_controls.label_reference(action.label, "pack") == EJECT then
             return true
         end
     end

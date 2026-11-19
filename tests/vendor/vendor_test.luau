@@ -70,7 +70,7 @@ assert(raw, "clicking the machine opens its window")
 local ui = ui_controls.record(t.ui(p))
 assert(ui.document == "modules" and ui.presentation == "shelf", "the clean-room shelf document")
 assert(
-    ui_controls.record(ui.notice).text == "Robust! Refreshing! Occasionally fermented!",
+    ui_controls.record(ui.notice).plain == "Robust! Refreshing! Occasionally fermented!",
     "the shelf wears the content-authored notice"
 )
 local product = ui_controls.rows(ui.products)[1]

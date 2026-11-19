@@ -3,6 +3,8 @@
 -- whose second line reads "In other hand". Either way round, a floppy and a
 -- laptop offer the laptop's `insert_disk` (items/laptop.luau, a receiver row
 -- judged with the floppy as `held`).
+local ui_controls = require("@helpers/ui_controls")
+
 t.world(
     [==[(
     name: "other hand desk",
@@ -56,9 +58,15 @@ local function assert_insert(rows: { SpecActionDescriptor }, partner: string, wh
     assert(#rows == 1, why .. ": one other-hand row, got " .. #rows)
     local row = rows[1]
     assert(row.id == "other/insert_disk", why .. ": id " .. tostring(row.id))
-    assert(row.label.key == "lunatic/tfs:ui.affordance.insert_disk", why .. ": label")
+    assert(
+        ui_controls.label_reference(row.label, "pack") == "lunatic/tfs:ui.affordance.insert_disk",
+        why .. ": label"
+    )
     assert(row.available, why .. ": available")
-    assert(row.detail and row.detail.key == "engine.action.other_hand", why .. ": detail line")
+    assert(
+        ui_controls.label_reference(row.detail, "engine") == "engine.action.other_hand",
+        why .. ": detail line"
+    )
     assert(row.implement ~= nil, why .. ": the partner is pictured")
     local sprite = tostring(row.implement.sprite)
     assert(

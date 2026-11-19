@@ -26,10 +26,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- its own air mixer. The pipe under the chamber wall is the whole
 -- trick: a run is subfloor and does not care what turf stands over it.
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local word = ui_controls.word
-
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
@@ -203,15 +201,16 @@ near(
 )
 local mix: ui_controls.Record? = nil
 for _, r in ipairs(ui_controls.rows(ui.readouts)) do
-    if word(r.label) == "mixer.mix" then
+    if ui_controls.label_reference(r.label, "structural") == "mixer.mix" then
         mix = ui_controls.record(r.value)
     end
 end
 assert(mix, "the mixer reports its split")
-local mix_args = ui_controls.record(mix.args)
 assert(
-    mix.id == "mixer.mix.split" and mix_args.back == "79%" and mix_args.side == "21%",
-    "which the panel says in both halves: " .. tostring(mix_args.back)
+    ui_controls.label_reference(mix, "structural") == "mixer.mix.split"
+        and ui_controls.label_argument(mix, "back", "plain") == "79%"
+        and ui_controls.label_argument(mix, "side", "plain") == "21%",
+    "which the panel says in both halves: " .. tostring(ui_controls.label_argument(mix, "back", "plain"))
 )
 t.ui_close(p)
 

@@ -15,6 +15,8 @@ const { ui } = await import(`data:text/javascript;base64,${Buffer.from(result.ou
 const flatten = (node) => [node, ...(node.children ?? []).flatMap(flatten)];
 const fixture = async (name) => JSON.parse(await readFile(new URL(`../ui/fixtures/${name}.json`, import.meta.url))).view;
 globalThis.__lunaticLocale = { tag: "en", catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))) };
+const structuralLabel = (structural, args = []) => ({ keyed: { reference: { structural }, args } });
+const literalArg = (name, plain) => ({ name, value: { plain } });
 
 test("busy HUD exposes named actions as valid pinned buttons", async () => {
   const view = await fixture("hud/hud-busy-compact"), nodes = flatten(ui.render(view));
@@ -51,19 +53,22 @@ test("device cards say each node's state, and gone once forgotten", async () => 
   const state = view.documents[1].state;
   delete state.refusal;
   const member = (mac, subject, label) => ({
-    field: "link_drop", option: mac, label, on: false, section: { id: "link.members" },
-    on_text: { id: "link.release.act" }, off_text: { id: "link.release.act" }, subject,
+    field: "link_drop", option: mac, label, on: false, section: structuralLabel("link.members"),
+    on_text: structuralLabel("link.release.act"), off_text: structuralLabel("link.release.act"), subject,
   });
   state.toggles = [{ ...state.toggles[0], on: true },
     member("02-4a-1f-00-3c-11", { name: "airlock button", address: "02-4a-1f-00-3c-11", online: false,
-      state: { id: "link.state.parent_offline" }, sprite: "airlock_button" },
-    { id: "link.member", args: { address: "02-4a-1f-00-3c-11", state: "link.state.parent_offline" }, arg_ids: ["state"] }),
+      state: structuralLabel("link.state.parent_offline"), sprite: "airlock_button" },
+    structuralLabel("link.member", [
+      literalArg("address", "02-4a-1f-00-3c-11"),
+      { name: "state", value: { ref: { structural: "link.state.parent_offline" } } },
+    ])),
     member("02-4a-1f-00-3c-12", { name: "", address: "02-4a-1f-00-3c-12", online: null, state: null, sprite: null },
-      { id: "link.member.gone", args: { address: "02-4a-1f-00-3c-12", state: "" } }),
-    { field: "link_join", option: "02-4a-1f-00-3c-20", on: false, section: { id: "link.joinable" },
-      label: { id: "link.candidate.hub", args: { address: "02-4a-1f-00-3c-20" } },
-      on_text: { id: "link.join.act" }, off_text: { id: "link.join.act" },
-      subject: { name: "panel", address: "02-4a-1f-00-3c-20", online: false, state: { id: "link.state.unbound" }, sprite: "apc" } }];
+    structuralLabel("link.member.gone", [literalArg("address", "02-4a-1f-00-3c-12")])),
+    { field: "link_join", option: "02-4a-1f-00-3c-20", on: false, section: structuralLabel("link.joinable"),
+      label: structuralLabel("link.candidate.hub", [literalArg("address", "02-4a-1f-00-3c-20")]),
+      on_text: structuralLabel("link.join.act"), off_text: structuralLabel("link.join.act"),
+      subject: { name: "panel", address: "02-4a-1f-00-3c-20", online: false, state: structuralLabel("link.state.unbound"), sprite: "apc" } }];
   const nodes = flatten(ui.render(view));
   const candidate = (name) => nodes.find((node) => node.id.endsWith(`/toggle/link_join/02-4a-1f-00-3c-20/${name}`));
   assert.equal(candidate("badge").text, "unbound");

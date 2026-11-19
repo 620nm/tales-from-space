@@ -14,6 +14,7 @@
 -- engine stows it, and the reload below only feeds rounds the table
 -- names. A round clicked onto a FLOOR magazine slips past the first
 -- gate natively; the second still starves it.
+local ui_label = require("@lib/ui_label")
 local firearm = {}
 
 -- Magazine id to the round ids it feeds. tg's C-20r takes the 24-round
@@ -69,7 +70,7 @@ function firearm.load_row(mag_id: string): { [string]: any }
         refuse = {
             {
                 when = { all = { holding, { ["not"] = feeds } } },
-                label = "lunatic/tfs:lib.firearm.wrong_caliber",
+                label = ui_label.pack("lunatic/tfs:lib.firearm.wrong_caliber"),
             },
         },
     }

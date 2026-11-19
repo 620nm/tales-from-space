@@ -1,4 +1,5 @@
 -- Possession-scoped action documents; docs/pack-ui/server.md.
+local ui_label = require("@lib/ui_label")
 type ActorSubject = { actor: Handle, subject: Handle }
 export type Spec = { id: string, label: string, sprite: string, state: string? }
 
@@ -24,11 +25,11 @@ local function attach(definition: Definition, spec: Spec, use: (InteractionActPa
                 groups = {
                     {
                         id = "equipment",
-                        label = { id = "lunatic/tfs:ui.actions.equipment" },
+                        label = ui_label.pack("lunatic/tfs:ui.actions.equipment"),
                         actions = {
                             {
                                 id = "activate",
-                                label = { id = spec.label },
+                                label = ui_label.pack(spec.label),
                                 sprite = spec.sprite,
                                 state = state,
                                 pinned = true,

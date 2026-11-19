@@ -1,8 +1,7 @@
 // Every word this package writes, as the catalog key it comes out of.
 // The words live in `locale/<tag>.json`; an unrendered key answers with
-// itself, which is visible rather than blank
-// (docs/localization/catalogs.md). Server-authored words arrive through
-// `labels.ts` instead.
+// itself, which is visible rather than blank (docs/localization/catalogs.md).
+// Server-authored UiLabel values use the SDK resolver in `labels.ts`.
 import { scoped } from "@lunatic/ui";
 
 /** This mod's namespace, bound once: `tfs("ui.tray.drop")`. */

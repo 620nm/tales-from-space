@@ -1,6 +1,8 @@
 -- Reinforced glass tells a player which tool comes next. The first weld
 -- also proves the same context row is unavailable until the welder is lit:
 -- construction checks the live implement, while the hint remains visible.
+local ui_controls = require("@helpers/ui_controls")
+
 local function hint(p: number, target: SpecObservedTarget, id: string): SpecActionDescriptor?
     for _, row in ipairs(t.action_hints(p, target)) do
         if row.id == id then
@@ -116,7 +118,10 @@ assert(not heat.available, "the suggested welder is not in hand")
 take("welder")
 heat = assert(hint(p, target, "heat_reinforced_glass"))
 assert(not heat.available, "an unlit welder cannot heat the security screws")
-assert(heat.requirements[1].label.key == "engine.action.lit_tool", "the requirement specifies a lit tool")
+assert(
+    ui_controls.label_reference(heat.requirements[1].label, "engine") == "engine.action.lit_tool",
+    "the requirement specifies a lit tool"
+)
 assert(heat.requirements[1].count == 1, "the tool quantity is separate from its label")
 t.use_self(p)
 t.tick()

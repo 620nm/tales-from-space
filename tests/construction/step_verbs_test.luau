@@ -1,4 +1,5 @@
 local bench = require("@helpers/grav_bench")
+local ui_controls = require("@helpers/ui_controls")
 
 -- A step with no name of its own reads the pack's verb for its tool or slot
 -- (`interactions.verbs`, content/capabilities.luau), never "Interact", and
@@ -14,7 +15,7 @@ t.tick()
 local function row(key: string, target: any?): any
     target = target or assert(t.target_at(p, 5, 5, "machine_frame"), "the frame stands")
     for _, hint in ipairs(t.action_hints(p, target)) do
-        if hint.label.key == key then
+        if ui_controls.label_reference(hint.label, "pack") == key then
             return hint
         end
     end
@@ -26,7 +27,10 @@ assert(row("lunatic/tfs:ui.verb.cutters") ~= nil, "cutters read their verb")
 
 bench.hold(p, "machine_board", { { 5, 6 } })
 local board = assert(row("lunatic/tfs:ui.verb.board"), "a board reads its slot's verb")
-assert((board.label.args.item or "") ~= "", "and names what it fits")
+assert(
+    (ui_controls.label_argument(board.label, "item") or "") ~= "",
+    "and names what it fits"
+)
 
 local table_target = assert(t.target_at(p, 6, 5, "table"), "the table stands")
 local place = assert(row("lunatic/tfs:ui.verb.place", table_target), "a table takes the board")

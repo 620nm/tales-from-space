@@ -22,7 +22,7 @@ import { filePanes, guard, retainOpenFileBuffers, retainWorkspaces } from "./fil
 import { linkMeta, refusalDialog, retainRefusals } from "./documents-device";
 import { bind, column, entry, icon, press, row, screen, some, text } from "./view";
 import * as S from "./strings";
-import { labelText } from "./labels";
+import { renderLabel } from "./labels";
 import { actionSurface } from "./actions";
 import { paperBody } from "./documents-paper";
 import { faxBody } from "./documents-fax";
@@ -119,7 +119,7 @@ export function documents(view: GameplayView): UiNode[] {
     // The host window's body is bare: the padding a document reads at
     // belongs to the document, not to every surface the pack opens.
     const module = state as Partial<ModuleState>;
-    const footer = module.notice ? labelText(module.notice) : S.tfs(active ? "ui.document.available" : "ui.document.unavailable");
+    const footer = module.notice ? renderLabel(module.notice) : S.tfs(active ? "ui.document.available" : "ui.document.unavailable");
     const heading = text(`${id}/heading`, module.name ?? doc.title, ["doc-heading"]);
     const refusal = refusalDialog(id, doc, module);
     return screen(id, {

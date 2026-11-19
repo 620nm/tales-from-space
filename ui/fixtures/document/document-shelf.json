@@ -24,7 +24,7 @@
           "name": "Tool dispenser",
           "products": [
             {
-              "label": "Emergency tool kit",
+              "label": {"plain": "Emergency tool kit"},
               "stock": 0,
               "act": "vend",
               "payload": {
@@ -32,7 +32,7 @@
               }
             },
             {
-              "label": "Replacement lamp",
+              "label": {"plain": "Replacement lamp"},
               "stock": 3,
               "act": "vend",
               "payload": {

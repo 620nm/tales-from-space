@@ -9,6 +9,7 @@ export type Spec = {
     unanchor: Words,
 }
 
+local ui_label = require("@lib/ui_label")
 local anchorable = {}
 
 -- Loose to fastened; `over` names the tile feature it must sit on.
@@ -18,7 +19,7 @@ function anchorable.anchor(spec: Spec): { [string]: any }
         sound = spec.sound,
         at = "displaced",
         tool = "wrench",
-        hint = { id = "anchor", label = "lunatic/tfs:ui.affordance.anchor" },
+        hint = { id = "anchor", label = ui_label.pack("lunatic/tfs:ui.affordance.anchor") },
         over = spec.over,
         secs = spec.secs,
         to = "anchored",
@@ -33,7 +34,7 @@ function anchorable.unanchor(spec: Spec, leaves: string?): { [string]: any }
         sound = spec.sound,
         at = "anchored",
         tool = "wrench",
-        hint = { id = "unanchor", label = "lunatic/tfs:ui.affordance.unanchor" },
+        hint = { id = "unanchor", label = ui_label.pack("lunatic/tfs:ui.affordance.unanchor") },
         secs = spec.secs,
         to = if leaves == nil then "displaced" else nil,
         gone = if leaves ~= nil then true else nil,

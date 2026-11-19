@@ -16,17 +16,15 @@ local ui_controls = require("@helpers/ui_controls")
 -- unsieved machine, the ledger row a dock writes, and what a crewman
 -- gets back when they take their beaker out again.
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local word = ui_controls.word
-
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 local function row(ui: ui_controls.Record, label: string): ui_controls.Record
     for _, r in ipairs(ui_controls.rows(ui.readouts)) do
-        if word(r.label) == label then
+        if ui_controls.label_reference(r.label, "structural") == label then
             return r
         end
     end
@@ -123,7 +121,7 @@ t.click(p, 4, 1, machine)
 t.tick()
 local ui = ui_controls.record(assert(t.ui(p)))
 assert(
-    ui_controls.record(row(ui, "dock.vessel").value).text == "beaker (ethanol)",
+    ui_controls.record(row(ui, "dock.vessel").value).plain == "beaker (ethanol)",
     "the panel names what is in it"
 )
 near(
@@ -160,7 +158,10 @@ assert(t.hands(p).held == "beaker.ethanol", "the eject button hands it back")
 assert(t.ledger_has("Undocked", "beaker"), "and the undock is on the record too")
 near(held_in(booze, "ethanol"), left, 1e-6, "carrying exactly what was left in it")
 assert(
-    ui_controls.record(row(ui_controls.record(assert(t.ui(p))), "dock.vessel").value).id
+    ui_controls.label_reference(
+        row(ui_controls.record(assert(t.ui(p))), "dock.vessel").value,
+        "structural"
+    )
         == "dock.vessel.empty",
     "the panel agrees the slot is bare"
 )

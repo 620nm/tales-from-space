@@ -40,13 +40,11 @@ t.world(
 local p = t.join()
 t.tick()
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local word = ui_controls.word
-
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local function readout(ui: ui_controls.Record, label: string): ui_controls.Record?
     for _, r in ipairs(ui_controls.rows(ui.readouts)) do
-        if word(r.label) == label then
+        if ui_controls.label_reference(r.label, "structural") == label then
             return r
         end
     end
@@ -66,7 +64,7 @@ end
 -- units each state is read in (docs/tgui/matter-block.md).
 local function block(ui: ui_controls.Record, section: string): ui_controls.Record?
     for _, b in ipairs(ui_controls.rows(ui.matter or {})) do
-        if word(b.section) == section then
+        if ui_controls.label_reference(b.section, "structural") == section then
             return b
         end
     end
@@ -139,7 +137,10 @@ assert(readout(ui, "holder.supply") == nil, "an ordinary bottle is not inexhaust
 assert(readout(ui, "holder.rating") == nil, "and nothing wrote a rating on the side of it")
 assert(ui.gauge == nil, "so there is no needle to draw against one")
 assert(
-    ui_controls.record(assert(readout(ui, "tank.internals")).value).id == "tank.internals.connected",
+    ui_controls.label_reference(
+        assert(readout(ui, "tank.internals")).value,
+        "structural"
+    ) == "tank.internals.connected",
     "the key opened the valve too"
 )
 

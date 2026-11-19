@@ -1,7 +1,7 @@
 // Compact rows for one disclosed control panel. The provider's kind ordering
-// and contiguous toggle groups remain the layout; labels are only rendered,
-// never inspected for vocabulary.
-import type { UiNode } from "@lunatic/ui";
+// and contiguous toggle groups remain the layout; only structural refs select
+// vocabulary-specific branches.
+import type { UiLabel, UiNode } from "@lunatic/ui";
 import { Choice, ChoiceGrid, Swatch } from "@lunatic/ui";
 import type {
   DocumentIdentity,
@@ -12,7 +12,7 @@ import type {
   Toggle,
 } from "./document-model";
 import { documentAction } from "./document-action";
-import { labelId, labelText, type Label } from "./labels";
+import { readoutText, renderLabel, structuralLabelId } from "./labels";
 import { matterBlock } from "./matter-block";
 import { setpointDisplay } from "./documents-modules";
 import { grayedCard, subjectBadge, subjectCard, unavailableBadge } from "./documents-choices";
@@ -26,7 +26,7 @@ type Indexed<T> = { value: T; index: number };
 
 interface ControlSection {
   identity: string;
-  label?: Label;
+  label?: UiLabel | null;
   readouts: Indexed<Readout>[];
   toggles: Indexed<Toggle>[];
   labels: Indexed<LabelRow>[];
@@ -43,8 +43,8 @@ function stableJson(value: unknown): string {
     .join(",")}}`;
 }
 
-/** Text may match across locales; the Label's authored structure must not. */
-function sectionIdentity(label: Label | undefined): string {
+/** Translated text may match across locales; UiLabel structure must not. */
+function sectionIdentity(label: UiLabel | null | undefined): string {
   return label == null ? "" : stableJson(label);
 }
 
@@ -66,7 +66,7 @@ function sections(panel: {
   matter?: MatterBlock[];
 }): ControlSection[] {
   const out: ControlSection[] = [];
-  const get = (label: Label | undefined): ControlSection => {
+  const get = (label: UiLabel | null | undefined): ControlSection => {
     const identity = sectionIdentity(label);
     let found = out.find((section) => section.identity === identity);
     if (!found) {
@@ -97,8 +97,8 @@ function readoutNodes(id: string, readouts: Indexed<Readout>[]): UiNode[] {
     out.push(column(`${id}/readouts`, plain.map(({ value, index }) => {
       const tone = toneClass(value.tone);
       return column(`${id}/readouts/${index}`, [
-        text(`${id}/readouts/${index}/label`, labelText(value.label), ["workspace-readout-label"]),
-        text(`${id}/readouts/${index}/value`, value.value, ["workspace-readout-value", ...(tone ? [tone] : [])]),
+        text(`${id}/readouts/${index}/label`, renderLabel(value.label), ["workspace-readout-label"]),
+        text(`${id}/readouts/${index}/value`, readoutText(value.value), ["workspace-readout-value", ...(tone ? [tone] : [])]),
       ], { cls: ["workspace-readout-tile"] });
     }), { cls: ["workspace-readout-grid"] }));
   }
@@ -108,7 +108,7 @@ function readoutNodes(id: string, readouts: Indexed<Readout>[]): UiNode[] {
       const choiceId = `${id}/subjects/${index}`;
       return Choice(choiceId, {
         ...subjectCard(subject, value.label, undefined,
-          labelId(value.label) === "link.member.hardwired"
+          structuralLabelId(value.label) === "link.member.hardwired"
             ? { ...subjectBadge(subject), text: S.tfs("ui.device.wired", { state: subjectBadge(subject).text }) }
             : undefined),
         selected: false,
@@ -135,17 +135,19 @@ function toggleKey(
 function switchRow(id: string, doc: DocumentIdentity, toggle: Toggle, active: boolean): UiNode {
   const swatch = toggle.color ? Swatch(`${id}/swatch`, toggle.color) : null;
   const blocked = unavailableBadge(toggle);
+  const caption = renderLabel(toggle.on ? toggle.on_text : toggle.off_text);
   return row(id, [
     ...(swatch ? [swatch] : []),
-    text(`${id}/label`, labelText(toggle.label), ["workspace-control-label", "grow"]),
+    text(`${id}/label`, renderLabel(toggle.label), ["workspace-control-label", "grow"]),
     ...(blocked ? [text(`${id}/unavailable`, blocked.text, ["workspace-control-value", "tone-off"])] : []),
-    press(`${id}/press`, labelText(toggle.on ? toggle.on_text : toggle.off_text), documentAction(doc, "toggle", {
+    press(`${id}/press`, caption, documentAction(doc, "toggle", {
       field: toggle.field,
       ...(toggle.option == null ? {} : { option: toggle.option }),
     }), {
       disabled: !active || blocked != null,
       variant: toggle.on ? "selected" : "default",
       ...(toggle.icon ? { icon: toggle.icon } : {}),
+      label: caption,
       cls: ["workspace-control-action"],
     }),
   ], { cls: ["workspace-control-row", "workspace-switch-row"] });
@@ -167,7 +169,7 @@ function choiceGroup(
     const blocked = unavailableBadge(value);
     const metadata = value.subject ? subjectCard(value.subject, value.label, undefined, blocked) : {};
     return grayedCard(Choice(id, {
-      label: metadata.label ?? labelText(value.label),
+      label: metadata.label ?? renderLabel(value.label),
       ...(metadata.sprite ? { sprite: metadata.sprite } : value.icon ? { sprite: value.icon } : {}),
       ...(value.color ? { color: value.color } : {}),
       ...(metadata.detail ? { detail: metadata.detail } : blocked ? { detail: blocked.text } : {}),
@@ -186,7 +188,7 @@ function choiceGroup(
     ? row(`${firstId}/group/${index}`, choices, { cls: ["workspace-choice-strip"] })
     : { ...ChoiceGrid(`${firstId}/group/${index}`, choices, { min: 140 }), class: ["choice-grid", "workspace-choice-grid"] };
   return [
-    ...(first.value.group == null ? [] : [text(`${firstId}/group/${index}/label`, labelText(first.value.group), ["workspace-control-group-label"])]),
+    ...(first.value.group == null ? [] : [text(`${firstId}/group/${index}/label`, first.value.group, ["workspace-control-group-label"])]),
     strip,
   ];
 }
@@ -202,11 +204,11 @@ function toggleRows(base: string, doc: DocumentIdentity, toggles: Indexed<Toggle
       cursor += 1;
       continue;
     }
-    const groupIdentity = `${first.value.field}\u0000${sectionIdentity(first.value.group)}`;
+    const groupIdentity = `${first.value.field}\u0000${first.value.group ?? ""}`;
     let end = cursor + 1;
     while (end < toggles.length) {
       const next = toggles[end]!.value;
-      if (next.option == null || `${next.field}\u0000${sectionIdentity(next.group)}` !== groupIdentity) break;
+      if (next.option == null || `${next.field}\u0000${next.group ?? ""}` !== groupIdentity) break;
       end += 1;
     }
     out.push(...choiceGroup(base, doc, toggles.slice(cursor, end), toggles, active, group));
@@ -220,36 +222,46 @@ function labelRows(base: string, doc: DocumentIdentity, labels: Indexed<LabelRow
   return labels.map(({ value, index }) => {
     const suffix = value.row === "input" ? safePart(value.action, `input-${index}`) : `${value.row}-${index}`;
     const id = bounded(`${base}/label`, suffix, index);
-    const caption = text(`${id}/label`, labelText(value.label), ["workspace-control-label", "grow"]);
-    if (value.row === "press")
-      return row(id, [caption, press(`${id}/press`, value.text, documentAction(doc, "toggle", {
+    const rowLabel = renderLabel(value.label);
+    const caption = text(`${id}/label`, rowLabel, ["workspace-control-label", "grow"]);
+    if (value.row === "press") {
+      const pressCaption = renderLabel(value.text);
+      return row(id, [caption, press(`${id}/press`, pressCaption, documentAction(doc, "toggle", {
         field: value.field,
         ...(value.option == null ? {} : { option: value.option }),
-      }), { disabled: !active || !value.enabled, cls: ["workspace-control-action"] })], { cls: ["workspace-control-row"] });
+      }), { disabled: !active || !value.enabled, label: pressCaption, cls: ["workspace-control-action"] })], { cls: ["workspace-control-row"] });
+    }
     if (value.row === "input") {
       const box = `${id}/value`;
+      const submitCaption = value.text ? renderLabel(value.text) : S.SET;
       return row(id, [caption, entry(box, "", () => undefined, {
         submitOnly: true,
         disabled: !active,
-        label: labelText(value.label),
+        label: rowLabel,
         cls: ["workspace-control-input"],
-      }), press(`${id}/send`, labelText(value.text) || S.SET, (event) => documentAction(doc, "action", {
+      }), press(`${id}/send`, submitCaption, (event) => documentAction(doc, "action", {
         action: value.action,
         value: [...(event.value ?? "")].slice(0, value.max_length ?? Number.MAX_SAFE_INTEGER).join(""),
-      }), { submit: box, disabled: !active, cls: ["workspace-control-action"] })], { cls: ["workspace-control-row"] });
+      }), {
+        submit: box,
+        disabled: !active,
+        ...(value.text ? { label: submitCaption } : {}),
+        cls: ["workspace-control-action"],
+      })], { cls: ["workspace-control-row"] });
     }
-    return row(id, [caption, text(`${id}/word`, labelText(value.text), ["workspace-control-value"])], { cls: ["workspace-control-row"] });
+    return row(id, [caption, text(`${id}/word`, renderLabel(value.text), ["workspace-control-value"])], { cls: ["workspace-control-row"] });
   });
 }
 
 function setpointRow(base: string, doc: DocumentIdentity, point: Setpoint, sourceIndex: number, active: boolean, unique: boolean): UiNode {
   const key = bounded(`${base}/set`, unique ? safePart(point.field, `index/${sourceIndex}`) : `index/${sourceIndex}`, sourceIndex);
   const { spell, unit, stored, range } = setpointDisplay(point);
+  const label = renderLabel(point.label);
   const step = point.step && point.step > 0 ? point.step : 1;
   const box = `${key}/value`;
   return row(key, [
     column(`${key}/description`, [
-      text(`${key}/label`, labelText(point.label), ["workspace-control-label"]),
+      text(`${key}/label`, label, ["workspace-control-label"]),
       ...(range === null ? [] : [text(`${key}/range`, range, ["workspace-control-range"])]),
     ], { cls: ["workspace-control-label-block"] }),
     row(`${key}/controls`, [
@@ -257,7 +269,7 @@ function setpointRow(base: string, doc: DocumentIdentity, point: Setpoint, sourc
       entry(box, spell(point.value), (value) => {
         const wanted = Number(value);
         return Number.isFinite(wanted) ? documentAction(doc, "set", { field: point.field, value: stored(wanted) }) : undefined;
-      }, { cls: ["workspace-setpoint-input"], disabled: !active, label: labelText(point.label) }),
+      }, { cls: ["workspace-setpoint-input"], disabled: !active, label }),
       text(`${key}/unit`, unit, ["workspace-control-unit"]),
       press(`${key}/up`, S.RAISE, documentAction(doc, "set", { field: point.field, adjust: step }), { disabled: !active, cls: ["workspace-control-step-button"] }),
     ], { cls: ["workspace-setpoint-controls"] }),
@@ -275,7 +287,7 @@ function sectionRows(base: string, doc: DocumentIdentity, section: ControlSectio
   ];
   if (!children.length) return [];
   return [column(base, [
-    ...(section.label == null ? [] : [text(`${base}/title`, labelText(section.label), ["workspace-control-section-title"])]),
+    ...(section.label == null ? [] : [text(`${base}/title`, renderLabel(section.label), ["workspace-control-section-title"])]),
     ...children,
   ], { cls: ["workspace-control-section"] })];
 }

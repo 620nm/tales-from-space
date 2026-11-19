@@ -19,7 +19,7 @@ const U = await import(`data:text/javascript;base64,${Buffer.from(result.outputF
 const id = "doc/5/1", doc = { id: 5, generation: 1, title: "Terminal", owner_sprite: "laptop" };
 const atmo = JSON.stringify({ version: 1, temperature_k: 293, pressure_kpa: 101, gases: [] });
 const state = (ext = "md", body = "Saved") => ({
-  stores: [{ key: "host", binding: "disk", label: "Internal", used: 5, capacity: 100, count: 1, count_cap: 8 }],
+  stores: [{ key: "host", binding: "disk", label: { plain: "Internal" }, used: 5, capacity: 100, count: 1, count_cap: 8 }],
   files: [{ store: "host", binding: "disk", uid: 1, name: "notes", ext, size: body.length }], create: { host: ["md", "atmo", "pem"] },
   open: { store: "host", binding: "disk", uid: 1, revision: 3, name: "notes", ext, body },
 });
@@ -168,7 +168,7 @@ test("a canceled receipt cannot release a newer pending guard", () => {
 test("Copy retains the source filename without a destination input", () => {
   U.retainOpenFileBuffers([]);
   const s = state();
-  s.stores.push({ key: "media", binding: "removable", label: "Removable", used: 0, capacity: 100, count: 0, count_cap: 8 });
+  s.stores.push({ key: "media", binding: "removable", label: { plain: "Removable" }, used: 0, capacity: 100, count: 0, count_cap: 8 });
   s.files[0].name = "a-very-long-filename-with-its-full-accessible-name";
   const nodes = render(s);
   assert(!get(nodes, "drive/host/stem"));
@@ -183,8 +183,9 @@ test("Copy retains the source filename without a destination input", () => {
 test("choice captions stay stable while selected styling follows state", () => {
   for (const on of [true, false]) {
     U.begin();
-    const nodes = U.toggleRows(id, doc, [{ field: "mode", option: "one", label: "Normal", on }], true).flatMap(flatten);
+    const nodes = U.toggleRows(id, doc, [{ field: "mode", option: "one", label: { plain: "Normal" }, on }], true).flatMap(flatten);
     assert.equal(nodes.find((n) => n.id === `${id}/toggle/mode/one/label`).text, "Normal");
+    assert.equal(nodes.find((n) => n.id === `${id}/toggle/mode/one`).label, "Normal");
     assert.equal(nodes.find((n) => n.id === `${id}/toggle/mode/one/box`).class.includes("choice-on"), on);
     assert.equal(act("toggle/mode/one").payload.option, "one");
   }
@@ -192,11 +193,11 @@ test("choice captions stay stable while selected styling follows state", () => {
 
 test("arbitrary choice values keep valid distinct IDs and unchanged commands", () => {
   const toggles = [
-    { field: "mode", option: "safe", label: "Safe", on: true },
-    { field: "surgery", option: "remove_organ|chest/heart", label: "Remove", on: false },
-    { field: "mode", option: "x".repeat(128), label: "Long", on: false },
-    { field: "mode", option: "same", label: "First", on: false },
-    { field: "mode", option: "same", label: "Second", on: false },
+    { field: "mode", option: "safe", label: { plain: "Safe" }, on: true },
+    { field: "surgery", option: "remove_organ|chest/heart", label: { plain: "Remove" }, on: false },
+    { field: "mode", option: "x".repeat(128), label: { plain: "Long" }, on: false },
+    { field: "mode", option: "same", label: { plain: "First" }, on: false },
+    { field: "mode", option: "same", label: { plain: "Second" }, on: false },
   ];
   U.begin();
   const nodes = U.toggleRows(id, doc, toggles.slice(1), true, toggles).flatMap(flatten);

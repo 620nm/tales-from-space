@@ -9,7 +9,7 @@ if (!engine) throw Error("Pass the engine checkout path.");
 const { build } = await import(pathToFileURL(resolve(engine, "web/node_modules/esbuild/lib/main.js")));
 const result = await build({
   stdin: {
-    contents: "export { labelText } from './labels'; export { actionGroups } from './actions'; export { event } from './view';",
+    contents: "export { renderLabel } from './labels'; export { actionGroups } from './actions'; export { event } from './view';",
     resolveDir: fileURLToPath(new URL("../ui", import.meta.url)),
     loader: "ts",
   },
@@ -24,6 +24,8 @@ const catalog = JSON.parse(await readFile(new URL("../locale/en.json", import.me
 globalThis.__lunaticLocale = { tag: "en", catalog };
 
 const flatten = (node) => [node, ...(node.children ?? []).flatMap(flatten)];
+const packLabel = (pack, args = []) => ({ keyed: { reference: { pack }, args } });
+const structuralLabel = (structural, args = []) => ({ keyed: { reference: { structural }, args } });
 
 test("qualified action groups use their real catalog labels and accessible names", () => {
   const view = {
@@ -41,8 +43,8 @@ test("qualified action groups use their real catalog labels and accessible names
             presentation: "actions",
             groups: [{
               id: "equipment",
-              label: { id: "lunatic/tfs:ui.actions.equipment" },
-              actions: [{ id: "activate", label: { id: "lunatic/tfs:ui.actions.welder" } }],
+              label: packLabel("lunatic/tfs:ui.actions.equipment"),
+              actions: [{ id: "activate", label: packLabel("lunatic/tfs:ui.actions.welder") }],
             }],
           },
         },
@@ -63,25 +65,22 @@ test("qualified action groups use their real catalog labels and accessible names
   assert(!nodes.some((node) => typeof node.text === "string" && node.text.includes("lunatic/tfs:")));
 });
 
-test("bare module labels retain the native prefix", () => {
-  assert.equal(UI.labelText({ id: "link.state.online" }), catalog["lunatic/tfs:module.link.state.online"]);
+test("structural labels use the pack's fully-qualified catalog key", () => {
+  assert.equal(UI.renderLabel(structuralLabel("link.state.online")), catalog["lunatic/tfs:module.link.state.online"]);
 });
 
-test("arg_ids resolve qualified and unqualified nested labels", () => {
-  assert.equal(UI.labelText({
-    id: "link.member",
-    args: { address: "02-4a", state: "lunatic/tfs:module.link.state.online" },
-    arg_ids: ["state"],
-  }), "02-4a — online");
-  assert.equal(UI.labelText({
-    id: "lunatic/tfs:module.link.member",
-    args: { address: "02-4a", state: "link.state.online" },
-    arg_ids: ["state"],
-  }), "02-4a — online");
+test("named arguments preserve literal and structural reference kinds", () => {
+  const args = [
+    { name: "address", value: { plain: "02-4a" } },
+    { name: "state", value: { ref: { structural: "link.state.online" } } },
+  ];
+  assert.equal(UI.renderLabel(structuralLabel("link.member", args)), "02-4a — online");
+  assert.equal(UI.renderLabel(packLabel("lunatic/tfs:module.link.member", args)), "02-4a — online");
 });
 
-test("literal text stays literal and missing ids remain visible", () => {
-  assert.equal(UI.labelText({ text: "Welder" }), "Welder");
-  assert.equal(UI.labelText({ id: "lunatic/tfs:ui.actions.missing" }), "lunatic/tfs:ui.actions.missing");
-  assert.equal(UI.labelText({ id: "missing" }), "lunatic/tfs:module.missing");
+test("key-shaped plain text stays literal and missing references remain visible", () => {
+  const key = "lunatic/tfs:module.link.state.online";
+  assert.equal(UI.renderLabel({ plain: key }), key);
+  assert.equal(UI.renderLabel(packLabel(key)), catalog[key]);
+  assert.equal(UI.renderLabel(packLabel("lunatic/tfs:ui.actions.missing")), "lunatic/tfs:ui.actions.missing");
 });

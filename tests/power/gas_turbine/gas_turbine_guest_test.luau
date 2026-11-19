@@ -178,7 +178,10 @@ local function install(ap_x: number, source: string, name: string): ()
     ui_files.program(p, "controller", uid)
     t.run_ticks(2)
     assert(
-        ui_controls.record(ui_controls.rows(laptop.ui(p).program_slots)[1].state).id
+        ui_controls.label_reference(
+            ui_controls.rows(laptop.ui(p).program_slots)[1].state,
+            "structural"
+        )
             == "program_slots.state.loaded",
         "the controller slot accepts the guest"
     )

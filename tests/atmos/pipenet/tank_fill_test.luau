@@ -35,10 +35,8 @@ local TANK_M3 = 2.5
 -- holographic sticker, and the denominator of its gauge.
 local RATED_KPA = 46000.0
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local word = ui_controls.word
-
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 -- The ideal gas law at the vessel's own size and filling temperature --
 -- the engine's `fill_vessel` line, written out again on this side of
 -- the boundary so the two have to agree rather than share a helper.
@@ -52,7 +50,7 @@ end
 
 local function row(panel: ui_controls.Record, label: string): ui_controls.Record?
     for _, r in ipairs(ui_controls.rows(panel.readouts)) do
-        if word(r.label) == label then
+        if ui_controls.label_reference(r.label, "structural") == label then
             return r
         end
     end
@@ -63,7 +61,7 @@ end
 -- units each state is read in (docs/tgui/matter-block.md).
 local function block(panel: ui_controls.Record, section: string): ui_controls.Record?
     for _, b in ipairs(ui_controls.rows(panel.matter or {})) do
-        if word(b.section) == section then
+        if ui_controls.label_reference(b.section, "structural") == section then
             return b
         end
     end
@@ -254,9 +252,9 @@ near(
     "the size of the thing"
 )
 assert(
-    ui_controls.record(assert(row(half, "holder.rating")).value).text == "46000 kPa",
+    ui_controls.record(assert(row(half, "holder.rating")).value).plain == "46000 kPa",
     "and its sticker, which the block cannot say: "
-        .. tostring(word(assert(row(half, "holder.rating")).value))
+        .. tostring(ui_controls.record(assert(row(half, "holder.rating")).value).plain)
 )
 assert(
     #ui_controls.rows(half.toggles) == 0 and #ui_controls.rows(half.setpoints) == 0,
@@ -415,6 +413,6 @@ near(
 near(ui_controls.number(nothing.volume_l), 2500.0, 1e-9, "while it is the size it always was")
 near(ui_controls.number(nothing.headspace_l), 2500.0, 1e-9, "all of it headspace")
 assert(
-    ui_controls.record(assert(row(empty, "holder.rating")).value).text == "46000 kPa",
+    ui_controls.record(assert(row(empty, "holder.rating")).value).plain == "46000 kPa",
     "and the sticker says what it always said"
 )

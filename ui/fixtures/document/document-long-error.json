@@ -20,134 +20,132 @@
         "state": {
           "document": "modules",
           "status": 2,
-          "notice": {
-            "text": "Sensor error: measurement unavailable. Check the connected sensor."
-          },
+          "notice": {"plain": "Sensor error: measurement unavailable. Check the connected sensor."},
           "labels": [
             {
               "row": "word",
-              "label": "Diagnostic 0",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 0"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 1",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 1"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 2",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 2"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 3",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 3"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 4",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 4"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 5",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 5"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 6",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 6"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 7",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 7"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 8",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 8"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 9",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 9"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 10",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 10"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 11",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 11"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 12",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 12"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 13",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 13"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 14",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 14"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 15",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 15"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 16",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 16"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 17",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 17"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 18",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 18"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 19",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 19"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 20",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 20"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 21",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 21"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 22",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 22"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 23",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 23"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             },
             {
               "row": "word",
-              "label": "Diagnostic 24",
-              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+              "label": {"plain": "Diagnostic 24"},
+              "text": {"plain": "A long equipment reading remains contained in the document body and its label stays next to its value."}
             }
           ]
         }

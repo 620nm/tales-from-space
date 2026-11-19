@@ -3,6 +3,8 @@
 -- tg code/modules/paperwork/fax.dm:222-237, :294-351, :406-428.
 local printing = require("@lib/printing")
 
+local ui_label = require("@lib/ui_label")
+
 return {
     id = "fax",
     entity_class = "installed",
@@ -28,14 +30,14 @@ return {
         modules = { "link", "actions" },
         opens_on_click = false,
         actions = {
-            { key = "advertise", label = "lunatic/tfs:action.fax.advertise" },
-            { key = "name", label = "lunatic/tfs:action.fax.name" },
-            { key = "target", label = "lunatic/tfs:action.fax.target" },
-            { key = "page", label = "lunatic/tfs:action.fax.page" },
-            { key = "confirm", label = "lunatic/tfs:action.fax.confirm" },
-            { key = "cancel", label = "lunatic/tfs:action.fax.cancel" },
-            { key = "send", label = "lunatic/tfs:action.fax.send" },
-            { key = "eject", label = "lunatic/tfs:action.fax.eject" },
+            { key = "advertise", label = ui_label.pack("lunatic/tfs:action.fax.advertise") },
+            { key = "name", label = ui_label.pack("lunatic/tfs:action.fax.name") },
+            { key = "target", label = ui_label.pack("lunatic/tfs:action.fax.target") },
+            { key = "page", label = ui_label.pack("lunatic/tfs:action.fax.page") },
+            { key = "confirm", label = ui_label.pack("lunatic/tfs:action.fax.confirm") },
+            { key = "cancel", label = ui_label.pack("lunatic/tfs:action.fax.cancel") },
+            { key = "send", label = ui_label.pack("lunatic/tfs:action.fax.send") },
+            { key = "eject", label = ui_label.pack("lunatic/tfs:action.fax.eject") },
         },
     },
     script = "fax",

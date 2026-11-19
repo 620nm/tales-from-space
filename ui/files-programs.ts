@@ -2,7 +2,7 @@ import type { UiNode } from "@lunatic/ui";
 import { Stack } from "@lunatic/ui";
 import type { DocumentIdentity, ModuleState, ProgramSlotRowState } from "./document-model";
 import { documentAction } from "./document-action";
-import { labelText } from "./labels";
+import { renderLabel } from "./labels";
 import { column, press, row, some, text, type Handler } from "./view";
 import * as S from "./strings";
 const SOURCE_EXTS = new Set(["disl"]);
@@ -20,7 +20,7 @@ export function programSummary(
   if (!slots?.length) return null;
   return Stack(`${id}/program-summary`, slots.map((slot: ProgramSlotRowState, index) => {
     const key = `${id}/program-summary/${index}`;
-    const detail = slot.file ?? labelText(slot.state);
+    const detail = slot.file ?? (slot.state ? renderLabel(slot.state) : "");
     return row(key, some(
       press(`${key}/open`, slot.id, openPrograms, { variant: "ghost", ...(submit ? { submit } : {}) }),
       text(`${key}/state`, detail, ["hint", "grow"]),
@@ -47,7 +47,7 @@ export function programSlotRows(
           `${key}/head`,
           some(
             text(`${key}/id`, slot.id, ["grow", "list-label"]),
-            text(`${key}/state`, labelText(slot.state), ["hint"]),
+            text(`${key}/state`, slot.state ? renderLabel(slot.state) : "", ["hint"]),
             slot.file ? text(`${key}/file`, slot.file, ["fname"]) : null,
             text(
               `${key}/stats`,

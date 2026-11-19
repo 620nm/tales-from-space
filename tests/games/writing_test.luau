@@ -169,8 +169,16 @@ local bin = assert(t.target_at(p, 3, 2, "paper_bin"))
 local draw_hint = false
 local pickup_hint = false
 for _, hint in ipairs(t.action_hints(p, bin)) do
-    if hint.gesture == "primary" and hint.label.key == "lunatic/tfs:action.paper_bin.draw" then draw_hint = true end
-    if hint.gesture == "alt_primary" and hint.label.key == "lunatic/tfs:action.pick_up" then pickup_hint = true end
+    if hint.gesture == "primary"
+        and ui_controls.label_reference(hint.label, "pack") == "lunatic/tfs:action.paper_bin.draw"
+    then
+        draw_hint = true
+    end
+    if hint.gesture == "alt_primary"
+        and ui_controls.label_reference(hint.label, "pack") == "lunatic/tfs:action.pick_up"
+    then
+        pickup_hint = true
+    end
 end
 assert(draw_hint and pickup_hint, "holding a writer still offers drawing and alternative pickup")
 t.click(p, 3, 2, bin)

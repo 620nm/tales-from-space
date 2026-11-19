@@ -1,8 +1,7 @@
 // Hand, carry and equipment groups share the HUD control row. Individual
 // equipment cells retain their anatomical positions and native item claims.
-import type { Json, UiNode } from "@lunatic/ui";
+import type { UiNode } from "@lunatic/ui";
 import { Pane, Stack } from "@lunatic/ui";
-import { labelText } from "./labels";
 import { hudSlot } from "./slots";
 import type { GameplayView, InventoryState } from "./model";
 import { openStorageSite } from "./inventory-storage";
@@ -35,12 +34,12 @@ export function inventory(view: GameplayView): UiNode | null {
 
 interface AssetMark { asset: string; cls: string }
 
-function isAssetMark(glyph: unknown): glyph is AssetMark {
+function isAssetMark(glyph: AssetMark | string): glyph is AssetMark {
   return typeof glyph === "object" && glyph !== null && "asset" in glyph;
 }
 
 /** A glyph or drawn mark over its word, with the press stretched across both. */
-function glyphControl(id: string, glyph: unknown, caption: unknown, action: Command, on = false): UiNode {
+function glyphControl(id: string, glyph: AssetMark | string, caption: string, action: Command, on = false): UiNode {
   return panel(`${id}/box`, some(
     isAssetMark(glyph)
       ? { id: `${id}/glyph`, type: "image", asset: glyph.asset, class: [glyph.cls] }
@@ -48,7 +47,7 @@ function glyphControl(id: string, glyph: unknown, caption: unknown, action: Comm
     text(`${id}/cap`, caption, ["hud-cap"]),
     // The press is a bare hit box over a glyph and a word, so the word
     // is what it is read out as.
-    press(id, "", action, { cls: ["hud-hit"], label: labelText(caption as Json) }),
+    press(id, "", action, { cls: ["hud-hit"], label: caption }),
   ), { cls: on ? ["hand-action", "hand-action-on"] : ["hand-action"] });
 }
 

@@ -2,6 +2,8 @@
 -- Uses tg's five-tool disassembly and four-tool repair ladder (`grille.luau`,
 -- `window.dm`'s `*_act_secondary` chain); unbolting the cut frame returns the
 -- two reinforced lead glass sheets and leaves a bolted `grille` standing.
+local ui_label = require("@lib/ui_label")
+
 return {
     id = "reinforced_lead_glass_grille",
     entity_class = "installed",
@@ -60,7 +62,7 @@ return {
             fuel = 0.45,
             hint = {
                 id = "heat_reinforced_glass",
-                label = "lunatic/tfs:ui.affordance.heat_reinforced_glass",
+                label = ui_label.pack("lunatic/tfs:ui.affordance.heat_reinforced_glass"),
             },
             to = "heated",
             start = "You start heating the security screws.",
@@ -73,7 +75,7 @@ return {
             secs = 5.0,
             hint = {
                 id = "remove_reinforced_glass_screws",
-                label = "lunatic/tfs:ui.affordance.remove_reinforced_glass_screws",
+                label = ui_label.pack("lunatic/tfs:ui.affordance.remove_reinforced_glass_screws"),
             },
             to = "unscrewed",
             start = "You dig into the heated screws.",
@@ -86,7 +88,7 @@ return {
             secs = 4.0,
             hint = {
                 id = "pry_reinforced_glass",
-                label = "lunatic/tfs:ui.affordance.pry_reinforced_glass",
+                label = ui_label.pack("lunatic/tfs:ui.affordance.pry_reinforced_glass"),
             },
             to = "popped",
             start = "You wedge the crowbar into the gap and pry.",
@@ -99,7 +101,7 @@ return {
             secs = 2.0,
             hint = {
                 id = "cut_reinforced_glass_bars",
-                label = "lunatic/tfs:ui.affordance.cut_reinforced_glass_bars",
+                label = ui_label.pack("lunatic/tfs:ui.affordance.cut_reinforced_glass_bars"),
             },
             to = "cut",
             start = "You start cutting the exposed bars.",
@@ -112,7 +114,7 @@ return {
             secs = 4.0,
             hint = {
                 id = "unbolt_reinforced_glass",
-                label = "lunatic/tfs:ui.affordance.unbolt_reinforced_glass",
+                label = ui_label.pack("lunatic/tfs:ui.affordance.unbolt_reinforced_glass"),
             },
             yields = { reinforced_lead_glass = 2 },
             gone = true,
@@ -130,7 +132,7 @@ return {
             fuel = 0.45,
             hint = {
                 id = "repair_reinforced_lead_glass",
-                label = "lunatic/tfs:ui.affordance.repair_reinforced_lead_glass",
+                label = ui_label.pack("lunatic/tfs:ui.affordance.repair_reinforced_lead_glass"),
             },
             to = "reinforced",
             start = "You start securing the heated security screws.",
@@ -143,7 +145,7 @@ return {
             secs = 5.0,
             hint = {
                 id = "replace_reinforced_glass_screws",
-                label = "lunatic/tfs:ui.affordance.replace_reinforced_glass_screws",
+                label = ui_label.pack("lunatic/tfs:ui.affordance.replace_reinforced_glass_screws"),
             },
             to = "heated",
             start = "You start replacing the security screws.",
@@ -156,7 +158,7 @@ return {
             secs = 4.0,
             hint = {
                 id = "reseat_reinforced_glass",
-                label = "lunatic/tfs:ui.affordance.reseat_reinforced_glass",
+                label = ui_label.pack("lunatic/tfs:ui.affordance.reseat_reinforced_glass"),
             },
             to = "unscrewed",
             start = "You start levering the panel back into the frame.",
@@ -170,7 +172,7 @@ return {
             fuel = 0.3,
             hint = {
                 id = "weld_reinforced_glass_bars",
-                label = "lunatic/tfs:ui.affordance.weld_reinforced_glass_bars",
+                label = ui_label.pack("lunatic/tfs:ui.affordance.weld_reinforced_glass_bars"),
             },
             to = "popped",
             start = "You start welding the security bars back together.",

@@ -27,10 +27,8 @@ local ui_controls = require("@helpers/ui_controls")
 local ONE_ATM = 101.325
 local TUNED = 150.0
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local word = ui_controls.word
-
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. tostring(a) .. " vs " .. tostring(b))
 end
@@ -40,7 +38,11 @@ local function link(ui: ui_controls.Record, key: string): string?
     if ui.link == nil then
         return nil
     end
-    return word(ui_controls.record(ui.link)[key])
+    local value = ui_controls.record(ui.link)[key]
+    if key == "state" then
+        return ui_controls.label_reference(value, "structural")
+    end
+    return ui_controls.text(value)
 end
 
 local function rows(ui: ui_controls.Record, field)
@@ -395,9 +397,10 @@ assert(#ui_controls.rows(casing.setpoints or {}) == 0, "a paired vent offers no 
 assert(#ui_controls.rows(casing.toggles or {}) == 0, "and no switch either")
 local notice = ui_controls.record(assert(casing.notice, "it says why instead"))
 assert(
-    notice.id == "proxy.controlled_from" and ui_controls.record(notice.args).address == alarm,
+    ui_controls.label_reference(notice, "structural") == "proxy.controlled_from"
+        and ui_controls.label_argument(notice, "address", "plain") == alarm,
     "and names the box that has it: "
-        .. tostring(notice.args and ui_controls.record(notice.args).address)
+        .. tostring(ui_controls.label_argument(notice, "address", "plain"))
 )
 
 -- ---------------------------------------------------------------

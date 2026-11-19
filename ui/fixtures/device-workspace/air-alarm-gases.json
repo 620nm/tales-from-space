@@ -26,36 +26,36 @@
               "notice": null,
               "online": true,
               "readouts": [
-                {"label": {"id": "scrubber.waste"}, "section": null, "tone": "on", "value": {"text": "101 kPa"}},
-                {"label": {"id": "room.room"}, "section": null, "tone": "on", "value": {"text": "101.3 kPa"}},
-                {"label": {"id": "room.supply"}, "section": null, "tone": "on", "value": {"id": "room.supply.fed"}}
+                {"label": {"keyed": {"reference": {"structural": "scrubber.waste"}, "args": []}}, "section": null, "tone": "on", "value": {"plain": "101 kPa"}},
+                {"label": {"keyed": {"reference": {"structural": "room.room"}, "args": []}}, "section": null, "tone": "on", "value": {"plain": "101.3 kPa"}},
+                {"label": {"keyed": {"reference": {"structural": "room.supply"}, "args": []}}, "section": null, "tone": "on", "value": {"keyed": {"reference": {"structural": "room.supply.fed"}, "args": []}}}
               ],
               "setpoints": [
-                {"decimals": 0, "field": "3a-43-ec-2b-4c-aa/rate_lps", "label": {"id": "scrubber.rate"}, "max": 200, "min": 0, "section": null, "step": 10, "unit": "L/s", "value": 5},
-                {"decimals": 1, "field": "3a-43-ec-2b-4c-aa/floor_kpa", "label": {"id": "scrubber.stop_at"}, "max": 4500, "min": 0, "section": null, "step": 10.1325, "unit": "kPa", "value": 100}
+                {"decimals": 0, "field": "3a-43-ec-2b-4c-aa/rate_lps", "label": {"keyed": {"reference": {"structural": "scrubber.rate"}, "args": []}}, "max": 200, "min": 0, "section": null, "step": 10, "unit": "L/s", "value": 5},
+                {"decimals": 1, "field": "3a-43-ec-2b-4c-aa/floor_kpa", "label": {"keyed": {"reference": {"structural": "scrubber.stop_at"}, "args": []}}, "max": 4500, "min": 0, "section": null, "step": 10.1325, "unit": "kPa", "value": 100}
               ],
               "sprite": "scrubber_off_n",
               "toggles": [
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/on", "group": null, "icon": null, "label": {"id": "room.power"}, "off_text": {"id": "switch.off"}, "on": false, "on_text": {"id": "switch.on"}, "option": null, "section": null},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/service", "group": null, "icon": null, "label": {"args": {"factor": "1×"}, "id": "scrubber.reach.tile"}, "off_text": {"args": {"factor": "1×"}, "id": "scrubber.reach.tile"}, "on": true, "on_text": {"args": {"factor": "1×"}, "id": "scrubber.reach.tile"}, "option": "1", "section": null},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/service", "group": null, "icon": null, "label": {"args": {"factor": "5×"}, "id": "scrubber.reach.cardinals"}, "off_text": {"args": {"factor": "5×"}, "id": "scrubber.reach.cardinals"}, "on": false, "on_text": {"args": {"factor": "5×"}, "id": "scrubber.reach.cardinals"}, "option": "5", "section": null},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/service", "group": null, "icon": null, "label": {"args": {"factor": "9×"}, "id": "scrubber.reach.ring"}, "off_text": {"args": {"factor": "9×"}, "id": "scrubber.reach.ring"}, "on": false, "on_text": {"args": {"factor": "9×"}, "id": "scrubber.reach.ring"}, "option": "9", "section": null},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/whole_air", "group": null, "icon": null, "label": {"id": "scrubber.roster"}, "off_text": {"id": "scrubber.roster.selected"}, "on": false, "on_text": {"id": "scrubber.roster.all"}, "option": null, "section": null},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "oxygen"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "o2", "section": {"text": "Station atmosphere"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "nitrogen"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "n2", "section": {"text": "Station atmosphere"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "carbon dioxide"}, "off_text": {"id": "scrubber.gas.left"}, "on": true, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "co2", "section": {"text": "Station atmosphere"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "plasma"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "plasma", "section": {"text": "Atmospheric poisons"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "nitrous oxide"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "n2o", "section": {"text": "Atmospheric poisons"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "uranium hexafluoride"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "uf6", "section": {"text": "Atmospheric poisons"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "tritium"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "tritium", "section": {"text": "Atmospheric poisons"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "hydrogen"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "hydrogen", "section": {"text": "Atmospheric poisons"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "ammonia"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "ammonia", "section": {"text": "Atmospheric poisons"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "chlorine"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "chlorine", "section": {"text": "Atmospheric poisons"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "fluorine"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "fluorine", "section": {"text": "Atmospheric poisons"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "water"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "water", "section": {"text": "Volatiles"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "iodine"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "iodine", "section": {"text": "Volatiles"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "bromine"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "bromine", "section": {"text": "Volatiles"}},
-                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"text": "ethanol"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "ethanol", "section": {"text": "Volatiles"}}
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/on", "group": null, "icon": null, "label": {"keyed": {"reference": {"structural": "room.power"}, "args": []}}, "off_text": {"keyed": {"reference": {"structural": "switch.off"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "switch.on"}, "args": []}}, "option": null, "section": null},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/service", "group": null, "icon": null, "label": {"keyed": {"reference": {"structural": "scrubber.reach.tile"}, "args": [{"name": "factor", "value": {"plain": "1×"}}]}}, "off_text": {"keyed": {"reference": {"structural": "scrubber.reach.tile"}, "args": [{"name": "factor", "value": {"plain": "1×"}}]}}, "on": true, "on_text": {"keyed": {"reference": {"structural": "scrubber.reach.tile"}, "args": [{"name": "factor", "value": {"plain": "1×"}}]}}, "option": "1", "section": null},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/service", "group": null, "icon": null, "label": {"keyed": {"reference": {"structural": "scrubber.reach.cardinals"}, "args": [{"name": "factor", "value": {"plain": "5×"}}]}}, "off_text": {"keyed": {"reference": {"structural": "scrubber.reach.cardinals"}, "args": [{"name": "factor", "value": {"plain": "5×"}}]}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.reach.cardinals"}, "args": [{"name": "factor", "value": {"plain": "5×"}}]}}, "option": "5", "section": null},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/service", "group": null, "icon": null, "label": {"keyed": {"reference": {"structural": "scrubber.reach.ring"}, "args": [{"name": "factor", "value": {"plain": "9×"}}]}}, "off_text": {"keyed": {"reference": {"structural": "scrubber.reach.ring"}, "args": [{"name": "factor", "value": {"plain": "9×"}}]}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.reach.ring"}, "args": [{"name": "factor", "value": {"plain": "9×"}}]}}, "option": "9", "section": null},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/whole_air", "group": null, "icon": null, "label": {"keyed": {"reference": {"structural": "scrubber.roster"}, "args": []}}, "off_text": {"keyed": {"reference": {"structural": "scrubber.roster.selected"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.roster.all"}, "args": []}}, "option": null, "section": null},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "oxygen"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "o2", "section": {"plain": "Station atmosphere"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "nitrogen"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "n2", "section": {"plain": "Station atmosphere"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "carbon dioxide"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": true, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "co2", "section": {"plain": "Station atmosphere"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "plasma"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "plasma", "section": {"plain": "Atmospheric poisons"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "nitrous oxide"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "n2o", "section": {"plain": "Atmospheric poisons"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "uranium hexafluoride"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "uf6", "section": {"plain": "Atmospheric poisons"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "tritium"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "tritium", "section": {"plain": "Atmospheric poisons"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "hydrogen"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "hydrogen", "section": {"plain": "Atmospheric poisons"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "ammonia"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "ammonia", "section": {"plain": "Atmospheric poisons"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "chlorine"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "chlorine", "section": {"plain": "Atmospheric poisons"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "fluorine"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "fluorine", "section": {"plain": "Atmospheric poisons"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "water"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "water", "section": {"plain": "Volatiles"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "iodine"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "iodine", "section": {"plain": "Volatiles"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "bromine"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "bromine", "section": {"plain": "Volatiles"}},
+                {"color": null, "field": "3a-43-ec-2b-4c-aa/filter", "group": null, "icon": null, "label": {"plain": "ethanol"}, "off_text": {"keyed": {"reference": {"structural": "scrubber.gas.left"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "scrubber.gas.scrubbed"}, "args": []}}, "option": "ethanol", "section": {"plain": "Volatiles"}}
               ]
             },
             {
@@ -66,18 +66,18 @@
               "notice": null,
               "online": true,
               "readouts": [
-                {"label": {"id": "vent.supply_line"}, "section": null, "tone": "off", "value": {"id": "room.line.none"}},
-                {"label": {"id": "room.room"}, "section": null, "tone": "on", "value": {"text": "101.3 kPa"}},
-                {"label": {"id": "room.supply"}, "section": null, "tone": "on", "value": {"id": "room.supply.fed"}}
+                {"label": {"keyed": {"reference": {"structural": "vent.supply_line"}, "args": []}}, "section": null, "tone": "off", "value": {"keyed": {"reference": {"structural": "room.line.none"}, "args": []}}},
+                {"label": {"keyed": {"reference": {"structural": "room.room"}, "args": []}}, "section": null, "tone": "on", "value": {"plain": "101.3 kPa"}},
+                {"label": {"keyed": {"reference": {"structural": "room.supply"}, "args": []}}, "section": null, "tone": "on", "value": {"keyed": {"reference": {"structural": "room.supply.fed"}, "args": []}}}
               ],
               "setpoints": [
-                {"decimals": 2, "field": "aa-33-36-03-3d-a2/target_kpa", "label": {"id": "vent.hold_at"}, "max": 109.431, "min": 101.325, "section": null, "step": 10.1325, "unit": "kPa", "value": 101.325},
-                {"decimals": 2, "field": "aa-33-36-03-3d-a2/release_below_kpa", "label": {"id": "vent.feed_under"}, "max": 101.325, "min": 0, "section": null, "step": 10.1325, "unit": "kPa", "value": 101.325},
-                {"decimals": 2, "field": "aa-33-36-03-3d-a2/siphon_above_kpa", "label": {"id": "vent.empty_over"}, "max": 4500, "min": 101.325, "section": null, "step": 10.1325, "unit": "kPa", "value": 109.431}
+                {"decimals": 2, "field": "aa-33-36-03-3d-a2/target_kpa", "label": {"keyed": {"reference": {"structural": "vent.hold_at"}, "args": []}}, "max": 109.431, "min": 101.325, "section": null, "step": 10.1325, "unit": "kPa", "value": 101.325},
+                {"decimals": 2, "field": "aa-33-36-03-3d-a2/release_below_kpa", "label": {"keyed": {"reference": {"structural": "vent.feed_under"}, "args": []}}, "max": 101.325, "min": 0, "section": null, "step": 10.1325, "unit": "kPa", "value": 101.325},
+                {"decimals": 2, "field": "aa-33-36-03-3d-a2/siphon_above_kpa", "label": {"keyed": {"reference": {"structural": "vent.empty_over"}, "args": []}}, "max": 4500, "min": 101.325, "section": null, "step": 10.1325, "unit": "kPa", "value": 109.431}
               ],
               "sprite": "vent_off",
               "toggles": [
-                {"color": null, "field": "aa-33-36-03-3d-a2/on", "group": null, "icon": null, "label": {"id": "room.power"}, "off_text": {"id": "switch.off"}, "on": true, "on_text": {"id": "switch.on"}, "option": null, "section": null}
+                {"color": null, "field": "aa-33-36-03-3d-a2/on", "group": null, "icon": null, "label": {"keyed": {"reference": {"structural": "room.power"}, "args": []}}, "off_text": {"keyed": {"reference": {"structural": "switch.off"}, "args": []}}, "on": true, "on_text": {"keyed": {"reference": {"structural": "switch.on"}, "args": []}}, "option": null, "section": null}
               ]
             }
           ],
@@ -93,34 +93,30 @@
           "link": {
             "address": "7a-36-bf-a2-af-60",
             "online": true,
-            "state": {
-              "id": "link.state.online"
-            }
+            "state": {"keyed": {"reference": {"structural": "link.state.online"}, "args": []}}
           },
-          "media_slot": {
-            "id": "files.media.empty"
-          },
+          "media_slot": {"keyed": {"reference": {"structural": "files.media.empty"}, "args": []}},
           "name": "air alarm",
           "notice": null,
           "open": null,
           "owner_sprite": "air_alarm_lit_n",
           "presentation": "panes",
           "program_slots": [
-            {"faults": 0, "file": null, "id": "controller", "runs": 0, "state": {"id": "program_slots.state.empty"}, "uid": null}
+            {"faults": 0, "file": null, "id": "controller", "runs": 0, "state": {"keyed": {"reference": {"structural": "program_slots.state.empty"}, "args": []}}, "uid": null}
           ],
           "readouts": [
-            {"label": {"text": "network card"}, "section": {"id": "parts.parts"}, "tone": "idle", "value": {"args": {"efficiency": "1.00", "tier": "1"}, "id": "parts.tier"}}
+            {"label": {"plain": "network card"}, "section": {"keyed": {"reference": {"structural": "parts.parts"}, "args": []}}, "tone": "idle", "value": {"keyed": {"reference": {"structural": "parts.tier"}, "args": [{"name": "efficiency", "value": {"plain": "1.00"}}, {"name": "tier", "value": {"plain": "1"}}]}}}
           ],
           "save_ack": null,
           "setpoints": [],
           "status": 2,
           "stores": [
-            {"append_only": false, "binding": "Kc5mRWjih2mepHVS0dJogB", "capacity": 65536, "count": 0, "count_cap": 16, "drive": "host", "key": "host", "label": {"text": "air alarm"}, "owner": "target", "used": 0}
+            {"append_only": false, "binding": "Kc5mRWjih2mepHVS0dJogB", "capacity": 65536, "count": 0, "count_cap": 16, "drive": "host", "key": "host", "label": {"plain": "air alarm"}, "owner": "target", "used": 0}
           ],
           "toggles": [
-            {"color": null, "field": "link_lock", "group": null, "icon": null, "label": {"id": "link.lock"}, "off_text": {"id": "link.lock.locked"}, "on": true, "on_text": {"id": "link.lock.unlocked"}, "option": null, "section": null},
-            {"color": null, "field": "link_drop", "group": null, "icon": null, "label": {"arg_ids": ["state"], "args": {"address": "3a-43-ec-2b-4c-aa", "state": "link.state.online"}, "id": "link.member"}, "off_text": {"id": "link.release.act"}, "on": false, "on_text": {"id": "link.release.act"}, "option": "3a-43-ec-2b-4c-aa", "section": {"id": "link.members"}, "subject": {"address": "3a-43-ec-2b-4c-aa", "name": "air scrubber", "online": true, "sprite": "scrubber_off_e", "state": {"id": "link.state.online"}}},
-            {"color": null, "field": "link_drop", "group": null, "icon": null, "label": {"arg_ids": ["state"], "args": {"address": "aa-33-36-03-3d-a2", "state": "link.state.online"}, "id": "link.member"}, "off_text": {"id": "link.release.act"}, "on": false, "on_text": {"id": "link.release.act"}, "option": "aa-33-36-03-3d-a2", "section": {"id": "link.members"}, "subject": {"address": "aa-33-36-03-3d-a2", "name": "air vent", "online": true, "sprite": "vent_on", "state": {"id": "link.state.online"}}}
+            {"color": null, "field": "link_lock", "group": null, "icon": null, "label": {"keyed": {"reference": {"structural": "link.lock"}, "args": []}}, "off_text": {"keyed": {"reference": {"structural": "link.lock.locked"}, "args": []}}, "on": true, "on_text": {"keyed": {"reference": {"structural": "link.lock.unlocked"}, "args": []}}, "option": null, "section": null},
+            {"color": null, "field": "link_drop", "group": null, "icon": null, "label": {"keyed": {"reference": {"structural": "link.member"}, "args": [{"name": "address", "value": {"plain": "3a-43-ec-2b-4c-aa"}}, {"name": "state", "value": {"ref": {"structural": "link.state.online"}}}]}}, "off_text": {"keyed": {"reference": {"structural": "link.release.act"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "link.release.act"}, "args": []}}, "option": "3a-43-ec-2b-4c-aa", "section": {"keyed": {"reference": {"structural": "link.members"}, "args": []}}, "subject": {"address": "3a-43-ec-2b-4c-aa", "name": "air scrubber", "online": true, "sprite": "scrubber_off_e", "state": {"keyed": {"reference": {"structural": "link.state.online"}, "args": []}}}},
+            {"color": null, "field": "link_drop", "group": null, "icon": null, "label": {"keyed": {"reference": {"structural": "link.member"}, "args": [{"name": "address", "value": {"plain": "aa-33-36-03-3d-a2"}}, {"name": "state", "value": {"ref": {"structural": "link.state.online"}}}]}}, "off_text": {"keyed": {"reference": {"structural": "link.release.act"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "link.release.act"}, "args": []}}, "option": "aa-33-36-03-3d-a2", "section": {"keyed": {"reference": {"structural": "link.members"}, "args": []}}, "subject": {"address": "aa-33-36-03-3d-a2", "name": "air vent", "online": true, "sprite": "vent_on", "state": {"keyed": {"reference": {"structural": "link.state.online"}, "args": []}}}}
           ]
         },
         "title": "air alarm"

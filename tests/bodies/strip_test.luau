@@ -141,10 +141,9 @@ assert(
 )
 local refill = row(after, "Uniform")
 assert(refill ~= nil and refill.field == "dress", "the empty slot offers to be filled")
-local refill_text = ui_controls.record(refill.text)
-local refill_args = ui_controls.record(refill_text.args)
 assert(
-    refill_text.id == "wearables.put_on" and refill_args.item == "gray jumpsuit",
+    ui_controls.label_reference(refill.text, "structural") == "wearables.put_on"
+        and ui_controls.label_argument(refill.text, "item") == "gray jumpsuit",
     "and a dress button can never be misread as a strip one: " .. tostring(word(refill.text))
 )
 

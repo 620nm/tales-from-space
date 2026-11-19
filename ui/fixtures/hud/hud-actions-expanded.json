@@ -681,135 +681,135 @@
             "groups": [
               {
                 "id": "tools",
-                "label": "Equipment",
+                "label": {"plain": "Equipment"},
                 "actions": [
                   {
                     "id": "tool0",
-                    "label": "Instrument 0"
+                    "label": {"plain": "Instrument 0"}
                   },
                   {
                     "id": "tool1",
-                    "label": "Instrument 1"
+                    "label": {"plain": "Instrument 1"}
                   },
                   {
                     "id": "tool2",
-                    "label": "Instrument 2"
+                    "label": {"plain": "Instrument 2"}
                   },
                   {
                     "id": "tool3",
-                    "label": "Instrument 3"
+                    "label": {"plain": "Instrument 3"}
                   },
                   {
                     "id": "tool4",
-                    "label": "Instrument 4"
+                    "label": {"plain": "Instrument 4"}
                   },
                   {
                     "id": "tool5",
-                    "label": "Instrument 5"
+                    "label": {"plain": "Instrument 5"}
                   },
                   {
                     "id": "tool6",
-                    "label": "Instrument 6"
+                    "label": {"plain": "Instrument 6"}
                   },
                   {
                     "id": "tool7",
-                    "label": "Instrument 7"
+                    "label": {"plain": "Instrument 7"}
                   },
                   {
                     "id": "tool8",
-                    "label": "Instrument 8"
+                    "label": {"plain": "Instrument 8"}
                   },
                   {
                     "id": "tool9",
-                    "label": "Instrument 9"
+                    "label": {"plain": "Instrument 9"}
                   },
                   {
                     "id": "tool10",
-                    "label": "Instrument 10"
+                    "label": {"plain": "Instrument 10"}
                   },
                   {
                     "id": "tool11",
-                    "label": "Instrument 11"
+                    "label": {"plain": "Instrument 11"}
                   },
                   {
                     "id": "tool12",
-                    "label": "Instrument 12"
+                    "label": {"plain": "Instrument 12"}
                   },
                   {
                     "id": "tool13",
-                    "label": "Instrument 13"
+                    "label": {"plain": "Instrument 13"}
                   },
                   {
                     "id": "tool14",
-                    "label": "Instrument 14"
+                    "label": {"plain": "Instrument 14"}
                   },
                   {
                     "id": "tool15",
-                    "label": "Instrument 15"
+                    "label": {"plain": "Instrument 15"}
                   },
                   {
                     "id": "tool16",
-                    "label": "Instrument 16"
+                    "label": {"plain": "Instrument 16"}
                   },
                   {
                     "id": "tool17",
-                    "label": "Instrument 17"
+                    "label": {"plain": "Instrument 17"}
                   },
                   {
                     "id": "tool18",
-                    "label": "Instrument 18"
+                    "label": {"plain": "Instrument 18"}
                   },
                   {
                     "id": "tool19",
-                    "label": "Instrument 19"
+                    "label": {"plain": "Instrument 19"}
                   },
                   {
                     "id": "tool20",
-                    "label": "Instrument 20"
+                    "label": {"plain": "Instrument 20"}
                   },
                   {
                     "id": "tool21",
-                    "label": "Instrument 21"
+                    "label": {"plain": "Instrument 21"}
                   },
                   {
                     "id": "tool22",
-                    "label": "Instrument 22"
+                    "label": {"plain": "Instrument 22"}
                   },
                   {
                     "id": "tool23",
-                    "label": "Instrument 23"
+                    "label": {"plain": "Instrument 23"}
                   },
                   {
                     "id": "tool24",
-                    "label": "Instrument 24"
+                    "label": {"plain": "Instrument 24"}
                   },
                   {
                     "id": "tool25",
-                    "label": "Instrument 25"
+                    "label": {"plain": "Instrument 25"}
                   },
                   {
                     "id": "tool26",
-                    "label": "Instrument 26"
+                    "label": {"plain": "Instrument 26"}
                   },
                   {
                     "id": "tool27",
-                    "label": "Instrument 27"
+                    "label": {"plain": "Instrument 27"}
                   },
                   {
                     "id": "tool28",
-                    "label": "Instrument 28"
+                    "label": {"plain": "Instrument 28"}
                   },
                   {
                     "id": "tool29",
-                    "label": "Instrument 29"
+                    "label": {"plain": "Instrument 29"}
                   },
                   {
                     "id": "tool30",
-                    "label": "Instrument 30"
+                    "label": {"plain": "Instrument 30"}
                   },
                   {
                     "id": "tool31",
-                    "label": "Instrument 31 \u2014 Calibrate the distribution manifold pressure sensor and confirm the maintenance reading"
+                    "label": {"plain": "Instrument 31 — Calibrate the distribution manifold pressure sensor and confirm the maintenance reading"}
                   }
                 ]
               }

@@ -5,7 +5,7 @@ import type { UiNode } from "@lunatic/ui";
 import { Section, Table } from "@lunatic/ui";
 import type { DocumentIdentity, Product } from "./document-model";
 import { documentAction } from "./document-action";
-import { labelText } from "./labels";
+import { renderLabel } from "./labels";
 import { column, icon, press, some, text } from "./view";
 import * as S from "./strings";
 
@@ -22,7 +22,7 @@ function productRow(
   return [
     icon(`${key}/icon`, product.sprite) ?? text(`${key}/icon`, ""),
     column(`${key}/description`, some(
-      text(`${key}/name`, labelText(product.label), ["pname"]),
+      text(`${key}/name`, renderLabel(product.label), ["pname"]),
       (product.stock ?? 0) <= 0 ? text(`${key}/unavailable`, S.tfs("ui.document.stock_empty"), ["hint"]) : null,
     )),
     text(`${key}/stock`, String(product.stock ?? 0), ["stock"]),

@@ -3,7 +3,7 @@
 import type { UiNode } from "@lunatic/ui";
 import { Gauge } from "@lunatic/ui";
 import type { ControlPanel, DocumentIdentity, ModuleState } from "./document-model";
-import { labelId, labelText } from "./labels";
+import { renderLabel, structuralLabelId } from "./labels";
 import { controlPanelRows } from "./documents-control-rows";
 import { column, icon, row, some, text } from "./view";
 import * as S from "./strings";
@@ -50,7 +50,7 @@ function controlCard(
     row(`${key}/header`, some(sprite, identity), { cls: ["workspace-control-header"] }),
     ...(panel.gauge === null || panel.gauge === undefined ? [] : [Gauge(`${key}/gauge`, panel.gauge)]),
     ...(!panelActive ? [text(`${key}/disabled`, S.tfs("ui.document.unavailable"), ["workspace-control-disabled"])] : []),
-    ...(panel.notice === null || panel.notice === undefined ? [] : [text(`${key}/notice`, labelText(panel.notice), ["workspace-control-notice"])]),
+    ...(panel.notice === null || panel.notice === undefined ? [] : [text(`${key}/notice`, renderLabel(panel.notice), ["workspace-control-notice"])]),
     ...controlPanelRows(`${key}/details`, doc, panel, panelActive),
   ];
   return column(key, children, { cls: ["workspace-control-card"] });
@@ -58,10 +58,10 @@ function controlCard(
 
 function reachDisclosure(id: string, state: Partial<ModuleState>): UiNode[] {
   return (state.labels ?? []).flatMap((entry, index) =>
-    entry.row === "word" && labelId(entry.label) === "reach.reach"
+    entry.row === "word" && structuralLabelId(entry.label) === "reach.reach"
       ? [row(`${id}/controls/reach/${index}`, [
-          text(`${id}/controls/reach/${index}/label`, labelText(entry.label), ["workspace-control-label", "grow"]),
-          text(`${id}/controls/reach/${index}/value`, labelText(entry.text), ["workspace-control-value"]),
+          text(`${id}/controls/reach/${index}/label`, renderLabel(entry.label), ["workspace-control-label", "grow"]),
+          text(`${id}/controls/reach/${index}/value`, renderLabel(entry.text), ["workspace-control-value"]),
         ], { cls: ["workspace-control-row", "workspace-control-disclosure"] })]
       : [],
   );

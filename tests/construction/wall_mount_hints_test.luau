@@ -7,6 +7,8 @@
 -- the shut face offers no primary at all, the open face offers the
 -- bottle's own row, and far down the hall that row offers past the
 -- mount, as the far click would spray.
+local ui_controls = require("@helpers/ui_controls")
+
 t.world(
     [==[(
     name: "southwest face hints",
@@ -71,7 +73,7 @@ assert(px == 2 and py == 1, "the player starts north of the southwest button")
 local shut = primary()
 assert(shut.id == "press", "the primary row is the button press")
 assert(
-    shut.label.key == "lunatic/tfs:ui.affordance.press",
+    ui_controls.label_reference(shut.label, "pack") == "lunatic/tfs:ui.affordance.press",
     "the primary row carries the press label"
 )
 assert(shut.available == false, "the shut face grades its primary out of range")

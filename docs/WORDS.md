@@ -50,9 +50,9 @@ read. A key you leave out reads in English; nothing else has to change.
 actions, requirements and shortcut words. They are partial catalogs with
 the same English fallback, not complete game translations.
 
-Hover action labels carry catalog keys and named arguments; `arg_keys`
-explicitly identifies arguments that need translation before substitution.
-A label's `text` is literal player-authored text. Shortcut keycaps read
+Hover action labels use the engine's typed-label contract for references and
+named arguments; see the engine's `docs/tgui/labels.md`. This file owns the
+pack's catalog entries and placeholder spellings. Shortcut keycaps read
 `state.effectiveBindings`; an absent or empty binding has no keycap.
 The hover grid sizes its shared key column intrinsically and wraps long
 chords and descriptions. It does not estimate translated text width.

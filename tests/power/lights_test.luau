@@ -9,6 +9,8 @@
 -- The corridor's own fitting is a warm tungsten bulb somebody left in
 -- it (tg LIGHT_COLOR_TUNGSTEN, code/__DEFINES/colors.dm:312) — so what
 -- the janitor's tube does to the color of the room is visible here.
+local ui_controls = require("@helpers/ui_controls")
+
 local TUNGSTEN = "#FFD6AA"
 local TUBE = "#F3FFFA"
 
@@ -202,7 +204,7 @@ t.tick()
 
 local labels: { [string]: boolean } = {}
 for _, hint in ipairs(t.action_hints(p, assert(t.target_at(p, 2, 1, light_target)))) do
-    labels[hint.label.key] = true
+    labels[assert(ui_controls.label_reference(hint.label, "pack"), "action label reference")] = true
 end
 assert(labels["lunatic/tfs:ui.affordance.change_tube"], "the card says what the tube does")
 assert(not labels["lunatic/tfs:ui.affordance.check_light"], "and never offers to check it")

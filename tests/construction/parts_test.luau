@@ -15,26 +15,28 @@
 -- third, because both ends of its dial are its lasers
 -- (thermomachine.dm:94-96) and a window states them outright.
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local ui_controls = require("@helpers/ui_controls")
 
 local word = ui_controls.word
 
--- A socket row's two numbers ride one label id, as ARGUMENTS the pack
--- frames into a sentence (sim/ui/settings/parts.rs).
+-- A socket row's two numbers ride the structural `parts.tier` label as
+-- plain arguments (sim/ui/settings/parts_panel.rs).
 local function worth(raw: unknown): (number, number)
     local value = ui_controls.record(raw)
-    assert(value.id == "parts.tier", "the numbers ride a label id: " .. word(value))
-    local args = ui_controls.record(value.args)
-    return assert(tonumber(ui_controls.text(args.tier))),
-        assert(tonumber(ui_controls.text(args.efficiency)))
+    assert(
+        ui_controls.label_reference(value, "structural") == "parts.tier",
+        "the numbers ride a structural reference: " .. word(value)
+    )
+    return assert(tonumber(ui_controls.label_argument(value, "tier", "plain"))),
+        assert(tonumber(ui_controls.label_argument(value, "efficiency", "plain")))
 end
 
 local function rows_in(ui: unknown, section: string)
     local out = {}
     for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
-        if r.section and word(r.section) == section then
+        if r.section and ui_controls.label_reference(r.section, "structural") == section then
             table.insert(out, r)
         end
     end
@@ -43,7 +45,7 @@ end
 
 local function row(ui: unknown, label: string)
     for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
-        if word(r.label) == label then
+        if ui_controls.label_reference(r.label, "structural") == label then
             return r
         end
     end
@@ -275,8 +277,8 @@ local ui = ui_controls.state(p)
 local parts = rows_in(ui, "parts.parts")
 assert(#parts == 1, "one socket, one row: got " .. #parts)
 assert(
-    word(parts[1].label) == "ultra-high-power micro-laser",
-    "the row is the part's own name: " .. word(parts[1].label)
+    ui_controls.label_plain(parts[1].label) == "ultra-high-power micro-laser",
+    "the row is the part's own name: " .. ui_controls.label_plain(parts[1].label)
 )
 local built_tier, built_eff = worth(parts[1].value)
 assert(
@@ -284,13 +286,14 @@ assert(
     "against its rung and what it is worth: " .. built_tier .. " " .. built_eff
 )
 assert(
-    word(row(ui, "dock.vessel").value) == "beaker (libital)",
+    ui_controls.label_plain(row(ui, "dock.vessel").value) == "beaker (libital)",
     "a machine out of a frame docks like any other: "
-        .. tostring(word(row(ui, "dock.vessel").value))
+        .. ui_controls.label_plain(row(ui, "dock.vessel").value)
 )
 assert(
-    word(row(ui, "dock.supply").value) == "dock.supply.fed",
-    "and the frame it came out of was wired: " .. tostring(word(row(ui, "dock.supply").value))
+    ui_controls.label_reference(row(ui, "dock.supply").value, "structural") == "dock.supply.fed",
+    "and the frame it came out of was wired: "
+        .. tostring(ui_controls.label_reference(row(ui, "dock.supply").value, "structural"))
 )
 ui_controls.set(p, "temperature", 400)
 ui_controls.toggle(p, "on")
@@ -307,7 +310,7 @@ t.click(p, 3, 1, assert(t.target_at(p, 3, 1)))
 t.tick()
 parts = rows_in(t.ui(p), "parts.parts")
 assert(
-    #parts == 1 and word(parts[1].label) == "quad-ultra micro-laser",
+    #parts == 1 and ui_controls.label_plain(parts[1].label) == "quad-ultra micro-laser",
     "a placement that named tier four got tier four"
 )
 local four_tier, four_eff = worth(parts[1].value)
@@ -331,7 +334,7 @@ t.click(p, 2, 1, assert(t.target_at(p, 2, 1)))
 t.tick()
 parts = rows_in(t.ui(p), "parts.parts")
 assert(
-    #parts == 1 and word(parts[1].label) == "micro-laser",
+    #parts == 1 and ui_controls.label_plain(parts[1].label) == "micro-laser",
     "silence in a placement is the plain rung"
 )
 local plain_tier, plain_eff = worth(parts[1].value)
@@ -339,7 +342,10 @@ assert(
     plain_tier == 1 and math.abs(plain_eff - 1.0) < 1e-9,
     "and the neutral part: " .. plain_tier .. " " .. plain_eff
 )
-assert(word(row(t.ui(p), "dock.vessel").value) == "beaker (libital)", "with a beaker in it")
+assert(
+    ui_controls.label_plain(row(t.ui(p), "dock.vessel").value) == "beaker (libital)",
+    "with a beaker in it"
+)
 ui_controls.set(p, "temperature", 400)
 ui_controls.toggle(p, "on")
 t.run_ticks(2)

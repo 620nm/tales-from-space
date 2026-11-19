@@ -24,9 +24,7 @@
             {
               "key": "host",
               "binding": "host-1",
-              "label": {
-                "text": "Local"
-              },
+              "label": {"plain": "Local"},
               "used": 0,
               "capacity": 65536,
               "count": 0,
@@ -35,9 +33,7 @@
             {
               "key": "media",
               "binding": "media-1",
-              "label": {
-                "text": "Disk"
-              },
+              "label": {"plain": "Disk"},
               "used": 0,
               "capacity": 65536,
               "count": 0,

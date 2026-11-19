@@ -191,7 +191,7 @@ assert(record(ui.media_slot).id == "files.media.loaded", "and it knows there is 
 local stores = rows(ui.stores)
 assert(#stores == 2, "two stores in reach: " .. #stores)
 assert(
-    stores[1].key == "host" and record(stores[1].label).text == "programming terminal",
+    stores[1].key == "host" and ui_controls.word(stores[1].label) == "programming terminal",
     "the host store comes first, under the machine's own name"
 )
 assert(
@@ -199,7 +199,7 @@ assert(
     "the terminal is scratch space: " .. number(stores[1].capacity)
 )
 assert(
-    stores[2].key == "media" and record(stores[2].label).text == "floppy disk",
+    stores[2].key == "media" and ui_controls.word(stores[2].label) == "floppy disk",
     "the medium is the second store, under its own name"
 )
 -- The two numbers this pack's fiction is actually about: a

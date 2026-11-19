@@ -2,7 +2,7 @@
 // once where its first row appears and its rows underneath in the order
 // they were sent, so the SERVER's row order is the layout and the
 // document grows no nesting level (docs/tgui/documents.md).
-import type { ListRow, Tone, UiNode } from "@lunatic/ui";
+import type { ListRow, Tone, UiLabel, UiNode } from "@lunatic/ui";
 import { Choice, Gauge, LabeledList, Section, Stack } from "@lunatic/ui";
 import type {
   DocumentIdentity,
@@ -11,7 +11,7 @@ import type {
   Setpoint,
 } from "./document-model";
 import { documentAction } from "./document-action";
-import { labelId, labelText } from "./labels";
+import { readoutText, renderLabel, structuralLabelId } from "./labels";
 import { matterBlock } from "./matter-block";
 import { subjectBadge, subjectCard, toggleRows } from "./documents-choices";
 import { column, entry, press, row, some, text } from "./view";
@@ -34,43 +34,52 @@ export function moduleLabelRow(
   entryRow: LabelRow,
   active: boolean,
 ): UiNode {
-  const caption = text(`${id}/label`, labelText(entryRow.label), [
+  const rowLabel = renderLabel(entryRow.label);
+  const caption = text(`${id}/label`, rowLabel, [
     "grow",
     "list-label",
   ]);
-  if (entryRow.row === "press")
+  if (entryRow.row === "press") {
+    const pressCaption = renderLabel(entryRow.text);
     return row(
       id,
       [
         caption,
         press(
           `${id}/press`,
-          labelText(entryRow.text),
+          pressCaption,
           documentAction(doc, "toggle", {
             field: entryRow.field,
             ...(entryRow.option == null ? {} : { option: entryRow.option }),
           }),
-          { disabled: !active || !entryRow.enabled, cls: ["mod-pill"] },
+          { disabled: !active || !entryRow.enabled, label: pressCaption, cls: ["mod-pill"] },
         ),
       ],
       { cls: ["module-row"] },
     );
+  }
   if (entryRow.row === "input") {
     const box = `${id}/value`;
+    const submitCaption = entryRow.text ? renderLabel(entryRow.text) : S.SET;
     return row(
       id,
       [
         caption,
-        entry(box, "", () => undefined, { submitOnly: true, disabled: !active, label: labelText(entryRow.label) }),
+        entry(box, "", () => undefined, { submitOnly: true, disabled: !active, label: rowLabel }),
         press(
           `${id}/send`,
-          labelText(entryRow.text) || S.SET,
+          submitCaption,
           (e) =>
             documentAction(doc, "action", {
               action: entryRow.action,
               value: capped(e.value ?? "", entryRow.max_length),
             }),
-          { submit: box, variant: "primary", disabled: !active },
+          {
+            submit: box,
+            variant: "primary",
+            disabled: !active,
+            ...(entryRow.text ? { label: submitCaption } : {}),
+          },
         ),
       ],
       { cls: ["list-row"] },
@@ -78,7 +87,7 @@ export function moduleLabelRow(
   }
   return row(
     id,
-    [caption, text(`${id}/word`, labelText(entryRow.text), ["list-value"])],
+    [caption, text(`${id}/word`, renderLabel(entryRow.text), ["list-value"])],
     { cls: ["list-row"] },
   );
 }
@@ -122,6 +131,7 @@ export function moduleSetpointRow(
   active: boolean,
 ): UiNode {
   const { spell, unit, stored, range } = setpointDisplay(point);
+  const label = renderLabel(point.label);
   const step = point.step && point.step > 0 ? point.step : 1;
   const move = (to: number) =>
     documentAction(doc, "set", { field: point.field, value: stored(to) });
@@ -134,7 +144,7 @@ export function moduleSetpointRow(
       row(
         `${id}/head`,
         some(
-          text(`${id}/label`, labelText(point.label), ["grow", "list-label"]),
+          text(`${id}/label`, label, ["grow", "list-label"]),
           range === null ? null : text(`${id}/range`, range, ["hint"]),
         ),
         { cls: ["list-row"] },
@@ -152,7 +162,7 @@ export function moduleSetpointRow(
               const wanted = Number(value);
               return Number.isFinite(wanted) ? move(wanted) : undefined;
             },
-            { cls: ["num"], disabled: !active, label: labelText(point.label) },
+            { cls: ["num"], disabled: !active, label },
           ),
           unit ? text(`${id}/unit`, unit, ["mod-unit"]) : null,
           press(`${id}/up`, S.RAISE, stepBy(step), {
@@ -181,36 +191,43 @@ export function moduleSections(
   const setpoints = state.setpoints ?? [];
   const blocks = state.matter ?? [];
   const order: string[] = [];
-  const see = (section: string): void => {
-    if (!order.includes(section)) order.push(section);
+  const headings = new Map<string, UiLabel | null | undefined>();
+  const sectionIdentity = (section: UiLabel | null | undefined): string =>
+    section == null ? "" : JSON.stringify(section);
+  const see = (section: UiLabel | null | undefined): void => {
+    const identity = sectionIdentity(section);
+    if (headings.has(identity)) return;
+    order.push(identity);
+    headings.set(identity, section);
   };
   // A reading about another node joins its section's cards, so it
   // places that section no earlier than the switches do.
-  for (const reading of readouts) if (!reading.subject) see(labelText(reading.section));
-  for (const toggle of toggles) see(labelText(toggle.section));
-  for (const reading of readouts) if (reading.subject) see(labelText(reading.section));
-  for (const entryRow of labels) see(labelText(entryRow.section));
-  for (const point of setpoints) see(labelText(point.section));
-  for (const block of blocks) see(labelText(block.section));
+  for (const reading of readouts) if (!reading.subject) see(reading.section);
+  for (const toggle of toggles) see(toggle.section);
+  for (const reading of readouts) if (reading.subject) see(reading.section);
+  for (const entryRow of labels) see(entryRow.section);
+  for (const point of setpoints) see(point.section);
+  for (const block of blocks) see(block.section);
 
   const out: UiNode[] = [];
-  for (const [place, section] of order.entries()) {
+  for (const [place, identity] of order.entries()) {
+    const section = headings.get(identity);
     const key = `${id}/part/${place}`;
-    const here = readouts.filter((reading) => labelText(reading.section) === section);
+    const here = readouts.filter((reading) => sectionIdentity(reading.section) === identity);
     // A reading about another node is a card beside its section's
     // device choices, pressable by nobody (engine `subject`); a member
     // the wire joined says so beside its state.
     const cards = here.flatMap((reading, index) => reading.subject
       ? [Choice(`${key}/card/${index}`, { ...subjectCard(reading.subject, reading.label, undefined,
-        labelId(reading.label) === "link.member.hardwired"
+        structuralLabelId(reading.label) === "link.member.hardwired"
           ? { ...subjectBadge(reading.subject), text: S.tfs("ui.device.wired", { state: subjectBadge(reading.subject).text }) }
           : undefined), disabled: true })]
       : []);
     const rows: ListRow[] = here
       .filter((reading) => !reading.subject)
       .map((reading) => ({
-        label: labelText(reading.label),
-        value: labelText(reading.value),
+        label: renderLabel(reading.label),
+        value: readoutText(reading.value),
         ...(toneOf(reading.tone) ? { tone: toneOf(reading.tone)! } : {}),
       }));
     const children: UiNode[] = [];
@@ -224,25 +241,25 @@ export function moduleSections(
       ...toggleRows(
         key,
         doc,
-        toggles.filter((toggle) => labelText(toggle.section) === section),
+        toggles.filter((toggle) => sectionIdentity(toggle.section) === identity),
         active,
         toggles,
         cards,
       ),
     );
     for (const [index, entryRow] of labels.entries())
-      if (labelText(entryRow.section) === section)
+      if (sectionIdentity(entryRow.section) === identity)
         children.push(moduleLabelRow(`${id}/label/${entryRow.row === "input" ? entryRow.action : index}`, doc, entryRow, active));
     for (const point of setpoints)
-      if (labelText(point.section) === section)
+      if (sectionIdentity(point.section) === identity)
         children.push(moduleSetpointRow(`${id}/set/${point.field}`, doc, point, active));
     for (const [index, block] of blocks.entries())
-      if (labelText(block.section) === section)
+      if (sectionIdentity(block.section) === identity)
         children.push(matterBlock(`${id}/matter/${index}`, block));
     if (!children.length) continue;
     out.push(
-      section
-        ? Section(key, section, children)
+      section != null
+        ? Section(key, renderLabel(section), children)
         : Stack(key, children, { dir: "column", gap: 4 }),
     );
   }
@@ -266,7 +283,7 @@ export function moduleBody(
     out.push(Gauge(`${id}/gauge`, state.gauge));
   out.push(...moduleSections(id, doc, state, active));
   if (footer && state.notice)
-    out.push(row(`${id}/foot`, [text(`${id}/foot/word`, labelText(state.notice))], {
+    out.push(row(`${id}/foot`, [text(`${id}/foot/word`, renderLabel(state.notice))], {
       cls: ["mod-foot"],
     }));
   return out;

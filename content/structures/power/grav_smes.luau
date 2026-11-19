@@ -27,6 +27,7 @@
 -- while that draw is met.
 local assembly = require("@lib/assembly")
 local run = require("@lib/power/grav_smes_run")
+local ui_label = require("@lib/ui_label")
 
 local STATUSES = run.STATUSES
 local ANCHOR_CELL = 5
@@ -43,7 +44,7 @@ local MESSAGE = "lunatic/tfs:lib.grav_smes."
 
 -- A step this machine never takes, for the reason `key` says.
 local function refused(key: string): { { [string]: any } }
-    return { { when = true, label = MESSAGE .. key } }
+    return { { when = true, label = ui_label.pack(MESSAGE .. key) } }
 end
 
 local footprint = {}
@@ -156,8 +157,8 @@ local entry: { [string]: any } = {
     ui = {
         modules = { "store", "throttles", "ports", "actions" },
         actions = {
-            { key = "start", label = "lunatic/tfs:action.grav_smes.start" },
-            { key = "stop", label = "lunatic/tfs:action.grav_smes.stop" },
+            { key = "start", label = ui_label.pack("lunatic/tfs:action.grav_smes.start") },
+            { key = "stop", label = ui_label.pack("lunatic/tfs:action.grav_smes.stop") },
         },
     },
     transitions = {
@@ -209,7 +210,7 @@ local entry: { [string]: any } = {
             refuse = {
                 {
                     when = { ["not"] = { fact = "target.cell", value = tostring(SOUTH_CELL) } },
-                    label = MESSAGE .. "glass_wrong_cell",
+                    label = ui_label.pack(MESSAGE .. "glass_wrong_cell"),
                 },
             },
             secs = 3.0,

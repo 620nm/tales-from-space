@@ -27,6 +27,8 @@
 -- frame has no placement and therefore no key -- which is still a lock,
 -- because it has to be worked by somebody standing at it, and the
 -- engineer who screwed it together is exactly that somebody.
+local ui_label = require("@lib/ui_label")
+
 return {
     id = "access_point",
     entity_class = "installed",
@@ -62,7 +64,7 @@ return {
             visible = { ["not"] = { fact = "held.proto", value = "laptop" } },
             permission = { ["not"] = { fact = "held.proto", value = "laptop" } },
             held = { fact = "held.proto", value = "laptop" },
-            needs = "lunatic/tfs:entity.access_point.needs_laptop",
+            needs = ui_label.pack("lunatic/tfs:entity.access_point.needs_laptop"),
             suggest = true,
             -- Pictured as the laptop that connects: open and powered.
             suggest_implement = { item = "laptop", state = "on" },

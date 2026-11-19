@@ -1,5 +1,7 @@
 -- A loose, unpowered stand for an IV vessel and line.
 -- tg: code/game/machinery/iv_drip.dm:14-21.
+local ui_label = require("@lib/ui_label")
+
 return {
     id = "iv_drip",
     entity_class = "installed",
@@ -37,17 +39,17 @@ return {
     ui = {
         modules = { "dock", "actions" },
         actions = {
-            { key = "disconnect", label = "lunatic/tfs:action.iv_drip.disconnect" },
-            { key = "toggle_mode", label = "lunatic/tfs:action.iv_drip.toggle_mode" },
-            { key = "flow_down", label = "lunatic/tfs:action.iv_drip.flow_down" },
-            { key = "flow_up", label = "lunatic/tfs:action.iv_drip.flow_up" },
-            { key = "flow_max", label = "lunatic/tfs:action.iv_drip.flow_max" },
-            { key = "flow_off", label = "lunatic/tfs:action.iv_drip.flow_off" },
+            { key = "disconnect", label = ui_label.pack("lunatic/tfs:action.iv_drip.disconnect") },
+            { key = "toggle_mode", label = ui_label.pack("lunatic/tfs:action.iv_drip.toggle_mode") },
+            { key = "flow_down", label = ui_label.pack("lunatic/tfs:action.iv_drip.flow_down") },
+            { key = "flow_up", label = ui_label.pack("lunatic/tfs:action.iv_drip.flow_up") },
+            { key = "flow_max", label = ui_label.pack("lunatic/tfs:action.iv_drip.flow_max") },
+            { key = "flow_off", label = ui_label.pack("lunatic/tfs:action.iv_drip.flow_off") },
             {
                 key = "rate",
-                label = "lunatic/tfs:action.iv_drip.rate",
+                label = ui_label.pack("lunatic/tfs:action.iv_drip.rate"),
                 input = {
-                    label = "lunatic/tfs:action.iv_drip.rate_value",
+                    label = ui_label.pack("lunatic/tfs:action.iv_drip.rate_value"),
                     max_length = 8,
                 },
             },

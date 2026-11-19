@@ -169,7 +169,7 @@ local function laptop_gesture_ids(label: string)
         for _, action in ipairs(view.actions) do
             assert(not ids[action.id], "each hover row has a unique ID: " .. action.id)
             ids[action.id] = true
-            if action.label.key == label then
+            if ui_controls.label_reference(action.label, "pack") == label then
                 gestures[action.gesture] = action.id
             end
         end
@@ -229,7 +229,7 @@ take("floppy_disk")
 local insertion =
     assert(entity_action(laptop, "insert_disk"), "the matching media selects the receiver action")
 assert(
-    insertion.label.key == "lunatic/tfs:ui.affordance.insert_disk",
+    ui_controls.label_reference(insertion.label, "pack") == "lunatic/tfs:ui.affordance.insert_disk",
     "the receiver supplies its catalog label"
 )
 assert(entity_action(laptop, "insert_id") == nil, "a cartridge is not an ID card")

@@ -31,10 +31,8 @@ local ui_controls = require("@helpers/ui_controls")
 
 local T20C = 293.15
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local word = ui_controls.word
-
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
@@ -42,7 +40,7 @@ end
 local function row(value: unknown, label: string): ui_controls.Record
     local panel = ui_controls.record(value)
     for _, r in ipairs(ui_controls.rows(panel.readouts)) do
-        if word(r.label) == label then
+        if ui_controls.label_reference(r.label, "structural") == label then
             return r
         end
     end
@@ -134,7 +132,10 @@ assert(
     "so the panel says the gas is on the dial"
 )
 assert(
-    ui_controls.record(row(ui_controls.state(p), "thermo.supply").value).id == "thermo.supply.fed",
+    ui_controls.label_reference(
+        row(ui_controls.state(p), "thermo.supply").value,
+        "structural"
+    ) == "thermo.supply.fed",
     "and that the mains are behind it"
 )
 
@@ -207,7 +208,10 @@ assert(
     "while the switch is exactly where the engineer left it"
 )
 assert(
-    ui_controls.record(row(ui_controls.state(p), "thermo.supply").value).id == "thermo.supply.dead",
+    ui_controls.label_reference(
+        row(ui_controls.state(p), "thermo.supply").value,
+        "structural"
+    ) == "thermo.supply.dead",
     "the panel says which of the two it is"
 )
 near(

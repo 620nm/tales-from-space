@@ -1,4 +1,5 @@
 local assembly = require("@lib/assembly")
+local ui_label = require("@lib/ui_label")
 local reflection_chamber = require("@lib/process/reflection_chamber")
 
 return {
@@ -12,7 +13,7 @@ return {
     ui = {
         modules = { "tank", "actions" },
         actions = {
-            { key = "toggle_power", label = "lunatic/tfs:action.reflection_chamber.toggle_power" },
+            { key = "toggle_power", label = ui_label.pack("lunatic/tfs:action.reflection_chamber.toggle_power") },
         },
     },
     dense = true,
@@ -120,7 +121,7 @@ return {
             to = "open",
             tool = "screwdriver",
             sound = "smash",
-            hint = { label = "lunatic/tfs:ui.affordance.open_panel" },
+            hint = { label = ui_label.pack("lunatic/tfs:ui.affordance.open_panel") },
             done = "lunatic/tfs:structures.reflection_chamber.panel_opened",
         },
         {
@@ -128,50 +129,50 @@ return {
             to = "standby",
             tool = "screwdriver",
             sound = "smash",
-            hint = { label = "lunatic/tfs:ui.affordance.close_panel" },
+            hint = { label = ui_label.pack("lunatic/tfs:ui.affordance.close_panel") },
             done = "lunatic/tfs:structures.reflection_chamber.panel_closed",
         },
         {
             at = "subcritical",
             tool = "screwdriver",
-            hint = { label = "lunatic/tfs:ui.affordance.open_panel" },
+            hint = { label = ui_label.pack("lunatic/tfs:ui.affordance.open_panel") },
             refuse = {
                 {
                     when = true,
-                    label = "lunatic/tfs:structures.reflection_chamber.active_refusal",
+                    label = ui_label.pack("lunatic/tfs:structures.reflection_chamber.active_refusal"),
                 },
             },
         },
         {
             at = "critical",
             tool = "screwdriver",
-            hint = { label = "lunatic/tfs:ui.affordance.open_panel" },
+            hint = { label = ui_label.pack("lunatic/tfs:ui.affordance.open_panel") },
             refuse = {
                 {
                     when = true,
-                    label = "lunatic/tfs:structures.reflection_chamber.active_refusal",
+                    label = ui_label.pack("lunatic/tfs:structures.reflection_chamber.active_refusal"),
                 },
             },
         },
         {
             at = "overheated",
             tool = "screwdriver",
-            hint = { label = "lunatic/tfs:ui.affordance.open_panel" },
+            hint = { label = ui_label.pack("lunatic/tfs:ui.affordance.open_panel") },
             refuse = {
                 {
                     when = true,
-                    label = "lunatic/tfs:structures.reflection_chamber.active_refusal",
+                    label = ui_label.pack("lunatic/tfs:structures.reflection_chamber.active_refusal"),
                 },
             },
         },
         {
             at = "supercritical",
             tool = "screwdriver",
-            hint = { label = "lunatic/tfs:ui.affordance.open_panel" },
+            hint = { label = ui_label.pack("lunatic/tfs:ui.affordance.open_panel") },
             refuse = {
                 {
                     when = true,
-                    label = "lunatic/tfs:structures.reflection_chamber.active_refusal",
+                    label = ui_label.pack("lunatic/tfs:structures.reflection_chamber.active_refusal"),
                 },
             },
         },
@@ -179,7 +180,7 @@ return {
             sound = "crowbar",
             at = "open",
             tool = "crowbar",
-            hint = assembly.back("lunatic/tfs:ui.affordance.deconstruct"),
+            hint = assembly.back(ui_label.pack("lunatic/tfs:ui.affordance.deconstruct")),
             secs = 4.0,
             gone = true,
             leaves = "machine_frame",

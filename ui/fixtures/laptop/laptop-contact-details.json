@@ -25,33 +25,20 @@
           "owner_sprite": "access_point",
           "link": {
             "address": "02-4a-1f-00-3c-07",
-            "state": {
-              "id": "link.state.online"
-            },
+            "state": {"keyed": {"reference": {"structural": "link.state.online"}, "args": []}},
             "online": true
           },
           "readouts": [
             {
-              "label": {
-                "id": "link.member.hardwired",
-                "args": {
-                  "address": "02-4a-1f-00-3c-02"
-                }
-              },
-              "value": {
-                "id": "link.state.online"
-              },
+              "label": {"keyed": {"reference": {"structural": "link.member.hardwired"}, "args": [{"name": "address", "value": {"plain": "02-4a-1f-00-3c-02"}}]}},
+              "value": {"keyed": {"reference": {"structural": "link.state.online"}, "args": []}},
               "tone": "on",
-              "section": {
-                "id": "link.members"
-              },
+              "section": {"keyed": {"reference": {"structural": "link.members"}, "args": []}},
               "subject": {
                 "name": "air alarm",
                 "address": "02-4a-1f-00-3c-02",
                 "online": true,
-                "state": {
-                  "id": "link.state.online"
-                },
+                "state": {"keyed": {"reference": {"structural": "link.state.online"}, "args": []}},
                 "sprite": "air_alarm"
               }
             }
@@ -60,16 +47,10 @@
             {
               "field": "link_lock",
               "option": null,
-              "label": {
-                "id": "link.lock"
-              },
+              "label": {"keyed": {"reference": {"structural": "link.lock"}, "args": []}},
               "on": true,
-              "on_text": {
-                "id": "link.lock.unlocked"
-              },
-              "off_text": {
-                "id": "link.lock.locked"
-              },
+              "on_text": {"keyed": {"reference": {"structural": "link.lock.unlocked"}, "args": []}},
+              "off_text": {"keyed": {"reference": {"structural": "link.lock.locked"}, "args": []}},
               "icon": null,
               "group": null,
               "color": null,
@@ -78,103 +59,60 @@
             {
               "field": "link_drop",
               "option": "02-4a-1f-00-3c-11",
-              "label": {
-                "id": "link.member",
-                "args": {
-                  "address": "02-4a-1f-00-3c-11",
-                  "state": "link.state.online"
-                },
-                "arg_ids": [
-                  "state"
-                ]
-              },
+              "label": {"keyed": {"reference": {"structural": "link.member"}, "args": [{"name": "address", "value": {"plain": "02-4a-1f-00-3c-11"}}, {"name": "state", "value": {"ref": {"structural": "link.state.online"}}}]}},
               "on": false,
-              "on_text": {
-                "id": "link.release.act"
-              },
-              "off_text": {
-                "id": "link.release.act"
-              },
+              "on_text": {"keyed": {"reference": {"structural": "link.release.act"}, "args": []}},
+              "off_text": {"keyed": {"reference": {"structural": "link.release.act"}, "args": []}},
               "icon": null,
               "group": null,
               "color": null,
-              "section": {
-                "id": "link.members"
-              },
+              "section": {"keyed": {"reference": {"structural": "link.members"}, "args": []}},
               "subject": {
                 "name": "airlock button",
                 "address": "02-4a-1f-00-3c-11",
                 "online": true,
-                "state": {
-                  "id": "link.state.online"
-                },
+                "state": {"keyed": {"reference": {"structural": "link.state.online"}, "args": []}},
                 "sprite": "airlock_button"
               }
             },
             {
               "field": "link_join",
               "option": "02-4a-1f-00-3c-20",
-              "label": {
-                "id": "link.candidate.endpoint",
-                "args": {
-                  "address": "02-4a-1f-00-3c-20"
-                }
-              },
+              "label": {"keyed": {"reference": {"structural": "link.candidate.endpoint"}, "args": [{"name": "address", "value": {"plain": "02-4a-1f-00-3c-20"}}]}},
               "on": false,
-              "on_text": {
-                "id": "link.join.act"
-              },
-              "off_text": {
-                "id": "link.join.act"
-              },
+              "on_text": {"keyed": {"reference": {"structural": "link.join.act"}, "args": []}},
+              "off_text": {"keyed": {"reference": {"structural": "link.join.act"}, "args": []}},
               "icon": null,
               "group": null,
               "color": null,
-              "section": {
-                "id": "link.joinable"
-              },
+              "section": {"keyed": {"reference": {"structural": "link.joinable"}, "args": []}},
               "subject": {
                 "name": "access point",
                 "address": "02-4a-1f-00-3c-20",
                 "online": false,
-                "state": {
-                  "id": "link.state.unbound"
-                },
+                "state": {"keyed": {"reference": {"structural": "link.state.unbound"}, "args": []}},
                 "sprite": "access_point_off"
               }
             },
             {
               "field": "link_join",
               "option": "02-4a-1f-00-3c-01",
-              "label": {
-                "id": "link.candidate.hub",
-                "args": {
-                  "address": "02-4a-1f-00-3c-01"
-                }
-              },
+              "label": {"keyed": {"reference": {"structural": "link.candidate.hub"}, "args": [{"name": "address", "value": {"plain": "02-4a-1f-00-3c-01"}}]}},
               "on": false,
-              "on_text": {
-                "id": "link.join.act"
-              },
-              "off_text": {
-                "id": "link.join.act"
-              },
+              "on_text": {"keyed": {"reference": {"structural": "link.join.act"}, "args": []}},
+              "off_text": {"keyed": {"reference": {"structural": "link.join.act"}, "args": []}},
               "icon": null,
               "group": null,
               "color": null,
-              "section": {
-                "id": "link.joinable"
-              },
+              "section": {"keyed": {"reference": {"structural": "link.joinable"}, "args": []}},
               "subject": {
                 "name": "APC",
                 "address": "02-4a-1f-00-3c-01",
                 "online": true,
-                "state": {
-                  "id": "link.state.unbound"
-                },
+                "state": {"keyed": {"reference": {"structural": "link.state.unbound"}, "args": []}},
                 "sprite": "apc"
               },
-              "unavailable": "link.unavailable.would_cycle"
+              "unavailable": {"keyed": {"reference": {"structural": "link.unavailable.would_cycle"}, "args": []}}
             }
           ],
           "labels": [],
@@ -186,9 +124,7 @@
               "uid": 1,
               "runs": 12,
               "faults": 0,
-              "state": {
-                "id": "program_slots.state.loaded"
-              }
+              "state": {"keyed": {"reference": {"structural": "program_slots.state.loaded"}, "args": []}}
             }
           ],
           "stores": [
@@ -197,9 +133,7 @@
               "owner": "target",
               "drive": "host",
               "binding": "host-1",
-              "label": {
-                "text": "access point"
-              },
+              "label": {"plain": "access point"},
               "used": 22,
               "capacity": 65536,
               "count": 1,
@@ -210,9 +144,7 @@
               "owner": "tool",
               "drive": "host",
               "binding": "tool-host-1",
-              "label": {
-                "text": "laptop"
-              },
+              "label": {"plain": "laptop"},
               "used": 44,
               "capacity": 65536,
               "count": 2,
@@ -223,9 +155,7 @@
               "owner": "tool",
               "drive": "media",
               "binding": "tool-media-1",
-              "label": {
-                "text": "atmospherics disk"
-              },
+              "label": {"plain": "atmospherics disk"},
               "used": 0,
               "capacity": 65536,
               "count": 0,
@@ -233,9 +163,7 @@
             }
           ],
           "media_slot": null,
-          "tool_media_slot": {
-            "id": "files.media.loaded"
-          },
+          "tool_media_slot": {"keyed": {"reference": {"structural": "files.media.loaded"}, "args": []}},
           "files": [
             {
               "store": "host",

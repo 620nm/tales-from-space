@@ -1,18 +1,12 @@
 -- Select rendered pack controls; the shared host reducer invokes their callbacks.
 local controls = {}
 
-function controls.primary_label(player: number, target: SpecObservedTarget, key: string)
-    local labels = {}
-    for _, hint in ipairs(t.action_hints(player, target)) do
-        if hint.gesture == "primary" and hint.group ~= "suggestion" then table.insert(labels, hint.label.key) end
-    end
-    assert(#labels == 1 and labels[1] == key, "one state-specific primary action: " .. key .. "; got " .. table.concat(labels, ", "))
-end
-
 export type Record = { [string]: unknown }
 export type Node = { [string]: unknown, id: string }
 export type Scope = { document: number, generation: number }
 export type Option = string | number | boolean
+export type LabelNamespace = "pack" | "engine" | "structural"
+export type LabelArgumentKind = "plain" | "ref"
 type TargetKind = "toggle" | "label" | "setpoint"
 type Target = {
     kind: TargetKind,
@@ -36,14 +30,6 @@ function controls.number(value: unknown): number
     return value
 end
 
-function controls.word(value: unknown): string
-    if type(value) == "string" then
-        return value
-    end
-    local label = controls.record(value)
-    return controls.text(label.id or label.text)
-end
-
 function controls.array(value: unknown): { unknown }
     assert(type(value) == "table", "expected a disclosed array")
     local source = value :: { [unknown]: unknown }
@@ -58,6 +44,105 @@ function controls.array(value: unknown): { unknown }
         assert(source[index] ~= nil, "expected contiguous disclosed array indices")
     end
     return value :: { unknown }
+end
+
+local function reference_text(value: unknown, namespace: LabelNamespace?): string?
+    if type(value) ~= "table" then
+        return nil
+    end
+    local reference = controls.record(value)
+    if namespace ~= nil then
+        local key = reference[namespace]
+        return if key == nil then nil else controls.text(key)
+    end
+    for _, variant in ipairs({ "pack", "engine", "structural" }) do
+        local key = reference[variant]
+        if key ~= nil then
+            return controls.text(key)
+        end
+    end
+    return nil
+end
+
+function controls.label_reference(value: unknown, namespace: LabelNamespace?): string?
+    if type(value) ~= "table" then
+        return nil
+    end
+    local label = controls.record(value)
+    if label.plain ~= nil then
+        return nil
+    end
+    local keyed = label.keyed
+    if keyed == nil then
+        return nil
+    end
+    return reference_text(controls.record(keyed).reference, namespace)
+end
+
+function controls.label_plain(value: unknown): string
+    local label = controls.record(value)
+    assert(label.keyed == nil, "expected a Plain UI label")
+    return controls.text(label.plain)
+end
+
+function controls.label_argument(
+    value: unknown,
+    name: string,
+    kind: LabelArgumentKind?,
+    namespace: LabelNamespace?
+): string?
+    if type(value) ~= "table" then
+        return nil
+    end
+    local label = controls.record(value)
+    if label.keyed == nil then
+        return nil
+    end
+    local keyed = controls.record(label.keyed)
+    for _, item in ipairs(controls.array(keyed.args)) do
+        local argument = controls.record(item)
+        if argument.name == name then
+            local arg_value = controls.record(argument.value)
+            if kind == "plain" then
+                if namespace ~= nil or arg_value.plain == nil then
+                    return nil
+                end
+                return controls.text(arg_value.plain)
+            end
+            if kind == "ref" or namespace ~= nil then
+                return reference_text(arg_value.ref, namespace)
+            end
+            if arg_value.plain ~= nil then
+                return controls.text(arg_value.plain)
+            end
+            return reference_text(arg_value.ref, nil)
+        end
+    end
+    return nil
+end
+
+function controls.word(value: unknown): string
+    if type(value) == "string" then
+        return value
+    end
+    local label = controls.record(value)
+    if label.plain ~= nil then
+        return controls.text(label.plain)
+    end
+    return assert(controls.label_reference(value), "expected a plain or keyed UI label")
+end
+
+function controls.primary_label(player: number, target: SpecObservedTarget, key: string)
+    local labels = {}
+    for _, hint in ipairs(t.action_hints(player, target)) do
+        if hint.gesture == "primary" and hint.group ~= "suggestion" then
+            table.insert(labels, assert(controls.label_reference(hint.label), "primary action is keyed"))
+        end
+    end
+    assert(
+        #labels == 1 and labels[1] == key,
+        "one state-specific primary action: " .. key .. "; got " .. table.concat(labels, ", ")
+    )
 end
 
 function controls.texts(value: unknown): { string }
@@ -78,12 +163,11 @@ function controls.rows(value: unknown): { Record }
     return rows
 end
 
--- The label id saying why a listed row would not take a press, or nil
--- for an ordinary control. The key is ABSENT on ordinary rows
--- (../lunatic/docs/tgui/documents.md).
+-- The typed reason a listed row would not take a press, or nil for an
+-- ordinary control. The field is absent on ordinary rows.
 function controls.unavailable(row: Record): string?
     local reason = row.unavailable
-    return if reason == nil then nil else controls.text(reason)
+    return if reason == nil then nil else controls.word(reason)
 end
 
 -- Every toggle row on one field a press can actually land on, in the

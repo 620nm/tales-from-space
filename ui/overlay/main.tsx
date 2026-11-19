@@ -5,7 +5,8 @@
 // for nothing else (docs/pack-ui/sdk.md, "Slots").
 import type { GuestUi, UiNode } from "@lunatic/ui";
 import { Pane, Stack, t } from "@lunatic/ui";
-import type { ActionLabel, GameplayView, HoverAction } from "../model";
+import type { GameplayView, HoverAction } from "../model";
+import { renderLabel } from "../labels";
 import { begin, event, icon, panel, press, row, screen, some, text } from "../view";
 import { gesture, order } from "../gesture";
 import * as S from "../strings";
@@ -16,16 +17,9 @@ const MAX_SUGGESTIONS = 4;
 /** A reason this short reads inline after its label. */
 const MAX_INLINE_REASON = 24;
 
-/** What the cursor is over, with the verbs it answers to. */
-function actionText(label: ActionLabel): string {
-  if (label.text !== undefined && label.text !== null) return label.text;
-  const args = { ...label.args };
-  for (const key of label.arg_keys ?? []) if (args[key] !== undefined) args[key] = t(args[key]!);
-  return t(label.key, args);
-}
-
 function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>,
   bindings?: Record<string, readonly string[]>): UiNode {
+  const name = hover.name_label ? renderLabel(hover.name_label) : hover.name;
   const rows: HoverAction[] = [...(hover.actions ?? [])];
   const rank = (hint: HoverAction) => hint.group === "suggestion" ? 2 : hint.available ? 0 : 1;
   rows.sort((a, b) => rank(a) - rank(b) || (a.order ?? order(a.gesture)) - (b.order ?? order(b.gesture)));
@@ -47,21 +41,24 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>,
     const keys = gesture(keyId, hint.gesture, false, bindings);
     if (hint.implement?.sprite) keys.children = [...(keys.children ?? []),
       text(`${keyId}/plus`, "+", ["hover-combination-plus"]),
-      icon(`${keyId}/implement`, hint.implement.sprite, actionText(hint.implement.name), ["hover-implement"])!,
+      icon(`${keyId}/implement`, hint.implement.sprite, renderLabel(hint.implement.name), ["hover-implement"])!,
     ];
     if (!hint.available) keys.class = [...(keys.class ?? []), "hover-unavailable"];
     const style = hint.style ? actionStyles[hint.style] : undefined;
     const cls = ["hover-description", ...(style ? [style] : []),
       ...(hint.available ? [] : ["hover-unavailable"])];
-    const label = actionText(hint.label);
-    const reason = hint.detail ? actionText(hint.detail) : undefined;
+    const label = renderLabel(hint.label);
+    const reason = hint.detail ? renderLabel(hint.detail) : undefined;
     const inline = !hint.available && reason !== undefined && reason.length <= MAX_INLINE_REASON;
     cells.push(keys, panel(`hover/hint/${hint.id}`, [
       text(`hover/label/${hint.id}`, inline ? `${label} (${reason})` : label, cls),
       ...(hint.requirements ?? []).map((requirement, index) => text(`hover/requirement/${hint.id}/${index}`,
-        S.tfs(requirement.count > 1 ? "ui.look.requires_quantity" : "ui.look.requires", {
-          item: actionText(requirement.label), quantity: String(requirement.count),
-        }), ["hover-requirement"])),
+        requirement.count > 1
+          ? S.tfs("ui.look.requires_quantity", {
+              item: renderLabel(requirement.label), quantity: String(requirement.count),
+            })
+          : S.tfs("ui.look.requires", { item: renderLabel(requirement.label) }),
+        ["hover-requirement"])),
       ...(reason !== undefined && !inline
         ? [text(`hover/detail/${hint.id}`, reason, ["hover-requirement"])] : []),
     ], { cls: ["hover-row"] }));
@@ -75,7 +72,7 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>,
         {
           id: "hover/preview",
           type: "image",
-          text: hover.name_label ? actionText(hover.name_label) : hover.name,
+          text: name,
           // A slot's item comes with a sprite and no composed look, so
           // it is drawn the way every other icon is: one named asset.
           ...(hover.appearance
@@ -85,7 +82,7 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>,
               : {}),
           class: ["hover-preview"],
         },
-        text("hover/name", hover.name_label ? actionText(hover.name_label) : hover.name, ["hover-title"]),
+        text("hover/name", name, ["hover-title"]),
       ], { cls: ["hover-head"] }),
       panel("hover/actions", cells, { cls: ["hover-actions"] }),
     ], { cls: ["hover-card"] }),

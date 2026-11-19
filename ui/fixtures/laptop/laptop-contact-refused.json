@@ -25,25 +25,17 @@
           "owner_sprite": "access_point",
           "link": {
             "address": "02-4a-1f-00-3c-07",
-            "state": {
-              "id": "link.state.online"
-            },
+            "state": {"keyed": {"reference": {"structural": "link.state.online"}, "args": []}},
             "online": true
           },
           "toggles": [
             {
               "field": "link_lock",
               "option": null,
-              "label": {
-                "id": "link.lock"
-              },
+              "label": {"keyed": {"reference": {"structural": "link.lock"}, "args": []}},
               "on": false,
-              "on_text": {
-                "id": "link.lock.unlocked"
-              },
-              "off_text": {
-                "id": "link.lock.locked"
-              },
+              "on_text": {"keyed": {"reference": {"structural": "link.lock.unlocked"}, "args": []}},
+              "off_text": {"keyed": {"reference": {"structural": "link.lock.locked"}, "args": []}},
               "icon": null,
               "group": null,
               "color": null,
@@ -67,9 +59,7 @@
           "contact_locked": true,
           "refusal": {
             "serial": 1,
-            "text": {
-              "id": "link.access_denied"
-            }
+            "text": {"keyed": {"reference": {"structural": "link.access_denied"}, "args": []}}
           }
         }
       }

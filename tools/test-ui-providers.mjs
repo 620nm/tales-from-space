@@ -10,6 +10,8 @@ import {
 } from "./ui-runtime-harness.mjs";
 import { fileViews } from "./ui-file-views.mjs";
 
+const plainLabel = (plain) => ({ plain });
+
 // The pack is the subject here, so each of these is a check, never a
 // reason to answer zero quietly.
 const manifest = await readFile(join(packRoot, "mod.toml"), "utf8");
@@ -41,7 +43,7 @@ const file = {
   state: {
     status: 2,
     stores: [
-      { key: "host", binding: "fixture-host", label: { text: "Disk" }, used: 8192, capacity: 32768, count: 1, count_cap: 16 },
+      { key: "host", binding: "fixture-host", label: plainLabel("Disk"), used: 8192, capacity: 32768, count: 1, count_cap: 16 },
     ],
     files: [],
     create: {},
@@ -65,7 +67,7 @@ const vendor = {
     status: 2,
     products: [
       {
-        label: "Product",
+        label: plainLabel("Product"),
         sprite: "missing",
         category: "Stock",
         stock: 2,
@@ -111,7 +113,7 @@ try {
   const named = structuredClone(file);
   named.state.create = {host: ["md"]};
   named.state.files = [{...named.state.open, size: 8192}];
-  named.state.stores.push({key: "media", binding: "fixture-media", label: {text: "Disk"}, used: 0, capacity: 65536, count: 0, count_cap: 16});
+  named.state.stores.push({key: "media", binding: "fixture-media", label: plainLabel("Disk"), used: 0, capacity: 65536, count: 0, count_cap: 16});
   const namingView = {...view, documents: {2: named}};
   let namingTree = await vm.render(namingView);
   // The create dialog owns the filename and type fields.
@@ -164,6 +166,7 @@ try {
   await vm.render({...view, documents: {}});
   let tree = await vm.render(view);
   assert.ok(find(tree, "doc/1/1/product/0/vend"));
+  assert.equal(find(tree, "doc/1/1/product/0/name").text, "Product");
   const bodyId = find(tree, "doc/2/1/editor/save").submit;
   assert.equal(find(tree, bodyId).value.length, 8192);
   assert.deepEqual(

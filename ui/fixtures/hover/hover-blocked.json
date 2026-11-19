@@ -178,76 +178,49 @@
         "kind": "item",
         "name": "Machine under construction",
         "appearance": "hover",
-        "name_label": {
-          "key": "lunatic/tfs:entity.grav_smes.name",
-          "args": {}
-        },
+        "name_label": {"keyed": {"reference": {"pack": "lunatic/tfs:entity.grav_smes.name"}, "args": []}},
         "actions": [
           {
             "id": "blocked",
             "gesture": "primary",
-            "label": {
-              "key": "",
-              "text": "Install Screen"
-            },
+            "label": {"plain": "Install Screen"},
             "available": false,
             "group": "action",
             "implement": {
               "sprite": "toolbox",
-              "name": {
-                "key": "",
-                "text": "toolbox"
-              },
+              "name": {"plain": "toolbox"},
               "suggested": false
             },
             "requirements": [],
             "style": null,
             "presentation_group": null,
-            "detail": {
-              "key": "",
-              "text": "Wrong Section"
-            }
+            "detail": {"plain": "Wrong Section"}
           },
           {
             "id": "long",
             "gesture": "primary",
-            "label": {
-              "key": "",
-              "text": "Cut Welds"
-            },
+            "label": {"plain": "Cut Welds"},
             "available": false,
             "group": "action",
             "implement": {
               "sprite": "welder",
-              "name": {
-                "key": "",
-                "text": "welder"
-              },
+              "name": {"plain": "welder"},
               "suggested": false
             },
             "requirements": [],
             "style": null,
             "presentation_group": null,
-            "detail": {
-              "key": "",
-              "text": "Welds this deep do not come apart again"
-            }
+            "detail": {"plain": "Welds this deep do not come apart again"}
           },
           {
             "id": "next",
             "gesture": "primary",
-            "label": {
-              "key": "",
-              "text": "Run Pipes"
-            },
+            "label": {"plain": "Run Pipes"},
             "available": false,
             "group": "suggestion",
             "implement": {
               "sprite": "coil",
-              "name": {
-                "key": "",
-                "text": "coil"
-              },
+              "name": {"plain": "coil"},
               "suggested": true
             },
             "requirements": [],
@@ -257,18 +230,12 @@
           {
             "id": "back",
             "gesture": "primary",
-            "label": {
-              "key": "",
-              "text": "Cut Wiring"
-            },
+            "label": {"plain": "Cut Wiring"},
             "available": false,
             "group": "suggestion",
             "implement": {
               "sprite": "toolbox",
-              "name": {
-                "key": "",
-                "text": "toolbox"
-              },
+              "name": {"plain": "toolbox"},
               "suggested": true
             },
             "requirements": [],

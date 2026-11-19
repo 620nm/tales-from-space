@@ -122,7 +122,10 @@ assert(ui.presentation == "panes", "the files module is the panes one")
 local slots = rows(ui.program_slots)
 assert(#slots == 1, "one declared program slot: " .. #slots)
 assert(slots[1].id == "carry", "named for the stage it filters")
-assert(record(slots[1].state).id == "program_slots.state.empty", "and it starts empty")
+assert(
+    ui_controls.label_reference(slots[1].state, "structural") == "program_slots.state.empty",
+    "and it starts empty"
+)
 assert(slots[1].runs == 0 and slots[1].faults == 0, "with clean counters")
 
 -- The tower reads program text only: the create control offers `disl`
@@ -185,7 +188,7 @@ ui_files.program(operator, "carry", uid)
 t.tick()
 ui = ui_controls.state(operator)
 assert(
-    record(rows(ui.program_slots)[1].state).id == "program_slots.state.loaded",
+    ui_controls.label_reference(rows(ui.program_slots)[1].state, "structural") == "program_slots.state.loaded",
     "the program slot is loaded"
 )
 assert(
@@ -331,13 +334,19 @@ assert(
 )
 assert(#t.ledger_rows("file_deleted") == 0, "and nothing was deleted")
 ui = ui_controls.state(operator)
-assert(record(rows(ui.program_slots)[1].state).id == "program_slots.state.loaded", "still loaded")
+assert(
+    ui_controls.label_reference(rows(ui.program_slots)[1].state, "structural") == "program_slots.state.loaded",
+    "still loaded"
+)
 
 -- ---- unload, and the tower is stock again ----------------------------------
 ui_files.program(operator, "carry")
 t.tick()
 ui = ui_controls.state(operator)
-assert(record(rows(ui.program_slots)[1].state).id == "program_slots.state.empty", "emptied")
+assert(
+    ui_controls.label_reference(rows(ui.program_slots)[1].state, "structural") == "program_slots.state.empty",
+    "emptied"
+)
 local unloaded = t.ledger_rows("disl_program_unloaded")
 assert(#unloaded == 1 and unloaded[1].uid == uid, "the unload is on the record")
 

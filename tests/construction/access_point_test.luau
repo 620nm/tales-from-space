@@ -248,7 +248,7 @@ assert(#rows(panel, "link_drop") == 0, "nothing has joined it")
 local candidates = rows(panel, "link_join")
 assert(#candidates == 1, "the room's own panel, and nothing else: " .. #candidates)
 assert(
-    ui_controls.record(candidates[1].label).id == "link.candidate.hub",
+    ui_controls.label_reference(candidates[1].label, "structural") == "link.candidate.hub",
     "listed as the hub it is"
 )
 local why = ui_controls.unavailable(candidates[1])

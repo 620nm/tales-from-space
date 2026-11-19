@@ -1,5 +1,4 @@
-import type { Json, UiBitmapNode } from "@lunatic/ui";
-import type { Label } from "./labels";
+import type { Json, UiBitmapNode, UiLabel } from "@lunatic/ui";
 
 // Consumed document fields: lunatic crates/lunatic-server/src/sim/ui/settings.rs
 // (`to_json`, `push_json`), ui/settings/files.rs, ui/vending.rs, build.rs,
@@ -53,7 +52,7 @@ export interface FaxState {
   directory_page?: number;
   target?: string | null;
   confirming?: boolean;
-  refusal?: Label;
+  refusal?: UiLabel | null;
   busy?: boolean;
   progress?: number;
 }
@@ -127,56 +126,55 @@ export interface Subject {
   address: string;
   online?: boolean | null;
   sprite?: string | null;
-  state?: Label;
+  state?: UiLabel | null;
 }
 export interface Readout {
-  section?: Label;
-  label: Label;
+  section?: UiLabel | null;
+  label: UiLabel;
   value: Json;
   tone?: string | null;
   subject?: Subject | null;
 }
 export interface Toggle {
-  label: Label;
+  label: UiLabel;
   on: boolean;
-  on_text: Label;
-  off_text: Label;
+  on_text: UiLabel;
+  off_text: UiLabel;
   field: string;
   option?: string | null;
   icon?: string | null;
   group?: string | null;
   color?: string | null;
-  section?: Label;
+  section?: UiLabel | null;
   subject?: Subject | null;
-  /** Listed, but no press to take: the label id of the reason. Absent on
-   *  every ordinary row (engine `docs/tgui/documents.md`). */
-  unavailable?: string;
+  /** Listed without a press; absent on every ordinary row. */
+  unavailable?: UiLabel | null;
 }
 /** The document's own node on its network (engine `link` key). */
 export interface LinkIdentity {
   address: string;
-  state: Label;
+  state: UiLabel;
   online: boolean;
 }
 /** The reader's last refused act, until their next act (engine `refusal`). */
 export interface Refusal {
   serial: number;
-  text: Label;
+  text: UiLabel;
 }
-export type LabelRow = { section?: Label } & (
+export type LabelRow = { section?: UiLabel | null } & (
   | {
       row: "press";
-      label: Label;
-      text: Label;
+      label: UiLabel;
+      text: UiLabel;
       field: string;
       option?: string | null;
       enabled: boolean;
     }
-  | { row: "input"; label: Label; text?: Label; action: string; max_length?: number }
-  | { row: "word"; label: Label; text: Label }
+  | { row: "input"; label: UiLabel; text?: UiLabel; action: string; max_length?: number }
+  | { row: "word"; label: UiLabel; text: UiLabel }
 );
 export interface Setpoint {
-  label: Label;
+  label: UiLabel;
   unit: string;
   value: number;
   field: string;
@@ -188,7 +186,7 @@ export interface Setpoint {
   decimals?: number;
   /** How the stored value reads to a player (a fraction as percent); acts stay in stored units. */
   shown?: ShownScale;
-  section?: Label;
+  section?: UiLabel | null;
 }
 export interface ShownScale {
   scale: number;
@@ -197,7 +195,7 @@ export interface ShownScale {
 export interface Product {
   sprite?: string | null;
   category?: string | null;
-  label: Label;
+  label: UiLabel;
   stock: number;
   act: string;
   payload: Json;
@@ -210,7 +208,7 @@ export interface ModuleState {
   script?: Pick<ScriptState, "data" | "actions">;
   owner_sprite?: string;
   name?: string;
-  notice?: Label;
+  notice?: UiLabel | null;
   link?: LinkIdentity | null;
   refusal?: Refusal | null;
   gauge?: number | null;
@@ -225,9 +223,9 @@ export interface ModuleState {
   products?: Product[];
   matter?: MatterBlock[];
   stores?: StoreRow[];
-  media_slot?: Label | null;
+  media_slot?: UiLabel | null;
   /** The same for a contact's held tool: absent where it has no slot. */
-  tool_media_slot?: Label | null;
+  tool_media_slot?: UiLabel | null;
   files?: FileRow[];
   /** A contact workspace over a shut link lock: only the link rows ride. */
   contact_locked?: boolean;
@@ -249,7 +247,7 @@ export interface ControlPanel {
   sprite?: string | null;
   online?: boolean | null;
   gauge?: number | null;
-  notice?: Label | null;
+  notice?: UiLabel | null;
   readouts: Readout[];
   toggles: Toggle[];
   labels: LabelRow[];
@@ -273,7 +271,7 @@ export interface MatterStateBlock {
   rows?: MatterRow[];
 }
 export interface MatterBlock {
-  section: Label;
+  section: UiLabel | null;
   volume_l: number;
   headspace_l: number;
   temperature_k: number;
@@ -288,7 +286,7 @@ export interface StoreRow {
   owner?: "target" | "tool";
   /** Which of that owner's stores: its own (A:) or its slot's (B:). */
   drive?: "host" | "media";
-  label: Label;
+  label: UiLabel;
   used: number;
   capacity: number;
   count: number;
@@ -339,14 +337,13 @@ export interface EditorMarker {
   line?: number;
   message: string;
 }
-/** One program slot row of a panes document: the id, the loaded file's
- *  `name.ext` and uid (both null when empty), the slot's counters
- *  and the state word as a label id (engine settings/program_slots.rs). */
+/** One panes row: slot id, loaded file and uid, counters, and typed state
+ *  label (engine settings/program_slots.rs). */
 export interface ProgramSlotRowState {
   id: string;
   file?: string | null;
   uid?: number | null;
   runs?: number;
   faults?: number;
-  state?: Label;
+  state?: UiLabel | null;
 }

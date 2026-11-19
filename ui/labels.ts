@@ -1,100 +1,32 @@
-// The server's words. A document field is either a `Label` naming a
-// catalog id with its arguments or one quoting content's own word
-// (docs/tgui/labels.md); one reader for both, so a row reads the same
-// whichever author wrote it.
-import type { Json } from "@lunatic/ui";
-import { t } from "@lunatic/ui";
-import { tfs } from "./strings";
+import type { Json, LabelResolveContext, UiLabel } from "@lunatic/ui";
+import { resolveLabel } from "@lunatic/ui";
 
-export type Label =
-  | string
-  | number
-  | boolean
-  | null
-  | {
-      text?: string;
-      id?: string;
-      args?: Record<string, Json> | null;
-      /** Arguments whose VALUE is itself a label id, named by the
-       *  engine rather than guessed at (docs/tgui/labels.md §1). */
-      arg_ids?: string[] | null;
-    };
+const LABEL_CONTEXT: LabelResolveContext = {
+  // Keyed refs are public. Actor-private wording arrives as Plain and is
+  // returned verbatim without consulting the public catalog.
+  visibility: "public",
+  structuralKey: (id) => `lunatic/tfs:module.${id}`,
+};
 
-// One node carries at most 4096 UTF-16 units; over that the host
-// quarantines the package, so every word it writes is cut here.
-const TEXT_LIMIT = 4096;
-
-/** The names the label declared as ids of their own; anything else is a
- *  word already — an address, a number, content's own name. */
-function nested(names: unknown): Set<string> {
-  return new Set(
-    Array.isArray(names)
-      ? names.filter((name): name is string => typeof name === "string")
-      : [],
-  );
+export function renderLabel(label: UiLabel | null | undefined): string {
+  if (label == null) return "";
+  return resolveLabel(label, LABEL_CONTEXT);
 }
 
-/** Resolve either a fully-qualified catalog id or a bare native module id. */
-function moduleWord(id: string, args?: Record<string, string>): string {
-  return id.includes(":") ? t(id, args) : tfs(`module.${id}`, args);
+/** Structural references retain identity separately from their translation. */
+export function structuralLabelId(label: UiLabel | null | undefined): string | undefined {
+  if (!label || !("keyed" in label)) return undefined;
+  const reference = label.keyed.reference;
+  return "structural" in reference ? reference.structural : undefined;
 }
 
-/** Resolve a label and render the ids named by its `arg_ids` first. */
-function moduleLabel(
-  id: string,
-  args?: Record<string, Json> | null,
-  argIds?: unknown,
-): string {
-  if (!args) return moduleWord(id);
-  const ids = nested(argIds);
-  const values: Record<string, string> = {};
-  for (const [name, value] of Object.entries(args)) {
-    if (value === null || value === undefined) continue;
-    const word = String(value);
-    values[name] = ids.has(name) ? moduleWord(word) : word;
+/** Readouts remain arbitrary JSON; only an explicit typed-label tag resolves. */
+export function readoutText(value: Json | undefined): string {
+  if (value == null) return "";
+  if (typeof value !== "object") return String(value);
+  if (!Array.isArray(value) && Object.keys(value).length === 1) {
+    const record = value as Record<string, Json>;
+    if ("plain" in record || "keyed" in record) return renderLabel(value as UiLabel);
   }
-  return moduleWord(id, values);
-}
-
-export function labelText(label: Label | undefined | Json): string {
-  if (label === undefined || label === null) return "";
-  if (typeof label === "string") return label.slice(0, TEXT_LIMIT);
-  if (typeof label === "number" || typeof label === "boolean")
-    return String(label);
-  if (typeof label !== "object" || Array.isArray(label)) return "";
-  const row = label as {
-    text?: unknown;
-    id?: unknown;
-    args?: unknown;
-    arg_ids?: unknown;
-  };
-  if (typeof row.id === "string")
-    return moduleLabel(
-      row.id,
-      (row.args ?? null) as Record<string, Json> | null,
-      row.arg_ids,
-    ).slice(0, TEXT_LIMIT);
-  return typeof row.text === "string" ? row.text.slice(0, TEXT_LIMIT) : "";
-}
-
-/** An interaction hint's word. The engine sends the label a pack
- *  declared for the affordance, which is a fully-qualified catalog key
- *  (`<mod>:<id>`) whenever the pack named one and content's own word
- *  otherwise (docs/luau-api/click.md). A key belongs to whichever mod
- *  wrote it, so it resolves unscoped; an unrendered key answers with
- *  itself rather than going blank. */
-export function hintText(label: Label | undefined | Json): string {
-  if (typeof label === "string" && label.includes(":") && !/\s/.test(label))
-    return t(label).slice(0, TEXT_LIMIT);
-  return labelText(label);
-}
-
-/** The catalog id a `Label` NAMES, for a reader that branches on which
- *  word the server sent rather than drawing it. Undefined for a quoted
- *  word, which names nothing (docs/tgui/labels.md). */
-export function labelId(label: Label | undefined | Json): string | undefined {
-  if (label === null || typeof label !== "object" || Array.isArray(label))
-    return undefined;
-  const id = (label as { id?: unknown }).id;
-  return typeof id === "string" ? id : undefined;
+  return JSON.stringify(value);
 }

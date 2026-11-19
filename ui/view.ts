@@ -13,7 +13,6 @@ import {
   Button, Dropdown, Screen,
   type ButtonOpts, type ScreenParts, type ScrollAxis,
 } from "@lunatic/ui";
-import { labelText } from "./labels";
 
 export type Command = Record<string, Json>;
 export type Handler = Command | ((event: UiEvent) => Command | undefined);
@@ -89,7 +88,7 @@ export function screen(id: string, parts: ScreenParts, opts: ScreenOpts = {}): U
 
 export function text(
   id: string,
-  value: unknown,
+  value: string | number | boolean | null | undefined,
   cls?: string[],
   style?: StyleProps,
   runs?: UiInlineRun[],
@@ -97,29 +96,23 @@ export function text(
   return {
     id,
     type: "text",
-    text: labelText(value as Json),
+    text: value == null ? "" : String(value),
     ...(cls?.length ? { class: cls } : {}),
     ...(style ? { style: style as Record<string, StyleValue> } : {}),
     ...(runs?.length ? { runs } : {}),
   };
 }
 
-/** A press, bound to what it means. The caller's id lands on the button.
- *  `label` is the name a press is READ by where its caption is a glyph
- *  or empty; it belongs to the button itself, so it is not offered
- *  beside `icon`, which wraps the press in a row of its own. */
+/** A press, bound to what it means. The caller's id lands on the button;
+ *  every kit option, including its accessible label, stays on that button
+ *  when the kit wraps it with an icon. */
 export function press(
   id: string,
-  caption: unknown,
+  caption: string,
   action: Handler,
-  opts: Omit<ButtonOpts, "event"> & { label?: string } = {},
+  opts: Omit<ButtonOpts, "event"> = {},
 ): UiNode {
-  const { label, ...rest } = opts;
-  const node = Button(id, labelText(caption as Json), {
-    ...rest,
-    event: bind(id, action),
-  });
-  return label && node.type === "button" ? { ...node, label } : node;
+  return Button(id, caption, { ...opts, event: bind(id, action) });
 }
 
 export interface FieldOpts extends Box {
@@ -167,7 +160,7 @@ export function entry(
 
 export interface Choice {
   value: string;
-  text: unknown;
+  text: string;
 }
 
 /** A closed list of choices; a change answers with the chosen value,
@@ -179,7 +172,7 @@ export function select(
   callback: (value: string, e: UiEvent) => Command | undefined,
   opts: Box & { disabled?: boolean } = {},
 ): UiNode {
-  return Dropdown(id, value, choices.map((choice) => ({ value: choice.value, text: labelText(choice.text as Json) })), {
+  return Dropdown(id, value, choices.map((choice) => ({ value: choice.value, text: choice.text })), {
     event: bind(id, (e) => callback(e.value ?? "", e)),
     ...(opts.cls ? { cls: opts.cls } : {}),
     ...(opts.style ? { style: opts.style } : {}),

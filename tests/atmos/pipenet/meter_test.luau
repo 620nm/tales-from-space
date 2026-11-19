@@ -217,7 +217,7 @@ assert(
 -- the composition tg's chat line cannot give (docs/tgui/matter-block.md).
 local line = ui_controls.rows(panel.matter or {})[1]
 assert(
-    line and ui_controls.record(line.section).id == "meter.line",
+    line and ui_controls.label_reference(line.section, "structural") == "meter.line",
     "the panel draws the run it is reading"
 )
 local gas: ui_controls.Record? = nil

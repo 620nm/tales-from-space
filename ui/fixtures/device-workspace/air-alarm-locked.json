@@ -30,32 +30,28 @@
           "link": {
             "address": "7a-36-bf-a2-af-60",
             "online": true,
-            "state": {
-              "id": "link.state.online"
-            }
+            "state": {"keyed": {"reference": {"structural": "link.state.online"}, "args": []}}
           },
-          "media_slot": {
-            "id": "files.media.empty"
-          },
+          "media_slot": {"keyed": {"reference": {"structural": "files.media.empty"}, "args": []}},
           "name": "air alarm",
           "notice": null,
           "open": null,
           "owner_sprite": "air_alarm_lit_n",
           "presentation": "panes",
           "program_slots": [
-            {"faults": 0, "file": null, "id": "controller", "runs": 0, "state": {"id": "program_slots.state.empty"}, "uid": null}
+            {"faults": 0, "file": null, "id": "controller", "runs": 0, "state": {"keyed": {"reference": {"structural": "program_slots.state.empty"}, "args": []}}, "uid": null}
           ],
           "readouts": [
-            {"label": {"text": "network card"}, "section": {"id": "parts.parts"}, "tone": "idle", "value": {"args": {"efficiency": "1.00", "tier": "1"}, "id": "parts.tier"}}
+            {"label": {"plain": "network card"}, "section": {"keyed": {"reference": {"structural": "parts.parts"}, "args": []}}, "tone": "idle", "value": {"keyed": {"reference": {"structural": "parts.tier"}, "args": [{"name": "efficiency", "value": {"plain": "1.00"}}, {"name": "tier", "value": {"plain": "1"}}]}}}
           ],
           "save_ack": null,
           "setpoints": [],
           "status": 2,
           "stores": [
-            {"append_only": false, "binding": "Kc5mRWjih2mepHVS0dJogB", "capacity": 65536, "count": 0, "count_cap": 16, "drive": "host", "key": "host", "label": {"text": "air alarm"}, "owner": "target", "used": 0}
+            {"append_only": false, "binding": "Kc5mRWjih2mepHVS0dJogB", "capacity": 65536, "count": 0, "count_cap": 16, "drive": "host", "key": "host", "label": {"plain": "air alarm"}, "owner": "target", "used": 0}
           ],
           "toggles": [
-            {"color": null, "field": "link_lock", "group": null, "icon": null, "label": {"id": "link.lock"}, "off_text": {"id": "link.lock.locked"}, "on": false, "on_text": {"id": "link.lock.unlocked"}, "option": null, "section": null}
+            {"color": null, "field": "link_lock", "group": null, "icon": null, "label": {"keyed": {"reference": {"structural": "link.lock"}, "args": []}}, "off_text": {"keyed": {"reference": {"structural": "link.lock.locked"}, "args": []}}, "on": false, "on_text": {"keyed": {"reference": {"structural": "link.lock.unlocked"}, "args": []}}, "option": null, "section": null}
           ]
         },
         "title": "air alarm"

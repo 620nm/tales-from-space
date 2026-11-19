@@ -15,17 +15,15 @@ local ui_controls = require("@helpers/ui_controls")
 -- `network_matter.gas` / `t.room_gas` in MOLES. A pressure cannot say WHICH gas
 -- it is, and this whole machine is a claim about which one crosses.
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local word = ui_controls.word
-
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 local function row(ui: ui_controls.Record, label: string): ui_controls.Record
     for _, r in ipairs(ui_controls.rows(ui.readouts)) do
-        if word(r.label) == label then
+        if ui_controls.label_reference(r.label, "structural") == label then
             return r
         end
     end
@@ -127,7 +125,7 @@ t.tick()
 local ui = ui_controls.state(p)
 assert(ui, "an empty hand opens the panel")
 assert(
-    ui_controls.record(row(ui, "dock.vessel").value).id == "dock.vessel.empty",
+    ui_controls.label_reference(row(ui, "dock.vessel").value, "structural") == "dock.vessel.empty",
     "it says there is nothing in it"
 )
 assert(row(ui, "line_dock.line") ~= nil, "and it reads the run behind the machine")
@@ -158,7 +156,7 @@ near(pipe_of(3, 1, "water"), 0.0, 1e-9, "the run opens dry")
 t.click(p, 4, 1, assert(t.target_at(p, 4, 1, "steam_generator")))
 t.tick()
 assert(
-    ui_controls.record(row(ui_controls.state(p), "dock.vessel").value).text == "beaker (water)",
+    ui_controls.record(row(ui_controls.state(p), "dock.vessel").value).plain == "beaker (water)",
     "the panel names what is in it"
 )
 assert(

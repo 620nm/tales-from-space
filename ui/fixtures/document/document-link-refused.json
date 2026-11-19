@@ -26,9 +26,7 @@
           "owner_sprite": "air_alarm",
           "link": {
             "address": "02-4a-1f-00-3c-02",
-            "state": {
-              "id": "link.state.unpowered"
-            },
+            "state": {"keyed": {"reference": {"structural": "link.state.unpowered"}, "args": []}},
             "online": false
           },
           "readouts": [],
@@ -38,16 +36,10 @@
             {
               "field": "link_lock",
               "option": null,
-              "label": {
-                "id": "link.lock"
-              },
+              "label": {"keyed": {"reference": {"structural": "link.lock"}, "args": []}},
               "on": false,
-              "on_text": {
-                "id": "link.lock.unlocked"
-              },
-              "off_text": {
-                "id": "link.lock.locked"
-              },
+              "on_text": {"keyed": {"reference": {"structural": "link.lock.unlocked"}, "args": []}},
+              "off_text": {"keyed": {"reference": {"structural": "link.lock.locked"}, "args": []}},
               "icon": null,
               "group": null,
               "color": null,
@@ -56,9 +48,7 @@
           ],
           "refusal": {
             "serial": 1,
-            "text": {
-              "id": "link.access_denied"
-            }
+            "text": {"keyed": {"reference": {"structural": "link.access_denied"}, "args": []}}
           }
         }
       }

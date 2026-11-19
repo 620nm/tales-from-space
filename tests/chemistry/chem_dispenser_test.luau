@@ -23,8 +23,8 @@ local BRIM = 50e-6 / 18.015e-6
 -- unit at the bottom and a notch, a beaker's brim at the top.
 local NOTCH = 0.025
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local word = ui_controls.word
 
 local function near(a: number, b: number, slack: number, what: string)
@@ -42,7 +42,7 @@ end
 
 local function row(ui: ui_controls.Record, label): ui_controls.Record?
     for _, r in ipairs(ui_controls.rows(ui.readouts)) do
-        if word(r.label) == label then
+        if ui_controls.label_reference(r.label, "structural") == label then
             return r
         end
     end
@@ -53,7 +53,7 @@ end
 -- (docs/tgui/matter-block.md).
 local function block(ui: ui_controls.Record, section): ui_controls.Record?
     for _, b in ipairs(ui_controls.rows(ui.matter or {})) do
-        if word(b.section) == section then
+        if ui_controls.label_reference(b.section, "structural") == section then
             return b
         end
     end
@@ -136,7 +136,10 @@ local ui = ui_controls.state(p)
 assert(ui, "an empty hand opens the panel")
 assert(ui.document == "modules", "which is a clean-room module document")
 assert(
-    ui_controls.record(assert(row(ui, "dock.vessel")).value).id == "dock.vessel.empty",
+    ui_controls.label_reference(
+        assert(row(ui, "dock.vessel")).value,
+        "structural"
+    ) == "dock.vessel.empty",
     "and it says there is nothing in it"
 )
 
@@ -272,8 +275,10 @@ assert(t.hands(p).held == "beaker", "the eject button hands it back")
 near(total(beaker), BRIM, 1e-5, "still holding what it was given")
 assert(t.ledger_has("Undocked", "beaker"), "and the eject is on the record too")
 assert(
-    ui_controls.record(assert(row(ui_controls.state(p), "dock.vessel")).value).id
-        == "dock.vessel.empty",
+    ui_controls.label_reference(
+        assert(row(ui_controls.state(p), "dock.vessel")).value,
+        "structural"
+    ) == "dock.vessel.empty",
     "the panel agrees the slot is clear"
 )
 

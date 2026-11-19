@@ -132,14 +132,12 @@ local function face(value: unknown): string
     if type(value) ~= "table" then
         return tostring(value)
     end
-    local label = ui_controls.record(value)
-    if label.args then
-        local args = ui_controls.record(label.args)
-        if args.organ then
-            return tostring(args.operation) .. " " .. tostring(args.organ)
-        end
+    local operation = ui_controls.label_argument(value, "operation")
+    local organ = ui_controls.label_argument(value, "organ")
+    if operation and organ then
+        return operation .. " " .. organ
     end
-    return tostring(label.text or label.id)
+    return ui_controls.word(value)
 end
 
 local function set_syringe_mode(expected: "draw" | "inject"): ()

@@ -72,15 +72,13 @@ local word = ui_controls.word
 -- words as arguments of `procedure.on_organ` (docs/tgui/labels.md).
 local function face(value: unknown)
     if type(value) == "table" then
-        local label = ui_controls.record(value)
-        if label.args then
-            local args = ui_controls.record(label.args)
-            if args.organ then
-                return tostring(args.operation) .. " " .. tostring(args.organ)
-            end
+        local operation = ui_controls.label_argument(value, "operation")
+        local organ = ui_controls.label_argument(value, "organ")
+        if operation and organ then
+            return operation .. " " .. organ
         end
     end
-    return word(value)
+    return ui_controls.word(value)
 end
 
 local function slot_row(panel: ui_controls.Record, label): ui_controls.Record?

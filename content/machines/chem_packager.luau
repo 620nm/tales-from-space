@@ -1,6 +1,8 @@
 -- Dock and product controls; fixtures/chem_packager.luau owns operations.
 -- See docs/PETROCHEMISTRY.md and docs/CHEMISTRY.md.
 -- tg: code/modules/reagents/chemistry/machinery/chem_master.dm:3-8.
+local ui_label = require("@lib/ui_label")
+
 return {
     id = "chem_packager",
     entity_class = "installed",
@@ -24,15 +26,15 @@ return {
             { key = "package", label = "package" },
             {
                 key = "make_resin_pellet",
-                label = "lunatic/tfs:action.chem_packager.make_resin_pellet",
+                label = ui_label.pack("lunatic/tfs:action.chem_packager.make_resin_pellet"),
             },
             {
                 key = "mold_plastic_sheet",
-                label = "lunatic/tfs:action.chem_packager.mold_plastic_sheet",
+                label = ui_label.pack("lunatic/tfs:action.chem_packager.mold_plastic_sheet"),
             },
             {
                 key = "make_toner_cartridge",
-                label = "lunatic/tfs:action.chem_packager.make_toner_cartridge",
+                label = ui_label.pack("lunatic/tfs:action.chem_packager.make_toner_cartridge"),
             },
         },
     },

@@ -6,6 +6,7 @@
 -- The simulation runs at tg's own 20 Hz: TICKLAG 0.5 deciseconds
 -- (tgstation/config/config.txt:268-273) mirrors an fps default of 20
 -- (tgstation/code/controllers/configuration/entries/general.dm:216-247).
+local ui_label = require("@lib/ui_label")
 local fall_limits = require("@lib/fall_limits")
 local tile_geometry = require("@lib/tile_geometry")
 
@@ -17,19 +18,19 @@ return {
         -- the step takes.
         verbs = {
             tools = {
-                wrench = "lunatic/tfs:ui.verb.wrench",
-                crowbar = "lunatic/tfs:ui.verb.crowbar",
-                screwdriver = "lunatic/tfs:ui.verb.screwdriver",
-                welder = "lunatic/tfs:ui.verb.welder",
-                cutters = "lunatic/tfs:ui.verb.cutters",
+                wrench = ui_label.pack("lunatic/tfs:ui.verb.wrench"),
+                crowbar = ui_label.pack("lunatic/tfs:ui.verb.crowbar"),
+                screwdriver = ui_label.pack("lunatic/tfs:ui.verb.screwdriver"),
+                welder = ui_label.pack("lunatic/tfs:ui.verb.welder"),
+                cutters = ui_label.pack("lunatic/tfs:ui.verb.cutters"),
             },
-            material = "lunatic/tfs:ui.verb.material",
-            part = "lunatic/tfs:ui.verb.part",
-            board = "lunatic/tfs:ui.verb.board",
-            open = "lunatic/tfs:action.open",
-            close = "lunatic/tfs:action.close",
-            place = "lunatic/tfs:ui.verb.place",
-            panel = "lunatic/tfs:ui.affordance.view_interface",
+            material = ui_label.pack("lunatic/tfs:ui.verb.material"),
+            part = ui_label.pack("lunatic/tfs:ui.verb.part"),
+            board = ui_label.pack("lunatic/tfs:ui.verb.board"),
+            open = ui_label.pack("lunatic/tfs:action.open"),
+            close = ui_label.pack("lunatic/tfs:action.close"),
+            place = ui_label.pack("lunatic/tfs:ui.verb.place"),
+            panel = ui_label.pack("lunatic/tfs:ui.affordance.view_interface"),
         },
     },
     simulation = {

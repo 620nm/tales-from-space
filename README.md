@@ -208,7 +208,7 @@ supplies the component kit and default theme these screens are built from
 | `main.tsx` | the root sheet: what is pinned to which edge, and event dispatch |
 | `theme.ts` | the stylesheet, named by `manifest.json` and evaluated at build time |
 | `strings.ts` | the catalog key behind every word this package writes; no word of its own |
-| `labels.ts` | `labelText`, which renders a server `Label` — an id through the catalog, a quoted word as itself |
+| `labels.ts` | package structural-ID mapping and SDK-backed `UiLabel` resolution (`renderLabel`, `structuralLabelId`, `readoutText`) |
 | `view.ts` | node helpers and the id-to-command table every press is registered in |
 | `document-action.ts` | the one builder every panel's act goes out through |
 | `lobby.ts`, `chat.ts`, `inspect.ts` | the crew board and condition card, comms, examine and the tile menu |

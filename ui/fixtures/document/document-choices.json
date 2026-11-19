@@ -24,34 +24,34 @@
           "name": "Room lighting",
           "toggles": [
             {
-              "label": "White",
+              "label": {"plain": "White"},
               "on": true,
-              "on_text": "Selected",
-              "off_text": "Select",
+              "on_text": {"plain": "Selected"},
+              "off_text": {"plain": "Select"},
               "field": "color",
               "option": "0",
               "group": "Lighting",
-              "section": "Control"
+              "section": {"plain": "Control"}
             },
             {
-              "label": "Blue",
+              "label": {"plain": "Blue"},
               "on": false,
-              "on_text": "Selected",
-              "off_text": "Select",
+              "on_text": {"plain": "Selected"},
+              "off_text": {"plain": "Select"},
               "field": "color",
               "option": "1",
               "group": "Lighting",
-              "section": "Control"
+              "section": {"plain": "Control"}
             },
             {
-              "label": "Amber",
+              "label": {"plain": "Amber"},
               "on": false,
-              "on_text": "Selected",
-              "off_text": "Select",
+              "on_text": {"plain": "Selected"},
+              "off_text": {"plain": "Select"},
               "field": "color",
               "option": "2",
               "group": "Lighting",
-              "section": "Control"
+              "section": {"plain": "Control"}
             }
           ]
         }

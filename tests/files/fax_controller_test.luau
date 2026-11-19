@@ -113,7 +113,7 @@ assert(ui_controls.record(laptop.ui(crew).open).body == PROGRAM, "the source is 
 ui_files.program(crew, "controller", uid)
 t.run_ticks(2)
 assert(
-    ui_controls.record(ui_controls.rows(laptop.ui(crew).program_slots)[1].state).id
+    ui_controls.label_reference(ui_controls.rows(laptop.ui(crew).program_slots)[1].state, "structural")
         == "program_slots.state.loaded",
     "the controller slot accepts the player-authored guest"
 )

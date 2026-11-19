@@ -23,16 +23,16 @@
           "name": "Distribution manifold",
           "readouts": [
             {
-              "label": "Power",
+              "label": {"plain": "Power"},
               "value": "Offline"
             }
           ],
           "toggles": [
             {
-              "label": "Power",
+              "label": {"plain": "Power"},
               "on": false,
-              "on_text": "On",
-              "off_text": "Off",
+              "on_text": {"plain": "On"},
+              "off_text": {"plain": "Off"},
               "field": "on"
             }
           ]

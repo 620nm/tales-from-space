@@ -6,9 +6,8 @@ local ui_controls = require("@helpers/ui_controls")
 --   1. A pack line: content emits a KEY and arguments, and the socket
 --      resolves it for the one recipient reading it. The Luau file
 --      spells no sentence at all (docs/LOCALIZATION.md 3).
---   2. A panel row: the server names the FIELD as a label id and the
---      pack owns the word, so a document carries `{id}` and never
---      prose (docs/tgui/labels.md).
+--   2. A panel row: a document carries a typed structural reference and
+--      the pack owns the word (docs/tgui/labels.md).
 --   3. An engine line the pack would rather word itself: the engine
 --      renders the mechanism plainly, `locale/en.json` overrides it,
 --      and the override is what a crewman hears.
@@ -105,8 +104,8 @@ t.run_ticks(2)
 
 -- ---------------------------------------------------------------
 -- 2. A PANEL ROW. Not one word of this document is prose: the engine
---    names the field, the value and the heading, and every one of them
---    is an id out of `sim/ui/ids.rs` that this pack renders.
+--    gives the field, value and heading typed structural references
+--    that this pack renders.
 -- ---------------------------------------------------------------
 t.click(p, 2, 2, assert(t.target_at(p, 2, 2)))
 t.tick()
@@ -116,34 +115,34 @@ assert(ui ~= nil and ui.document == "modules", "the canister opens its window")
 local port = readout(ui, "canister.port")
 assert(port ~= nil, "the panel says whether it is plumbed in")
 assert(
-    ui_controls.record(port.label).id == "canister.port",
+    ui_controls.label_reference(port.label, "structural") == "canister.port",
     "and it says so as an id, not as a word: " .. tostring(word(port.label))
 )
 assert(
-    ui_controls.record(port.value).id == "canister.port.loose",
+    ui_controls.label_reference(port.value, "structural") == "canister.port.loose",
     "a bottle standing on the deck is loose: " .. tostring(word(port.value))
 )
 
 local valve = ui_controls.rows(ui.toggles or {})[1]
 assert(
-    valve ~= nil and ui_controls.record(valve.label).id == "canister.valve",
+    valve ~= nil and ui_controls.label_reference(valve.label, "structural") == "canister.valve",
     "the release valve is a switch, named by id"
 )
 assert(
-    ui_controls.record(valve.on_text).id == "canister.valve.open"
-        and ui_controls.record(valve.off_text).id == "canister.valve.shut",
+    ui_controls.label_reference(valve.on_text, "structural") == "canister.valve.open"
+        and ui_controls.label_reference(valve.off_text, "structural") == "canister.valve.shut",
     "with both of its positions named the same way"
 )
 
 local dial = ui_controls.rows(ui.setpoints or {})[1]
 assert(
-    dial ~= nil and ui_controls.record(dial.label).id == "canister.release",
+    dial ~= nil and ui_controls.label_reference(dial.label, "structural") == "canister.release",
     "the regulator's dial carries an id and a number, never a caption"
 )
 
 local block = ui_controls.rows(ui.matter or {})[1]
 assert(
-    block ~= nil and ui_controls.record(block.section).id == "holder.contents",
+    block ~= nil and ui_controls.label_reference(block.section, "structural") == "holder.contents",
     "and the contents block's heading is one too: " .. tostring(block and word(block.section))
 )
 -- What a substance is CALLED is the pack's own word and travels as

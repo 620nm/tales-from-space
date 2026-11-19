@@ -30,10 +30,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- (content/structures/light.luau), so it hangs off its panel and
 -- appears on nobody's candidate list at all.
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local word = ui_controls.word
-
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local function rows(ui: ui_controls.Record, field: string)
     local out = {}
     for _, row in ipairs(ui_controls.rows(ui.toggles or {})) do
@@ -58,8 +56,8 @@ end
 local function hardwired(ui: ui_controls.Record)
     local out = {}
     for _, r in ipairs(ui_controls.rows(ui.readouts or {})) do
-        if word(r.label) == "link.member.hardwired" then
-            local address = ui_controls.record(ui_controls.record(r.label).args).address
+        if ui_controls.label_reference(r.label, "structural") == "link.member.hardwired" then
+            local address = ui_controls.label_argument(r.label, "address", "plain")
             assert(type(address) == "string", "the wired member has an address")
             out[#out + 1] = address
         end

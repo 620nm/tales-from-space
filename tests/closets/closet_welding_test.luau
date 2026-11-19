@@ -1,4 +1,6 @@
 -- Player-facing closet welding and native open/close fallthrough.
+local ui_controls = require("@helpers/ui_controls")
+
 local function structure_state(x: number, y: number): string
     local structure = assert(t.structure_at(x, y), "the structure remains present")
     assert(structure.state ~= nil, "the closet exposes its native state")
@@ -36,7 +38,7 @@ t.run_ticks(2)
 local function offers(x: number, y: number, id: string, label: string): boolean
     local target = assert(t.target_at(player, x, y, id), "a target to hover")
     for _, hint in ipairs(t.action_hints(player, target)) do
-        if hint.label.key == label then
+        if ui_controls.label_reference(hint.label) == label then
             return hint.available
         end
     end

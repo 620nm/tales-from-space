@@ -8,15 +8,18 @@ export type FrameWords = {
     closed: string,
 }
 
+local ui_label = require("@lib/ui_label")
+type PackLabel = ui_label.PackLabel
+
 local assembly = {}
 
 -- A step toward the finished thing; `label` names it, else the pack's verb does.
-function assembly.next(label: string?): { [string]: any }
+function assembly.next(label: string | PackLabel?): { [string]: any }
     return { label = label, group = "lunatic/tfs:ui.look.next" }
 end
 
 -- A step back down the ladder, listed after the steps forward.
-function assembly.back(label: string?): { [string]: any }
+function assembly.back(label: string | PackLabel?): { [string]: any }
     return { label = label, group = "lunatic/tfs:ui.look.back", order = 1 }
 end
 
@@ -29,7 +32,7 @@ function assembly.board_frame(words: FrameWords): { { [string]: any } }
             sound = "smash",
             at = "empty",
             with = { cable_coil = 5 },
-            hint = assembly.next("lunatic/tfs:ui.affordance.wire_frame"),
+            hint = assembly.next(ui_label.pack("lunatic/tfs:ui.affordance.wire_frame")),
             secs = 2.0,
             to = "wired",
             start = "You start wiring the frame.",
@@ -39,7 +42,7 @@ function assembly.board_frame(words: FrameWords): { { [string]: any } }
             sound = "smash",
             at = "empty",
             tool = "welder",
-            hint = assembly.back("lunatic/tfs:ui.affordance.dismantle_frame"),
+            hint = assembly.back(ui_label.pack("lunatic/tfs:ui.affordance.dismantle_frame")),
             secs = 4.0,
             fuel = 0.3,
             yields = { metal = words.metal },

@@ -52,13 +52,18 @@ local ARENA = [==[(
 
 local CX, CY = 3, 3
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local word = ui_controls.word
-
-local function row(ui: ui_controls.Record, label: string): ui_controls.Record?
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
+local function row(
+    ui: ui_controls.Record,
+    label: string,
+    kind: "plain" | "structural"
+): ui_controls.Record?
     for _, r in ipairs(ui_controls.rows(ui.readouts)) do
-        if word(r.label) == label then
+        local actual = if kind == "structural"
+            then ui_controls.label_reference(r.label, "structural")
+            else ui_controls.label_plain(r.label)
+        if actual == label then
             return r
         end
     end
@@ -68,7 +73,7 @@ end
 local function rows_named(ui: ui_controls.Record, label: string)
     local n = 0
     for _, r in ipairs(ui_controls.rows(ui.readouts)) do
-        if word(r.label) == label then
+        if ui_controls.label_plain(r.label) == label then
             n = n + 1
         end
     end
@@ -80,8 +85,14 @@ end
 local function body_sections(ui: ui_controls.Record)
     local seen, order = {}, {}
     local function note(r: ui_controls.Record)
-        local at = if r.section then word(r.section) else nil
-        if at and at ~= "procedure.target" and not seen[at] then
+        if not r.section then
+            return
+        end
+        if ui_controls.label_reference(r.section, "structural") == "procedure.target" then
+            return
+        end
+        local at = ui_controls.label_plain(r.section)
+        if not seen[at] then
             seen[at] = true
             order[#order + 1] = at
         end
@@ -152,8 +163,8 @@ assert(rows_named(ui, "chest") == 2, "the open chest and the aimed one")
 local opened: ui_controls.Record? = nil
 local untouched: ui_controls.Record? = nil
 for _, r in ipairs(ui_controls.rows(ui.readouts)) do
-    if word(r.label) == "chest" then
-        if has(word(r.value), "skin_cut") then
+    if ui_controls.label_plain(r.label) == "chest" then
+        if has(ui_controls.label_plain(r.value), "skin_cut") then
             opened = r
         else
             untouched = r
@@ -161,13 +172,20 @@ for _, r in ipairs(ui_controls.rows(ui.readouts)) do
     end
 end
 assert(opened ~= nil, "one chest names the states it is holding")
-assert(has(word(opened.value), "vessels_unclamped"), "both of them: " .. word(opened.value))
-assert(has(word(opened.value), "/s"), "with what it is bleeding: " .. word(opened.value))
 assert(
-    untouched ~= nil and word(untouched.value) == "\u{2014}",
-    "and the other is holding nothing: " .. tostring(untouched and word(untouched.value))
+    has(ui_controls.label_plain(opened.value), "vessels_unclamped"),
+    "both of them: " .. ui_controls.label_plain(opened.value)
 )
-local blood = row(ui, "procedure.blood")
+assert(
+    has(ui_controls.label_plain(opened.value), "/s"),
+    "with what it is bleeding: " .. ui_controls.label_plain(opened.value)
+)
+assert(
+    untouched ~= nil and ui_controls.label_plain(untouched.value) == "\u{2014}",
+    "and the other is holding nothing: "
+        .. tostring(untouched and ui_controls.label_plain(untouched.value))
+)
+local blood = row(ui, "procedure.blood", "structural")
 assert(blood ~= nil, "and how much blood is left to lose")
 -- IN LITERS, and bleeding in milliliters a second. tg counts blood in
 -- bare units -- a number with no unit on it, which is only a scale if
@@ -177,31 +195,36 @@ assert(blood ~= nil, "and how much blood is left to lose")
 -- the rate as arguments, and a body that is not losing any carries the
 -- volume alone.
 local blood_value = ui_controls.record(blood.value)
-local volume = ui_controls.text(
-    if blood_value.args then ui_controls.record(blood_value.args).volume else blood_value.text
+assert(
+    ui_controls.label_reference(blood_value, "structural") == "procedure.blood.bleeding",
+    "the amount and bleed rate use the engine label"
 )
+local volume = assert(ui_controls.label_argument(blood_value, "volume", "plain"))
 assert(volume:match("^%d+%.%d%d L") ~= nil, "the blood row is in liters: " .. tostring(volume))
 -- Nothing is wrong with the head and nobody is aiming at it, so the head
 -- is not on the panel.
-assert(row(ui, "head") == nil, "a part with nothing wrong with it is not a row")
+assert(row(ui, "head", "plain") == nil, "a part with nothing wrong with it is not a row")
 
 -- ---- and what it admits next ------------------------------------------
 -- tg's `show_as_next_step` beside `get_recommended_tool`
 -- (_operation.dm:596-607, :818-820): the operation's own name, and the
 -- word for the first implement its file declares.
-local retract = row(ui, "retract the skin")
+local retract = row(ui, "retract the skin", "plain")
 assert(retract ~= nil, "an incision may be held open")
-assert(word(retract.value) == "retractor", "with a retractor: " .. tostring(word(retract.value)))
-local mend = row(ui, "mend the incision")
+assert(
+    ui_controls.label_plain(retract.value) == "retractor",
+    "with a retractor: " .. ui_controls.label_plain(retract.value)
+)
+local mend = row(ui, "mend the incision", "plain")
 assert(mend ~= nil, "...or closed again")
-assert(word(mend.value) == "cautery", "with a cautery: " .. tostring(word(mend.value)))
+assert(ui_controls.label_plain(mend.value) == "cautery", "with a cautery: " .. ui_controls.label_plain(mend.value))
 -- Not this one: clamping wants the skin RETRACTED, and it is only cut.
-assert(row(ui, "clamp the bleeders") == nil, "the state does not admit it yet")
+assert(row(ui, "clamp the bleeders", "plain") == nil, "the state does not admit it yet")
 -- And not this one either, for a different reason: cauterizing your own
 -- wound is `self_only`, and this chest belongs to somebody else. A
 -- catalog that offered it would be offering a click the click chain then
 -- refuses (content/operations/close_incision_self.luau).
-assert(row(ui, "cauterize your own wound") == nil, "a self-only step is nobody else's")
+assert(row(ui, "cauterize your own wound", "plain") == nil, "a self-only step is nobody else's")
 
 -- ---- the aim ----------------------------------------------------------
 -- One button per part slot of the SURGEON's own plan, and pressing one
@@ -213,7 +236,10 @@ for _, toggle in ipairs(ui_controls.rows(ui.toggles)) do
     end
 end
 assert(aimed ~= nil, "the panel offers the head as a target")
-assert(word(aimed.label) == "head", "labeled out of the plan: " .. tostring(word(aimed.label)))
+assert(
+    ui_controls.label_plain(aimed.label) == "head",
+    "labeled out of the plan: " .. ui_controls.label_plain(aimed.label)
+)
 
 ui_controls.toggle(surgeon, "zone", "head")
 t.run_ticks(2)

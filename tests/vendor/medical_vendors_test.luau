@@ -94,7 +94,7 @@ assert(
     "NanoMed opens the shared shelf document"
 )
 assert(
-    ui_controls.record(ui.notice).text == "Go save some lives!",
+    ui_controls.record(ui.notice).plain == "Go save some lives!",
     "NanoMed carries its own ad copy"
 )
 assert(#ui_controls.rows(ui.products) == #NANOMED, "NanoMed's complete shelf is asserted")
@@ -200,7 +200,7 @@ local CHEMDROBE = {
 }
 assert(
     ui
-        and ui_controls.record(ui.notice).text
+        and ui_controls.record(ui.notice).plain
             == "Our clothes are 0.5% more resistant to acid spills! Get yours now!",
     "ChemDrobe opens with tg's ad"
 )

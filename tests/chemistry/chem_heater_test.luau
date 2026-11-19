@@ -16,17 +16,15 @@ local ui_controls = require("@helpers/ui_controls")
 -- shape of the approach and the arrest at the dial, from both sides.
 local T20C = 293.15
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local word = ui_controls.word
-
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 local function row(ui: unknown, label: string): ui_controls.Record
     for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
-        if word(r.label) == label then
+        if ui_controls.label_reference(r.label, "structural") == label then
             return r
         end
     end
@@ -90,7 +88,10 @@ assert(
     "which is assembled from this machine's modules"
 )
 assert(
-    ui_controls.record(row(assert(ui), "dock.vessel").value).id == "dock.vessel.empty",
+    ui_controls.label_reference(
+        row(assert(ui), "dock.vessel").value,
+        "structural"
+    ) == "dock.vessel.empty",
     "and it says there is nothing in it"
 )
 near(
@@ -120,7 +121,7 @@ t.click(p, 2, 1, heater)
 t.tick()
 ui = ui_controls.record(t.ui(p))
 assert(
-    ui_controls.record(row(assert(ui), "dock.vessel").value).text == "beaker (libital)",
+    ui_controls.record(row(assert(ui), "dock.vessel").value).plain == "beaker (libital)",
     "the panel names what is in it"
 )
 assert(ui_controls.rows(ui.toggles)[1].on == false, "and it is switched off out of the crate")
@@ -206,7 +207,10 @@ assert(t.hands(p).held == "beaker.libital", "the eject button hands it back")
 near(assert(t.holder_k(beaker)), assert(warm), 0.5, "still carrying the heat it was given")
 assert(t.ledger_has("Undocked", "beaker"), "and the eject is on the record too")
 assert(
-    ui_controls.record(row(t.ui(p), "dock.vessel").value).id == "dock.vessel.empty",
+    ui_controls.label_reference(
+        row(t.ui(p), "dock.vessel").value,
+        "structural"
+    ) == "dock.vessel.empty",
     "the panel agrees there is nothing in it"
 )
 

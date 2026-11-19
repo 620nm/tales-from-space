@@ -4,7 +4,7 @@
 import type { UiNode } from "@lunatic/ui";
 import { Dialog, Stack } from "@lunatic/ui";
 import type { DocumentIdentity, ModuleState } from "./document-model";
-import { labelText } from "./labels";
+import { renderLabel } from "./labels";
 import { press, text } from "./view";
 import { tfs } from "./strings";
 
@@ -25,7 +25,7 @@ export function linkMeta(id: string, state: Partial<ModuleState>, addressCls: st
   if (!link) return null;
   return Stack(`${id}/link`, [
     text(`${id}/link/address`, link.address, addressCls),
-    text(`${id}/link/state`, link.state, [...stateCls, link.online ? "tone-on" : "tone-off"]),
+    text(`${id}/link/state`, renderLabel(link.state), [...stateCls, link.online ? "tone-on" : "tone-off"]),
   ], { gap: 6, align: "center", ...(grow ? { cls: ["grow"] } : {}) });
 }
 
@@ -41,7 +41,7 @@ export function refusalDialog(id: string, doc: DocumentIdentity, state: Partial<
   };
   return Dialog(key, {
     title: tfs("ui.document.refused"),
-    body: [text(`${key}/text`, labelText(refusal.text))],
+    body: [text(`${key}/text`, renderLabel(refusal.text))],
     actions: [press(`${key}/ok`, tfs("ui.document.ok"), ok, { variant: "primary" })],
   }, { initialFocus: `${key}/ok`, dismissEvent: `${key}/ok`, dismissLabel: tfs("ui.document.ok") });
 }

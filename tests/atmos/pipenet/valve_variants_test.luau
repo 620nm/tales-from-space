@@ -1,5 +1,6 @@
 local network_matter = require("@helpers/network_matter")
 local network_channels = require("@helpers/network_channels")
+local ui_controls = require("@helpers/ui_controls")
 
 -- The valve roster: the two layer-pinned wheels, and the digital twin.
 --
@@ -302,7 +303,8 @@ t.click(v, 4, 3, assert(t.target_at(v, 4, 3, "digital_valve")))
 t.tick()
 local panel = ui_controls.record(t.ui(v))
 assert(
-    ui_controls.record(ui_controls.rows(panel.toggles)[1].label).id == "flow.switch.valve",
+    ui_controls.label_reference(ui_controls.rows(panel.toggles)[1].label, "structural")
+        == "flow.switch.valve",
     "the digital valve answers with a panel"
 )
 ui_controls.toggle(v, "on")

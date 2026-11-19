@@ -1,4 +1,5 @@
 local bench = require("@helpers/grav_bench")
+local ui_controls = require("@helpers/ui_controls")
 
 -- What the gravity battery's tooltips say at every step, and that they
 -- follow the parts around them. `grav_smes_assembly_test` drives the clicks;
@@ -15,7 +16,7 @@ t.tick()
 local NEAR = { { 4, 6 }, { 6, 6 }, { 5, 7 }, { 5, 6 }, { 4, 7 }, { 6, 7 } }
 
 local function text_of(label: any): string
-    return label.text or label.key
+    return ui_controls.word(label)
 end
 
 -- The row a target shows under `label`, or nil.

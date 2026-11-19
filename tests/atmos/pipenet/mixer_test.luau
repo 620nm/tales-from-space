@@ -28,10 +28,8 @@ local PORT_M3 = 0.200
 -- the one port in the whole kit that is not 200.
 local OUTLET_M3 = 0.300
 
--- A document's words are labels: `{id=…}` for one the engine names,
--- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local word = ui_controls.word
-
+-- UI labels are tagged: `plain` carries display text; `keyed` carries a
+-- namespaced reference and args. Assertions keep those shapes distinct.
 local function near(a: number, b: number, slack: number, what: string): ()
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
@@ -226,15 +224,15 @@ near(
 -- subtract to read their own machine.
 local mix: ui_controls.Record = {}
 for _, r in ipairs(ui_controls.rows(ui.readouts)) do
-    if word(r.label) == "mixer.mix" then
+    if ui_controls.label_reference(r.label, "structural") == "mixer.mix" then
         mix = ui_controls.record(r.value)
     end
 end
 assert(
-    mix.id == "mixer.mix.split"
-        and ui_controls.record(mix.args).back == "50%"
-        and ui_controls.record(mix.args).side == "50%",
-    "the panel says both shares: " .. tostring(mix.args and ui_controls.record(mix.args).back)
+    ui_controls.label_reference(mix, "structural") == "mixer.mix.split"
+        and ui_controls.label_argument(mix, "back", "plain") == "50%"
+        and ui_controls.label_argument(mix, "side", "plain") == "50%",
+    "the panel says both shares: " .. tostring(ui_controls.label_argument(mix, "back", "plain"))
 )
 
 -- ---------------------------------------------------------------
@@ -279,15 +277,15 @@ ui_controls.set(p, "target_kpa", 200)
 t.tick()
 local said_mix: ui_controls.Record = {}
 for _, r in ipairs(ui_controls.rows(ui_controls.state(p).readouts)) do
-    if word(r.label) == "mixer.mix" then
+    if ui_controls.label_reference(r.label, "structural") == "mixer.mix" then
         said_mix = ui_controls.record(r.value)
     end
 end
 assert(
-    ui_controls.record(said_mix.args).back == "80%"
-        and ui_controls.record(said_mix.args).side == "20%",
+    ui_controls.label_argument(said_mix, "back", "plain") == "80%"
+        and ui_controls.label_argument(said_mix, "side", "plain") == "20%",
     "the other share follows: "
-        .. tostring(said_mix.args and ui_controls.record(said_mix.args).back)
+        .. tostring(ui_controls.label_argument(said_mix, "back", "plain"))
 )
 
 t.run_seconds(20)
