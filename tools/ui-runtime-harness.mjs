@@ -40,11 +40,15 @@ export async function compilePackModule(entry) {
   return result.outputFiles[0].text;
 }
 
-/** The pack's declarations, evaluated against the same SDK as production. */
-const motionsSource = await compilePackModule("ui/motions.ts");
-const { default: packMotions } = await import(
-  `data:text/javascript;base64,${Buffer.from(motionsSource).toString("base64")}`
-);
+/** The manifest names the declarations, as the production package build does. */
+const uiManifest = JSON.parse(await readFile(join(packRoot, "ui/manifest.json"), "utf8"));
+let packMotions;
+if (uiManifest.motions !== undefined) {
+  const motionsSource = await compilePackModule(join("ui", uiManifest.motions));
+  ({ default: packMotions } = await import(
+    `data:text/javascript;base64,${Buffer.from(motionsSource).toString("base64")}`
+  ));
+}
 
 /** The guest package the runtime accepts, around one compiled module. */
 export const guestPackage = (source) => ({
@@ -53,7 +57,7 @@ export const guestPackage = (source) => ({
   slot: "hud",
   entry: "main.js",
   modules: { "main.js": source },
-  motions: packMotions,
+  ...(packMotions === undefined ? {} : { motions: packMotions }),
 });
 
 /** The engine's guest host binary, from the debug build the pack gate's
