@@ -173,6 +173,13 @@
         "hold": {
           "frozen": true,
           "control_held": true
+        },
+        "presentation": {
+          "assets": null,
+          "drawing": {
+            "stalled": false,
+            "device_lost": false
+          }
         }
       }
     },
