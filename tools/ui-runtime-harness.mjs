@@ -27,6 +27,18 @@ export { build };
 export const engineModule = (relative) =>
   import(pathToFileURL(join(engineRoot, relative)).href);
 
+/** Load a TypeScript engine module in the Node harness. */
+async function importEngineTypeScript(relative) {
+  const built = await build({
+    entryPoints: [join(engineRoot, relative)],
+    bundle: true,
+    format: "esm",
+    platform: "node",
+    write: false,
+  });
+  return import(`data:text/javascript;base64,${Buffer.from(built.outputFiles[0].contents).toString("base64")}`);
+}
+
 /** One pack UI source compiled against the engine SDK, as the host builds it. */
 export async function compilePackModule(entry) {
   const result = await build({
@@ -81,9 +93,26 @@ function guestError(line) {
   return error;
 }
 
+let englishLocale;
+
+/** Feed the engine's viewer catalog loader the same English sources as the client. */
+async function loadEnglishLocale() {
+  const [{ loadCatalogChain }, engine, pack] = await Promise.all([
+    importEngineTypeScript("web/src/i18n.ts"),
+    readFile(join(engineRoot, "crates/lunatic-core/locale/en.json"), "base64"),
+    readFile(join(packRoot, "locale/en.json"), "base64"),
+  ]);
+  const catalog = await loadCatalogChain("en",
+    () => `data:application/json;base64,${engine}`,
+    () => `data:application/json;base64,${pack}`,
+  );
+  return { tag: "en", catalog };
+}
+
 /** One guest package in the engine's guest host (`xtask spec-ui --raw`,
  *  the engine's docs/pack-ui/authoring.md, "Testing a panel outside a
- *  round"). `locale` is `{tag, catalog}` or absent. Every call is one
+ *  round"). The default locale is English. An explicit `{tag, catalog}` selects
+ *  a fixture locale and `null` starts a guest without one. Every call is one
  *  round trip; a refused or fatal line rejects. Call `dispose()` always. */
 export async function createGuest(pkg, { locale } = {}) {
   if (!existsSync(xtaskBinary))
@@ -91,6 +120,7 @@ export async function createGuest(pkg, { locale } = {}) {
       `${xtaskBinary} is missing: build it with \`cargo build -p xtask\` in ${engineRoot} ` +
         "(the pack gate's `build` lane, `sh tools/check.sh build`)",
     );
+  if (locale === undefined) locale = await (englishLocale ??= loadEnglishLocale());
   const child = spawn(xtaskBinary, ["spec-ui", "--raw"], { stdio: ["pipe", "pipe", "pipe"] });
   live.add(child);
   const waiting = [];
@@ -176,17 +206,7 @@ export async function createGuest(pkg, { locale } = {}) {
 let lint;
 /** The engine's `web/src/pack-ui/lint.ts`, built once per process. */
 export function lintModule() {
-  return (lint ??= (async () => {
-    const built = await build({
-      entryPoints: [join(engineRoot, "web/src/pack-ui/lint.ts")],
-      bundle: true,
-      format: "esm",
-      platform: "node",
-      write: false,
-    });
-    const source = Buffer.from(built.outputFiles[0].text).toString("base64");
-    return import(`data:text/javascript;base64,${source}`);
-  })());
+  return (lint ??= importEngineTypeScript("web/src/pack-ui/lint.ts"));
 }
 
 /** A built bundle, or null when `xtask build-ui` has not written it. */
