@@ -52,9 +52,7 @@ if (absent.length) {
 }
 // One open laptop, plus the little a HUD render reads besides.
 const [view, full] = views;
-// The English file is 126,249 bytes, below GuestLocale's 262,144-byte cap.
-// Install the pack's actual catalog on Start so this click proves a real
-// caption, while the guest below keeps the deliberate no-locale fallback.
+// Exercise an explicit pack catalog here and the harness default below.
 const catalog = JSON.parse(await readFile(join(packRoot, "locale/en.json"), "utf8"));
 const localized = await createGuest(bundle, { locale: { tag: "en", catalog } });
 try {
@@ -109,7 +107,7 @@ try {
   assert.equal(find(tree, "doc/1/1/panes").split.panes.length, 3);
   assert.ok(find(tree, "doc/1/1/drive/media/eject"));
   assert.equal(find(tree, "doc/1/1/eject_cartridge"), undefined);
-  assert.equal(find(tree, "doc/1/1/power").label, "lunatic/tfs:ui.desktop.power_off");
+  assert.equal(find(tree, "doc/1/1/power").label, "Power off");
   assert.ok(find(tree, "doc/1/1/heading"), "power sits in the information heading");
   assert.equal(find(tree, "doc/1/1/drive/host/create").type, "button");
   for (const wallpaper of ["wallpaper_bliss", "wallpaper_moonlake"]) {
@@ -129,7 +127,7 @@ try {
   assert.equal(find(off, "doc/1/1/panes"), undefined);
   assert.equal(find(off, "doc/1/1/wallpaper"), undefined);
   assert.ok(find(off, "doc/1/1/eject_cartridge"));
-  assert.equal(find(off, "doc/1/1/power").label, "lunatic/tfs:ui.desktop.power_on");
+  assert.equal(find(off, "doc/1/1/power").label, "Power on");
   // Two full stores and a long Markdown reader stay inside the 2048-node
   // tree budget: the reader yields to the drives rather than fault the desktop.
   const crowded = await vm.render(full);

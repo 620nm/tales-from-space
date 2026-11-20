@@ -96,7 +96,7 @@ function guestError(line) {
 let englishLocale;
 
 /** Feed the engine's viewer catalog loader the same English sources as the client. */
-async function loadEnglishLocale() {
+export async function loadEnglishLocale() {
   const [{ loadCatalogChain }, engine, pack] = await Promise.all([
     importEngineTypeScript("web/src/i18n.ts"),
     readFile(join(engineRoot, "crates/lunatic-core/locale/en.json"), "base64"),

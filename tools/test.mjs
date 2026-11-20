@@ -5,6 +5,7 @@
 // beside this one; the engine's gate runs this as its `pack-node` lane.
 //
 //   node tools/test.mjs [/abs/path/to/lunatic]
+//   node --import ./tools/node/sdk-preamble.mjs tools/test-contact.mjs /abs/path/to/lunatic
 import { spawnSync } from "node:child_process";
 import { readdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -13,12 +14,13 @@ import { fileURLToPath } from "node:url";
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const TOOLS = join(ROOT, "tools");
 const engine = resolve(process.argv[2] ?? process.env.LUNATIC_ENGINE ?? join(ROOT, "..", "lunatic"));
+const preamble = new URL("./node/sdk-preamble.mjs", import.meta.url).href;
 
 const steps = [
   ["theme-lint", [join(TOOLS, "theme-lint.mjs")]],
   ["keyed-messages", [join(TOOLS, "keyed-messages.mjs"), "--check"]],
   ...readdirSync(TOOLS).filter((name) => /^test-.*\.mjs$/.test(name)).sort()
-    .map((name) => [name.replace(/\.mjs$/, ""), [join(TOOLS, name), engine]]),
+    .map((name) => [name.replace(/\.mjs$/, ""), ["--import", preamble, join(TOOLS, name), engine]]),
 ];
 
 let failed = 0;
