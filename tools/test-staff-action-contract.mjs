@@ -23,7 +23,7 @@ const { staffRequest } = await import(
   `data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString("base64")}`,
 );
 
-const fixturePath = resolve(engine, "crates/lunatic-web/tests/fixtures/staff-edits.json");
+const fixturePath = resolve(engine, "crates/lunatic-client/tests/fixtures/staff-edits.json");
 const cases = JSON.parse(await readFile(fixturePath, "utf8"));
 const session = { roundId: "84", revision: "9007199254740993" };
 
