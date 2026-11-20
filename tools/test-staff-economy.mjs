@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test } from "node:test";
+import "./node/sdk-preamble.mjs";
 
 const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw Error("Pass the engine checkout path.");
@@ -26,10 +27,6 @@ const output = await build({
 const { ui, resetEconomyReads, resetActionScope } = await import(
   `data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString("base64")}`,
 );
-globalThis.__lunaticLocale = {
-  tag: "en",
-  catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))),
-};
 
 const fixture = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-live.json", import.meta.url))).view;
 const sourceDb = "0123456789abcdef0123456789abcdef";
@@ -196,8 +193,8 @@ test("serialized receipt statuses and typed economy evidence refs render and dri
   const rendered = ui.render(view);
   const text = nodeText(rendered);
   assert.match(text, /Committed/);
-  assert.match(text, /lunatic\/tfs:ui\.staff\.economy_references · 7\/11/);
-  assert.match(text, /lunatic\/tfs:ui\.staff\.economy_references_more/);
+  assert.match(text, /Indexed references shown · 7\/11/);
+  assert.match(text, /Additional indexed references remain in the receipt\./);
   assert.match(text, /Rejected · StaleStateVersion/);
   assert.match(text, /04[,"]?04/);
 
@@ -296,7 +293,7 @@ test("receipt definition references open bounded mirror chunks and preserve unav
   });
   ui.onView(view);
   const rendered = nodeText(ui.render(view));
-  assert.match(rendered, /economy_definition_complete/);
+  assert.match(rendered, /Complete canonical definition/);
   assert.match(rendered, /eyJ2ZXJzaW9uIjozfQ/);
   assert.match(rendered, /pack\/owner/);
 
@@ -314,7 +311,7 @@ test("receipt definition references open bounded mirror chunks and preserve unav
     error: "definition has not been mirrored",
   });
   ui.onView(view);
-  assert.match(nodeText(ui.render(view)), /economy_definition_unavailable/);
+  assert.match(nodeText(ui.render(view)), /Canonical definition unavailable in the audit mirror/);
 
   ui.render(view);
   const incompleteRequest = ui.onEvent({ id: "staff/economy/row/1/ref/0", type: "activate" }, view).action;
@@ -331,9 +328,9 @@ test("receipt definition references open bounded mirror chunks and preserve unav
   });
   ui.onView(view);
   const incompleteRendered = ui.render(view);
-  assert.match(nodeText(incompleteRendered), /economy_definition_incomplete/);
-  assert.match(nodeText(incompleteRendered), /economy_definition_state.*incomplete/);
-  assert.doesNotMatch(nodeText(incompleteRendered), /economy_definition_continuation/);
+  assert.match(nodeText(incompleteRendered), /Canonical definition mirror incomplete/);
+  assert.match(nodeText(incompleteRendered), /Mirror state.*incomplete/);
+  assert.doesNotMatch(nodeText(incompleteRendered), /More canonical bytes remain/);
   assert.ok(nodeById(incompleteRendered, "staff/economy/definition/status").class?.includes("staff-warning"));
   assert.equal(nodeById(incompleteRendered, "staff/economy/definition/next"), undefined);
   assert.equal(nodeById(incompleteRendered, "staff/economy/definition/payload"), undefined);

@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test } from "node:test";
+import "./node/sdk-preamble.mjs";
 
 const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw Error("Pass the engine checkout path.");
@@ -22,7 +23,6 @@ const output = await build({
 const { ui, readStaff, resetStaffFlows, beginProfileRender, observeDisplayedConversation, observeDisplayedProfile, profileViewAction, resetProfileFlows, warningRequest, profileNoteRequest, conversationRequest, messageRequest, profileDrill, conversationFor, MAX_CONVERSATION_MESSAGES, MAX_PROFILE_ROWS, profileView, resetProfileCaches } = await import(
   `data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString("base64")}`,
 );
-globalThis.__lunaticLocale = { tag: "en", catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))) };
 
 const fixture = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-profile.json", import.meta.url))).view;
 const accountId = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
@@ -319,7 +319,7 @@ test("loaded conversations retain a visible first-page manual refresh", { concur
   const card = profileDrill(session, accountId);
   const refresh = findNode(card, "staff/profile/conversation/load");
   assert(refresh);
-  assert.equal(refresh.text, "lunatic/tfs:ui.staff.refresh_messages");
+  assert.equal(refresh.text, "Refresh messages");
   const action = ui.onEvent({ id: refresh.id, type: "activate" }).action;
   assert(action);
   assert.deepEqual(queryOf(action), conversationQuery);

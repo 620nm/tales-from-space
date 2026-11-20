@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test } from "node:test";
+import { assertLabelOutcomes } from "./node/sdk-preamble.mjs";
 
 const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw new Error("Set LUNATIC_ENGINE or pass the absolute engine checkout path.");
@@ -26,23 +27,32 @@ const render = (actions, bindings) => flatten(UI.overlay.render({ state: {
 } }));
 const icons = (nodes) => nodes.filter((node) => node.class?.includes("hover-implement"));
 
+function withLocale(locale, renderView) {
+  const previous = globalThis.__lunaticLocale;
+  if (locale === undefined) delete globalThis.__lunaticLocale;
+  else globalThis.__lunaticLocale = locale;
+  try { return renderView(); }
+  finally { globalThis.__lunaticLocale = previous; }
+}
+
 test("empty descriptors never invent primary or examine actions", () => {
   assert.equal(render([]).filter((node) => node.id.startsWith("hover/hint/")).length, 0);
 });
-test("hover labels resolve typed keys while key-shaped plain words stay literal", async () => {
+test("hover labels resolve typed keys while key-shaped plain words stay literal", () => {
   const key = "lunatic/tfs:ui.look.examine";
-  const catalog = JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url)));
-  globalThis.__lunaticLocale = { tag: "en", catalog };
-  try {
-    const nodes = render([
-      descriptor("literal", { label: plainLabel(key) }),
-      descriptor("keyed", { label: packLabel(key) }),
-    ]);
-    assert.equal(nodes.find((node) => node.id === "hover/label/literal").text, key);
-    assert.equal(nodes.find((node) => node.id === "hover/label/keyed").text, catalog[key]);
-  } finally {
-    delete globalThis.__lunaticLocale;
-  }
+  const actions = [
+    descriptor("literal", { label: plainLabel(key) }),
+    descriptor("keyed", { label: packLabel(key) }),
+  ];
+  const nodes = render(actions);
+  assert.equal(nodes.find((node) => node.id === "hover/label/literal").text, key);
+  assert.equal(nodes.find((node) => node.id === "hover/label/keyed").text, globalThis.__lunaticLocale.catalog[key]);
+  assertLabelOutcomes([]);
+
+  const missing = withLocale(undefined, () => render([actions[1]]));
+  assert.equal(missing.find((node) => node.id === "hover/label/keyed").text, "");
+  assert.equal(missing.find((node) => node.id === "hover/key/keyed/mouse-label").text, "");
+  assertLabelOutcomes(["unproved_key", "unproved_key"]);
 });
 test("equivalent laptop controls retain distinct nodes across state labels", () => {
   for (const state of ["open_lid", "power_on", "view_interface"]) {
@@ -57,9 +67,11 @@ test("equivalent laptop controls retain distinct nodes across state labels", () 
 test("same gesture preserves distinct available, range and suggested rows", () => {
   const held = { name: plainLabel("wrench"), sprite: "actual_wrench", suggested: false };
   const nodes = render([
-    descriptor("wire", { available: false, group: "suggestion", implement: { ...held, sprite: "cable", suggested: true } }),
+    descriptor("wire", { label: packLabel("lunatic/tfs:ui.affordance.wire_frame"),
+      available: false, group: "suggestion", implement: { ...held, sprite: "cable", suggested: true } }),
     descriptor("unfasten_pipe", { available: false, group: "range", implement: held }),
-    descriptor("face"), descriptor("examine", { gesture: "shift_primary" }),
+    descriptor("face", { label: packLabel("lunatic/tfs:ui.look.face") }),
+    descriptor("examine", { gesture: "shift_primary", label: packLabel("lunatic/tfs:ui.look.examine") }),
   ]);
   assert.deepEqual(nodes.filter((node) => node.id.startsWith("hover/hint/")).map((node) => node.id),
     ["hover/hint/face", "hover/hint/examine", "hover/hint/unfasten_pipe", "hover/hint/wire"]);
@@ -92,28 +104,30 @@ test("other-hand rows show the use_other keys, the implement and their detail li
   assert(!nodes.find((node) => node.id === "hover/key/other/insert_disk").class?.includes("hover-unavailable"));
 });
 test("pack group, style, requirements and order stay data-driven", () => {
-  const nodes = render([descriptor("second", { order: 2 }), descriptor("wire_frame", {
+  const nodes = render([descriptor("view_interface", { order: 2 }), descriptor("wire_frame", {
     order: 1, style: "construction", presentation_group: "lunatic/tfs:ui.look.role",
-    requirements: [{ label: packLabel("lunatic/tfs:ui.item.cable"), count: 5 }],
+    requirements: [{ label: packLabel("lunatic/tfs:entity.cable_coil.name"), count: 5 }],
   })]);
   assert(nodes.find((node) => node.id === "hover/label/wire_frame").class.includes("hover-construction"));
   assert(nodes.some((node) => node.id === "hover/group/wire_frame"));
-  assert(nodes.some((node) => node.id === "hover/requirement/wire_frame/0"));
+  assert.equal(nodes.find((node) => node.id === "hover/requirement/wire_frame/0").text, "Requires 5 × cable coil");
   assert.equal(nodes.find((node) => node.id.startsWith("hover/hint/")).id, "hover/hint/wire_frame");
 });
 test("disabled actions render their authoritative reason, short ones inline", () => {
-  const short = render([descriptor("role", { available: false, style: "role",
+  const short = render([descriptor("take", { available: false, style: "role",
     detail: plainLabel("Permission needed"),
   })]);
-  assert.equal(short.find((node) => node.id === "hover/label/role").text.endsWith(" (Permission needed)"), true);
-  assert(!short.some((node) => node.id === "hover/detail/role"));
+  assert.equal(short.find((node) => node.id === "hover/label/take").text, "Take (Permission needed)");
+  assert(!short.some((node) => node.id === "hover/detail/take"));
   assert(!short.some((node) => node.text?.includes("out_of_range")));
   const long = "The whole assembly has to be bolted down first";
-  const nodes = render([descriptor("role", { available: false, detail: plainLabel(long) })]);
-  assert.equal(nodes.find((node) => node.id === "hover/detail/role").text, long);
+  const nodes = render([descriptor("take", { available: false, detail: plainLabel(long) })]);
+  assert.equal(nodes.find((node) => node.id === "hover/detail/take").text, long);
 });
 test("next and back steps stand under their own headings, and suggestions are capped", () => {
-  const suggestion = (id, extras = {}) => descriptor(id, { available: false, group: "suggestion", ...extras });
+  const suggestion = (id, extras = {}) => descriptor(id, {
+    label: packLabel("lunatic/tfs:ui.affordance.wire_frame"), available: false, group: "suggestion", ...extras,
+  });
   const nodes = render([
     suggestion("next", { presentation_group: "lunatic/tfs:ui.look.next" }),
     suggestion("back", { presentation_group: "lunatic/tfs:ui.look.back", order: 1 }),
@@ -122,31 +136,26 @@ test("next and back steps stand under their own headings, and suggestions are ca
   assert(nodes.some((node) => node.id === "hover/group/next"));
   assert.equal(nodes.filter((node) => node.id.startsWith("hover/hint/")).length, 4);
 });
-test("tool requirements receive one Requires prefix and one quantity", async () => {
-  const catalog = JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url)));
-  globalThis.__lunaticLocale = { tag: "en", catalog };
-  try {
-    const nodes = render([descriptor("weld", {
-      requirements: [
-        { label: plainLabel("lit welding tool"), count: 1 },
-        { label: plainLabel("glass sheet"), count: 2 },
-      ],
-    })]);
-    const requirements = nodes.filter((node) => node.id.startsWith("hover/requirement/weld/"));
-    assert.deepEqual(requirements.map((node) => node.text), [
-      catalog["lunatic/tfs:ui.look.requires"].replace("{item}", "lit welding tool"),
-      catalog["lunatic/tfs:ui.look.requires_quantity"]
-        .replace("{quantity}", "2").replace("{item}", "glass sheet"),
-    ]);
-    for (const requirement of requirements)
-      assert.equal(requirement.text.match(/Requires/g)?.length, 1);
-  } finally {
-    delete globalThis.__lunaticLocale;
-  }
+test("tool requirements receive one Requires prefix and one quantity", () => {
+  const { catalog } = globalThis.__lunaticLocale;
+  const nodes = render([descriptor("weld_assembly", {
+    requirements: [
+      { label: plainLabel("lit welding tool"), count: 1 },
+      { label: plainLabel("glass sheet"), count: 2 },
+    ],
+  })]);
+  const requirements = nodes.filter((node) => node.id.startsWith("hover/requirement/weld_assembly/"));
+  assert.deepEqual(requirements.map((node) => node.text), [
+    catalog["lunatic/tfs:ui.look.requires"].replace("{item}", "lit welding tool"),
+    catalog["lunatic/tfs:ui.look.requires_quantity"]
+      .replace("{quantity}", "2").replace("{item}", "glass sheet"),
+  ]);
+  for (const requirement of requirements)
+    assert.equal(requirement.text.match(/Requires/g)?.length, 1);
 });
 test("representative catalogs preserve variables and fall back to English", async () => {
   const catalog = async (tag) => JSON.parse(await readFile(new URL(`../locale/${tag}.json`, import.meta.url)));
-  const en = await catalog("en");
+  const en = globalThis.__lunaticLocale.catalog;
   for (const tag of ["zh-hans", "sr-cyrl", "sr-latn"]) {
     const partial = await catalog(tag), merged = { ...en, ...partial };
     for (const [key, value] of Object.entries(partial)) {
@@ -155,30 +164,27 @@ test("representative catalogs preserve variables and fall back to English", asyn
     }
     assert.notEqual(merged["lunatic/tfs:ui.look.examine"], en["lunatic/tfs:ui.look.examine"]);
     assert.equal(merged["lunatic/tfs:ui.affordance.spray"], en["lunatic/tfs:ui.affordance.spray"]);
-    globalThis.__lunaticLocale = { tag, catalog: merged };
-    const nodes = render([descriptor("wire_frame", {
+    const nodes = withLocale({ tag, catalog: merged }, () => render([descriptor("wire_frame", {
       requirements: [{ label: packLabel("lunatic/tfs:ui.affordance.spray"), count: 5 }],
-    })]);
+    })]));
     assert.equal(nodes.find((node) => node.id === "hover/label/wire_frame").text,
       merged["lunatic/tfs:ui.affordance.wire_frame"]);
     assert.equal(nodes.find((node) => node.id === "hover/requirement/wire_frame/0").text,
       partial["lunatic/tfs:ui.look.requires_quantity"].replace("{quantity}", "5").replace("{item}", "Spray"));
   }
-  delete globalThis.__lunaticLocale;
 });
 test("literal key-looking player names remain literal and nested catalog args translate", () => {
   const nameKey = "lunatic/tfs:ui.test.name";
   const actionKey = "lunatic/tfs:ui.test.action";
-  globalThis.__lunaticLocale = { tag: "en", catalog: {
+  const locale = { tag: "en", catalog: { ...globalThis.__lunaticLocale.catalog,
     [nameKey]: "Translated", [actionKey]: "Give {item}",
   } };
-  const nodes = flatten(UI.overlay.render({ state: { hover: {
+  const nodes = withLocale(locale, () => flatten(UI.overlay.render({ state: { hover: {
     name: nameKey, name_label: plainLabel(nameKey),
     actions: [descriptor("give", { label: packLabel(actionKey, [
       { name: "item", value: { ref: { pack: nameKey } } },
     ]) })],
-  } } }));
+  } } })));
   assert.equal(nodes.find((node) => node.id === "hover/name").text, nameKey);
   assert.equal(nodes.find((node) => node.id === "hover/label/give").text, "Give Translated");
-  delete globalThis.__lunaticLocale;
 });

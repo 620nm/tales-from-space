@@ -172,7 +172,7 @@ test("setpoint input and step buttons retain native set payloads", () => {
 });
 
 test("a shown scale draws the scaled value and sends stored units", () => {
-  const ratio = { field: "mix-01/ratio", label: "Mix", unit: "", value: 0.79, min: 0, max: 1, step: 0.05, decimals: 0, shown: { scale: 100, unit: "%" } };
+  const ratio = { field: "mix-01/ratio", label: label("Mix"), unit: "", value: 0.79, min: 0, max: 1, step: 0.05, decimals: 0, shown: { scale: 100, unit: "%" } };
   const nodes = render({ document: "modules", control_panels: [panel("mix-01", "Mixer", { setpoints: [ratio] })] });
   const input = nodes.find((node) => node.type === "input" && node.id.endsWith("/set/mix-01/ratio/value"));
   assert.equal(input?.value, "79");
@@ -187,8 +187,8 @@ test("a shown scale draws the scaled value and sends stored units", () => {
 });
 
 test("a setpoint missing a bound draws only the bounds it has and still acts", () => {
-  const floorOnly = { field: "pmp-01/target_kpa", label: "Target", unit: "kPa", value: 101.325, min: 0, step: 10.1325, decimals: 2 };
-  const unbounded = { field: "pmp-01/rate_lps", label: "Rate", unit: "L/s", value: 10, step: 10 };
+  const floorOnly = { field: "pmp-01/target_kpa", label: label("Target"), unit: "kPa", value: 101.325, min: 0, step: 10.1325, decimals: 2 };
+  const unbounded = { field: "pmp-01/rate_lps", label: label("Rate"), unit: "L/s", value: 10, step: 10 };
   const nodes = render({ document: "modules", control_panels: [panel("pmp-01", "Pump", { setpoints: [floorOnly, unbounded] })] });
   const range = nodes.find((node) => node.id.endsWith("/set/pmp-01/target_kpa/range"));
   assert.equal(range?.text, "from 0.00 kPa");
@@ -217,10 +217,10 @@ test("long keys and duplicate provider identities retain bounded unique node ids
   const repeated = panel("same", "Repeated");
   repeated.setpoints.push({ ...repeated.setpoints[0] });
   const lengthy = panel("y".repeat(64), "Long", {
-    toggles: [{ field: long, label: "Switch", on: true },
-      { field: long, option: "one", label: "Choice", on: false }],
+    toggles: [{ field: long, label: label("Switch"), on: true },
+      { field: long, option: "one", label: label("Choice"), on: false }],
     setpoints: [{ ...repeated.setpoints[0], field: long }],
-    labels: [{ row: "input", action: long, label: "Input", text: "Send", max_length: 20 }],
+    labels: [{ row: "input", action: long, label: label("Input"), text: label("Send"), max_length: 20 }],
   });
   const nodes = render({ control_panels: [repeated, panel("same", "Other"),
     panel("bad/address", "Unsafe"), panel("address-2", "Lookalike"), lengthy] });

@@ -24,7 +24,8 @@ globalThis.__lunaticLocale = {
 const U = await import(`data:text/javascript;base64,${Buffer.from(result.outputFiles[0].text).toString("base64")}`);
 
 const doc = { id: 5, generation: 1, title: "Control terminal", owner_sprite: "terminal" };
-const stores = [{ key: "host", binding: "host-1", label: "Local", used: 10, capacity: 65536, count: 3, count_cap: 16 }];
+const label = (plain) => ({ plain });
+const stores = [{ key: "host", binding: "host-1", label: label("Local"), used: 10, capacity: 65536, count: 3, count_cap: 16 }];
 const files = [
   { store: "host", uid: 1, binding: "host-1", name: "one", ext: "md", size: 1 },
   { store: "host", uid: 2, binding: "host-1", name: "two", ext: "disl", size: 2 },
@@ -49,7 +50,7 @@ const reset = () => { U.retainOpenFileBuffers([]); U.retainWorkspaces([]); };
 
 test("Details is first when disclosed while Controls and Files keep their defaults", () => {
   reset();
-  let nodes = render(base({ control_panels: [], readouts: [{ label: "Owner", value: "Ready" }], program_slots: [{ id: "slot_a", file: null, uid: null, runs: 0, faults: 0, state: "empty" }] }));
+  let nodes = render(base({ control_panels: [], readouts: [{ label: label("Owner"), value: "Ready" }], program_slots: [{ id: "slot_a", file: null, uid: null, runs: 0, faults: 0, state: label("empty") }] }));
   assert.ok(node(nodes, "workspace/details"));
   assert.ok(node(nodes, "workspace/controls"));
   assert.deepEqual(node(nodes, "workspace-tabs").children.slice(0, 2).map(tab => tab.id),
@@ -70,8 +71,8 @@ test("Details is first when disclosed while Controls and Files keep their defaul
 test("program summaries are read-only, count native slots, and open Programs", () => {
   reset();
   const state = base({ control_panels: [], program_slots: [
-    { id: "slot_a", file: "one.disl", uid: 2, runs: 4, faults: 1, state: "loaded" },
-    { id: "slot_b", file: null, uid: null, runs: 0, faults: 0, state: "empty" },
+    { id: "slot_a", file: "one.disl", uid: 2, runs: 4, faults: 1, state: label("loaded") },
+    { id: "slot_b", file: null, uid: null, runs: 0, faults: 0, state: label("empty") },
   ] });
   let nodes = render(state);
   assert.equal(node(nodes, "workspace/programs").text, "Programs (2)");
@@ -84,8 +85,8 @@ test("program summaries are read-only, count native slots, and open Programs", (
 });
 
 test("Controls to Files mounts source before every navigation submit", () => {
-  const state = base({ control_panels: [], readouts: [{ label: "Owner", value: "Ready" }], toggles: [linkLock(true)], program_slots: [
-    { id: "slot_a", file: "two.disl", uid: 2, runs: 0, faults: 0, state: "loaded" },
+  const state = base({ control_panels: [], readouts: [{ label: label("Owner"), value: "Ready" }], toggles: [linkLock(true)], program_slots: [
+    { id: "slot_a", file: "two.disl", uid: 2, runs: 0, faults: 0, state: label("loaded") },
   ] });
   reset();
   render(state);
@@ -115,8 +116,8 @@ test("Controls to Files mounts source before every navigation submit", () => {
 test("preview readers omit source submits from workspace navigation", () => {
   const state = base({
     control_panels: [],
-    readouts: [{ label: "Owner", value: "Ready" }],
-    program_slots: [{ id: "slot_a", file: "two.disl", uid: 2, runs: 0, faults: 0, state: "loaded" }],
+    readouts: [{ label: label("Owner"), value: "Ready" }],
+    program_slots: [{ id: "slot_a", file: "two.disl", uid: 2, runs: 0, faults: 0, state: label("loaded") }],
     open: { store: "host", uid: 2, binding: "host-1", revision: 3, name: "two", ext: "md", body: "# Preview" },
     editor: { body: "# Preview", read_only: false, byte_budget: 65536, markers: [], revision: 3, bound: true },
   });
@@ -264,7 +265,7 @@ test("primarySave is advertised only for a mounted writable source", () => {
 
   reset();
   const controls = view({ ...base().editor, bound: true }, {
-    control_panels: [], readouts: [{ label: "Owner", value: "Ready" }],
+    control_panels: [], readouts: [{ label: label("Owner"), value: "Ready" }],
   });
   nodes = U.documents(controls);
   assert.equal(nodes[0].primarySave, undefined, "Controls has no source save target");
@@ -288,7 +289,7 @@ test("primarySave is advertised only for a mounted writable source", () => {
 
 test("workspace memory is scoped to document generation and locked controls disclose no diagnosis", () => {
   reset();
-  const locked = { ...base({ control_panels: [], status: 0, readouts: [{ label: "temperature", value: "stable" }] }), status: 0 };
+  const locked = { ...base({ control_panels: [], status: 0, readouts: [{ label: label("temperature"), value: "stable" }] }), status: 0 };
   const first = render(locked);
   assert.ok(node(first, "workspace/details"));
   assert.equal(node(first, "workspace/controls").class.includes("workspace-tab-active"), true);
@@ -299,22 +300,22 @@ test("workspace memory is scoped to document generation and locked controls disc
 
   const next = { ...doc, generation: 2 };
   U.retainWorkspaces([next]);
-  const fresh = render(base({ control_panels: [], readouts: [{ label: "temperature", value: "stable" }] }), next);
+  const fresh = render(base({ control_panels: [], readouts: [{ label: label("temperature"), value: "stable" }] }), next);
   assert.equal(node(fresh, "workspace/controls", next).class.includes("workspace-tab-active"), true);
   assert.equal(node(fresh, "workspace/details", next).class.includes("workspace-tab-active"), false);
 });
 
 const linkLock = (on, option = "target") => ({
-  label: "Link lock", on, on_text: "Unlocked", off_text: "Locked", field: "link_lock", option,
+  label: label("Link lock"), on, on_text: label("Unlocked"), off_text: label("Locked"), field: "link_lock", option,
 });
 
 test("the heading owns the native lock action and reflects both lock states", () => {
-  for (const [on, label, asset] of [[true, "Lock", "ui_lock_open"], [false, "Unlock", "ui_lock_closed"]]) {
+  for (const [on, expectedLabel, asset] of [[true, "Lock", "ui_lock_open"], [false, "Unlock", "ui_lock_closed"]]) {
     reset();
-    const state = base({ control_panels: [], readouts: [{ label: "Owner", value: "Ready" }], toggles: [linkLock(on)] });
+    const state = base({ control_panels: [], readouts: [{ label: label("Owner"), value: "Ready" }], toggles: [linkLock(on)] });
     const nodes = render(state);
     const button = node(nodes, "toggle/link_lock/switch");
-    assert.equal(button.text, label);
+    assert.equal(button.text, expectedLabel);
     assert.equal(button.disabled, undefined);
     assert.equal(node(nodes, "toggle/link_lock/switch/icon").asset, asset);
     assert.deepEqual(action("toggle/link_lock/switch"), {
@@ -326,7 +327,7 @@ test("the heading owns the native lock action and reflects both lock states", ()
 
 test("the lock action is disclosed only when native state says so and disables while inactive", () => {
   reset();
-  let nodes = render(base({ control_panels: [], readouts: [{ label: "Owner", value: "Ready" }] }));
+  let nodes = render(base({ control_panels: [], readouts: [{ label: label("Owner"), value: "Ready" }] }));
   assert.equal(node(nodes, "toggle/link_lock/switch"), undefined);
 
   nodes = render(base({ status: 0, control_panels: [], toggles: [linkLock(false)] }));
@@ -335,9 +336,9 @@ test("the lock action is disclosed only when native state says so and disables w
 
 test("Details removes only the root link lock row and keeps other owner modules", () => {
   reset();
-  const state = base({ control_panels: [], readouts: [{ label: "Owner", value: "Ready" }], toggles: [
+  const state = base({ control_panels: [], readouts: [{ label: label("Owner"), value: "Ready" }], toggles: [
     linkLock(true),
-    { label: "Other switch", on: true, on_text: "On", off_text: "Off", field: "other_switch" },
+    { label: label("Other switch"), on: true, on_text: label("On"), off_text: label("Off"), field: "other_switch" },
   ] });
   let nodes = render(state);
   assert.equal(nodes.filter((entry) => entry.id === id("toggle/link_lock/switch")).length, 1);

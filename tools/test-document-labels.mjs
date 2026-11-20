@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test } from "node:test";
+import { assertLabelOutcomes } from "./node/sdk-preamble.mjs";
 
 const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw Error("Pass the engine checkout path.");
@@ -20,8 +20,7 @@ const result = await build({
   write: false,
 });
 const UI = await import(`data:text/javascript;base64,${Buffer.from(result.outputFiles[0].text).toString("base64")}`);
-const catalog = JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url)));
-globalThis.__lunaticLocale = { tag: "en", catalog };
+const { catalog } = globalThis.__lunaticLocale;
 
 const flatten = (node) => [node, ...(node.children ?? []).flatMap(flatten)];
 const packLabel = (pack, args = []) => ({ keyed: { reference: { pack }, args } });
@@ -78,9 +77,11 @@ test("named arguments preserve literal and structural reference kinds", () => {
   assert.equal(UI.renderLabel(packLabel("lunatic/tfs:module.link.member", args)), "02-4a — online");
 });
 
-test("key-shaped plain text stays literal and missing references remain visible", () => {
+test("key-shaped plain text stays literal and a missing reference records a refusal", () => {
   const key = "lunatic/tfs:module.link.state.online";
   assert.equal(UI.renderLabel({ plain: key }), key);
   assert.equal(UI.renderLabel(packLabel(key)), catalog[key]);
-  assert.equal(UI.renderLabel(packLabel("lunatic/tfs:ui.actions.missing")), "lunatic/tfs:ui.actions.missing");
+  assertLabelOutcomes([]);
+  assert.equal(UI.renderLabel(packLabel("lunatic/tfs:ui.actions.missing")), "");
+  assertLabelOutcomes(["unproved_key"]);
 });

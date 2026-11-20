@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test } from "node:test";
+import "./node/sdk-preamble.mjs";
 
 const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw Error("Pass the engine checkout path.");
@@ -16,7 +17,6 @@ const contractOutput = await build({
   stdin: { contents: "export { validateTree } from './src/pack-ui/contract';", resolveDir: resolve(engine, "web"), loader: "ts" },
   bundle: true, format: "esm", platform: "node", write: false,
 });
-globalThis.__lunaticLocale = { tag: "en", catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))) };
 const { ui } = await import(`data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString("base64")}`);
 const { validateTree } = await import(`data:text/javascript;base64,${Buffer.from(contractOutput.outputFiles[0].text).toString("base64")}`);
 const fixture = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-live.json", import.meta.url)));
@@ -166,7 +166,9 @@ test("catalog nullable enums expose a clear option and preserve absent options",
   const nullable = node("staff/live/spawn/property/1");
   assert(nullable);
   assert.equal(nullable.type, "select");
-  assert(nullable.children?.some((option) => option.value === "staff-option:null"));
+  const unset = nullable.children?.find((option) => option.value === "staff-option:null");
+  assert(unset);
+  assert.equal(unset.text, "Unset");
   const defaults = JSON.parse(event("staff/live/spawn/place").request.action.Edit.edit.Spawn.properties);
   assert.equal(defaults.mount, undefined, "a null descriptor keeps the prototype default untouched");
 

@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test } from "node:test";
+import "./node/sdk-preamble.mjs";
 
 const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw new Error("Pass the engine checkout path.");
@@ -36,10 +37,6 @@ const { ui, readStaff, selectedEntity } = await import(
 const { validateTree } = await import(
   `data:text/javascript;base64,${Buffer.from(contractOutput.outputFiles[0].text).toString("base64")}`,
 );
-globalThis.__lunaticLocale = {
-  tag: "en",
-  catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))),
-};
 
 const source = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-live.json", import.meta.url)));
 
@@ -283,6 +280,7 @@ test("nullable enum choices clear to null and refuse a removed null option", () 
   assert.equal(control.value, "staff-option:\"north\"");
   const clear = control.children?.find((option) => option.value === "staff-option:null");
   assert(clear);
+  assert.equal(clear.text, "Unset");
   ui.onEvent({ id: control.id, type: "change", value: clear.value }, view);
   let apply = node(view, "staff/live/edit/property/0/apply");
   assert(apply);
