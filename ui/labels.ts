@@ -28,5 +28,5 @@ export function readoutText(value: Json | undefined): string {
     const record = value as Record<string, Json>;
     if ("plain" in record || "keyed" in record) return renderLabel(value as UiLabel);
   }
-  return JSON.stringify(value);
+  return "";
 }

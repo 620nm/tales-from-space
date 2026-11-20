@@ -71,6 +71,20 @@ try {
   assert.deepEqual(click.action, {
     kind: "document", document: 1, generation: 1, act: "power", payload: {},
   }, "localization leaves the action identity and payload intact");
+
+  const readoutView = await fixtureView("document/document-unavailable");
+  readoutView.documents["1"].state.readouts = [
+    { label: { plain: "Object" }, value: { private: "object payload" } },
+    { label: { plain: "Array" }, value: ["private array payload"] },
+    { label: { plain: "Number" }, value: 42 },
+    { label: { plain: "Label" }, value: { plain: "Explicit value" } },
+  ];
+  const readoutTree = await localized.render(readoutView);
+  const readoutValue = (index) => find(readoutTree, `doc/1/1/part/0/stats/${index}/value`);
+  assert.equal(readoutValue(0)?.text, "", "unsupported readout objects stay blank");
+  assert.equal(readoutValue(1)?.text, "", "unsupported readout arrays stay blank");
+  assert.equal(readoutValue(2)?.text, "42", "primitive readouts stay visible");
+  assert.equal(readoutValue(3)?.text, "Explicit value", "explicit labels still resolve");
 } finally {
   await localized.dispose();
 }
@@ -126,4 +140,4 @@ try {
 } finally {
   await vm.dispose();
 }
-console.log("Laptop desktop: 31 guest host checks passed");
+console.log("Laptop desktop and readout guest checks passed");
