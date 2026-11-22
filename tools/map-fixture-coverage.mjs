@@ -1,8 +1,9 @@
 // Named map-fixture coverage. The `maps` lane only round-trips a map, so
 // a fixture no spec boots would pass on parsing alone: every
-// `tests/maps/*.ron` is named here with the specs that boot it. The
-// authority is the `specs` lane's `--json` report: each named spec ran
-// once, passed, and lists the fixture in `maps_loaded` (the engine's
+// `tests/maps/*.ron` is named here with its specs or is a `host_map` in
+// `ui/fixture-cases.json`, which the drift lane boots. Spec coverage's
+// authority is the `specs` lane's `--json` report: each named spec ran once,
+// passed, and lists the fixture in `maps_loaded` (the engine's
 // `docs/scripting/determinism-and-testing.md`). Without a report, the
 // source check is a fast pre-check only. Zero shipped `maps/` is legal.
 //
@@ -86,13 +87,22 @@ export function checkGravityRoll(pack, spec = gravityRollSpec) {
   return pinned.length;
 }
 
+export function uiFixtureHostMaps(pack) {
+  const path = join(pack, "ui", "fixture-cases.json");
+  if (!existsSync(path)) return [];
+  const manifest = JSON.parse(readFileSync(path, "utf8"));
+  const names = [manifest.defaults?.host_map];
+  for (const entry of Object.values(manifest.cases ?? {})) names.push(entry.host_map);
+  return [...new Set(names.filter(Boolean))].sort();
+}
+
 export function checkFixtureFiles(pack, fixtures = mapFixtures) {
   const tests = join(pack, "tests");
   const shipped = ronFiles(join(pack, "maps"));
   const onDisk = ronFiles(join(tests, "maps"));
-  const named = new Set(fixtures.map((fixture) => fixture.map));
+  const named = new Set([...fixtures.map((fixture) => fixture.map), ...uiFixtureHostMaps(pack)]);
   for (const map of onDisk) {
-    assert.ok(named.has(map), `tests/maps/${map} is loaded by no named spec: add it to mapFixtures`);
+    assert.ok(named.has(map), `tests/maps/${map} is loaded by no named spec or UI fixture manifest`);
   }
   for (const fixture of fixtures) {
     assert.ok(onDisk.includes(fixture.map), `required fixture missing: tests/maps/${fixture.map}`);

@@ -627,6 +627,24 @@ ui_shot_pass() {
   return "$rc"
 }
 
+ui_fixture_drift_check() {
+  engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p xtask -- \
+    ui-fixture "$PACK" --manifest --check \
+    --out-dir "$PACK/ui/fixture-cases/generated" --web "$PACK_WEB" || return $?
+  rm -rf "$GATE/ui-fixture-drift-shots"
+  engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p lunatic-gui \
+    --features shots --bin ui_shot -- \
+    "$PACK/ui/fixture-cases/generated" --out "$GATE/ui-fixture-drift-shots" \
+    --pack "$PACK" --web "$PACK_WEB" --check --allow-missing-baselines
+  rc=$?
+  if [ "$rc" -eq 3 ]; then
+    lane_skip ui-fixture-drift "no headless GPU adapter" \
+      "generated fixture rendering (no headless GPU adapter)"
+    return 0
+  fi
+  return "$rc"
+}
+
 # ------------------------------------------------------------- the run
 
 gate_start=$(now_ms)
@@ -647,7 +665,7 @@ BAKE=$BUILD
 # that cares and withheld from one that does not.
 wants_the_bake() {
   for reader in content maps lint-assets roster placeable pack-node specs \
-    ui-shots world-pointer push-motion; do
+    ui-fixture-drift ui-shots world-pointer push-motion; do
     want "$reader" && return 0
   done
   return 1
@@ -723,6 +741,12 @@ UI_BUILT=${UI_BUILT:-$BAKE}
 # run produced it, so a check this run cannot supply takes its own
 # fallback rather than reading an earlier run's leavings.
 gated "$UI_BUILT" pack-node node "$PACK/tools/test.mjs" "$ENGINE"
+
+if want ui-fixture-drift && [ -n "$UI_BUILT" ]; then
+  blocked ui-fixture-drift "$UI_BUILT"
+else
+  gated "$BAKE" ui-fixture-drift ui_fixture_drift_check
+fi
 
 gated "$BAKE" specs spec_fixture_check
 

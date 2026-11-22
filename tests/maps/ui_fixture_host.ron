@@ -1,0 +1,52 @@
+(
+    name: "UI fixture host",
+    environment: (kind: Exact(space)),
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+    },
+    levels: [
+        (
+            rows: [
+                "#############",
+                "#...........#",
+                "#...........#",
+                "#...........#",
+                "#...........#",
+                "#...........#",
+                "#...........#",
+                "#...........#",
+                "#############",
+            ],
+            structures: [
+                (5, 3, "player_spawn"),
+                (5, 3, "utility_outlet_port"),
+                (1, 6, "generator"),
+                (2, 6, "apc", { "l1_reserve": true }),
+            ],
+            networks: [
+                (x: 1, y: 6, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 6, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 6, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 6, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 6, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 6, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 6, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 6, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 5, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 5, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 4, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 5, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 6, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
+    ],
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
+        "cryo_air": (rows: [("n2", 182.33791758582038), ("methane:gas", 9.596732504516863)], temperature_k: 94.0, amount: per_m3),
+    },
+)

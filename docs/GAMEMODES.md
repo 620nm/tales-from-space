@@ -158,8 +158,7 @@ on ground, and one pinning `surface_temperature_k: Exact(293.15)`,
 cryo-hydrocarbon world. If no candidate survives, the map is
 rejected before the round starts.
 
-This pack ships no maps under `maps/`; focused fixtures under `tests/maps/`
-author their own physical preferences. A new map omits `environment` by
+`maps/` holds `closet_cut_test.ron` and `terrain_sampler.ron`; focused fixtures under `tests/maps/` author their own physical preferences. A new map omits `environment` by
 default, leaving them unconstrained so the mode may choose microgravity.
 
 An optional `atmosphere_blend: Some("map_air")` instead fixes the ambient recipe.

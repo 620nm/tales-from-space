@@ -1,0 +1,59 @@
+{
+  "defaults": { "host_map": "ui_fixture_host.ron", "at": { "x": 4, "y": 3, "z": 0 }, "viewer": {}, "seed": 0 },
+  "sweep": {
+    "skip": {
+      "access_point": "its interface opens only through an open, running laptop, which the generator viewer cannot hold",
+      "air_alarm": "not byte-stable: file-store binding ids (P39.151)",
+      "chem_dispenser.fullupgrade": "the generator's id-filtered target lookup does not disclose this machine variant",
+      "chem_heater.fullupgrade": "the generator's id-filtered target lookup does not disclose this machine variant",
+      "grav_smes": "its default assembly has an empty center cell, so the generator's at-target lookup finds nothing",
+      "laptop": "world primary picks it up; not byte-stable: file-store binding ids (P39.151)",
+      "meter": "its panel needs a pipe beneath it; a named case uses the host's plumbed tile",
+      "programming_terminal": "not byte-stable: file-store binding ids (P39.151)",
+      "transceiver": "the generator's id-filtered target lookup does not disclose this machine",
+      "transceiver.command": "the generator's id-filtered target lookup does not disclose this machine variant",
+      "transceiver.common": "the generator's id-filtered target lookup does not disclose this machine variant",
+      "transceiver.engineering": "the generator's id-filtered target lookup does not disclose this machine variant",
+      "transceiver.medical": "the generator's id-filtered target lookup does not disclose this machine variant",
+      "transceiver.security": "the generator's id-filtered target lookup does not disclose this machine variant"
+    }
+  },
+  "cases": {
+    "meter-attached": {
+      "thing": "meter",
+      "at": { "x": 6, "y": 3, "z": 0 },
+      "gesture": "primary",
+      "note": "a flow meter attached to the layer-three pipe beneath it"
+    },
+    "canister-filled-open": {
+      "thing": "canister",
+      "props": { "blend": "canister_air", "open": true, "release_kpa": 202.65 },
+      "gesture": "primary",
+      "note": "a charged canister with its valve open and regulator raised"
+    },
+    "fax-loaded": {
+      "thing": "fax",
+      "props": { "media": "paper.blood_types" },
+      "gesture": "primary",
+      "note": "a powered fax with the blood-type reference page loaded"
+    },
+    "photocopier-loaded": {
+      "thing": "photocopier",
+      "props": { "media": "paper.blood_types" },
+      "gesture": "primary",
+      "note": "a powered photocopier with the blood-type reference original loaded"
+    },
+    "reflection-chamber-engaged": {
+      "thing": "reflection_chamber",
+      "props": { "blend": "cryo_air", "engaged": true },
+      "gesture": "primary",
+      "note": "an engaged reflection chamber holding a cold gas charge"
+    },
+    "temperature-gate-inverted": {
+      "thing": "temperature_gate",
+      "props": { "on": true, "inverted": true },
+      "gesture": "primary",
+      "note": "an armed temperature gate passing the hotter side of its setpoint"
+    }
+  }
+}

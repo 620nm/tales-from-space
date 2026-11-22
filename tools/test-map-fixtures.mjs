@@ -12,6 +12,7 @@ import {
   gravityRollFixtures,
   gravityRollSpec,
   mapFixtures,
+  uiFixtureHostMaps,
   worldFileNames,
 } from "./map-fixture-coverage.mjs";
 
@@ -90,6 +91,22 @@ function passingRows(list = fixtures) {
   return [...booted].map(([name, maps]) => ({ name, status: "ok", maps_loaded: maps, maps_loaded_truncated: false }));
 }
 
+test("UI fixture manifests cover their host maps", () => {
+  const files = {
+    ...covered,
+    "tests/maps/ui-default.ron": "()",
+    "tests/maps/ui-case.ron": "()",
+    "ui/fixture-cases.json": JSON.stringify({
+      defaults: { host_map: "ui-default.ron" },
+      cases: { filled: { host_map: "ui-case.ron" } },
+    }),
+  };
+  withPack(files, (root) => {
+    assert.deepEqual(uiFixtureHostMaps(root), ["ui-case.ron", "ui-default.ron"]);
+    assert.deepEqual(checkFixtureFiles(root, fixtures), { shipped: 0, fixtures: 4 });
+  });
+});
+
 test("missing, failed and duplicate runs cannot claim coverage", () => {
   const specs = passingRows();
   checkFixtureResults({ specs }, fixtures);
@@ -153,6 +170,7 @@ test("the gravity roll walks exactly the fixtures pinning standard gravity", () 
 
 test("this pack's fixtures are each loaded by their named specs", () => {
   const counts = checkFixtureFiles(pack);
-  assert.equal(counts.fixtures, mapFixtures.length);
+  const named = new Set([...mapFixtures.map((fixture) => fixture.map), ...uiFixtureHostMaps(pack)]);
+  assert.equal(counts.fixtures, named.size);
   checkGravityRoll(pack);
 });

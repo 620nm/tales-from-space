@@ -1,0 +1,531 @@
+{
+  "note": "a charged canister with its valve open and regulator raised",
+  "request": {
+    "at": {
+      "x": 4,
+      "y": 3,
+      "z": 0
+    },
+    "gesture": "primary",
+    "host_map": "ui_fixture_host.ron",
+    "props": {
+      "blend": "canister_air",
+      "open": true,
+      "release_kpa": 202.65
+    },
+    "seed": 0,
+    "source": "generator",
+    "thing": "canister",
+    "viewer": {}
+  },
+  "view": {
+    "body": true,
+    "documents": {
+      "0": {
+        "generation": 1,
+        "id": 0,
+        "state": {
+          "document": "modules",
+          "gauge": 50.000000000000014,
+          "labels": [],
+          "matter": [
+            {
+              "headspace_l": 2000.0,
+              "sealed": true,
+              "section": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "holder.contents"
+                  }
+                }
+              },
+              "states": [
+                {
+                  "mass_g": 107908.20273561697,
+                  "measure": 4559.625000000001,
+                  "moles": 3741.6159062280503,
+                  "phase": "gas",
+                  "rows": [
+                    {
+                      "color": "#808080",
+                      "key": "n2",
+                      "mass_g": 82764.54384576448,
+                      "measure": 3602.103750000001,
+                      "moles": 2955.87656592016,
+                      "name": "nitrogen"
+                    },
+                    {
+                      "color": "#808080",
+                      "key": "o2",
+                      "mass_g": 25143.658889852497,
+                      "measure": 957.5212500000001,
+                      "moles": 785.7393403078905,
+                      "name": "oxygen"
+                    }
+                  ]
+                }
+              ],
+              "temperature_k": 293.15000000000003,
+              "volume_l": 2000.0
+            }
+          ],
+          "name": "canister",
+          "notice": null,
+          "owner_sprite": "canister",
+          "presentation": "modules",
+          "readouts": [
+            {
+              "label": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "canister.port"
+                  }
+                }
+              },
+              "section": null,
+              "tone": "idle",
+              "value": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "canister.port.loose"
+                  }
+                }
+              }
+            },
+            {
+              "label": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "holder.rating"
+                  }
+                }
+              },
+              "section": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "holder.contents"
+                  }
+                }
+              },
+              "tone": "on",
+              "value": {
+                "keyed": {
+                  "args": [
+                    {
+                      "name": "rated",
+                      "value": {
+                        "plain": "9119 kPa"
+                      }
+                    }
+                  ],
+                  "reference": {
+                    "structural": "holder.band.full"
+                  }
+                }
+              }
+            }
+          ],
+          "setpoints": [
+            {
+              "decimals": 1,
+              "field": "release_kpa",
+              "label": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "canister.release"
+                  }
+                }
+              },
+              "max": 2533.125,
+              "min": 10.1325,
+              "section": null,
+              "step": 10.1325,
+              "unit": "kPa",
+              "value": 202.65
+            }
+          ],
+          "status": 2,
+          "toggles": [
+            {
+              "color": null,
+              "field": "open",
+              "group": null,
+              "icon": null,
+              "label": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "canister.valve"
+                  }
+                }
+              },
+              "off_text": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "canister.valve.shut"
+                  }
+                }
+              },
+              "on": true,
+              "on_text": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "canister.valve.open"
+                  }
+                }
+              },
+              "option": null,
+              "section": null
+            }
+          ]
+        },
+        "title": "canister"
+      }
+    },
+    "log": [],
+    "revision": 259,
+    "state": {
+      "bodyStatus": {
+        "can_respawn": false,
+        "state": {
+          "aloft": false,
+          "animate": true,
+          "controllable": true,
+          "label": ""
+        }
+      },
+      "currentTarget": null,
+      "equipment": {
+        "generation": 1,
+        "slots": [
+          {
+            "id": "id",
+            "label": "ID",
+            "quick_store": false
+          },
+          {
+            "id": "uniform",
+            "label": "Uniform",
+            "quick_store": false
+          },
+          {
+            "id": "suit",
+            "label": "Suit",
+            "quick_store": false
+          },
+          {
+            "id": "eyes",
+            "label": "Eyes",
+            "quick_store": false
+          },
+          {
+            "id": "belt",
+            "label": "Belt",
+            "quick_store": false
+          },
+          {
+            "id": "back",
+            "label": "Back",
+            "quick_store": true
+          },
+          {
+            "id": "mask",
+            "label": "Mask",
+            "quick_store": false
+          }
+        ]
+      },
+      "identity": {
+        "name": "player-1",
+        "you": 4294967144
+      },
+      "inventory": {
+        "active": 0,
+        "body_grid": null,
+        "equipment": [
+          {
+            "contents": null,
+            "item": {
+              "contents": null,
+              "fill": null,
+              "gestures": 0,
+              "hints": [],
+              "name": "assistant ID card",
+              "primary_hidden": false,
+              "sprite": "id",
+              "tags": [
+                "card"
+              ]
+            },
+            "slot": 0
+          },
+          {
+            "contents": null,
+            "item": {
+              "contents": null,
+              "fill": null,
+              "gestures": 0,
+              "hints": [],
+              "name": "gray jumpsuit",
+              "primary_hidden": false,
+              "sprite": "uniform_gray",
+              "tags": []
+            },
+            "slot": 1
+          },
+          {
+            "contents": null,
+            "item": null,
+            "slot": 2
+          },
+          {
+            "contents": null,
+            "item": null,
+            "slot": 3
+          },
+          {
+            "contents": null,
+            "item": null,
+            "slot": 4
+          },
+          {
+            "contents": [
+              {
+                "contents": null,
+                "fill": null,
+                "gestures": 0,
+                "hints": [
+                  {
+                    "gesture": "self",
+                    "held": [],
+                    "intent": [],
+                    "label": "lunatic/tfs:ui.affordance.toggle_internals"
+                  }
+                ],
+                "name": "emergency oxygen tank",
+                "primary_hidden": false,
+                "sprite": "emergency_tank",
+                "tags": []
+              },
+              {
+                "contents": null,
+                "fill": null,
+                "gestures": 0,
+                "hints": [],
+                "name": "radio headset",
+                "primary_hidden": false,
+                "sprite": "headset",
+                "tags": []
+              }
+            ],
+            "item": {
+              "contents": null,
+              "fill": null,
+              "gestures": 0,
+              "hints": [],
+              "name": "backpack",
+              "primary_hidden": false,
+              "sprite": "backpack",
+              "tags": []
+            },
+            "slot": 5
+          },
+          {
+            "contents": null,
+            "item": {
+              "contents": null,
+              "fill": null,
+              "gestures": 0,
+              "hints": [],
+              "name": "breath mask",
+              "primary_hidden": false,
+              "sprite": "breath_mask",
+              "tags": []
+            },
+            "slot": 6
+          }
+        ],
+        "generation": 1,
+        "hands": [
+          null,
+          null
+        ],
+        "held": [
+          null,
+          null
+        ],
+        "open_ground": [],
+        "receipt": 1
+      },
+      "preparation": {
+        "can_edit": false,
+        "can_ready": false,
+        "draft": {
+          "fallback": false,
+          "name": "player-1",
+          "ranked_jobs": [
+            "assistant"
+          ]
+        },
+        "fallback_job": "assistant",
+        "issue": null,
+        "ready": false,
+        "revision": 1,
+        "round": 1
+      },
+      "readouts": {
+        "generation": 1,
+        "slots": [
+          {
+            "id": "brute",
+            "label": "Brute",
+            "suffix": ""
+          },
+          {
+            "id": "burn",
+            "label": "Burn",
+            "suffix": ""
+          },
+          {
+            "id": "oxy",
+            "label": "Oxygen loss",
+            "suffix": ""
+          },
+          {
+            "id": "tox",
+            "label": "Toxin load",
+            "suffix": ""
+          },
+          {
+            "id": "pressure",
+            "label": "Pressure",
+            "suffix": ""
+          },
+          {
+            "id": "temperature",
+            "label": "Temperature",
+            "suffix": "C"
+          },
+          {
+            "id": "tank",
+            "label": "Tank",
+            "suffix": ""
+          }
+        ]
+      },
+      "round": {
+        "connected": 1,
+        "fault": null,
+        "paused": false,
+        "phase": "playing",
+        "ready": 0,
+        "remaining_seconds": null,
+        "round": 1,
+        "waiting": false
+      },
+      "target": {
+        "generation": 1,
+        "zone": 1
+      },
+      "targets": {
+        "base": "target_doll",
+        "generation": 1,
+        "zones": [
+          {
+            "id": "head",
+            "label": "head",
+            "rect": [
+              0.34375,
+              0.0625,
+              0.28125,
+              0.25
+            ],
+            "slot": 8,
+            "sprite": "target_head"
+          },
+          {
+            "id": "chest",
+            "label": "chest",
+            "rect": [
+              0.34375,
+              0.3125,
+              0.28125,
+              0.28125
+            ],
+            "slot": 5,
+            "sprite": "target_chest"
+          },
+          {
+            "id": "pelvis",
+            "label": "pelvis",
+            "rect": [
+              0.34375,
+              0.59375,
+              0.28125,
+              0.125
+            ],
+            "slot": 2,
+            "sprite": "target_pelvis"
+          },
+          {
+            "id": "l_arm",
+            "label": "left arm",
+            "rect": [
+              0.625,
+              0.3125,
+              0.125,
+              0.40625
+            ],
+            "slot": 6,
+            "sprite": "target_l_arm"
+          },
+          {
+            "id": "r_arm",
+            "label": "right arm",
+            "rect": [
+              0.21875,
+              0.3125,
+              0.125,
+              0.40625
+            ],
+            "slot": 4,
+            "sprite": "target_r_arm"
+          },
+          {
+            "id": "l_leg",
+            "label": "left leg",
+            "rect": [
+              0.5,
+              0.71875,
+              0.1875,
+              0.28125
+            ],
+            "slot": 3,
+            "sprite": "target_l_leg"
+          },
+          {
+            "id": "r_leg",
+            "label": "right leg",
+            "rect": [
+              0.28125,
+              0.71875,
+              0.1875,
+              0.28125
+            ],
+            "slot": 1,
+            "sprite": "target_r_leg"
+          }
+        ]
+      }
+    },
+    "version": 11
+  }
+}

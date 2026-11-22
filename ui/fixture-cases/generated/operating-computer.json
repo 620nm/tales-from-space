@@ -1,0 +1,654 @@
+{
+  "request": {
+    "at": {
+      "x": 4,
+      "y": 3,
+      "z": 0
+    },
+    "gesture": "primary",
+    "host_map": "ui_fixture_host.ron",
+    "props": {},
+    "seed": 0,
+    "source": "generator",
+    "thing": "operating_computer",
+    "viewer": {}
+  },
+  "view": {
+    "body": true,
+    "documents": {
+      "0": {
+        "generation": 1,
+        "id": 0,
+        "state": {
+          "document": "modules",
+          "gauge": null,
+          "labels": [],
+          "name": "operating computer",
+          "notice": null,
+          "owner_sprite": "operating_computer",
+          "presentation": "modules",
+          "readouts": [
+            {
+              "label": {
+                "plain": "Brute"
+              },
+              "section": {
+                "plain": "player-1"
+              },
+              "tone": null,
+              "value": {
+                "plain": "0.0"
+              }
+            },
+            {
+              "label": {
+                "plain": "Burn"
+              },
+              "section": {
+                "plain": "player-1"
+              },
+              "tone": null,
+              "value": {
+                "plain": "0.0"
+              }
+            },
+            {
+              "label": {
+                "plain": "Oxygen loss"
+              },
+              "section": {
+                "plain": "player-1"
+              },
+              "tone": null,
+              "value": {
+                "plain": "0.0"
+              }
+            },
+            {
+              "label": {
+                "plain": "Toxin load"
+              },
+              "section": {
+                "plain": "player-1"
+              },
+              "tone": null,
+              "value": {
+                "plain": "0.0"
+              }
+            },
+            {
+              "label": {
+                "plain": "Pressure"
+              },
+              "section": {
+                "plain": "player-1"
+              },
+              "tone": null,
+              "value": {
+                "plain": "101.3"
+              }
+            },
+            {
+              "label": {
+                "plain": "Temperature"
+              },
+              "section": {
+                "plain": "player-1"
+              },
+              "tone": null,
+              "value": {
+                "plain": "20.0"
+              }
+            },
+            {
+              "label": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "procedure.blood"
+                  }
+                }
+              },
+              "section": {
+                "plain": "player-1"
+              },
+              "tone": "on",
+              "value": {
+                "plain": "5.60 L"
+              }
+            },
+            {
+              "label": {
+                "plain": "chest"
+              },
+              "section": {
+                "plain": "player-1"
+              },
+              "tone": "off",
+              "value": {
+                "plain": "—"
+              }
+            }
+          ],
+          "setpoints": [],
+          "status": 2,
+          "toggles": [
+            {
+              "color": null,
+              "field": "zone",
+              "group": "target",
+              "icon": null,
+              "label": {
+                "plain": "head"
+              },
+              "off_text": {
+                "plain": "head"
+              },
+              "on": false,
+              "on_text": {
+                "plain": "head"
+              },
+              "option": "head",
+              "section": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "procedure.target"
+                  }
+                }
+              }
+            },
+            {
+              "color": null,
+              "field": "zone",
+              "group": "target",
+              "icon": null,
+              "label": {
+                "plain": "chest"
+              },
+              "off_text": {
+                "plain": "chest"
+              },
+              "on": true,
+              "on_text": {
+                "plain": "chest"
+              },
+              "option": "chest",
+              "section": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "procedure.target"
+                  }
+                }
+              }
+            },
+            {
+              "color": null,
+              "field": "zone",
+              "group": "target",
+              "icon": null,
+              "label": {
+                "plain": "pelvis"
+              },
+              "off_text": {
+                "plain": "pelvis"
+              },
+              "on": false,
+              "on_text": {
+                "plain": "pelvis"
+              },
+              "option": "pelvis",
+              "section": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "procedure.target"
+                  }
+                }
+              }
+            },
+            {
+              "color": null,
+              "field": "zone",
+              "group": "target",
+              "icon": null,
+              "label": {
+                "plain": "left arm"
+              },
+              "off_text": {
+                "plain": "left arm"
+              },
+              "on": false,
+              "on_text": {
+                "plain": "left arm"
+              },
+              "option": "l_arm",
+              "section": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "procedure.target"
+                  }
+                }
+              }
+            },
+            {
+              "color": null,
+              "field": "zone",
+              "group": "target",
+              "icon": null,
+              "label": {
+                "plain": "right arm"
+              },
+              "off_text": {
+                "plain": "right arm"
+              },
+              "on": false,
+              "on_text": {
+                "plain": "right arm"
+              },
+              "option": "r_arm",
+              "section": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "procedure.target"
+                  }
+                }
+              }
+            },
+            {
+              "color": null,
+              "field": "zone",
+              "group": "target",
+              "icon": null,
+              "label": {
+                "plain": "left leg"
+              },
+              "off_text": {
+                "plain": "left leg"
+              },
+              "on": false,
+              "on_text": {
+                "plain": "left leg"
+              },
+              "option": "l_leg",
+              "section": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "procedure.target"
+                  }
+                }
+              }
+            },
+            {
+              "color": null,
+              "field": "zone",
+              "group": "target",
+              "icon": null,
+              "label": {
+                "plain": "right leg"
+              },
+              "off_text": {
+                "plain": "right leg"
+              },
+              "on": false,
+              "on_text": {
+                "plain": "right leg"
+              },
+              "option": "r_leg",
+              "section": {
+                "keyed": {
+                  "args": [],
+                  "reference": {
+                    "structural": "procedure.target"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "title": "operating computer"
+      }
+    },
+    "log": [],
+    "revision": 259,
+    "state": {
+      "bodyStatus": {
+        "can_respawn": false,
+        "state": {
+          "aloft": false,
+          "animate": true,
+          "controllable": true,
+          "label": ""
+        }
+      },
+      "currentTarget": null,
+      "equipment": {
+        "generation": 1,
+        "slots": [
+          {
+            "id": "id",
+            "label": "ID",
+            "quick_store": false
+          },
+          {
+            "id": "uniform",
+            "label": "Uniform",
+            "quick_store": false
+          },
+          {
+            "id": "suit",
+            "label": "Suit",
+            "quick_store": false
+          },
+          {
+            "id": "eyes",
+            "label": "Eyes",
+            "quick_store": false
+          },
+          {
+            "id": "belt",
+            "label": "Belt",
+            "quick_store": false
+          },
+          {
+            "id": "back",
+            "label": "Back",
+            "quick_store": true
+          },
+          {
+            "id": "mask",
+            "label": "Mask",
+            "quick_store": false
+          }
+        ]
+      },
+      "identity": {
+        "name": "player-1",
+        "you": 4294967144
+      },
+      "inventory": {
+        "active": 0,
+        "body_grid": null,
+        "equipment": [
+          {
+            "contents": null,
+            "item": {
+              "contents": null,
+              "fill": null,
+              "gestures": 0,
+              "hints": [],
+              "name": "assistant ID card",
+              "primary_hidden": false,
+              "sprite": "id",
+              "tags": [
+                "card"
+              ]
+            },
+            "slot": 0
+          },
+          {
+            "contents": null,
+            "item": {
+              "contents": null,
+              "fill": null,
+              "gestures": 0,
+              "hints": [],
+              "name": "gray jumpsuit",
+              "primary_hidden": false,
+              "sprite": "uniform_gray",
+              "tags": []
+            },
+            "slot": 1
+          },
+          {
+            "contents": null,
+            "item": null,
+            "slot": 2
+          },
+          {
+            "contents": null,
+            "item": null,
+            "slot": 3
+          },
+          {
+            "contents": null,
+            "item": null,
+            "slot": 4
+          },
+          {
+            "contents": [
+              {
+                "contents": null,
+                "fill": null,
+                "gestures": 0,
+                "hints": [
+                  {
+                    "gesture": "self",
+                    "held": [],
+                    "intent": [],
+                    "label": "lunatic/tfs:ui.affordance.toggle_internals"
+                  }
+                ],
+                "name": "emergency oxygen tank",
+                "primary_hidden": false,
+                "sprite": "emergency_tank",
+                "tags": []
+              },
+              {
+                "contents": null,
+                "fill": null,
+                "gestures": 0,
+                "hints": [],
+                "name": "radio headset",
+                "primary_hidden": false,
+                "sprite": "headset",
+                "tags": []
+              }
+            ],
+            "item": {
+              "contents": null,
+              "fill": null,
+              "gestures": 0,
+              "hints": [],
+              "name": "backpack",
+              "primary_hidden": false,
+              "sprite": "backpack",
+              "tags": []
+            },
+            "slot": 5
+          },
+          {
+            "contents": null,
+            "item": {
+              "contents": null,
+              "fill": null,
+              "gestures": 0,
+              "hints": [],
+              "name": "breath mask",
+              "primary_hidden": false,
+              "sprite": "breath_mask",
+              "tags": []
+            },
+            "slot": 6
+          }
+        ],
+        "generation": 1,
+        "hands": [
+          null,
+          null
+        ],
+        "held": [
+          null,
+          null
+        ],
+        "open_ground": [],
+        "receipt": 1
+      },
+      "preparation": {
+        "can_edit": false,
+        "can_ready": false,
+        "draft": {
+          "fallback": false,
+          "name": "player-1",
+          "ranked_jobs": [
+            "assistant"
+          ]
+        },
+        "fallback_job": "assistant",
+        "issue": null,
+        "ready": false,
+        "revision": 1,
+        "round": 1
+      },
+      "readouts": {
+        "generation": 1,
+        "slots": [
+          {
+            "id": "brute",
+            "label": "Brute",
+            "suffix": ""
+          },
+          {
+            "id": "burn",
+            "label": "Burn",
+            "suffix": ""
+          },
+          {
+            "id": "oxy",
+            "label": "Oxygen loss",
+            "suffix": ""
+          },
+          {
+            "id": "tox",
+            "label": "Toxin load",
+            "suffix": ""
+          },
+          {
+            "id": "pressure",
+            "label": "Pressure",
+            "suffix": ""
+          },
+          {
+            "id": "temperature",
+            "label": "Temperature",
+            "suffix": "C"
+          },
+          {
+            "id": "tank",
+            "label": "Tank",
+            "suffix": ""
+          }
+        ]
+      },
+      "round": {
+        "connected": 1,
+        "fault": null,
+        "paused": false,
+        "phase": "playing",
+        "ready": 0,
+        "remaining_seconds": null,
+        "round": 1,
+        "waiting": false
+      },
+      "target": {
+        "generation": 1,
+        "zone": 1
+      },
+      "targets": {
+        "base": "target_doll",
+        "generation": 1,
+        "zones": [
+          {
+            "id": "head",
+            "label": "head",
+            "rect": [
+              0.34375,
+              0.0625,
+              0.28125,
+              0.25
+            ],
+            "slot": 8,
+            "sprite": "target_head"
+          },
+          {
+            "id": "chest",
+            "label": "chest",
+            "rect": [
+              0.34375,
+              0.3125,
+              0.28125,
+              0.28125
+            ],
+            "slot": 5,
+            "sprite": "target_chest"
+          },
+          {
+            "id": "pelvis",
+            "label": "pelvis",
+            "rect": [
+              0.34375,
+              0.59375,
+              0.28125,
+              0.125
+            ],
+            "slot": 2,
+            "sprite": "target_pelvis"
+          },
+          {
+            "id": "l_arm",
+            "label": "left arm",
+            "rect": [
+              0.625,
+              0.3125,
+              0.125,
+              0.40625
+            ],
+            "slot": 6,
+            "sprite": "target_l_arm"
+          },
+          {
+            "id": "r_arm",
+            "label": "right arm",
+            "rect": [
+              0.21875,
+              0.3125,
+              0.125,
+              0.40625
+            ],
+            "slot": 4,
+            "sprite": "target_r_arm"
+          },
+          {
+            "id": "l_leg",
+            "label": "left leg",
+            "rect": [
+              0.5,
+              0.71875,
+              0.1875,
+              0.28125
+            ],
+            "slot": 3,
+            "sprite": "target_l_leg"
+          },
+          {
+            "id": "r_leg",
+            "label": "right leg",
+            "rect": [
+              0.28125,
+              0.71875,
+              0.1875,
+              0.28125
+            ],
+            "slot": 1,
+            "sprite": "target_r_leg"
+          }
+        ]
+      }
+    },
+    "version": 11
+  }
+}

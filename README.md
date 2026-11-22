@@ -15,7 +15,7 @@ This standalone repository is loaded by the lunatic engine through
 | `content/`       | The mod itself: the two optional fixed-name entrypoints (`audiences.luau` for delivery rosters, then `main.luau` for other top-level declarations), `capabilities.luau`, `part_tree.luau`, `lib/` (shared tables the rosters read), pack rosters (`items/`, `jobs/`, `bodies/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/`, `air/`) whose `.luau` files return prototype data and register behavior through explicit `Definition:handle` calls, plus `tuning.luau` feel knobs. |
 | `ui/`           | Restricted TypeScript/TSX gameplay presentation and semantic bindings, delivered separately from client wasm. |
 | `editor/`       | Versioned pack/mode editor palettes, schemas, declarative previews and composed native tools. |
-| `maps/`          | Shipped station maps as RON; this pack currently ships none. Focused map fixtures live under `tests/maps/`. |
+| `maps/`          | Shipped RON maps: `closet_cut_test.ron` and `terrain_sampler.ron`. Focused map fixtures live under `tests/maps/`. |
 | `reference/`     | ID catalog and raw preset file bodies; guest programs in `scripts/` are standalone Luau sources, separate from trusted content. |
 | `assets/`        | Sprite, sound and whole-picture source manifests plus the tracked `tg-revision` consumed and verified by `cargo run -p xtask -- bake-atlas`. |
 | `tests/`         | Luau specs (`tests/**/*_test.luau`) run by the engine's spec runner, with focused RON fixtures in `tests/maps/` or embedded inline where needed. |
@@ -112,12 +112,13 @@ to `target/gate/log/`, which the next run replaces.
 | `build` | The engine binaries the later lanes run. |
 | `bake` | `assets/*.ron`, `assets/fonts/` and the pinned tg revision bake, into `target/web` — never the engine checkout's own served root. |
 | `content` | Every content file loads: the lint a spec run skips. |
-| `maps` | Every file in both `maps/` (shipped) and `tests/maps/` (focused fixtures) parses, preflights, writes and reads back unchanged; the lane reports separate counts, including zero, and fails fast unless every `tests/maps/` file is named with specs whose code holds a literal `t.world_file` call naming it (`tools/map-fixture-coverage.mjs`; `specs` proves the boot). It does not boot or step a world. |
+| `maps` | Every file in both `maps/` (shipped) and `tests/maps/` (focused fixtures) parses, preflights, writes and reads back unchanged; the lane reports separate counts, including zero. Every `tests/maps/` file is named by a spec or as a `host_map` in `ui/fixture-cases.json` (`tools/map-fixture-coverage.mjs`); `specs` and `ui-fixture-drift` prove those boots. This lane does not boot or step a world. |
 | `lint-assets` | Every sprite name content says is in the bake. |
 | `roster` | The roster a server would serve builds; `target/gate/roster.json` is what the next lanes read. |
 | `placeable` | Everything declared is offered in the map editor, and its art is in this pack's bake (`LUNATIC_WEB_ROOT`). |
 | `pack-ui-build` | `ui/` compiles against that engine's SDK, and every font `ui/fonts.json` declares is published in this pack's bake (`--web`). |
 | `pack-node` | `tools/test.mjs`: the theme and message lints and every `tools/test-*.mjs`. |
+| `ui-fixture-drift` | Every fixture in `ui/fixture-cases/generated/` matches fresh `ui-fixture --manifest --check` bytes and renders through GPUI as a smoke check; generated fixtures have no recorded geometry. |
 | `ui-shots` | Every ordinary and staff fixture renders through GPUI and matches its recorded boxes and text lines; missing or incomplete geometry pairs, orphaned recordings and differences fail. |
 | `specs` | `tests/**/*_test.luau` through the engine's spec runner, including the actual boot/step assertions for focused map fixtures; its `--json` report proves each fixture was booted: every named spec ran once, passed, and lists the fixture in an untruncated `maps_loaded` (`tools/map-fixture-coverage.mjs`). |
 | `world-pointer`, `push-motion` | The fixtures in `tests/fixtures/`, driven in the real client against this pack's bake. |
