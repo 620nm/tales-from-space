@@ -3,19 +3,9 @@
   "sweep": {
     "skip": {
       "access_point": "its interface opens only through an open, running laptop, which the generator viewer cannot hold",
-      "air_alarm": "not byte-stable: file-store binding ids (P39.151)",
-      "chem_dispenser.fullupgrade": "the generator's id-filtered target lookup does not disclose this machine variant",
-      "chem_heater.fullupgrade": "the generator's id-filtered target lookup does not disclose this machine variant",
       "grav_smes": "its default assembly has an empty center cell, so the generator's at-target lookup finds nothing",
-      "laptop": "world primary picks it up; not byte-stable: file-store binding ids (P39.151)",
-      "meter": "its panel needs a pipe beneath it; a named case uses the host's plumbed tile",
-      "programming_terminal": "not byte-stable: file-store binding ids (P39.151)",
-      "transceiver": "the generator's id-filtered target lookup does not disclose this machine",
-      "transceiver.command": "the generator's id-filtered target lookup does not disclose this machine variant",
-      "transceiver.common": "the generator's id-filtered target lookup does not disclose this machine variant",
-      "transceiver.engineering": "the generator's id-filtered target lookup does not disclose this machine variant",
-      "transceiver.medical": "the generator's id-filtered target lookup does not disclose this machine variant",
-      "transceiver.security": "the generator's id-filtered target lookup does not disclose this machine variant"
+      "laptop": "world primary picks it up",
+      "meter": "its panel needs a pipe beneath it; a named case uses the host's plumbed tile"
     }
   },
   "cases": {
@@ -24,6 +14,30 @@
       "at": { "x": 6, "y": 3, "z": 0 },
       "gesture": "primary",
       "note": "a flow meter attached to the layer-three pipe beneath it"
+    },
+    "air-alarm-locked": {
+      "thing": "air_alarm",
+      "props": { "access": "station.engineering" },
+      "gesture": "primary",
+      "note": "an engineering-locked air alarm viewed by an assistant"
+    },
+    "air-alarm-disk": {
+      "thing": "air_alarm",
+      "props": { "media": "floppy_disk.atmos_stock" },
+      "gesture": "primary",
+      "note": "an air alarm with the stock controller disk in its drive"
+    },
+    "laptop-desktop": {
+      "thing": "laptop",
+      "props": { "open": true, "powered": true, "media": "floppy_disk.atmos_stock" },
+      "gesture": "secondary",
+      "note": "an open, powered laptop with a stock disk, opened by its held-item gesture"
+    },
+    "programming-terminal-disk": {
+      "thing": "programming_terminal",
+      "props": { "media": "floppy_disk.atmos_stock" },
+      "gesture": "primary",
+      "note": "a programming terminal with the stock controller disk in its drive"
     },
     "canister-filled-open": {
       "thing": "canister",
