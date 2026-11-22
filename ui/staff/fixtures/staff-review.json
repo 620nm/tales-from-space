@@ -1,4 +1,5 @@
 {
+  "audience": "staff",
   "note": "Canonical destructive review retains the selected body reference until confirmation.",
   "viewport": {
     "width": 1600,

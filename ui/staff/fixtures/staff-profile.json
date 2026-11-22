@@ -1,4 +1,5 @@
 {
+  "audience": "staff",
   "note": "Canonical account profile projection uses an unscoped stable profile id.",
   "viewport": {
     "width": 1366,

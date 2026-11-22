@@ -1,4 +1,5 @@
 {
+  "audience": "staff",
   "note": "Canonical staff case projection with account, mind, body, item and event references.",
   "viewport": {
     "width": 1366,

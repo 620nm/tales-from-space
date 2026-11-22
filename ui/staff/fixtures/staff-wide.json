@@ -1,4 +1,5 @@
 {
+  "audience": "staff",
   "note": "Canonical staff live projection at the wide docked inspector size.",
   "viewport": {
     "width": 1600,

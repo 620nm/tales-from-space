@@ -1,4 +1,5 @@
 {
+  "audience": "staff",
   "note": "Canonical staff live projection with a decimal body id and exact source cursors.",
   "viewport": {
     "width": 1024,
