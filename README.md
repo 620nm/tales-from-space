@@ -67,7 +67,13 @@ Nothing names a default map, so export one yourself:
 A server started with no map begins no round.
 `--playtest` instead has the host install and begin the map itself. The
 development launcher accepts `--map "$LUNATIC_MAP"` and plays it under
-`--playtest` by default; `--no-playtest` runs the pack's own start.
+`--playtest` by default; `--no-playtest` runs the pack's own start. For
+playtesting a map you are building, `free_build` is the drop-in mode: it
+seats each connection at a `player_spawn` at once with the engineer's kit,
+while `space_station` first opens preparation (name, ranked jobs, ready,
+countdown). A minimal playable map needs a sealed, floored room and one
+`player_spawn`; `tests/rounds/editor_playtest_test.luau` pins that contract
+for both modes.
 
 ### The gate
 
