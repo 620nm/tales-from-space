@@ -122,7 +122,7 @@ return {
     version = 1,
     pack = "lunatic/tfs",
     revision = "11",
-    tools = { "select", "paint", "fill", "erase", "clone", "link" },
+    tools = { "select", "paint", "fill", "erase", "clone", "link", "area" },
     lenses = { "surface", "subfloor", "blend", "networking" },
     prototypes = prototypes,
     composed_tools = composed_tools,
