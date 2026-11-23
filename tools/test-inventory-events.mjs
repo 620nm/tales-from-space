@@ -32,6 +32,17 @@ function render(held = cartridge) {
   UI.storageRegion(view);
   return view;
 }
+test("storage trays anchor clear of the slots they drag to", () => {
+  const view = render();
+  const flatten = (node) => [node, ...(node.children ?? []).flatMap(flatten)];
+  const windows = flatten(UI.storageRegion(view)).filter((node) => node.window);
+  const root = windows.find((node) => node.window.key === "storage/equipment/back/");
+  const nested = windows.find((node) => node.window.key === "storage/equipment/back/0");
+  assert.equal(root.window.source, "hud-origin",
+    "a worn tray opens above the whole controls region, never over a hand");
+  assert.equal(nested.window.source, undefined,
+    "a nested tray fans out instead of opening below its parent slot");
+});
 const sites = [
   ["hand/1/pick", { Held: { hand: 1 } }],
   ["equipment/belt/pick", { Equipment: { slot: "belt" } }],

@@ -636,308 +636,302 @@
       "h": 0
     },
     "lunatic/tfs/storage/hand/0/": {
-      "x": 704,
-      "y": 471,
+      "x": 358.40625,
+      "y": 405.609375,
       "w": 320,
       "h": 148
     },
     "lunatic/tfs/storage/hand/0/#body": {
-      "x": 705,
-      "y": 511,
+      "x": 359.40625,
+      "y": 445.609375,
       "w": 318,
       "h": 107
     },
     "lunatic/tfs/storage/hand/0/#caret": {
-      "x": 878,
-      "y": 619,
+      "x": 666.40625,
+      "y": 553.609375,
       "w": 8,
       "h": 4
     },
     "lunatic/tfs/storage/hand/0/#close": {
-      "x": 986,
-      "y": 477,
+      "x": 640.40625,
+      "y": 411.609375,
       "w": 28,
       "h": 28
     },
     "lunatic/tfs/storage/hand/0/#grip-e": {
-      "x": 1015,
-      "y": 480,
+      "x": 669.40625,
+      "y": 414.609375,
       "w": 8,
       "h": 130
     },
     "lunatic/tfs/storage/hand/0/#grip-n": {
-      "x": 713,
-      "y": 472,
+      "x": 367.40625,
+      "y": 406.609375,
       "w": 302,
       "h": 8
     },
     "lunatic/tfs/storage/hand/0/#grip-ne": {
-      "x": 1015,
-      "y": 472,
+      "x": 669.40625,
+      "y": 406.609375,
       "w": 8,
       "h": 8
     },
     "lunatic/tfs/storage/hand/0/#grip-nw": {
-      "x": 705,
-      "y": 472,
+      "x": 359.40625,
+      "y": 406.609375,
       "w": 8,
       "h": 8
     },
     "lunatic/tfs/storage/hand/0/#grip-s": {
-      "x": 713,
-      "y": 610,
+      "x": 367.40625,
+      "y": 544.609375,
       "w": 302,
       "h": 8
     },
     "lunatic/tfs/storage/hand/0/#grip-se": {
-      "x": 1015,
-      "y": 610,
+      "x": 669.40625,
+      "y": 544.609375,
       "w": 8,
       "h": 8
     },
     "lunatic/tfs/storage/hand/0/#grip-sw": {
-      "x": 705,
-      "y": 610,
+      "x": 359.40625,
+      "y": 544.609375,
       "w": 8,
       "h": 8
     },
     "lunatic/tfs/storage/hand/0/#grip-w": {
-      "x": 705,
-      "y": 480,
+      "x": 359.40625,
+      "y": 414.609375,
       "w": 8,
       "h": 130
     },
     "lunatic/tfs/storage/hand/0/#label": {
-      "x": 714,
-      "y": 483.3125,
+      "x": 368.40625,
+      "y": 417.921875,
       "w": 264,
       "h": 15.390625
     },
     "lunatic/tfs/storage/hand/0/#title": {
-      "x": 705,
-      "y": 472,
+      "x": 359.40625,
+      "y": 406.609375,
       "w": 318,
       "h": 39
     },
     "lunatic/tfs/storage/hand/0/#window": {
-      "x": 704,
-      "y": 471,
+      "x": 358.40625,
+      "y": 405.609375,
       "w": 320,
       "h": 148
     },
     "lunatic/tfs/storage/hand/0//body": {
-      "x": 705,
-      "y": 543,
+      "x": 359.40625,
+      "y": 477.609375,
       "w": 318,
       "h": 75
     },
     "lunatic/tfs/storage/hand/0//items": {
-      "x": 705,
-      "y": 543,
+      "x": 359.40625,
+      "y": 477.609375,
       "w": 306,
       "h": 48
     },
     "lunatic/tfs/storage/hand/0//store": {
-      "x": 712,
-      "y": 513,
+      "x": 366.40625,
+      "y": 447.609375,
       "w": 82.796875,
       "h": 28
     },
     "lunatic/tfs/storage/hand/0//toolbar": {
-      "x": 705,
-      "y": 511,
+      "x": 359.40625,
+      "y": 445.609375,
       "w": 318,
       "h": 32
     },
     "lunatic/tfs/storage/hand/0/0": {
-      "x": 704,
-      "y": 591,
+      "x": 56,
+      "y": 56,
       "w": 320,
       "h": 148
     },
     "lunatic/tfs/storage/hand/0/0#body": {
-      "x": 705,
-      "y": 631,
+      "x": 57,
+      "y": 96,
       "w": 318,
       "h": 107
     },
-    "lunatic/tfs/storage/hand/0/0#caret": {
-      "x": 728,
-      "y": 739,
-      "w": 8,
-      "h": 4
-    },
     "lunatic/tfs/storage/hand/0/0#close": {
-      "x": 986,
-      "y": 597,
+      "x": 338,
+      "y": 62,
       "w": 28,
       "h": 28
     },
     "lunatic/tfs/storage/hand/0/0#grip-e": {
-      "x": 1015,
-      "y": 600,
+      "x": 367,
+      "y": 65,
       "w": 8,
       "h": 130
     },
     "lunatic/tfs/storage/hand/0/0#grip-n": {
-      "x": 713,
-      "y": 592,
+      "x": 65,
+      "y": 57,
       "w": 302,
       "h": 8
     },
     "lunatic/tfs/storage/hand/0/0#grip-ne": {
-      "x": 1015,
-      "y": 592,
+      "x": 367,
+      "y": 57,
       "w": 8,
       "h": 8
     },
     "lunatic/tfs/storage/hand/0/0#grip-nw": {
-      "x": 705,
-      "y": 592,
+      "x": 57,
+      "y": 57,
       "w": 8,
       "h": 8
     },
     "lunatic/tfs/storage/hand/0/0#grip-s": {
-      "x": 713,
-      "y": 730,
+      "x": 65,
+      "y": 195,
       "w": 302,
       "h": 8
     },
     "lunatic/tfs/storage/hand/0/0#grip-se": {
-      "x": 1015,
-      "y": 730,
+      "x": 367,
+      "y": 195,
       "w": 8,
       "h": 8
     },
     "lunatic/tfs/storage/hand/0/0#grip-sw": {
-      "x": 705,
-      "y": 730,
+      "x": 57,
+      "y": 195,
       "w": 8,
       "h": 8
     },
     "lunatic/tfs/storage/hand/0/0#grip-w": {
-      "x": 705,
-      "y": 600,
+      "x": 57,
+      "y": 65,
       "w": 8,
       "h": 130
     },
     "lunatic/tfs/storage/hand/0/0#label": {
-      "x": 714,
-      "y": 603.3125,
+      "x": 66,
+      "y": 68.3125,
       "w": 264,
       "h": 15.390625
     },
     "lunatic/tfs/storage/hand/0/0#title": {
-      "x": 705,
-      "y": 592,
+      "x": 57,
+      "y": 57,
       "w": 318,
       "h": 39
     },
     "lunatic/tfs/storage/hand/0/0#window": {
-      "x": 704,
-      "y": 591,
+      "x": 56,
+      "y": 56,
       "w": 320,
       "h": 148
     },
     "lunatic/tfs/storage/hand/0/0/body": {
-      "x": 705,
-      "y": 663,
+      "x": 57,
+      "y": 128,
       "w": 318,
       "h": 75
     },
     "lunatic/tfs/storage/hand/0/0/items": {
-      "x": 705,
-      "y": 663,
+      "x": 57,
+      "y": 128,
       "w": 306,
       "h": 48
     },
     "lunatic/tfs/storage/hand/0/0/store": {
-      "x": 712,
-      "y": 633,
+      "x": 64,
+      "y": 98,
       "w": 82.796875,
       "h": 28
     },
     "lunatic/tfs/storage/hand/0/0/take": {
-      "x": 802.796875,
-      "y": 633,
+      "x": 154.796875,
+      "y": 98,
       "w": 118.796875,
       "h": 28
     },
     "lunatic/tfs/storage/hand/0/0/toolbar": {
-      "x": 705,
-      "y": 631,
+      "x": 57,
+      "y": 96,
       "w": 318,
       "h": 32
     },
     "lunatic/tfs/stored/hand/0/0-0/take": {
-      "x": 712,
-      "y": 663,
+      "x": 64,
+      "y": 128,
       "w": 40,
       "h": 40
     },
     "lunatic/tfs/stored/hand/0/0-0/take/box": {
-      "x": 712,
-      "y": 663,
+      "x": 64,
+      "y": 128,
       "w": 40,
       "h": 40
     },
     "lunatic/tfs/stored/hand/0/0-0/take/cell": {
-      "x": 712,
-      "y": 663,
+      "x": 64,
+      "y": 128,
       "w": 40,
       "h": 40
     },
     "lunatic/tfs/stored/hand/0/0-0/take/frame": {
-      "x": 712,
-      "y": 663,
+      "x": 64,
+      "y": 128,
       "w": 40,
       "h": 40
     },
     "lunatic/tfs/stored/hand/0/0-0/take/icon": {
-      "x": 716,
-      "y": 667,
+      "x": 68,
+      "y": 132,
       "w": 32,
       "h": 32
     },
     "lunatic/tfs/stored/hand/0/0-0/take/label": {
-      "x": 712,
-      "y": 689.8125,
+      "x": 64,
+      "y": 154.8125,
       "w": 40,
       "h": 13.1875
     },
     "lunatic/tfs/stored/hand/0/0/take": {
-      "x": 712,
-      "y": 543,
+      "x": 366.40625,
+      "y": 477.609375,
       "w": 40,
       "h": 40
     },
     "lunatic/tfs/stored/hand/0/0/take/box": {
-      "x": 712,
-      "y": 543,
+      "x": 366.40625,
+      "y": 477.609375,
       "w": 40,
       "h": 40
     },
     "lunatic/tfs/stored/hand/0/0/take/cell": {
-      "x": 712,
-      "y": 543,
+      "x": 366.40625,
+      "y": 477.609375,
       "w": 40,
       "h": 40
     },
     "lunatic/tfs/stored/hand/0/0/take/frame": {
-      "x": 712,
-      "y": 543,
+      "x": 366.40625,
+      "y": 477.609375,
       "w": 40,
       "h": 40
     },
     "lunatic/tfs/stored/hand/0/0/take/icon": {
-      "x": 716,
-      "y": 547,
+      "x": 370.40625,
+      "y": 481.609375,
       "w": 32,
       "h": 32
     },
     "lunatic/tfs/stored/hand/0/0/take/label": {
-      "x": 712,
-      "y": 569.8125,
+      "x": 366.40625,
+      "y": 504.421875,
       "w": 40,
       "h": 13.1875
     },

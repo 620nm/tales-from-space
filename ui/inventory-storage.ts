@@ -1,5 +1,6 @@
-// Disclosed container paths open next to their source item. Paths are bounded
-// by the native inventory projection and every move is revalidated there.
+// Disclosed container paths open as trays clear of the controls they
+// drag to. Paths are bounded by the native inventory projection and
+// every move is revalidated there.
 import type { Json, UiNode } from "@lunatic/ui";
 import { hudSlot } from "./slots";
 import type { GameplayView, InventoryState, ItemView } from "./model";
@@ -112,7 +113,13 @@ export function storageRegion(view: GameplayView, place: Box = {}): UiNode | nul
       }, { cls: ["pane", "storage-window", ...(place.cls ?? [])], ...(place.style ? { style: place.style } : {}) }),
       window: { key: id, title: S.storageTitle(disclosed.label), width: 320,
         height: Math.min(420, 100 + Math.max(1, Math.ceil(disclosed.items.length / 7)) * 48),
-        source: source(which), close: `${id}/close` },
+        // A nested tray anchored to its slot inside the parent tray
+        // opens below that slot, over the hands it drags to; without
+        // a source the host fans it out clear of the drop targets. A
+        // held or worn tray anchors to the whole controls region for
+        // the same reason: above one slot can still cover its taller
+        // neighbors, above the region covers none of them.
+        ...(which.path.length ? {} : { source: which.target !== undefined ? source(which) : "hud-origin" }), close: `${id}/close` },
     };
   });
   return panels.length ? column("storage-windows", panels, { cls: ["hudgroup"] }) : null;
