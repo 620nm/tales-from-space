@@ -64,6 +64,13 @@ test("qualified action groups use their real catalog labels and accessible names
   assert(!nodes.some((node) => typeof node.text === "string" && node.text.includes("lunatic/tfs:")));
 });
 
+test("the shared title screen resolves its pack words", () => {
+  assert.equal(catalog["lunatic/tfs:title.heading"], "Tales from Space");
+  assert.equal(UI.renderLabel(packLabel("lunatic/tfs:title.editor")), "Map editor");
+  assert.equal(UI.renderLabel(packLabel("lunatic/tfs:title.connect")), "Connect to a server");
+  assert.equal(UI.renderLabel(packLabel("lunatic/tfs:title.language")), "Language");
+});
+
 test("structural labels use the pack's fully-qualified catalog key", () => {
   assert.equal(UI.renderLabel(structuralLabel("link.state.online")), catalog["lunatic/tfs:module.link.state.online"]);
 });

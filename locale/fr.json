@@ -164,5 +164,9 @@
   "lunatic/tfs:lib.climbing.refused.blocked": "Votre escalade est bloquée.",
   "lunatic/tfs:lib.climbing.refused.cross_vetoed": "Quelque chose vous empêche de monter là.",
   "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "Vous ne pouvez pas monter aussi haut.",
-  "lunatic/tfs:lib.climbing.refused.not_applied": "Vous n'arrivez pas à monter dessus."
+  "lunatic/tfs:lib.climbing.refused.not_applied": "Vous n'arrivez pas à monter dessus.",
+  "lunatic/tfs:title.heading": "Tales from Space",
+  "lunatic/tfs:title.editor": "Éditeur de carte",
+  "lunatic/tfs:title.connect": "Se connecter à un serveur",
+  "lunatic/tfs:title.language": "Langue"
 }

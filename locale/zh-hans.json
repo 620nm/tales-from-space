@@ -73,5 +73,9 @@
   "lunatic/tfs:lib.climbing.refused.blocked": "你的攀爬被阻挡。",
   "lunatic/tfs:lib.climbing.refused.cross_vetoed": "有东西阻止你爬到那里。",
   "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "你不能爬那么高。",
-  "lunatic/tfs:lib.climbing.refused.not_applied": "你没能爬上去。"
+  "lunatic/tfs:lib.climbing.refused.not_applied": "你没能爬上去。",
+  "lunatic/tfs:title.heading": "Tales from Space",
+  "lunatic/tfs:title.editor": "地图编辑器",
+  "lunatic/tfs:title.connect": "连接到服务器",
+  "lunatic/tfs:title.language": "语言"
 }

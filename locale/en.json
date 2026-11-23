@@ -1903,5 +1903,9 @@
   "lunatic/tfs:observe.return": "Return to body",
   "lunatic/tfs:observe.refused": "No observer could stand here.",
   "lunatic/tfs:observe.stranded": "Your body is gone, dead or taken; you remain an observer.",
-  "lunatic/tfs:observe.title": "Observe"
+  "lunatic/tfs:observe.title": "Observe",
+  "lunatic/tfs:title.heading": "Tales from Space",
+  "lunatic/tfs:title.editor": "Map editor",
+  "lunatic/tfs:title.connect": "Connect to a server",
+  "lunatic/tfs:title.language": "Language"
 }

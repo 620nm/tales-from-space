@@ -73,5 +73,9 @@
   "lunatic/tfs:lib.climbing.refused.blocked": "Penjanje je blokirano.",
   "lunatic/tfs:lib.climbing.refused.cross_vetoed": "Nešto sprečava penjanje tamo.",
   "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "Ta visina je prevelika za penjanje.",
-  "lunatic/tfs:lib.climbing.refused.not_applied": "Ne uspevaš da se popneš na to."
+  "lunatic/tfs:lib.climbing.refused.not_applied": "Ne uspevaš da se popneš na to.",
+  "lunatic/tfs:title.heading": "Tales from Space",
+  "lunatic/tfs:title.editor": "Uređivač mape",
+  "lunatic/tfs:title.connect": "Poveži se na server",
+  "lunatic/tfs:title.language": "Jezik"
 }
