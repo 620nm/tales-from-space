@@ -128,6 +128,31 @@ test("no restore when ready, locked, already drafted or without a record", () =>
   delete bare.state.packageRecord;
   assert.equal(act(bare), undefined);
 });
+test("a stored draft the server would refuse is never restored", () => {
+  const dup = { name: "Ada", ranked_jobs: ["engineer", "engineer"], fallback: false };
+  assert.deepEqual(act(draftView(120, 0, EMPTY, dup)), {
+    kind: "character_draft", round: 120, revision: 0,
+    draft: { name: "Ada", ranked_jobs: ["engineer"], fallback: false },
+  });
+  const blank = { name: "   ", ranked_jobs: ["engineer"], fallback: false };
+  assert.equal(act(draftView(121, 0, EMPTY, blank)), undefined);
+  const long = { name: "A".repeat(65), ranked_jobs: [], fallback: true };
+  assert.equal(act(draftView(122, 0, EMPTY, long)), undefined);
+  const control = { name: "Ada" + String.fromCharCode(7), ranked_jobs: [], fallback: true };
+  assert.equal(act(draftView(123, 0, EMPTY, control)), undefined);
+  const capped = draftView(124, 0, EMPTY, SAVED);
+  const jobs = Array.from({ length: 130 }, (_, i) => ({ key: `job${i}`, name: `Job ${i}` }));
+  capped.state.jobs.jobs = jobs;
+  capped.state.packageRecord.value.draft = { name: "Ada", ranked_jobs: jobs.map((job) => job.key), fallback: false };
+  assert.equal(act(capped), undefined);
+});
+test("an unusable saved setup says so in the editor", () => {
+  const blank = { name: "   ", ranked_jobs: ["engineer"], fallback: false };
+  const tree = flatten(ui.render(draftView(125, 0, EMPTY, blank)));
+  assert(tree.some((node) => node.id === "preparation/saved-unusable"));
+  const usable = flatten(ui.render(draftView(125, 0, EMPTY, SAVED)));
+  assert.equal(usable.some((node) => node.id === "preparation/saved-unusable"), false);
+});
 test("a record fault shows the saving notice without closing the lobby", () => {
   const faulted = draftView(108, 3, view.view.state.preparation.draft, view.view.state.preparation.draft);
   faulted.state.packageRecord.fault = "write";

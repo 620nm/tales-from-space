@@ -185,6 +185,9 @@ function characterEditor(view: LobbyView): UiNode {
     storageFailed(view)
       ? text("preparation/storage-unavailable", S.tfs("ui.lobby.preparation.saving_unavailable"), ["lobby-notice"])
       : null,
+    savedUnusable(view)
+      ? text("preparation/saved-unusable", S.tfs("ui.lobby.preparation.saved_unusable"), ["lobby-notice"])
+      : null,
   ), { cls: ["lobby-editor"] });
 }
 
@@ -223,6 +226,48 @@ function normalDraft(value: unknown): CharacterDraft | null {
 const emptyDraft = (draft: CharacterDraft): boolean =>
   !draft.name && !draft.ranked_jobs.length && !draft.fallback;
 
+/** The server's name rule, mirrored so a restore it would refuse is
+ *  never sent: at most 64 scalars and 256 UTF-8 bytes, no control
+ *  characters (engine `sim/preparation_validation.rs`). */
+function draftNameFits(name: string): boolean {
+  let scalars = 0;
+  let bytes = 0;
+  for (const ch of name) {
+    const cp = ch.codePointAt(0)!;
+    if (cp < 0x20 || (cp >= 0x7f && cp <= 0x9f)) return false;
+    scalars++;
+    bytes += cp < 0x80 ? 1 : cp < 0x800 ? 2 : cp < 0x10000 ? 3 : 4;
+  }
+  return scalars > 0 && scalars <= 64 && bytes <= 256;
+}
+
+/** The stored draft as the server would accept it, or null when no
+ *  faithful send exists: unknown jobs drop and duplicates collapse,
+ *  but a name or ranking that no longer fits is the player's to redo. */
+function restorableDraft(view: LobbyView): CharacterDraft | null {
+  const prep = preparationOf(view);
+  const stored = normalDraft(packageRecord(view)?.value?.draft);
+  const roster = view.state.jobs?.jobs;
+  if (!prep || !stored || !roster) return null;
+  const name = stored.name.trim();
+  if (!draftNameFits(name)) return null;
+  const known = new Set(roster.map((job) => job.key));
+  const ranked = [...new Set(stored.ranked_jobs.filter((job) => known.has(job)))];
+  if (ranked.length > 128) return null;
+  return { name, ranked_jobs: ranked, fallback: stored.fallback && !!prep.fallback_job };
+}
+
+/** A saved setup sits in the device record but no send of it would be
+ *  accepted; say so instead of letting a refusal blame the player. */
+function savedUnusable(view: LobbyView): boolean {
+  const prep = preparationOf(view);
+  const stored = normalDraft(packageRecord(view)?.value?.draft);
+  if (!prep || prep.revision > 0 || !stored || emptyDraft(stored)) return false;
+  if (!emptyDraft(draftOf(view)) || !prep.can_edit || prep.ready || prep.issue) return false;
+  if (!view.state.jobs?.jobs) return false;
+  return restorableDraft(view) === null;
+}
+
 /** Keeps the accepted server draft (name, ranked jobs, fallback only) in
  *  this package's device record, and offers it back while the server
  *  holds an untouched one; none after the server states an issue. */
@@ -250,14 +295,11 @@ export function draftOnView(view: GameplayView): Command | undefined {
   if (!stored || emptyDraft(stored) || !emptyDraft(current) || !prep.can_edit || prep.ready
     || prep.issue || preparationPending(view) || !roster
     || restoreSeen >= SEEN_TRIES || restoreSends >= SEND_CAP) return undefined;
-  const known = new Set(roster.map((job) => job.key));
+  const candidate = restorableDraft(view);
+  if (!candidate) return undefined;
   restoreSends++;
   restoreAwaiting = true;
-  return preparationCommand(view, {
-    name: stored.name,
-    ranked_jobs: stored.ranked_jobs.filter((job) => known.has(job)),
-    fallback: stored.fallback && !!prep.fallback_job,
-  });
+  return preparationCommand(view, candidate);
 }
 
 /** The chat owner supplies the OOC filter and persistent `chat` composer. */
