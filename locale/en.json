@@ -1292,6 +1292,7 @@
   "lunatic/tfs:ui.lobby.issue.invalid_draft": "Your setup is invalid. Choose a name and a role or fallback.",
   "lunatic/tfs:ui.lobby.issue.stale": "Your setup is out of date. It will refresh shortly.",
   "lunatic/tfs:ui.lobby.issue.locked": "Your setup is locked. Unready before making changes.",
+  "lunatic/tfs:ui.lobby.issue.locked_closed": "Setup is closed for this round. Wait for the next round to change it.",
   "lunatic/tfs:ui.lobby.issue.allocation_failed": "The round could not start. An operator needs to resolve the problem.",
   "lunatic/tfs:ui.lobby.issue.no_assignments": "Your choices could not be assigned. Choose another role or fallback.",
   "lunatic/tfs:ui.lobby.starting": "Starting round…",

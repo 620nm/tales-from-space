@@ -90,11 +90,16 @@ function jobRows(view: LobbyView): { key: string; name: string }[] {
 }
 
 /** The disclosed preparation issue's words, for whichever lobby
- *  surface the session is looking at when the server states one. */
+ *  surface the session is looking at when the server states one.
+ *  Locked has two faces: a ready player locked their own draft, or
+ *  setup closed around a player who never readied. Say which. */
 export function preparationIssueLabel(view: GameplayView): string | null {
   const lobby = view as LobbyView;
   const issue = preparationOf(lobby)?.issue ?? roundOf(lobby)?.fault;
-  return issue ? ISSUE_LABELS[issue] : null;
+  if (!issue) return null;
+  return issue === "locked" && !preparationOf(lobby)?.ready
+    ? S.tfs("ui.lobby.issue.locked_closed")
+    : ISSUE_LABELS[issue];
 }
 
 function issueNotice(view: LobbyView): UiNode | null {

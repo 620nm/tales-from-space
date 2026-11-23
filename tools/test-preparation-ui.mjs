@@ -31,6 +31,15 @@ test("the footer waits for ready players instead of a frozen countdown", async (
   assert.equal(await timerOf("preparation-ready"), "Starts in 97s",
     "a running countdown keeps its seconds");
 });
+test("a locked setup says unready only to a ready player", () => {
+  const noticeOf = (prep) => flatten(ui.render(draftView(131, 0,
+    { name: "Ada", ranked_jobs: ["assistant"], fallback: false }, null, prep)))
+    .find((node) => node.id === "preparation/issue")?.text;
+  assert.equal(noticeOf({ issue: "locked", ready: true }),
+    "Your setup is locked. Unready before making changes.");
+  assert.equal(noticeOf({ issue: "locked", ready: false }),
+    "Setup is closed for this round. Wait for the next round to change it.");
+});
 test("an empty name says why Ready stays disabled", () => {
   const unnamed = draftView(130, 0, { name: "", ranked_jobs: ["assistant"], fallback: false }, null);
   const hint = flatten(ui.render(unnamed)).find((node) => node.id === "preparation/name-empty");
