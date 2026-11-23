@@ -18,7 +18,7 @@ t.world(
                 "#........#",
                 "##########",
             ],
-            structures: [(1, 1, "player_spawn"), (3, 1, "player_spawn"), (5, 1, "player_spawn"), (7, 1, "player_spawn")],
+            structures: [(1, 1, "player_spawn"), (3, 1, "player_spawn"), (5, 1, "player_spawn"), (7, 1, "player_spawn"), (8, 1, "player_spawn")],
         ),
     ],
 )]==],
@@ -115,6 +115,16 @@ home = t.connect(string.format("%064x", 4203))
 t.run_ticks(4)
 assert(plan(home) == "human", "a reconnect without the grant goes home")
 assert(t.ui(home, "observe") == nil, "with nothing offered")
+
+-- A grant revoked while observing, with no press and no reconnect: the
+-- mode's sweep sends them home within its period.
+local swept = staff_with_control(4205)
+press(swept)
+assert(plan(swept) == "observer", "out")
+assert(t.staff_grant(swept, "observe"), "observe replaces control")
+t.run_seconds(3)
+assert(plan(swept) == "human", "the sweep sent them home")
+assert(t.ui(swept, "observe") == nil, "and the panel closed")
 
 -- A dead staff member presses the way out: a corpse is no body to leave
 -- (the reconnect viewpoint over it is observe_station_test.luau's).

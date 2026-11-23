@@ -183,6 +183,24 @@ local function on_action(ev: UiActionPayload): ()
     end
 end
 
+-- Seconds between sweeps for observers whose grant is gone.
+local SWEEP_SECONDS = 2
+
+-- A mode's `clock.second`: every sweep, an observer whose account lost the
+-- grant and whose left body still lives is sent home, pressed or not.
+function observe.on_second(ev: ClockSecondPayload): ()
+    if math.floor(ev.elapsed_seconds) % SWEEP_SECONDS ~= 0 then
+        return
+    end
+    for _, mind in sim.query.minds() do
+        local player = mind.player
+        local left = left_of(mind)
+        if player ~= nil and observing(player.body) and not may(player) and left ~= nil and steppable(left) then
+            come_back(player)
+        end
+    end
+end
+
 function observe.install(behavior: Definition): ()
     behavior:handle("participant.join.done", { kind = "react" }, on_join)
     behavior:handle("ui.action", { kind = "react" }, on_action)

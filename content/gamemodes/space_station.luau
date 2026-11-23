@@ -89,6 +89,7 @@ if sim ~= nil then
 
     behavior:handle("clock.second", { kind = "react" }, function(ev)
         shift.on_second(shift_rules, ev)
+        observe.on_second(ev)
     end)
 
     behavior:handle("round.end", { kind = "react" }, function()
