@@ -1003,7 +1003,7 @@
       }
     },
     "log": [],
-    "revision": 259,
+    "revision": 260,
     "state": {
       "bodyStatus": {
         "can_respawn": false,
@@ -1334,6 +1334,35 @@
             ],
             "slot": 1,
             "sprite": "target_r_leg"
+          }
+        ]
+      },
+      "vitals": {
+        "generation": 1,
+        "values": [
+          {
+            "slot": 0,
+            "value": 0.0
+          },
+          {
+            "slot": 1,
+            "value": 0.0
+          },
+          {
+            "slot": 2,
+            "value": 0.0
+          },
+          {
+            "slot": 3,
+            "value": 0.0
+          },
+          {
+            "slot": 4,
+            "value": 101.32499694824219
+          },
+          {
+            "slot": 5,
+            "value": 20.0
           }
         ]
       }
