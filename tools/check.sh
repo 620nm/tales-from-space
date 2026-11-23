@@ -586,8 +586,8 @@ ui_shot_skip() {
 
 # Every disclosed-view fixture this pack ships, drawn windowless by the
 # engine's ui_shot through the real coordinator and guests: a guest fault,
-# failed step expectation, geometry difference, or missing, half or orphaned
-# baseline fails the lane. Exit 3 is the tool's "no headless GPU adapter"
+# failed step expectation, geometry difference, contact/OOC overlap, or missing,
+# half or orphaned baseline fails the lane. Exit 3 is the tool's no-adapter code
 # (the engine's docs/pack-ui/windowless-shots.md): the lane reads `skip`,
 # never `ok`.
 ui_shots_check() {
@@ -603,6 +603,7 @@ ui_shots_check() {
     [ "$rc" -eq 3 ] && return 0
     [ "$rc" -eq 0 ] || return "$rc"
   fi
+  node "$PACK/tools/ui-geometry-check.mjs" "$GATE/ui-shots"
 }
 
 # ui_shot_pass FIXTURES OUT [ARGS...] -- one ui_shot check, its output

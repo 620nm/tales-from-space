@@ -1,0 +1,55 @@
+{
+  "note": "Compact preparation keeps the open contact window clear of the OOC composer.",
+  "viewport": { "width": 1024, "height": 640, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {
+      "round": {
+        "round": 15,
+        "phase": "preparing",
+        "remaining_seconds": 120,
+        "ready": 0,
+        "connected": 2,
+        "paused": false,
+        "waiting": true,
+        "fault": null
+      },
+      "preparation": {
+        "round": 15,
+        "revision": 3,
+        "draft": { "name": "Mira", "ranked_jobs": ["assistant", "engineer"], "fallback": false },
+        "ready": false,
+        "can_edit": true,
+        "can_ready": true,
+        "fallback_job": "assistant",
+        "issue": null
+      },
+      "preparationStorage": { "available": true },
+      "staff_contact": {
+        "revision": "1",
+        "available": true,
+        "conversations": [],
+        "unread": 0,
+        "cursor": null,
+        "denial": null
+      },
+      "jobs": {
+        "jobs": [
+          { "key": "assistant", "name": "Assistant", "taken": 0, "slots": 3 },
+          { "key": "engineer", "name": "Engineer", "taken": 1, "slots": 2 },
+          { "key": "doctor", "name": "Doctor", "taken": 0, "slots": 2 }
+        ]
+      }
+    },
+    "log": [
+      { "kind": "ooc", "name": "A7K2", "text": "Ready when you are." }
+    ],
+    "documents": {}
+  },
+  "steps": [
+    { "type": "click", "id": "contact/entry", "expect": { "visible": ["contact/window"], "actionCount": 1 } }
+  ]
+}

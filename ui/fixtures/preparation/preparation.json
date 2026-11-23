@@ -1,6 +1,6 @@
 {
   "note": "Round preparation keeps OOC on the left and the editable character setup on the right.",
-  "viewport": { "width": 1024, "height": 768, "dpr": 1 },
+  "viewport": { "width": 1280, "height": 800, "dpr": 1 },
   "locale": "en",
   "view": {
     "version": 5,

@@ -1,6 +1,6 @@
 {
   "note": "The open staff contact window leaves the OOC composer visible during preparation.",
-  "viewport": { "width": 1024, "height": 768, "dpr": 1 },
+  "viewport": { "width": 1280, "height": 800, "dpr": 1 },
   "locale": "en",
   "view": {
     "version": 5,
