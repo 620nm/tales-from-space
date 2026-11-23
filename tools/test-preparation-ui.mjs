@@ -21,6 +21,16 @@ globalThis.__lunaticLocale = {
 const view = JSON.parse(await readFile(new URL("../ui/fixtures/preparation/preparation.json", import.meta.url)));
 const flatten = (node) => [node, ...(node.children ?? []).flatMap(flatten)];
 
+test("the footer waits for ready players instead of a frozen countdown", async () => {
+  const timerOf = async (name) => {
+    const { view } = JSON.parse(await readFile(new URL(`../ui/fixtures/preparation/${name}.json`, import.meta.url)));
+    return flatten(ui.render(view)).find((node) => node.id === "lobby/status-footer/timer").text;
+  };
+  assert.equal(await timerOf("preparation"), "Waiting for players",
+    "zero ready players hold the countdown at its full length; say so");
+  assert.equal(await timerOf("preparation-ready"), "Starts in 97s",
+    "a running countdown keeps its seconds");
+});
 test("preparation name commits only a complete field change or Enter submission", () => {
   const tree = ui.render(view.view);
   const name = flatten(tree).find((node) => node.id === "preparation/name");

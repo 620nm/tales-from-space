@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // Live browser check for Tales from Space lobby preparation and in-round chat
 // on the real /gui/ GPUI wasm client using real keyDown/keyUp-with-text:
-// (1) name + Add role at once keeps both (draft rebase),
-// (2) edit existing name + Ready at once keeps the edit (Leave before Activate),
+// (0) zero ready holds the full countdown as waiting, (1) name + Add role at
+// once keeps both (draft rebase), (2) edit existing name + Ready at once keeps
+// the edit (Leave before Activate), (4) the ready countdown spends seconds,
 // (3) focus.chat + bound gameplay letters delivers chat with zero world actions.
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
@@ -127,6 +128,7 @@ async function openGui(chrome, gatewayOrigin) {
   await cdp.call("Page.addScriptToEvaluateOnNewDocument", {
     source: `(() => {
       globalThis.__prepSnapshots = [];
+      globalThis.__roundSnapshots = [];
       const orig = Worker.prototype.postMessage;
       Worker.prototype.postMessage = function(msg, ...rest) {
         if (typeof msg === "string" && msg.includes("view_json")) {
@@ -135,6 +137,10 @@ async function openGui(chrome, gatewayOrigin) {
             if (typeof req?.view_json === "string" && req.view_json.includes('"preparation"')) {
               const prep = JSON.parse(req.view_json)?.state?.preparation;
               if (prep?.draft) globalThis.__prepSnapshots.push(prep);
+            }
+            if (typeof req?.view_json === "string" && req.view_json.includes('"round"')) {
+              const round = JSON.parse(req.view_json)?.state?.round;
+              if (round) globalThis.__roundSnapshots.push(round);
             }
           } catch {}
         }
@@ -184,6 +190,18 @@ async function waitForPrep(cdp, predicate, label, timeoutMs = 15_000) {
   throw Error(`timed out waiting for ${label}; last preparation=${JSON.stringify(last)}`);
 }
 
+async function waitForRound(cdp, predicate, label, timeoutMs = 15_000) {
+  let last = null;
+  for (const end = Date.now() + timeoutMs; Date.now() < end; await delay(80)) {
+    const snaps = await cdp.evaluate("globalThis.__roundSnapshots ?? []");
+    last = snaps.at(-1) ?? null;
+    for (let i = snaps.length - 1; i >= 0; i--) {
+      if (predicate(snaps[i])) return snaps[i];
+    }
+  }
+  throw Error(`timed out waiting for ${label}; last round=${JSON.stringify(last)}`);
+}
+
 async function runLobbyFlows(chrome, runDir) {
   const srv = await startDev(runDir, "lobby", "space_station", "tests/maps/Box.ron");
   let cdp;
@@ -193,11 +211,25 @@ async function runLobbyFlows(chrome, runDir) {
     const nameCtrl = await waitForLaidControl(cdp, /\/preparation\/name$/, {}, 12_000);
     const addCtrl = await waitForLaidControl(cdp, /\/preparation\/add$/, {}, 5_000);
 
+    // Flow 0: nobody ready yet — the round holds its full countdown and
+    // says it is waiting instead of silently spending it.
+    const held = await waitForRound(
+      cdp,
+      (r) => r.phase === "preparing" && r.waiting === true && r.ready === 0,
+      "held countdown with zero ready",
+    );
+    assert.equal(held.remaining_seconds, 120,
+      `Flow 0: held countdown names its full length, got ${JSON.stringify(held)}`);
+    const typingSeq = (await fetchLedger(srv.apiOrigin, srv.apiSecret)).at(-1)?.seq ?? 0;
+
     // Flow 1: type name with keydown, click Add role at once -> keeps both.
     await clickAt(cdp, nameCtrl.x, nameCtrl.y);
     await delay(200);
     await typeKeyDown(cdp, "Alex");
     await delay(150);
+    const typedDrafts = (await fetchLedger(srv.apiOrigin, srv.apiSecret, typingSeq))
+      .filter((e) => e.event === "draft_accepted");
+    console.log(`lobby-live: draft_accepted rows while typing (before Add click): ${typedDrafts.length}`);
     await clickAt(cdp, addCtrl.x, addCtrl.y);
     await delay(250);
     await tapKey(cdp, ARROW_DOWN);
@@ -253,6 +285,16 @@ async function runLobbyFlows(chrome, runDir) {
       readyRow && draftAfter.seq < readyRow.seq,
       `edited draft_accepted (${draftAfter?.seq}) must precede ready_changed (${readyRow?.seq})`,
     );
+
+    // Flow 4: with a ready player the countdown actually spends its
+    // seconds (the full spawn walk waits out or forces the remainder).
+    const ticking = await waitForRound(
+      cdp,
+      (r) => r.phase === "preparing" && r.waiting === false
+        && typeof r.remaining_seconds === "number" && r.remaining_seconds < 120,
+      "countdown spending seconds after Ready",
+    );
+    assert.ok(ticking.ready >= 1, `Flow 4: countdown runs with a ready cohort, got ${JSON.stringify(ticking)}`);
   } finally {
     cdp?.close();
     await stopChild(srv.child).catch(() => {});
@@ -318,7 +360,7 @@ async function main() {
   try {
     await runLobbyFlows(chrome, runDir);
     await runChatFlow(chrome, runDir);
-    console.log("ok    lobby-live (name+add-role, edit+ready, focus.chat wdrh)");
+    console.log("ok    lobby-live (held countdown, name+add-role, edit+ready, ticking countdown, focus.chat wdrh)");
   } finally {
     await chrome.stop().catch(() => {});
     clearTimeout(wd);

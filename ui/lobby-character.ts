@@ -335,12 +335,14 @@ function footer(view: LobbyView): UiNode[] {
     : round.phase === "playing"
       ? S.tfs("ui.lobby.phase.playing")
       : S.tfs("ui.lobby.phase.ending");
+  // A held countdown still names its full length, so `waiting` (no
+  // ready player yet) must outrank the seconds it is not spending.
   const timer = starting(view)
     ? S.tfs("ui.lobby.starting")
+    : round.waiting
+    ? S.tfs("ui.lobby.waiting")
     : round.remaining_seconds === null
-    ? round.waiting
-      ? S.tfs("ui.lobby.waiting")
-      : S.tfs("ui.lobby.countdown_waiting")
+    ? S.tfs("ui.lobby.countdown_waiting")
     : S.tfs("ui.lobby.countdown", { seconds: round.remaining_seconds });
   return [
     row("lobby/status-footer", [

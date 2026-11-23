@@ -180,19 +180,19 @@
       "h": 25
     },
     "lunatic/tfs/lobby/readiness-footer": {
-      "x": 590.53125,
+      "x": 623.53125,
       "y": 584,
       "w": 234.796875,
       "h": 36
     },
     "lunatic/tfs/lobby/readiness-footer/connected": {
-      "x": 644.734375,
+      "x": 677.734375,
       "y": 595.3125,
       "w": 72.59375,
       "h": 15.390625
     },
     "lunatic/tfs/lobby/readiness-footer/ready": {
-      "x": 590.53125,
+      "x": 623.53125,
       "y": 595.3125,
       "w": 46.203125,
       "h": 15.390625
@@ -212,7 +212,7 @@
     "lunatic/tfs/lobby/status-footer": {
       "x": 426.734375,
       "y": 589,
-      "w": 159.796875,
+      "w": 192.796875,
       "h": 26
     },
     "lunatic/tfs/lobby/status-footer/phase": {
@@ -224,7 +224,7 @@
     "lunatic/tfs/lobby/status-footer/timer": {
       "x": 494.125,
       "y": 594.8125,
-      "w": 92.40625,
+      "w": 125.40625,
       "h": 15.390625
     },
     "lunatic/tfs/log/0": {
@@ -444,7 +444,7 @@
       "h": 28
     },
     "lunatic/tfs/preparation/ready": {
-      "x": 725.328125,
+      "x": 758.328125,
       "y": 589,
       "w": 100,
       "h": 28

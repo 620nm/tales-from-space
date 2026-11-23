@@ -70,7 +70,7 @@
     "lunatic/tfs/lobby/readiness-footer/connected": [
       {
         "start": 0,
-        "x": 755.140625,
+        "x": 788.140625,
         "y": 756.3125,
         "w": 72.59375,
         "h": 13,
@@ -81,7 +81,7 @@
     "lunatic/tfs/lobby/readiness-footer/ready": [
       {
         "start": 0,
-        "x": 700.9375,
+        "x": 733.9375,
         "y": 756.3125,
         "w": 46.203125,
         "h": 13,
@@ -127,7 +127,7 @@
         "start": 0,
         "x": 604.53125,
         "y": 755.8125,
-        "w": 92.40625,
+        "w": 125.40625,
         "h": 13,
         "slack": 0,
         "need": null
@@ -334,7 +334,7 @@
     "lunatic/tfs/preparation/ready": [
       {
         "start": 0,
-        "x": 867.734375,
+        "x": 900.734375,
         "y": 755.609375,
         "w": 36,
         "h": 14,
