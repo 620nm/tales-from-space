@@ -193,10 +193,15 @@ function observe.on_second(ev: ClockSecondPayload): ()
         return
     end
     for _, mind in sim.query.minds() do
-        local player = mind.player
-        local left = left_of(mind)
-        if player ~= nil and observing(player.body) and not may(player) and left ~= nil and steppable(left) then
-            come_back(player)
+        -- An earlier life of a player is listed too, and raises on `.player`.
+        local live, player = pcall(function(): Player?
+            return mind.player
+        end)
+        if live and player ~= nil and observing(player.body) and not may(player) then
+            local left = left_of(mind)
+            if left ~= nil and steppable(left) then
+                come_back(player)
+            end
         end
     end
 end
