@@ -84,6 +84,7 @@ GATE=${GATE:-$PACK/target/gate}
 LOCK=$GATE.lock
 VERBOSE=${VERBOSE:-0}
 ONLY=$*
+PACK_LANES="luau middle-pin lint-units tree-shape terms build bake content hints maps lint-assets roster placeable pack-ui-build pack-node ui-fixture-drift specs ui-shots world-pointer push-motion"
 
 # want NAME -- whether this run selected the lane NAME.
 want() {
@@ -93,6 +94,18 @@ want() {
   done
   return 1
 }
+
+# Every selector must match before a lock or any lane work starts.
+for selector in $ONLY; do
+  matched=0
+  for lane in $PACK_LANES; do
+    case "$lane" in *"$selector"*) matched=1; break ;; esac
+  done
+  if [ "$matched" -eq 0 ]; then
+    printf 'unknown lane: %s\nvalid lanes: %s\n' "$selector" "$PACK_LANES" >&2
+    exit 1
+  fi
+done
 
 # Unbuilt engine node tooling is refused rather than skipped lane by lane
 # wherever a selected lane runs the engine's node packages: the pack's
