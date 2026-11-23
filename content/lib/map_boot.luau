@@ -3,8 +3,8 @@
 -- A server run without `--playtest` installs no map: every round publishes
 -- `round.bootstrap` once, before any install, and this pack answers it
 -- (the engine's `docs/rounds/lifecycle.md`). The map the host was started
--- with arrives as `host_map`, its stem. The pack ships no root `maps/`
--- directory, so a server started without one has nothing to instantiate:
+-- with arrives as `host_map`, its stem. The pack ships no default round
+-- map, so a server started without one has nothing to instantiate:
 -- it says so in the ledger and no round begins.
 --
 -- Both modes bind the two handlers below with `map_boot.install`. A map that

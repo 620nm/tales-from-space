@@ -60,8 +60,11 @@ start the authenticated game server and browser gateway. Open the gateway on
 port 8081. The raw server has no pack map default: its map is positional, and
 the pack owns round start (`content/lib/map_boot.luau`). Its modes answer
 `round.bootstrap` by instantiating the named map and beginning the round on it,
-for example `cargo run -p lunatic-server -- "$LUNATIC_MAP" --mode free_build`;
-a server started with no map begins no round, because the pack ships none.
+for example `cargo run -p lunatic-server -- "$LUNATIC_MAP" --mode free_build`.
+Nothing names a default map, so export one yourself:
+`tests/maps/Box.ron` under this pack stands up a full Space Station round (the
+`lobby-live` lane plays it) and `tests/maps/cold_outpost.ron` a Free Build one.
+A server started with no map begins no round.
 `--playtest` instead has the host install and begin the map itself. The
 development launcher accepts `--map "$LUNATIC_MAP"` and plays it under
 `--playtest` by default; `--no-playtest` runs the pack's own start.

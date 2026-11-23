@@ -67,7 +67,7 @@ cargo run -p lunatic-server -- "$LUNATIC_MAP" --mode free_build
 Without `--playtest` the engine installs no map. `lib/map_boot.luau`, bound by
 each mode, answers `round.bootstrap` by instantiating the server's map
 (`host_map`) and, once `maps.instantiate.done` is `completed`, calling
-`sim.round.begin`. The pack ships no root `maps/`, so a map-less server records
+`sim.round.begin`. The pack ships no default round map, so a map-less server records
 `lunatic/tfs:map_boot_failed` (stage `no_host_map`) and begins no round; a
 refused install records it with the reason. `mod.toml` selects
 `lifecycle.round_bootstrap` and `maps.lifecycle` and requests `map_lifecycle`,
