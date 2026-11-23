@@ -80,6 +80,18 @@ test("a participant script window wears the title its view declares", async () =
   assert.equal(nodes.filter((node) => node.text === "Observe").length, 1,
     "the title names the frame once, never a data row of its own");
 });
+test("script input rows wear their view label, never the raw action id", async () => {
+  const view = await fixture("document/document-empty");
+  view.documents = { 8: { id: 8, generation: 1, title: "Panel", state: {
+    document: "script", status: 2,
+    data: { labels: { set_freq: { plain: "Set frequency" } } },
+    actions: [{ id: "set_freq", input: 1 }],
+  } } };
+  const nodes = flatten(ui.render(view));
+  assert.equal(nodes.find((node) => node.id === "doc/8/1/action/0/label").text, "Set frequency");
+  assert.equal(nodes.find((node) => node.id === "doc/8/1/action/0/value").label, "Set frequency");
+  assert.equal(nodes.some((node) => node.text === "set_freq"), false);
+});
 test("device cards say each node's state, and gone once forgotten", async () => {
   const view = await fixture("document/document-link-refused");
   const state = view.documents[1].state;

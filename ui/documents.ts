@@ -232,11 +232,12 @@ function scriptRows(
           disabled: !active,
         });
       const box = `${key}/value`;
+      const caption = labels[action.id] || action.id;
       return row(
         key,
         [
-          text(`${key}/label`, action.id, ["grow", "list-label"]),
-          entry(box, "", () => undefined, { submitOnly: true, disabled: !active, label: action.id }),
+          text(`${key}/label`, caption, ["grow", "list-label"]),
+          entry(box, "", () => undefined, { submitOnly: true, disabled: !active, label: caption }),
           press(
             `${key}/send`,
             S.SET,
