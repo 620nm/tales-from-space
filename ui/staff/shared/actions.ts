@@ -86,8 +86,6 @@ function encodeAction(action: StaffAction): Record<string, Json> {
   switch (kind) {
     case "enter": return { Enter: null };
     case "exit": return { Exit: null };
-    case "ghost": return { Ghost: null };
-    case "reenter": return { Reenter: null };
     case "release": return { Release: null };
     case "camera": return { Camera: { pos: action.pos ?? {} } };
     case "inspect": return { Inspect: { target: action.target ?? {} } };
