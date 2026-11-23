@@ -4,10 +4,9 @@
 -- Control. Both modes bind it with `observe.install`; the observer plan
 -- (`bodies/observer.luau`) answers its own spawn with `observe.on_spawned`.
 --
--- Policy: a disconnect changes nothing, so a staff member who reconnects
--- while observing is offered the way back. A body left behind that is
--- gone, dead or ridden by someone else takes nobody back; the observer
--- stays, and the document says so.
+-- Policy: a disconnect changes nothing. A body left behind that is gone,
+-- dead or ridden takes nobody back; the observer stays, and the panel says
+-- so. Revocation (docs/STAFF.md) sends home, or stops the observer.
 local ui_label = require("@lib/ui_label")
 
 local observe = {}
@@ -21,6 +20,9 @@ observe.LEFT = "lunatic/tfs:observe_left"
 -- Mod scope: bodies left behind whose observer has not answered yet, in
 -- request order; spawns answer in the order they were asked.
 observe.WAITING = "lunatic/tfs:observe_waiting"
+-- Mod scope: observers stopped for a revoked rider with no body to go
+-- back to, removed by the sweep once nobody rides them.
+observe.SPENT = "lunatic/tfs:observe_spent"
 
 -- Which press the document offers: out, back, or none while on the way.
 type Offer = "leave" | "return" | "none"
@@ -52,10 +54,11 @@ local function offer(player: Player, choice: Offer, status: string?, opening: bo
     end
 end
 
--- Whether `body` is an observer this library spawned: its plan says so.
+-- Whether `body` is a running observer this library spawned: its plan
+-- says so, and it has not been stopped (`retire`).
 local function observing(body: Handle?): boolean
     local read = if body ~= nil then sim.body.read(body) else nil
-    return read ~= nil and read.plan == observe.PLAN
+    return read ~= nil and read.plan == observe.PLAN and read.animate
 end
 
 local function left_of(mind: Mind): Handle?
@@ -65,6 +68,10 @@ end
 
 local function waiting(): { any }
     return (sim.var("mod", observe.WAITING) :: { any }?) or {}
+end
+
+local function spent(): { any }
+    return (sim.var("mod", observe.SPENT) :: { any }?) or {}
 end
 
 -- What the document offers once a trip is over: the way out to those who
@@ -183,11 +190,41 @@ local function on_action(ev: UiActionPayload): ()
     end
 end
 
+-- A revoked observer with no living body to go back to is stopped: the
+-- observer becomes a dead body, so its rider is any dead player of the
+-- mode (its lens, its respawn offer), with no panel left to act on.
+local function retire(player: Player, mind: Mind, observer: Handle): ()
+    mind.vars[observe.LEFT] = nil
+    sim.set_body_facts(observer, { animate = false, controllable = false, label = "Dead" })
+    ui.close_participant({ participant = player, channel = CHANNEL })
+    local list = spent()
+    table.insert(list, observer:ref())
+    sim.script_var.set({ scope = "mod", key = observe.SPENT, value = list })
+end
+
+-- Remove stopped observers their rider has left (a respawn, a reconnect).
+local function clear_spent(): ()
+    local list = spent()
+    if #list == 0 then
+        return
+    end
+    local kept = {}
+    for _, ref in list do
+        local observer = sim.resolve(ref)
+        if observer ~= nil and observer.mind == nil then
+            sim.entity.despawn({ entity = observer })
+        elseif observer ~= nil then
+            table.insert(kept, ref)
+        end
+    end
+    sim.script_var.set({ scope = "mod", key = observe.SPENT, value = kept })
+end
+
 -- Seconds between sweeps for observers whose grant is gone.
 local SWEEP_SECONDS = 2
 
 -- A mode's `clock.second`: every sweep, an observer whose account lost the
--- grant and whose left body still lives is sent home, pressed or not.
+-- grant is sent home, pressed or not, or stopped when home is gone.
 function observe.on_second(ev: ClockSecondPayload): ()
     if math.floor(ev.elapsed_seconds) % SWEEP_SECONDS ~= 0 then
         return
@@ -201,9 +238,12 @@ function observe.on_second(ev: ClockSecondPayload): ()
             local left = left_of(mind)
             if left ~= nil and steppable(left) then
                 come_back(player)
+            else
+                retire(player, mind, assert(player.body))
             end
         end
     end
+    clear_spent()
 end
 
 function observe.install(behavior: Definition): ()

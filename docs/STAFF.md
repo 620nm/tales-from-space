@@ -57,9 +57,13 @@ The body left behind stands where it was.
   returned to: the observer stays and the panel says so.
 - Only a live, animate body can be left: a corpse, or the engine's
   reconnect viewpoint over one, spawns nothing.
-- The way back needs no grant. Without it, any press of the panel, any
-  reconnect while observing, and the modes' two-second sweep send the
-  observer home, and the panel closes there.
+- The way back needs no grant. A revoked grant takes effect within two
+  seconds, the modes' sweep period: any press of the panel, any reconnect
+  while observing, or the sweep sends the observer home, and the panel
+  closes there. With no living body to go home to, the sweep stops the
+  observer instead (a dead body, the panel closed): the player is then
+  any dead player of the mode, under its respawn policy, and the sweep
+  removes the stopped observer once nobody rides it.
 - A grant made mid-round shows the panel at the next connect.
 - Specs: `tests/rounds/observe_free_build_test.luau`,
   `tests/rounds/observe_station_test.luau`,

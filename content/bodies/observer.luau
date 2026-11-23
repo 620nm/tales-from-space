@@ -19,6 +19,7 @@ if sim ~= nil then
     local observe = require("@lib/observe")
     sim.define("script_var", observe.LEFT, { replicate = "server", private = true })
     sim.define("script_var", observe.WAITING, { replicate = "server", private = true })
+    sim.define("script_var", observe.SPENT, { replicate = "server", private = true })
     local behavior = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     -- A spawn answers the spawned plan, so the observer seats its asker here.
     behavior:handle("entity.spawn.done", { kind = "react" }, observe.on_spawned)

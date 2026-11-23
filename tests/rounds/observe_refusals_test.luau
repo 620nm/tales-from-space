@@ -18,7 +18,7 @@ t.world(
                 "#........#",
                 "##########",
             ],
-            structures: [(1, 1, "player_spawn"), (3, 1, "player_spawn"), (5, 1, "player_spawn"), (7, 1, "player_spawn"), (8, 1, "player_spawn")],
+            structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn"), (3, 1, "player_spawn"), (5, 1, "player_spawn"), (7, 1, "player_spawn"), (8, 1, "player_spawn")],
         ),
     ],
 )]==],
@@ -125,6 +125,28 @@ assert(t.staff_grant(swept, "observe"), "observe replaces control")
 t.run_seconds(3)
 assert(plan(swept) == "human", "the sweep sent them home")
 assert(t.ui(swept, "observe") == nil, "and the panel closed")
+
+-- A grant revoked while observing, the left body destroyed: within the
+-- sweep the panel is gone and the observer stops, a dead player's state.
+-- The mode's respawn route then gives a fresh body, and no observer stays.
+local spent = staff_with_control(4206)
+local ex, ey = t.pos(spent)
+local left_id = t.body_id(spent)
+press(spent)
+assert(plan(spent) == "observer", "out")
+assert(t.destroy(left_id) == nil, "the left body is removed")
+assert(t.staff_grant(spent, "observe"), "observe replaces control")
+t.run_seconds(3)
+assert(t.ui(spent, "observe") == nil, "the panel is gone")
+local stopped = assert(t.body(spent))
+assert(stopped.plan == "observer" and not stopped.animate, "the observer stopped")
+t.respawn(spent)
+t.run_seconds(3)
+local fresh = assert(t.body(spent))
+assert(fresh.plan == "human" and fresh.animate, "the mode's respawn gave a fresh body")
+for _, body in t.bodies_at(ex, ey) do
+    assert(body.plan ~= "observer", "and no observer remains")
+end
 
 -- A dead staff member presses the way out: a corpse is no body to leave
 -- (the reconnect viewpoint over it is observe_station_test.luau's).

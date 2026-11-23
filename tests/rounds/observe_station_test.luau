@@ -59,6 +59,29 @@ assert(body.plan == "human" and body.animate, "back in the living body they left
 assert(#t.ledger_rows("MindSeated") == 2, "out and back are two seats")
 assert(#t.ledger_rows("MobDespawned") == 1, "and the observer is removed")
 
+-- Revoked while observing, the left body destroyed: the sweep stops the
+-- observer, a dead player's state. The lobby respawn leaves it unridden,
+-- and the next sweep removes it.
+local ox, oy = t.pos(staff)
+local left_id = t.body_id(staff)
+ui_controls.press(staff, "/action/0")
+t.run_ticks(4)
+assert(assert(t.body(staff)).plan == "observer", "out again")
+assert(t.destroy(left_id) == nil, "the left body is removed")
+assert(t.staff_grant(staff, "observe"), "observe replaces control")
+t.run_seconds(3)
+assert(t.ui(staff, "observe") == nil, "the panel is gone")
+local stopped = assert(t.body(staff))
+assert(stopped.plan == "observer" and not stopped.animate, "the observer stopped")
+t.respawn(staff, "engineer")
+t.run_seconds(3)
+local fresh = assert(t.body(staff))
+assert(fresh.plan == "human" and fresh.animate, "the lobby gave a fresh life")
+for _, standing in t.bodies_at(ox, oy) do
+    assert(standing.plan ~= "observer", "and the sweep removed the observer")
+end
+assert(t.staff_grant(staff, "control"), "control again")
+
 -- Dead, then reconnected: the Mind rides the engine's viewpoint over the
 -- corpse, which has no body. Pressing the way out leaves nothing behind.
 local x, y = t.pos(staff)
@@ -73,6 +96,6 @@ ui_controls.press(staff, "/action/0")
 t.run_ticks(4)
 assert(t.body(staff) == nil, "which a bodiless viewpoint cannot take")
 assert(#t.bodies_at(x, y) == 1, "no observer beside the corpse")
-assert(#t.ledger_rows("MindSeated") == 2, "nobody was seated")
+assert(#t.ledger_rows("MindSeated") == 3, "nobody was seated")
 assert(#t.ledger_rows("ScriptEffectRefused") == 0, "no effect was refused")
 assert(#t.script_errors() == 0, "no handler raised")
