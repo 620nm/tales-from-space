@@ -21,7 +21,8 @@
         "control_held": true,
         "camera": {
           "x": 18,
-          "y": 42
+          "y": 42,
+          "z": 1
         },
         "operator": {
           "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",

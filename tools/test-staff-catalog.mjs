@@ -29,11 +29,11 @@ view.state.staff.payload.roster = {
 const flatten = (node) => node ? [node, ...(node.children ?? []).flatMap(flatten)] : [];
 const nodes = () => flatten(ui.render(view));
 const node = (id) => nodes().find((item) => item.id === id);
-const event = (id, extra = {}) => ui.onEvent({ id, type: "activate", ...extra }, view).action;
+const event = (id, extra = {}, targetView = view) => ui.onEvent({ id, type: "activate", ...extra }, targetView).action;
 const requestId = (action) => action.request.request_id;
 const query = (action) => JSON.parse(action.request.action.Query.query);
-const response = (action, body, responseQuery = query(action)) => {
-  view.state.staff.payload.records.response = {
+const response = (action, body, responseQuery = query(action), targetView = view) => {
+  targetView.state.staff.payload.records.response = {
     request_id: requestId(action), query: responseQuery, refs: [], result: body,
   };
 };
@@ -225,6 +225,63 @@ test("Place revalidates refreshed spawn drafts and preserves exact primitives", 
   assert.equal(properties.flag, false);
   assert.equal(properties.count, 0);
 });
+
+test("Place uses the current camera level without a selected target", () => {
+  const spatial = spatialView("85", false);
+  ui.render(spatial);
+  const opening = event("staff/live/spawn", {}, spatial);
+  assert(opening);
+  response(opening, { kind: "catalog", items: [item("staff-level")], next: null }, query(opening), spatial);
+  const drawer = flatten(ui.render(spatial));
+  assert.equal(drawer.find((entry) => entry.id === "staff/live/spawn/place")?.disabled, true);
+  assert.equal(event("staff/live/spawn/place", {}, spatial), undefined, "Place cannot guess a missing level");
+  spatial.state.staff.camera.z = 0;
+  ui.render(spatial);
+  assert.equal(event("staff/live/spawn/place", {}, spatial).request.action.Edit.edit.Spawn.pos.z, 0);
+  spatial.state.staff.camera.z = -2;
+  ui.render(spatial);
+  const placed = event("staff/live/spawn/place", {}, spatial);
+  assert(placed);
+  assert.deepEqual(placed.request.action.Edit.edit.Spawn.pos, { x: 91, y: 92, z: -2 });
+});
+
+test("Move uses selected x/y on the current camera level", () => {
+  assertSpatialEditPosition("86", "staff/live/edit/move/action", "Move", -2);
+});
+
+test("Duplicate uses selected x/y on the current camera level", () => {
+  assertSpatialEditPosition("87", "staff/live/edit/duplicate", "Duplicate", -3);
+});
+
+function spatialView(roundId, hasSelection) {
+  const spatial = structuredClone(fixture.view);
+  const staff = spatial.state.staff;
+  const payload = staff.payload;
+  staff.round_id = roundId;
+  payload.current_round = roundId;
+  staff.camera = { x: 91, y: 92 };
+  const selected = payload.selected;
+  selected.target.round = roundId;
+  selected.payload.reference.round = roundId;
+  selected.found = hasSelection;
+  selected.payload.position = { x: 18, y: 42, z: 7 };
+  payload.roster = { items: [item("staff-level")], structures: [], machines: [], mobs: [], bodies: [], items_truncated: true };
+  return spatial;
+}
+
+function assertSpatialEditPosition(roundId, buttonId, editKind, cameraZ) {
+  const spatial = spatialView(roundId, true);
+  ui.render(spatial);
+  event("staff/live/tab/edit", {}, spatial);
+  const inspector = flatten(ui.render(spatial));
+  assert.equal(inspector.find((entry) => entry.id === buttonId)?.disabled, true);
+  assert.equal(event(buttonId, {}, spatial), undefined, "an edit cannot guess a missing level");
+  spatial.state.staff.camera.z = cameraZ;
+  ui.render(spatial);
+  const action = event(buttonId, {}, spatial);
+  assert(action);
+  assert.deepEqual(action.request.action.Edit.edit[editKind].pos, { x: 18, y: 42, z: cameraZ });
+}
 
 console.log("staff catalog: explicit full-query search, stale-reply rejection, paging, and draft retention");
 

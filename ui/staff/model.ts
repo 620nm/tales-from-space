@@ -104,6 +104,8 @@ export interface StaffControlMetadata {
   requestId?: string;
 }
 
+type StaffPosition = { x: number; y: number; z?: number };
+
 export interface StaffEntity {
   /** Decimal `bevy::Entity` bits, retained as text across the browser edge. */
   id: DecimalId;
@@ -113,7 +115,7 @@ export interface StaffEntity {
   role?: string;
   state?: string;
   location?: string;
-  pos?: { x: number; y: number; z?: number };
+  pos?: StaffPosition;
   accountId?: ProfileId;
   mindId?: DecimalId;
   bodyId?: DecimalId;
@@ -233,7 +235,7 @@ export interface StaffState {
   frozen: boolean;
   control_held: boolean;
   operator?: StaffProfile | null;
-  camera?: { x: number; y: number };
+  camera?: StaffPosition;
   driving?: DecimalId;
   payload?: StaffPayload | string | null;
 }
@@ -246,7 +248,7 @@ export interface StaffSession extends StaffPayload {
   operator: StaffProfile | null;
   frozen: boolean;
   hold: boolean;
-  camera: { x: number; y: number } | null;
+  camera: StaffPosition | null;
   driving: DecimalId | null;
   inspector: StaffInspection | null;
   entities: StaffEntity[];
@@ -562,13 +564,34 @@ export function readStaff(view: GameplayView): StaffSession | null {
   const audit = Array.isArray(payload.audit) ? payload.audit.map((item) => eventValue(item, roundId)).filter((item): item is StaffEvent => !!item) : [];
   const events = [...(selected?.audit ?? []), ...audit];
   const camera = object(raw.camera);
+  const cameraPosition = camera
+    && typeof camera.x === "number" && Number.isFinite(camera.x)
+    && typeof camera.y === "number" && Number.isFinite(camera.y)
+    ? {
+      x: camera.x,
+      y: camera.y,
+      ...(typeof camera.z === "number" && isWireInteger(camera.z) ? { z: camera.z } : {}),
+    }
+    : null;
   return {
     ...payload, allowed: raw.allowed, active: raw.allowed && raw.active, revision: raw.revision, roundId,
     operator: profileValue(raw.operator), frozen: raw.frozen, hold: raw.control_held,
-    camera: camera && typeof camera.x === "number" && typeof camera.y === "number" ? { x: camera.x, y: camera.y } : null,
+    camera: cameraPosition,
     driving: isDecimalId(raw.driving) ? raw.driving : null, inspector: selected,
     profiles, entities, cases, events, audit,
   };
+}
+
+/** Build a staff edit tile only when the current camera exposes its level. */
+export function staffTile(camera: StaffSession["camera"], x: string, y: string) {
+  const tileX = Number(x);
+  const tileY = Number(y);
+  if (camera?.z === undefined || !x.trim() || !y.trim() || !isWireInteger(tileX) || !isWireInteger(tileY)) return null;
+  return { x: tileX, y: tileY, z: camera.z };
+}
+
+function isWireInteger(value: number): boolean {
+  return Number.isInteger(value) && value >= -2_147_483_648 && value <= 2_147_483_647;
 }
 
 export function entityFor(session: StaffSession, id: string | number | undefined): StaffEntity | null {

@@ -3,7 +3,7 @@ import { Card, Divider, Field, LabeledList, Section, Stack, Table, Tabs } from "
 import { bind, entry, press, select, text } from "../../view";
 import { freezeReference, localButton, nativePress, staffRequest } from "../shared/actions";
 import type { StaffEntity, StaffEvent, StaffInspection, StaffProperty, StaffRef, StaffSession } from "../model";
-import { label, profileFor, propertyValue } from "../model";
+import { label, profileFor, propertyValue, staffTile } from "../model";
 import { caseAnchorRefs, caseId, contextQuery, contextQueryAnchor, contextRows, pageFor, responseProfileFor } from "../cases/records";
 import { createCasePress, profileActionCard, staffLocal } from "../actions";
 import * as S from "../strings";
@@ -137,11 +137,6 @@ function coordinates(_session: StaffSession, entity: StaffEntity, state: ReturnT
   ], { cls: ["staff-coordinate-row"], gap: 4 });
 }
 
-function coordinateValue(state: ReturnType<typeof liveState>): Json {
-  const number = (value: string): number => Number.isFinite(Number(value)) ? Number(value) : 0;
-  return { x: number(state.spawnX), y: number(state.spawnY) };
-}
-
 function editPress(
   id: string,
   caption: unknown,
@@ -150,7 +145,11 @@ function editPress(
   edit: Record<string, Json>,
   opts: Parameters<typeof press>[3],
 ): UiNode {
-  return press(id, caption, () => staffRequest(session, { kind: "edit", edit: { ...edit, pos: coordinateValue(state) } }), opts);
+  const position = () => staffTile(session.camera, state.spawnX, state.spawnY);
+  return press(id, caption, () => {
+    const pos = position();
+    return pos ? staffRequest(session, { kind: "edit", edit: { ...edit, pos } }) : undefined;
+  }, { ...opts, disabled: opts?.disabled || !position() });
 }
 
 function disclosedProperties(entity: StaffEntity, inspection: StaffInspection | null): StaffProperty[] {

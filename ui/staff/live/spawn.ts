@@ -1,7 +1,8 @@
-import type { Json, UiNode } from "@lunatic/ui";
+import type { UiNode } from "@lunatic/ui";
 import { Card, Field, Stack } from "@lunatic/ui";
 import { localButton, staffRequest } from "../shared/actions";
 import type { StaffCatalogEntry, StaffEntity, StaffProperty, StaffSession } from "../model";
+import { staffTile } from "../model";
 import { nullablePropertyOptions, parsePropertyOption, propertyDraftValue, propertyOptionChoices, propertyOptionDraft, propertyOptionValue, type PropertyOption } from "../shared/property-values";
 import { entry, press, select, text } from "../../view";
 import * as S from "../strings";
@@ -50,7 +51,7 @@ export function spawnDrawer(session: StaffSession, target: StaffEntity | null): 
   }
   const properties = option?.properties ?? [];
   const propertyValidation = option ? validateSpawnProperties(option.properties, state.spawnProperties) : undefined;
-  const placeDisabled = !option || !propertyValidation?.valid;
+  const placeDisabled = !option || !propertyValidation?.valid || !staffTile(session.camera, state.spawnX, state.spawnY);
   return Card("staff/live/spawn-drawer", [
     Stack("staff/live/spawn-drawer/head", [
       textNode("staff/live/spawn-drawer/title", S.SPAWN_DRAWER, "staff-section-title"),
@@ -107,10 +108,11 @@ export function spawnDrawer(session: StaffSession, target: StaffEntity | null): 
       press("staff/live/spawn/place", S.PLACE, () => {
         const current = currentSpawnOption(state);
         const validated = current ? validateSpawnProperties(current.properties, state.spawnProperties) : undefined;
-        if (!current || !validated?.valid) return undefined;
+        const pos = staffTile(session.camera, state.spawnX, state.spawnY);
+        if (!current || !validated?.valid || !pos) return undefined;
         return staffRequest(session, {
           kind: "edit",
-          edit: { kind: "spawn", spawnKind: current.kind as SpawnKind, prototype: current.id, pos: coordinates(state), properties: validated.properties },
+          edit: { kind: "spawn", spawnKind: current.kind as SpawnKind, prototype: current.id, pos, properties: validated.properties },
         });
       }, { variant: "primary", disabled: placeDisabled }),
     ], { cls: ["staff-action-row"], gap: 5 }),
@@ -279,11 +281,6 @@ function currentSpawnOption(state: ReturnType<typeof liveState>): SpawnOption | 
 function retainActiveDraft(state: ReturnType<typeof liveState>): void {
   const key = currentSpawnPropertyDraftKey(state);
   if (key) rememberSpawnPropertyDraft(state, key, state.spawnProperties, key);
-}
-
-function coordinates(state: ReturnType<typeof liveState>): Json {
-  const number = (value: string): number => Number.isFinite(Number(value)) ? Number(value) : 0;
-  return { x: number(state.spawnX), y: number(state.spawnY) };
 }
 
 function textNode(id: string, value: unknown, cls?: string): UiNode {
