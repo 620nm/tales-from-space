@@ -27,7 +27,7 @@
         "fallback_job": "assistant",
         "issue": "allocation_failed"
       },
-      "preparationStorage": { "available": false },
+      "packageRecord": { "value": { "version": 1, "draft": { "name": "", "ranked_jobs": [], "fallback": false } }, "persistent": false, "fault": "write" },
       "jobs": {
         "jobs": [
           { "key": "assistant", "name": "Assistant", "taken": 3, "slots": 3 },

@@ -1267,7 +1267,7 @@
   "lunatic/tfs:ui.lobby.preparation.ranked": "Ranked roles",
   "lunatic/tfs:ui.lobby.preparation.ranked_empty": "Add at least one role, or choose a fallback.",
   "lunatic/tfs:ui.lobby.preparation.fallback": "Fallback",
-  "lunatic/tfs:ui.lobby.preparation.saving_unavailable": "This browser cannot save your setup. It may be lost when you leave.",
+  "lunatic/tfs:ui.lobby.preparation.saving_unavailable": "This device cannot save your setup. It may be lost when you leave.",
   "lunatic/tfs:ui.lobby.preparation.updating": "Updating…",
   "lunatic/tfs:ui.lobby.rank_up": "Move up",
   "lunatic/tfs:ui.lobby.rank_down": "Move down",

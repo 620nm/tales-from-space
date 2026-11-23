@@ -1,6 +1,8 @@
 // Character setup and out-of-character communication during round
-// preparation. The server snapshot is the only source of draft truth.
+// preparation. The server draft wins; this package's device record only
+// fills an untouched draft (revision 0) after a server or game restart.
 import type { UiNode } from "@lunatic/ui";
+import { packageRecord, packageRecordWrite } from "@lunatic/ui";
 import type {
   CharacterDraft,
   GameplayView,
@@ -180,10 +182,82 @@ function characterEditor(view: LobbyView): UiNode {
     preparationPending(view)
       ? text("preparation/pending", S.tfs("ui.lobby.preparation.updating"), ["lobby-pending"])
       : null,
-    view.state.preparationStorage?.available === false
+    storageFailed(view)
       ? text("preparation/storage-unavailable", S.tfs("ui.lobby.preparation.saving_unavailable"), ["lobby-notice"])
       : null,
   ), { cls: ["lobby-editor"] });
+}
+
+/** Restores the server saw (a pending view followed the send), and sends
+ *  of any kind per round or per written value. A send dropped under a
+ *  trusted modal or a newer view leaves no trace and is resent on a later
+ *  view; one send per view at most, and no send queues a view of its own. */
+const SEEN_TRIES = 3;
+const SEND_CAP = 64;
+let restoreRound: number | null = null;
+let restoreSeen = 0;
+let restoreSends = 0;
+let restoreAwaiting = false;
+let lastWritten = "";
+let writeSends = 0;
+
+/** Storage really failed (package-record.md fault list); an `invalid`
+ *  fault is a dropped or refused write that a later view resends. */
+function storageFailed(view: LobbyView): boolean {
+  const fault = packageRecord(view)?.fault;
+  return fault === "write" || fault === "read" || fault === "scope";
+}
+
+function normalDraft(value: unknown): CharacterDraft | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const draft = value as Partial<Record<keyof CharacterDraft, unknown>>;
+  return {
+    name: typeof draft.name === "string" ? draft.name : "",
+    ranked_jobs: Array.isArray(draft.ranked_jobs)
+      ? draft.ranked_jobs.filter((job): job is string => typeof job === "string")
+      : [],
+    fallback: draft.fallback === true,
+  };
+}
+
+const emptyDraft = (draft: CharacterDraft): boolean =>
+  !draft.name && !draft.ranked_jobs.length && !draft.fallback;
+
+/** Keeps the accepted server draft (name, ranked jobs, fallback only) in
+ *  this package's device record, and offers it back while the server
+ *  holds an untouched one; none after the server states an issue. */
+export function draftOnView(view: GameplayView): Command | undefined {
+  const prep = preparationOf(view);
+  const record = packageRecord(view);
+  if (!prep || !record) return undefined;
+  const stored = normalDraft(record.value?.draft);
+  const current = draftOf(view);
+  if (prep.revision > 0) {
+    const value = { version: 1, draft: { name: current.name, ranked_jobs: [...current.ranked_jobs], fallback: current.fallback } };
+    const encoded = JSON.stringify(value);
+    if (stored && JSON.stringify(stored) === JSON.stringify(current)) return undefined;
+    if (encoded !== lastWritten) { lastWritten = encoded; writeSends = 0; }
+    if (writeSends >= SEND_CAP) return undefined;
+    writeSends++;
+    return packageRecordWrite(value);
+  }
+  if (prep.round !== restoreRound) {
+    restoreRound = prep.round; restoreSeen = 0; restoreSends = 0; restoreAwaiting = false;
+  }
+  if (restoreAwaiting && preparationPending(view)) restoreSeen++;
+  restoreAwaiting = false;
+  const roster = view.state.jobs?.jobs;
+  if (!stored || emptyDraft(stored) || !emptyDraft(current) || !prep.can_edit || prep.ready
+    || prep.issue || preparationPending(view) || !roster
+    || restoreSeen >= SEEN_TRIES || restoreSends >= SEND_CAP) return undefined;
+  const known = new Set(roster.map((job) => job.key));
+  restoreSends++;
+  restoreAwaiting = true;
+  return preparationCommand(view, {
+    name: stored.name,
+    ranked_jobs: stored.ranked_jobs.filter((job) => known.has(job)),
+    fallback: stored.fallback && !!prep.fallback_job,
+  });
 }
 
 /** The chat owner supplies the OOC filter and persistent `chat` composer. */

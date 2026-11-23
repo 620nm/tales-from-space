@@ -27,7 +27,7 @@
         "fallback_job": "assistant",
         "issue": null
       },
-      "preparationStorage": { "available": true },
+      "packageRecord": { "value": { "version": 1, "draft": {"name": "Mira", "ranked_jobs": ["assistant", "engineer"], "fallback": false} }, "persistent": true, "fault": null },
       "staff_contact": {
         "revision": "1",
         "available": true,

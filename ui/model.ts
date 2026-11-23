@@ -109,7 +109,6 @@ export interface GameplayView {
     preparation?: PreparationState;
     preparationPending?: boolean;
     preparationCanQueue?: boolean;
-    preparationStorage?: { available: boolean };
     /** Present only for an authenticated, server-approved staff audience. */
     staff?: StaffState | null;
     /** Ordinary-only private staff contact; never contains case or account data. */

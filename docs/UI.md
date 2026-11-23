@@ -100,9 +100,11 @@ Each draft or ready action echoes the currently disclosed round and revision;
 the engine validates both again. OOC is available in every phase and appears
 in the log with `kind = "ooc"`, an opaque display name and the sanitized player
 text. Existing `join` remains the latejoin board action after `playing`.
-Preparation storage belongs to the trusted host and is reconciled with the
-accepted server draft; the package receives no arbitrary storage access. The
-engine's `docs/UI-PRIVACY.md` owns that storage boundary.
+The package keeps the accepted draft (name, ranked roles, fallback) in its
+own device record and offers it back only while the server draft is
+untouched (revision 0), once per round with bounded retries; the server
+draft always wins. A record fault shows a notice and blocks nothing. The
+engine's `docs/pack-ui/package-record.md` owns that storage boundary.
 
 The character name field keeps its local text while the server publishes
 ordinary round updates. It emits one complete `character_draft` on the native

@@ -61,3 +61,77 @@ test("readiness capability controls Ready and Unready during a queued save", () 
     assert.equal(button.disabled, true);
   }
 });
+
+// The lobby keeps the accepted draft in the package record and offers it
+// back only over an untouched server draft, a bounded number of times.
+const EMPTY = { name: "", ranked_jobs: [], fallback: false };
+const SAVED = { name: "Ada", ranked_jobs: ["engineer", "gone"], fallback: true };
+/** A fresh copy of the fixture view at `round`/`revision` with these drafts. */
+function draftView(round, revision, draft, stored, prep = {}) {
+  const next = JSON.parse(JSON.stringify(view.view));
+  Object.assign(next.state.preparation, { round, revision, draft, issue: null, ...prep });
+  next.state.round.round = round;
+  next.state.packageRecord = { value: stored ? { version: 1, draft: stored } : null, persistent: true, fault: null };
+  return next;
+}
+const act = (v) => ui.onView(v).action;
+
+const pending = (v) => { v.state.preparationPending = true; return v; };
+
+test("an untouched draft is restored, filtered to the roster, and a refusal ends it", () => {
+  assert.deepEqual(act(draftView(101, 0, EMPTY, SAVED)), {
+    kind: "character_draft", round: 101, revision: 0,
+    draft: { name: "Ada", ranked_jobs: ["engineer"], fallback: true },
+  });
+  assert.equal(act(pending(draftView(101, 0, EMPTY, SAVED))), undefined);
+  // The server refused the restored name: the issue stops any resend.
+  assert.equal(act(draftView(101, 0, EMPTY, SAVED, { issue: "invalid_draft" })), undefined);
+});
+test("sends dropped under an open menu keep the round's restore, within a cap", () => {
+  const dropped = Array.from({ length: 10 }, () => act(draftView(102, 0, EMPTY, SAVED)));
+  assert(dropped.every(Boolean), "a send the server never saw is resent on the next view");
+  const rest = Array.from({ length: 100 }, () => act(draftView(102, 0, EMPTY, SAVED))).filter(Boolean);
+  assert.equal(10 + rest.length, 64);
+});
+test("server-seen restores stop after three; a new round starts over", () => {
+  let seen = 0;
+  for (let view = 0; view < 12; view++) {
+    if (act(draftView(109, 0, EMPTY, SAVED))) {
+      seen++;
+      act(pending(draftView(109, 0, EMPTY, SAVED)));
+    }
+  }
+  assert.equal(seen, 3);
+  assert(act(draftView(110, 0, EMPTY, SAVED)));
+});
+test("a dropped write shows no notice and is resent", () => {
+  const edited = { name: "Di", ranked_jobs: [], fallback: true };
+  assert.equal(act(draftView(111, 4, edited, SAVED)).kind, "package_record_write");
+  const back = draftView(111, 4, edited, SAVED);
+  back.state.packageRecord = { ...back.state.packageRecord, fault: "invalid" };
+  assert.equal(flatten(ui.render(back)).some((node) => node.id === "preparation/storage-unavailable"), false);
+  assert.deepEqual(act(back).value.draft, edited);
+});
+test("a cleared or edited draft is saved, never restored over", () => {
+  assert.deepEqual(act(draftView(103, 2, EMPTY, SAVED)), {
+    kind: "package_record_write", value: { version: 1, draft: EMPTY },
+  });
+  const edited = { name: "Bo", ranked_jobs: ["assistant"], fallback: false };
+  assert.deepEqual(act(draftView(103, 3, edited, SAVED)).value.draft, edited);
+  assert.equal(act(draftView(103, 3, edited, edited)), undefined);
+});
+test("no restore when ready, locked, already drafted or without a record", () => {
+  assert.equal(act(draftView(104, 0, EMPTY, SAVED, { ready: true })), undefined);
+  assert.equal(act(draftView(105, 0, EMPTY, SAVED, { can_edit: false })), undefined);
+  assert.equal(act(draftView(106, 0, { ...EMPTY, name: "Cy" }, SAVED)), undefined);
+  const bare = draftView(107, 0, EMPTY, SAVED);
+  delete bare.state.packageRecord;
+  assert.equal(act(bare), undefined);
+});
+test("a record fault shows the saving notice without closing the lobby", () => {
+  const faulted = draftView(108, 3, view.view.state.preparation.draft, view.view.state.preparation.draft);
+  faulted.state.packageRecord.fault = "write";
+  const tree = flatten(ui.render(faulted));
+  assert(tree.some((node) => node.id === "preparation/storage-unavailable"));
+  assert(tree.some((node) => node.id === "preparation/ready" && !node.disabled));
+});

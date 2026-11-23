@@ -9,6 +9,7 @@ import {
   statusLoading, statusLoadingFailed,
 } from "./strings";
 import { crewPanels } from "./lobby";
+import { draftOnView } from "./lobby-character";
 import { chatPanel } from "./chat";
 import { inspectionPanels } from "./inspect";
 import { worldOverlays } from "./world-overlays";
@@ -74,7 +75,8 @@ function statusCluster(view: GameplayView): UiNode | null {
 const ui: GuestUi = {
   onView(raw) {
     const view = raw as unknown as GameplayView;
-    return { action: contactOnView(view) ?? pollContinuation(Object.values(view.documents ?? {})) };
+    return { action: contactOnView(view) ?? pollContinuation(Object.values(view.documents ?? {}))
+      ?? draftOnView(view) };
   },
   render(raw) {
     const view = raw as unknown as GameplayView;
