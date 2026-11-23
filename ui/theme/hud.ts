@@ -181,5 +181,6 @@ export const hudRules: UiStyleRule[] = [
   rule("statusnote", { fontFamily: "mono", fontSize: 11, color: dim, textShadow: stroke, textAlign: "right", maxWidth: 360 }),
   rule("statusnote-refused", { color: amber }),
   rule("statusnote-hold", { color: amber }),
+  rule("statusnote-failed", { color: amber }),
   rule("statusmark", { fontFamily: "mono", fontSize: 10, color: amber, letterSpacing: 1, textTransform: "uppercase" }),
 ];

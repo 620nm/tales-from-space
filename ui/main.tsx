@@ -1,10 +1,13 @@
 // Two coordinated regions keep communication and body controls clear of
 // each other; host windows contain expandable documents and storage.
-import type { GuestUi, Json, UiNode } from "@lunatic/ui";
+import type { ClientReport, GuestUi, Json, UiNode } from "@lunatic/ui";
 import { Pane, Stack, clientReport, recentLines } from "@lunatic/ui";
 import type { GameplayView } from "./model";
 import { begin, column, event, panel, row, some, text } from "./view";
-import { STAFF_MARK, STATUS_DELAYED, STATUS_FROZEN, STATUS_HELD } from "./strings";
+import {
+  STAFF_MARK, STATUS_DELAYED, STATUS_FROZEN, STATUS_HELD, STATUS_LOADING_WAIT,
+  statusLoading, statusLoadingFailed,
+} from "./strings";
 import { crewPanels } from "./lobby";
 import { chatPanel } from "./chat";
 import { inspectionPanels } from "./inspect";
@@ -16,6 +19,19 @@ import { pollContinuation } from "./files";
 import { documents } from "./documents";
 import { actionGroups } from "./actions";
 import { contactOnView, contactPanel } from "./contact/actions";
+
+/** World art still loading: file counts, or a plain failed-and-retrying
+ *  line (the loader retries by itself, so there is no press). Gone once
+ *  the client reports ready, and absent outside a world (`assets` null). */
+function loadingNote(report: ClientReport | null): UiNode | null {
+  const assets = report?.presentation.assets;
+  if (!assets || assets.ready) return null;
+  if (assets.failed)
+    return text("status-loading", statusLoadingFailed(assets.done, assets.total),
+      ["statusnote", "statusnote-failed"]);
+  return text("status-loading",
+    assets.total ? statusLoading(assets.done, assets.total) : STATUS_LOADING_WAIT, ["statusnote"]);
+}
 
 /** Where this body is and who it is, a staff mark, this session's hold,
  *  and the last few refusals and faults the client reported: lettering
@@ -42,6 +58,7 @@ function statusCluster(view: GameplayView): UiNode | null {
   const rows = some(
     where.length ? row("status-where", where, { cls: ["hudgroup", "statusline"] }) : null,
     note,
+    loadingNote(report),
     ...lines.map((line): UiNode => ({
       ...text(`status-line/${line.seq}`, line.text,
         line.kind === "refused" ? ["statusnote", "statusnote-refused"] : ["statusnote"]),

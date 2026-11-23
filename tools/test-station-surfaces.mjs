@@ -18,6 +18,20 @@ globalThis.__lunaticLocale = { tag: "en", catalog: JSON.parse(await readFile(new
 const structuralLabel = (structural, args = []) => ({ keyed: { reference: { structural }, args } });
 const literalArg = (name, plain) => ({ name, value: { plain } });
 
+test("world loading shows counts, a retrying failure, and nothing once ready", async () => {
+  const loading = async (name, edit) => {
+    const view = await fixture(`hud/${name}`); edit?.(view.state.client.presentation);
+    return flatten(ui.render(view)).find((node) => node.id === "status-loading");
+  };
+  assert.equal((await loading("hud-loading-mid")).text, "Loading the station: 3 of 10 files");
+  assert.equal((await loading("hud-loading-mid", (p) => { p.assets.total = 0; p.assets.done = 0; })).text,
+    "Loading the station…");
+  const failed = await loading("hud-loading-failed");
+  assert.match(failed.text, /retrying \(7 of 10 loaded\)/);
+  assert(failed.class.includes("statusnote-failed"));
+  assert.equal(await loading("hud-loading-ready"), undefined);
+  assert.equal(await loading("hud-loading-ready", (p) => { p.assets = null; }), undefined);
+});
 test("busy HUD exposes named actions as valid pinned buttons", async () => {
   const view = await fixture("hud/hud-busy-compact"), nodes = flatten(ui.render(view));
   for (const node of nodes) if (node.children) assert(["panel", "row", "column", "select"].includes(node.type), node.id);

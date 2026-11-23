@@ -1,0 +1,771 @@
+{
+  "version": 1,
+  "viewport": {
+    "w": 1024,
+    "h": 768
+  },
+  "boxes": {
+    "lunatic/tfs/action-anchor": {
+      "x": 358.40625,
+      "y": 562.609375,
+      "w": 653.59375,
+      "h": 53.390625
+    },
+    "lunatic/tfs/action-strip": {
+      "x": 358.40625,
+      "y": 562.609375,
+      "w": 653.59375,
+      "h": 53.390625
+    },
+    "lunatic/tfs/carry": {
+      "x": 800,
+      "y": 672,
+      "w": 40,
+      "h": 84
+    },
+    "lunatic/tfs/chat": {
+      "x": 183.203125,
+      "y": 724,
+      "w": 148.484375,
+      "h": 28
+    },
+    "lunatic/tfs/chat-channel": {
+      "x": 70.203125,
+      "y": 724,
+      "w": 72,
+      "h": 28
+    },
+    "lunatic/tfs/chat-channel-label": {
+      "x": 20,
+      "y": 730.3125,
+      "w": 46.203125,
+      "h": 15.390625
+    },
+    "lunatic/tfs/chat-channel/option/0": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/chat-channel/option/1": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/chat-history": {
+      "x": 254.28125,
+      "y": 544,
+      "w": 77.40625,
+      "h": 28
+    },
+    "lunatic/tfs/chat-pane": {
+      "x": 12,
+      "y": 506,
+      "w": 327.6875,
+      "h": 250
+    },
+    "lunatic/tfs/chat-pane/body": {
+      "x": 20,
+      "y": 576,
+      "w": 311.6875,
+      "h": 143
+    },
+    "lunatic/tfs/chat-pane/footer": {
+      "x": 20,
+      "y": 719,
+      "w": 311.6875,
+      "h": 33
+    },
+    "lunatic/tfs/chat-pane/toolbar": {
+      "x": 20,
+      "y": 511,
+      "w": 311.6875,
+      "h": 65
+    },
+    "lunatic/tfs/chat-tabs": {
+      "x": 20,
+      "y": 511,
+      "w": 243.203125,
+      "h": 29
+    },
+    "lunatic/tfs/chat-tabs/all": {
+      "x": 20,
+      "y": 511,
+      "w": 37.796875,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/local": {
+      "x": 59.796875,
+      "y": 511,
+      "w": 51,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/ooc": {
+      "x": 165.796875,
+      "y": 511,
+      "w": 37.796875,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/radio": {
+      "x": 112.796875,
+      "y": 511,
+      "w": 51,
+      "h": 28
+    },
+    "lunatic/tfs/chat-tabs/system": {
+      "x": 205.59375,
+      "y": 511,
+      "w": 57.59375,
+      "h": 28
+    },
+    "lunatic/tfs/composer-label": {
+      "x": 146.203125,
+      "y": 730.3125,
+      "w": 33,
+      "h": 15.390625
+    },
+    "lunatic/tfs/drop": {
+      "x": 900.140625,
+      "y": 724,
+      "w": 45.140625,
+      "h": 32
+    },
+    "lunatic/tfs/drop/box": {
+      "x": 900.140625,
+      "y": 724,
+      "w": 45.140625,
+      "h": 32
+    },
+    "lunatic/tfs/drop/cap": {
+      "x": 909.5,
+      "y": 741.0625,
+      "w": 26.40625,
+      "h": 13.1875
+    },
+    "lunatic/tfs/drop/glyph": {
+      "x": 919.40625,
+      "y": 725.765625,
+      "w": 6.59375,
+      "h": 14.296875
+    },
+    "lunatic/tfs/equip": {
+      "x": 850.765625,
+      "y": 582,
+      "w": 45.03125,
+      "h": 34
+    },
+    "lunatic/tfs/equip#earlier": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/equip#pin": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/equip#row": {
+      "x": 850.765625,
+      "y": 582,
+      "w": 45.03125,
+      "h": 34
+    },
+    "lunatic/tfs/equipment/back/pick": {
+      "x": 800,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/box": {
+      "x": 800,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/cell": {
+      "x": 800,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/back/pick/frame": {
+      "x": 800,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick": {
+      "x": 800,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/box": {
+      "x": 800,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/cell": {
+      "x": 800,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/belt/pick/frame": {
+      "x": 800,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/ears/pick": {
+      "x": 660,
+      "y": 628,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/ears/pick/box": {
+      "x": 660,
+      "y": 628,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/ears/pick/cell": {
+      "x": 660,
+      "y": 628,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/ears/pick/frame": {
+      "x": 660,
+      "y": 628,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/gloves/pick": {
+      "x": 660,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/gloves/pick/box": {
+      "x": 660,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/gloves/pick/cell": {
+      "x": 660,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/gloves/pick/frame": {
+      "x": 660,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/head/pick": {
+      "x": 704,
+      "y": 628,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/head/pick/box": {
+      "x": 704,
+      "y": 628,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/head/pick/cell": {
+      "x": 704,
+      "y": 628,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/head/pick/frame": {
+      "x": 704,
+      "y": 628,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/id/pick": {
+      "x": 748,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/id/pick/box": {
+      "x": 748,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/id/pick/cell": {
+      "x": 748,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/id/pick/frame": {
+      "x": 748,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/mask/pick": {
+      "x": 748,
+      "y": 628,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/mask/pick/box": {
+      "x": 748,
+      "y": 628,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/mask/pick/cell": {
+      "x": 748,
+      "y": 628,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/mask/pick/frame": {
+      "x": 748,
+      "y": 628,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/shoes/pick": {
+      "x": 704,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/shoes/pick/box": {
+      "x": 704,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/shoes/pick/cell": {
+      "x": 704,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/shoes/pick/frame": {
+      "x": 704,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/suit/pick": {
+      "x": 748,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/suit/pick/box": {
+      "x": 748,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/suit/pick/cell": {
+      "x": 748,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/suit/pick/frame": {
+      "x": 748,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/uniform/pick": {
+      "x": 704,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/uniform/pick/box": {
+      "x": 704,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/uniform/pick/cell": {
+      "x": 704,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/equipment/uniform/pick/frame": {
+      "x": 704,
+      "y": 672,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/gameplay": {
+      "x": 0,
+      "y": 0,
+      "w": 1024,
+      "h": 768
+    },
+    "lunatic/tfs/hand-controls": {
+      "x": 852,
+      "y": 724,
+      "w": 148,
+      "h": 32
+    },
+    "lunatic/tfs/hand/0/pick": {
+      "x": 852,
+      "y": 659,
+      "w": 60,
+      "h": 61
+    },
+    "lunatic/tfs/hand/0/pick/active": {
+      "x": 852,
+      "y": 659,
+      "w": 60,
+      "h": 61
+    },
+    "lunatic/tfs/hand/0/pick/box": {
+      "x": 852,
+      "y": 659,
+      "w": 60,
+      "h": 61
+    },
+    "lunatic/tfs/hand/0/pick/cell": {
+      "x": 852,
+      "y": 659,
+      "w": 60,
+      "h": 61
+    },
+    "lunatic/tfs/hand/0/pick/frame": {
+      "x": 852,
+      "y": 659,
+      "w": 60,
+      "h": 61
+    },
+    "lunatic/tfs/hand/0/pick/label": {
+      "x": 857,
+      "y": 663,
+      "w": 50,
+      "h": 13.1875
+    },
+    "lunatic/tfs/hand/1/pick": {
+      "x": 916,
+      "y": 659,
+      "w": 60,
+      "h": 61
+    },
+    "lunatic/tfs/hand/1/pick/box": {
+      "x": 916,
+      "y": 659,
+      "w": 60,
+      "h": 61
+    },
+    "lunatic/tfs/hand/1/pick/cell": {
+      "x": 916,
+      "y": 659,
+      "w": 60,
+      "h": 61
+    },
+    "lunatic/tfs/hand/1/pick/frame": {
+      "x": 916,
+      "y": 659,
+      "w": 60,
+      "h": 61
+    },
+    "lunatic/tfs/hand/1/pick/label": {
+      "x": 921,
+      "y": 663,
+      "w": 50,
+      "h": 13.1875
+    },
+    "lunatic/tfs/hands": {
+      "x": 852,
+      "y": 659,
+      "w": 148,
+      "h": 61
+    },
+    "lunatic/tfs/hud-comms": {
+      "x": 12,
+      "y": 18,
+      "w": 327.6875,
+      "h": 738
+    },
+    "lunatic/tfs/hud-controls": {
+      "x": 660,
+      "y": 628,
+      "w": 352,
+      "h": 128
+    },
+    "lunatic/tfs/hud-origin": {
+      "x": 358.40625,
+      "y": 562.609375,
+      "w": 653.59375,
+      "h": 193.390625
+    },
+    "lunatic/tfs/identity": {
+      "x": 859.40625,
+      "y": 14,
+      "w": 150.59375,
+      "h": 15.390625
+    },
+    "lunatic/tfs/inventory": {
+      "x": 852,
+      "y": 659,
+      "w": 148,
+      "h": 97
+    },
+    "lunatic/tfs/item-actions": {
+      "x": 714.609375,
+      "y": 562.609375,
+      "w": 297.390625,
+      "h": 53.390625
+    },
+    "lunatic/tfs/item-actions/buttons": {
+      "x": 714.609375,
+      "y": 582,
+      "w": 297.390625,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons#rows": {
+      "x": 714.609375,
+      "y": 582,
+      "w": 229.1875,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons#toolbar": {
+      "x": 947.796875,
+      "y": 582,
+      "w": 64.203125,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons/more": {
+      "x": 947.796875,
+      "y": 582,
+      "w": 64.203125,
+      "h": 34
+    },
+    "lunatic/tfs/item-actions/buttons/search": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/item-actions/title": {
+      "x": 974,
+      "y": 562.609375,
+      "w": 38,
+      "h": 15.390625
+    },
+    "lunatic/tfs/log-empty": {
+      "x": 20,
+      "y": 576,
+      "w": 299.6875,
+      "h": 15.390625
+    },
+    "lunatic/tfs/open_build": {
+      "x": 899.796875,
+      "y": 582,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/open_build#earlier": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/open_build#pin": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/open_build#row": {
+      "x": 899.796875,
+      "y": 582,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/status": {
+      "x": 762.796875,
+      "y": 14,
+      "w": 247.203125,
+      "h": 15.390625
+    },
+    "lunatic/tfs/status-dot": {
+      "x": 762.796875,
+      "y": 19.203125,
+      "w": 5,
+      "h": 5
+    },
+    "lunatic/tfs/status-place": {
+      "x": 762.796875,
+      "y": 14,
+      "w": 85.59375,
+      "h": 15.390625
+    },
+    "lunatic/tfs/status-place/name": {
+      "x": 775.796875,
+      "y": 14,
+      "w": 72.59375,
+      "h": 15.390625
+    },
+    "lunatic/tfs/status-where": {
+      "x": 762.796875,
+      "y": 14,
+      "w": 247.203125,
+      "h": 15.390625
+    },
+    "lunatic/tfs/swap": {
+      "x": 852,
+      "y": 724,
+      "w": 45.140625,
+      "h": 32
+    },
+    "lunatic/tfs/swap/box": {
+      "x": 852,
+      "y": 724,
+      "w": 45.140625,
+      "h": 32
+    },
+    "lunatic/tfs/swap/cap": {
+      "x": 861.359375,
+      "y": 740.90625,
+      "w": 26.40625,
+      "h": 13.1875
+    },
+    "lunatic/tfs/swap/glyph": {
+      "x": 866.5625,
+      "y": 725.90625,
+      "w": 16,
+      "h": 14
+    },
+    "lunatic/tfs/target-block": {
+      "x": 1012,
+      "y": 756,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/target-meta": {
+      "x": 1012,
+      "y": 756,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/throw_mode": {
+      "x": 948.265625,
+      "y": 724,
+      "w": 51.734375,
+      "h": 32
+    },
+    "lunatic/tfs/throw_mode/box": {
+      "x": 948.265625,
+      "y": 724,
+      "w": 51.734375,
+      "h": 32
+    },
+    "lunatic/tfs/throw_mode/cap": {
+      "x": 957.640625,
+      "y": 741.0625,
+      "w": 33,
+      "h": 13.1875
+    },
+    "lunatic/tfs/throw_mode/glyph": {
+      "x": 970.828125,
+      "y": 725.765625,
+      "w": 6.59375,
+      "h": 14.296875
+    },
+    "lunatic/tfs/use_other": {
+      "x": 714.609375,
+      "y": 582,
+      "w": 84.15625,
+      "h": 34
+    },
+    "lunatic/tfs/use_other#earlier": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/use_other#pin": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/use_other#row": {
+      "x": 714.609375,
+      "y": 582,
+      "w": 84.15625,
+      "h": 34
+    },
+    "lunatic/tfs/use_self": {
+      "x": 802.765625,
+      "y": 582,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/use_self#earlier": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/use_self#pin": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "lunatic/tfs/use_self#row": {
+      "x": 802.765625,
+      "y": 582,
+      "w": 44,
+      "h": 34
+    },
+    "lunatic/tfs/worn-group": {
+      "x": 660,
+      "y": 628,
+      "w": 128,
+      "h": 128
+    },
+    "lunatic/tfs/worn-toggle": {
+      "x": 660,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/worn-toggle/box": {
+      "x": 660,
+      "y": 716,
+      "w": 40,
+      "h": 40
+    },
+    "lunatic/tfs/worn-toggle/cap": {
+      "x": 664.796875,
+      "y": 740.40625,
+      "w": 30.40625,
+      "h": 13.1875
+    },
+    "lunatic/tfs/worn-toggle/glyph": {
+      "x": 670,
+      "y": 718.40625,
+      "w": 20,
+      "h": 20
+    }
+  }
+}

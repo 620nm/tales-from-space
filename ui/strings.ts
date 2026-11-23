@@ -167,5 +167,11 @@ export const STAFF_MARK = tfs("ui.status.staff");
 export const STATUS_FROZEN = tfs("ui.status.frozen");
 export const STATUS_HELD = tfs("ui.status.held");
 export const STATUS_DELAYED = tfs("ui.status.delayed");
+// World art still arriving; the loader retries a failure by itself.
+export const STATUS_LOADING_WAIT = tfs("ui.status.loading_wait");
+export const statusLoading = (done: number, total: number): string =>
+  tfs("ui.status.loading", { done, total });
+export const statusLoadingFailed = (done: number, total: number): string =>
+  tfs("ui.status.loading_failed", { done, total });
 export const storageFill = (count: number, cap: number): string =>
   tfs("ui.tray.storage_fill", { count, cap });
