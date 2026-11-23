@@ -82,20 +82,38 @@ for _, standing in t.bodies_at(ox, oy) do
 end
 assert(t.staff_grant(staff, "control"), "control again")
 
--- Dead, then reconnected: the Mind rides the engine's viewpoint over the
--- corpse, which has no body. Pressing the way out leaves nothing behind.
+-- Stopped again, then gone and back without a respawn: the reconnect
+-- leaves the stopped observer for the engine's bodiless viewpoint, and
+-- the sweep removes it. Pressing the way out from that viewpoint, which
+-- has no body, leaves nothing behind.
+t.disconnect(staff)
+staff = t.connect(PROFILE)
+t.run_ticks(4)
 local x, y = t.pos(staff)
-assert(t.staff_kill(staff), "the body dies")
+local home = t.body_id(staff)
+ui_controls.press(staff, "/action/0")
+t.run_ticks(4)
+assert(assert(t.body(staff)).plan == "observer", "out a third time")
+assert(t.destroy(home) == nil, "the left body is removed")
+assert(t.staff_grant(staff, "observe"), "observe replaces control")
+t.run_seconds(3)
+assert(not assert(t.body(staff)).animate, "the observer stopped")
 t.disconnect(staff)
 t.run_ticks(4)
 staff = t.connect(PROFILE)
-t.run_ticks(4)
+t.run_seconds(3)
 assert(t.body(staff) == nil, "the reconnect rides a viewpoint with no body")
+for _, standing in t.bodies_at(x, y) do
+    assert(standing.plan ~= "observer", "and the sweep removed the stopped observer")
+end
+assert(t.staff_grant(staff, "control"), "control again")
+t.disconnect(staff)
+staff = t.connect(PROFILE)
+t.run_ticks(4)
 assert(t.ui(staff, "observe") ~= nil, "still offered the way out")
 ui_controls.press(staff, "/action/0")
 t.run_ticks(4)
 assert(t.body(staff) == nil, "which a bodiless viewpoint cannot take")
-assert(#t.bodies_at(x, y) == 1, "no observer beside the corpse")
-assert(#t.ledger_rows("MindSeated") == 3, "nobody was seated")
+assert(#t.ledger_rows("MindSeated") == 4, "nobody was seated")
 assert(#t.ledger_rows("ScriptEffectRefused") == 0, "no effect was refused")
 assert(#t.script_errors() == 0, "no handler raised")
