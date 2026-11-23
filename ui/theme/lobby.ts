@@ -15,11 +15,16 @@ export const lobbyRules: UiStyleRule[] = [
     backgroundColor: alpha(surface, 0.96), border: edge(titleLine), borderRadius: 4,
     boxShadow: shade, pointerEvents: "auto", overflow: "hidden",
   }),
+  rule("lobby-ooc-column", {
+    width: "40%", maxWidth: "100%", minWidth: 0, minHeight: 0, height: "100%",
+    flexGrow: 2, flexShrink: 1, flexDirection: "column", gap: 10,
+  }),
   rule("lobby-ooc-screen", {
-    width: "40%", maxWidth: "100%", minWidth: 0, height: "100%", flexGrow: 2,
-    flexShrink: 1, backgroundColor: alpha(field, 0.92), border: edge(line),
+    width: "100%", maxWidth: "100%", minWidth: 0, minHeight: 0, height: "100%",
+    flexGrow: 1, flexShrink: 1, backgroundColor: alpha(field, 0.92), border: edge(line),
     boxShadow: flat, overflow: "hidden", fontFamily: "sans",
   }),
+  rule("lobby-contact", { maxWidth: "100%", minWidth: 0, flexShrink: 0 }),
   rule("lobby-setup-screen", {
     width: "60%", maxWidth: "100%", minWidth: 0, height: "100%", flexGrow: 3,
     flexShrink: 1, backgroundColor: alpha(titleFace, 0.92), border: edge(amberLine),

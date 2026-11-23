@@ -4,7 +4,7 @@
     "lunatic/tfs/chat-history": [
       {
         "start": 0,
-        "x": 330.4375,
+        "x": 330.328125,
         "y": 24.8125,
         "w": 59.40625,
         "h": 13,
@@ -27,17 +27,50 @@
       {
         "start": 0,
         "x": 20,
-        "y": 731.3125,
+        "y": 659.921875,
         "w": 33,
         "h": 13,
         "slack": 0,
         "need": null
       }
     ],
+    "lunatic/tfs/contact/entry": [
+      {
+        "start": 0,
+        "x": 322.46875,
+        "y": 709.21875,
+        "w": 69.25,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/contact/entry/hint": [
+      {
+        "start": 0,
+        "x": 18,
+        "y": 735.609375,
+        "w": 216.484375,
+        "h": 13,
+        "slack": 166.234375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/contact/entry/title": [
+      {
+        "start": 0,
+        "x": 18,
+        "y": 708.515625,
+        "w": 101.40625,
+        "h": 15,
+        "slack": 188.078125,
+        "need": null
+      }
+    ],
     "lunatic/tfs/lobby/readiness-footer/connected": [
       {
         "start": 0,
-        "x": 644.84375,
+        "x": 644.734375,
         "y": 724.3125,
         "w": 72.59375,
         "h": 13,
@@ -48,7 +81,7 @@
     "lunatic/tfs/lobby/readiness-footer/ready": [
       {
         "start": 0,
-        "x": 590.640625,
+        "x": 590.53125,
         "y": 724.3125,
         "w": 46.203125,
         "h": 13,
@@ -70,7 +103,7 @@
     "lunatic/tfs/lobby/setup/title": [
       {
         "start": 0,
-        "x": 426.84375,
+        "x": 426.734375,
         "y": 21,
         "w": 148.765625,
         "h": 18,
@@ -81,7 +114,7 @@
     "lunatic/tfs/lobby/status-footer/phase": [
       {
         "start": 0,
-        "x": 426.84375,
+        "x": 426.734375,
         "y": 723.8125,
         "w": 59.40625,
         "h": 13,
@@ -92,7 +125,7 @@
     "lunatic/tfs/lobby/status-footer/timer": [
       {
         "start": 0,
-        "x": 494.234375,
+        "x": 494.125,
         "y": 723.8125,
         "w": 92.40625,
         "h": 13,
@@ -107,7 +140,7 @@
         "y": 52,
         "w": 121.765625,
         "h": 15,
-        "slack": 167.828125,
+        "slack": 167.71875,
         "need": null
       }
     ],
@@ -125,7 +158,7 @@
     "lunatic/tfs/preparation/add-label": [
       {
         "start": 0,
-        "x": 436.84375,
+        "x": 436.734375,
         "y": 280.078125,
         "w": 52.796875,
         "h": 13,
@@ -136,40 +169,40 @@
     "lunatic/tfs/preparation/editor/hint": [
       {
         "start": 0,
-        "x": 436.84375,
+        "x": 436.734375,
         "y": 95.1875,
         "w": 277.953125,
         "h": 13,
-        "slack": 267.21875,
+        "slack": 267.328125,
         "need": null
       }
     ],
     "lunatic/tfs/preparation/editor/title": [
       {
         "start": 0,
-        "x": 436.84375,
+        "x": 436.734375,
         "y": 62,
         "w": 79.203125,
         "h": 15,
-        "slack": 465.96875,
+        "slack": 466.078125,
         "need": null
       }
     ],
     "lunatic/tfs/preparation/fallback-title": [
       {
         "start": 0,
-        "x": 436.84375,
+        "x": 436.734375,
         "y": 311.765625,
         "w": 70.40625,
         "h": 15,
-        "slack": 474.765625,
+        "slack": 474.875,
         "need": null
       }
     ],
     "lunatic/tfs/preparation/name-label": [
       {
         "start": 0,
-        "x": 436.84375,
+        "x": 436.734375,
         "y": 126.890625,
         "w": 26.40625,
         "h": 13,
@@ -180,11 +213,11 @@
     "lunatic/tfs/preparation/ranked-title": [
       {
         "start": 0,
-        "x": 436.84375,
+        "x": 436.734375,
         "y": 158.578125,
         "w": 105.59375,
         "h": 15,
-        "slack": 439.5625,
+        "slack": 439.671875,
         "need": null
       }
     ],
@@ -202,18 +235,18 @@
     "lunatic/tfs/preparation/ranked/assistant/name": [
       {
         "start": 0,
-        "x": 471.84375,
+        "x": 471.734375,
         "y": 200.375,
         "w": 49.296875,
         "h": 14,
-        "slack": 351.859375,
+        "slack": 351.984375,
         "need": null
       }
     ],
     "lunatic/tfs/preparation/ranked/assistant/number": [
       {
         "start": 0,
-        "x": 458.234375,
+        "x": 458.125,
         "y": 201.078125,
         "w": 6.59375,
         "h": 13,
@@ -257,18 +290,18 @@
     "lunatic/tfs/preparation/ranked/engineer/name": [
       {
         "start": 0,
-        "x": 471.84375,
+        "x": 471.734375,
         "y": 238.375,
         "w": 47.9375,
         "h": 14,
-        "slack": 353.21875,
+        "slack": 353.328125,
         "need": null
       }
     ],
     "lunatic/tfs/preparation/ranked/engineer/number": [
       {
         "start": 0,
-        "x": 458.234375,
+        "x": 458.125,
         "y": 239.078125,
         "w": 6.59375,
         "h": 13,
@@ -301,7 +334,7 @@
     "lunatic/tfs/preparation/ready": [
       {
         "start": 0,
-        "x": 757.4375,
+        "x": 757.328125,
         "y": 723.609375,
         "w": 36,
         "h": 14,

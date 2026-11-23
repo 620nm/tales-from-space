@@ -28,6 +28,14 @@
         "issue": null
       },
       "preparationStorage": { "available": true },
+      "staff_contact": {
+        "revision": "1",
+        "available": true,
+        "conversations": [],
+        "unread": 0,
+        "cursor": null,
+        "denial": null
+      },
       "jobs": {
         "jobs": [
           { "key": "assistant", "name": "Assistant", "taken": 0, "slots": 3 },

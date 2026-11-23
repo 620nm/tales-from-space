@@ -10,6 +10,7 @@ import type {
 } from "./model";
 import { column, entry, panel, press, row, screen, select, some, text, type Command } from "./view";
 import { chatPanel } from "./chat";
+import { contactPanel } from "./contact/actions";
 import * as S from "./strings";
 
 type LobbyView = GameplayView;
@@ -239,11 +240,17 @@ function footer(view: LobbyView): UiNode[] {
   ];
 }
 
-/** The bounded preparation shell: OOC owns the left column and setup the right. */
+/** The bounded preparation shell: OOC and contact share the left column. */
 export function preparationPanels(view: GameplayView): UiNode[] {
   const lobby = view as LobbyView;
+  const contact = contactPanel(lobby);
   return [panel("lobby-preparation", [
-    oocPanel(lobby),
+    column("lobby-ooc-column", [
+      oocPanel(lobby),
+      ...some(contact
+        ? panel("preparation-contact", [contact], { cls: ["hudgroup", "lobby-contact"] })
+        : null),
+    ], { cls: ["lobby-ooc-column"] }),
     screen("lobby-setup", {
       toolbar: [
         text("lobby/setup/title", S.tfs("ui.lobby.preparation.title"), ["titlebar-title"]),

@@ -69,12 +69,6 @@ const ui: GuestUi = {
     // Preparation owns the whole bounded surface. Keeping the gameplay HUD
     // out of this branch leaves the OOC and setup columns unobscured.
     if (view.state.round?.phase === "preparing" && !view.state.staff_view) {
-      const contact = contactPanel(view);
-      if (contact) children.push(panel("preparation-contact", [contact], {
-        cls: ["hudgroup"], style: {
-          position: "absolute", left: 12, bottom: 12, width: "32%", minWidth: 320, maxWidth: 420,
-        },
-      }));
       return Pane("gameplay", children, { cls: ["hud", "centered"] });
     }
     children.push(column("hud-comms", [
