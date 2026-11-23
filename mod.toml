@@ -31,6 +31,8 @@ native_edges = [
     "lifecycle.round_spawn",
     "lifecycle.level_crossing",
     "lifecycle.body_spawn",
+    "lifecycle.participant_join",
+    "ui.action",
     "attack.swing",
     "entity.pull",
     "throw.land",
@@ -109,6 +111,9 @@ entity_transfer = true
 # The gas turbine's damage alarm speaks on the engineering channel
 # (content/lib/power/gas_turbine_turns.luau; the engine's docs/luau-api/radio-relay.md).
 radio_transmit = true
+# Staff leave their body for an observer and come back as themselves
+# (content/lib/observe.luau; the engine's docs/control/seat.md).
+mind_seat = true
 
 # This pack spells no sentence: every player-visible line it sends names
 # a catalog key, prototype `failure` lines included, and the engine

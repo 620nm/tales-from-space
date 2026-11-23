@@ -13,4 +13,5 @@ permissions = [
     "map_lifecycle",
     "entity_transfer",
     "radio_transmit",
+    "mind_seat",
 ]

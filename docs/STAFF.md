@@ -40,3 +40,21 @@ Director and punishment enforcement have no interface here.
 Inspect staff fixture captures at 1024×768, 1366×768 and 1600×1000 using the
 engine's UI lab. A connected station capture checks that the canvas remains
 readable and staff operations affect real entities. See [UI workflow](UI.md).
+
+## Observing
+
+Staff whose account holds `engine.staff.control` get an observe panel
+in both modes (`content/lib/observe.luau`). Leaving spawns an `observer`
+body (`content/bodies/observer.luau`: the ghost picture, unseen by the
+crew, through every wall) on their tile and moves their own Mind into it;
+returning moves it back and removes the observer. Name, job, memory and
+vars stay with the Mind throughout (the engine's `docs/control/seat.md`).
+The body left behind stands where it was.
+
+- A disconnect changes nothing: a staff member who reconnects while
+  observing is still the observer and is offered the way back.
+- A left body that is gone, dead or ridden by someone else cannot be
+  returned to: the observer stays and the panel says so.
+- A grant made mid-round shows the panel at the next connect.
+- Specs: `tests/rounds/observe_free_build_test.luau`,
+  `tests/rounds/observe_station_test.luau`.

@@ -13,7 +13,7 @@ import type {
   ScriptState,
 } from "./document-model";
 import type { CopierState, FaxState, PaperState, TurbineState } from "./document-model";
-import { documentAction, scriptAction } from "./document-action";
+import { documentAction } from "./document-action";
 import { moduleBody } from "./documents-modules";
 import { controlWorkspace } from "./documents-controls";
 import { shelfRows } from "./documents-shelf";
@@ -22,7 +22,7 @@ import { filePanes, guard, retainOpenFileBuffers, retainWorkspaces } from "./fil
 import { linkMeta, refusalDialog, retainRefusals } from "./documents-device";
 import { bind, column, entry, icon, press, row, screen, some, text } from "./view";
 import * as S from "./strings";
-import { renderLabel } from "./labels";
+import { readoutText, renderLabel } from "./labels";
 import { actionSurface } from "./actions";
 import { paperBody } from "./documents-paper";
 import { faxBody } from "./documents-fax";
@@ -192,6 +192,16 @@ function buildRows(
     : [];
 }
 
+/** A script data record's top-level `labels`: typed labels by action id. */
+function splitLabels(data: Json | undefined): { readings: Json | undefined; labels: Record<string, string> } {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return { readings: data, labels: {} };
+  const { labels, ...readings } = data as Record<string, Json>;
+  const named: Record<string, string> = {};
+  if (labels && typeof labels === "object" && !Array.isArray(labels))
+    for (const [action, label] of Object.entries(labels)) named[action] = readoutText(label);
+  return { readings, labels: named };
+}
+
 /** A script view model: its data as readings, its offers as presses. */
 function scriptRows(
   id: string,
@@ -199,12 +209,14 @@ function scriptRows(
   state: Partial<ScriptState>,
   active: boolean,
 ): UiNode[] {
+  const { readings, labels } = splitLabels(state.data);
   return [
-    ...(state.data == null ? [] : dataRows(`${id}/data`, state.data)),
+    ...(readings == null ? [] : dataRows(`${id}/data`, readings)),
     ...(state.actions ?? []).map((action, index) => {
     const key = `${id}/action/${index}`;
       if (!action.input)
-        return press(key, action.id, scriptAction(doc, action.id), {
+        // An action declared with no input takes an empty payload.
+        return press(key, labels[action.id] || action.id, documentAction(doc, action.id, {}), {
           disabled: !active,
         });
       const box = `${key}/value`;
@@ -233,6 +245,9 @@ function dataRows(id: string, value: Json, depth = 0): UiNode[] {
     .slice(0, 32)
     .flatMap(([key, held], index) => {
       const child = `${id}/${index}`;
+      // A typed label is a sentence, drawn as its text without its key.
+      const sentence = held && typeof held === "object" ? readoutText(held) : "";
+      if (sentence) return [text(child, sentence, ["list-value"])];
       if (held && typeof held === "object")
         return [
           Section(child, key, dataRows(`${child}/value`, held, depth + 1)),

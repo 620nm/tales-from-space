@@ -1861,5 +1861,9 @@
   "lunatic/tfs:ground.need.gravity": "Weight underfoot without a generator",
   "lunatic/tfs:ground.role.rock": "Bedrock",
   "lunatic/tfs:ground.cover.grass": "Grass",
-  "lunatic/tfs:ground.cover.moss": "Moss"
+  "lunatic/tfs:ground.cover.moss": "Moss",
+  "lunatic/tfs:observe.leave": "Leave body to observe",
+  "lunatic/tfs:observe.return": "Return to body",
+  "lunatic/tfs:observe.refused": "No observer could stand here.",
+  "lunatic/tfs:observe.stranded": "Your body is gone, dead or taken; you remain an observer."
 }
