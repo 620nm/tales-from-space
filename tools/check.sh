@@ -84,7 +84,7 @@ GATE=${GATE:-$PACK/target/gate}
 LOCK=$GATE.lock
 VERBOSE=${VERBOSE:-0}
 ONLY=$*
-PACK_LANES="luau middle-pin lint-units tree-shape terms build bake content hints maps lint-assets roster placeable pack-ui-build pack-node ui-fixture-drift specs ui-shots world-pointer push-motion"
+PACK_LANES="luau middle-pin lint-units tree-shape terms build bake content hints maps lint-assets roster placeable pack-ui-build pack-node ui-fixture-drift specs ui-shots world-pointer push-motion lobby-live"
 
 # want NAME -- whether this run selected the lane NAME.
 want() {
@@ -807,6 +807,14 @@ for lane in world-pointer push-motion; do
     esac
   fi
 done
+
+if want lobby-live; then
+  if [ -n "$UI_BUILT" ]; then
+    blocked lobby-live "$UI_BUILT"
+  else
+    run lobby-live node "$PACK/tools/lobby-live.mjs" "$ENGINE" --web "$PACK_WEB"
+  fi
+fi
 
 total=$(took "$(( $(now_ms) - gate_start ))")
 
