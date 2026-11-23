@@ -46,7 +46,8 @@ assert(attacker_id ~= victim_id)
 t.click(attacker, 1, 1, assert(t.target_at(attacker, 1, 1, "toolbox"))) -- the toolbox underfoot
 t.tick()
 assert(t.hands(attacker).held == "toolbox", "picked it up")
-assert(t.vitals(victim) == nil, "nobody has been hurt yet")
+local unhurt = t.vitals(victim)
+assert(unhurt and unhurt.brute == 0, "the victim's vitals show no harm yet")
 
 -- The fourth argument is the pixel-perfect claim a real client sends
 -- when the cursor is over a sprite: an attack is a click that NAMED
