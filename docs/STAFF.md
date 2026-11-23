@@ -55,6 +55,12 @@ The body left behind stands where it was.
   observing is still the observer and is offered the way back.
 - A left body that is gone, dead or ridden by someone else cannot be
   returned to: the observer stays and the panel says so.
+- Only a live, animate body can be left: a corpse, or the engine's
+  reconnect viewpoint over one, spawns nothing.
+- The way back needs no grant. Without it, any press of the panel and
+  any reconnect while observing sends the observer home, and the panel
+  closes there.
 - A grant made mid-round shows the panel at the next connect.
 - Specs: `tests/rounds/observe_free_build_test.luau`,
-  `tests/rounds/observe_station_test.luau`.
+  `tests/rounds/observe_station_test.luau`,
+  `tests/rounds/observe_refusals_test.luau`.
