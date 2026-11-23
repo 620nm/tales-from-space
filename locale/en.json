@@ -1264,6 +1264,7 @@
   "lunatic/tfs:ui.lobby.preparation.latejoin_hint": "Choose a name before selecting a late-join position.",
   "lunatic/tfs:ui.lobby.preparation.character": "Character",
   "lunatic/tfs:ui.lobby.preparation.name": "Name",
+  "lunatic/tfs:ui.lobby.preparation.name_empty": "Enter a name to ready up.",
   "lunatic/tfs:ui.lobby.preparation.ranked": "Ranked roles",
   "lunatic/tfs:ui.lobby.preparation.ranked_empty": "Add at least one role, or choose a fallback.",
   "lunatic/tfs:ui.lobby.preparation.fallback": "Fallback",

@@ -31,6 +31,13 @@ test("the footer waits for ready players instead of a frozen countdown", async (
   assert.equal(await timerOf("preparation-ready"), "Starts in 97s",
     "a running countdown keeps its seconds");
 });
+test("an empty name says why Ready stays disabled", () => {
+  const unnamed = draftView(130, 0, { name: "", ranked_jobs: ["assistant"], fallback: false }, null);
+  const hint = flatten(ui.render(unnamed)).find((node) => node.id === "preparation/name-empty");
+  assert.equal(hint?.text, "Enter a name to ready up.");
+  const named = draftView(130, 0, { name: "Ada", ranked_jobs: ["assistant"], fallback: false }, null);
+  assert.equal(flatten(ui.render(named)).some((node) => node.id === "preparation/name-empty"), false);
+});
 test("preparation name commits only a complete field change or Enter submission", () => {
   const tree = ui.render(view.view);
   const name = flatten(tree).find((node) => node.id === "preparation/name");

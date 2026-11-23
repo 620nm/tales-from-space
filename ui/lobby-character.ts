@@ -164,6 +164,9 @@ function characterEditor(view: LobbyView): UiNode {
         cls: ["lobby-name-entry"],
       }),
     ], { cls: ["lobby-field"] }),
+    editable && !draft.name.trim()
+      ? text("preparation/name-empty", S.tfs("ui.lobby.preparation.name_empty"), ["hint"])
+      : null,
     text("preparation/ranked-title", S.tfs("ui.lobby.preparation.ranked"), ["lobby-section-title"]),
     column("preparation/ranked", rankRows(view, editable), { cls: ["lobby-ranked"] }),
     draft.ranked_jobs.length
