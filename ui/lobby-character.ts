@@ -89,10 +89,18 @@ function jobRows(view: LobbyView): { key: string; name: string }[] {
   return jobs.map((job) => ({ key: job.key, name: job.name }));
 }
 
+/** The disclosed preparation issue's words, for whichever lobby
+ *  surface the session is looking at when the server states one. */
+export function preparationIssueLabel(view: GameplayView): string | null {
+  const lobby = view as LobbyView;
+  const issue = preparationOf(lobby)?.issue ?? roundOf(lobby)?.fault;
+  return issue ? ISSUE_LABELS[issue] : null;
+}
+
 function issueNotice(view: LobbyView): UiNode | null {
-  const issue = preparationOf(view)?.issue ?? roundOf(view)?.fault;
-  if (!issue) return null;
-  return text("preparation/issue", ISSUE_LABELS[issue], ["lobby-notice"]);
+  const label = preparationIssueLabel(view);
+  if (!label) return null;
+  return text("preparation/issue", label, ["lobby-notice"]);
 }
 
 function rankRows(view: LobbyView, editable: boolean): UiNode[] {

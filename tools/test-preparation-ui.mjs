@@ -153,6 +153,13 @@ test("an unusable saved setup says so in the editor", () => {
   const usable = flatten(ui.render(draftView(125, 0, EMPTY, SAVED)));
   assert.equal(usable.some((node) => node.id === "preparation/saved-unusable"), false);
 });
+test("a refused latejoin name edit says so on the job board", async () => {
+  const { view: playing } = JSON.parse(await readFile(new URL("../ui/fixtures/preparation/preparation-playing.json", import.meta.url)));
+  assert.equal(flatten(ui.render(playing)).some((node) => node.id === "preparation/issue"), false);
+  playing.state.preparation.issue = "invalid_draft";
+  const notice = flatten(ui.render(playing)).find((node) => node.id === "preparation/issue");
+  assert.equal(notice.text, "Your setup is invalid. Choose a name and a role or fallback.");
+});
 test("a record fault shows the saving notice without closing the lobby", () => {
   const faulted = draftView(108, 3, view.view.state.preparation.draft, view.view.state.preparation.draft);
   faulted.state.packageRecord.fault = "write";

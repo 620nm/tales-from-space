@@ -4,7 +4,7 @@ import type { UiNode } from "@lunatic/ui";
 import { Pane, Stack } from "@lunatic/ui";
 import type { GameplayView } from "./model";
 import { bind, entry, press, row, screen, some, text } from "./view";
-import { preparationPanels } from "./lobby-character";
+import { preparationIssueLabel, preparationPanels } from "./lobby-character";
 import * as S from "./strings";
 
 export function crewPanels(view: GameplayView): UiNode[] {
@@ -19,6 +19,7 @@ export function crewPanels(view: GameplayView): UiNode[] {
     : undefined;
   const latejoinPending = state.preparationPending === true;
   const joinPending = latejoinPending && !state.preparationCanQueue;
+  const issue = preparationIssueLabel(view);
   if (jobs)
     out.push(
       // A screen as tall as its roster, up to the cap, and then scrolling.
@@ -45,6 +46,7 @@ export function crewPanels(view: GameplayView): UiNode[] {
             ], { cls: ["lobby-field"] }),
             ...(latejoinPending ? [text("preparation/pending", S.tfs("ui.lobby.preparation.updating"), ["lobby-pending"])] : []),
           ] : []),
+          ...(issue ? [text("preparation/issue", issue, ["lobby-notice"])] : []),
           Stack(
             "lobby-jobs",
             jobs.length ? jobs.map((job) => {
