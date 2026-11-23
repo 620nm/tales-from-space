@@ -12,7 +12,7 @@ import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const PACK = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const PACK = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const argv = process.argv.slice(2);
 const ENGINE = resolve(argv[0] ?? process.env.LUNATIC_ENGINE ?? join(PACK, "../lunatic"));
 const webIdx = argv.indexOf("--web");

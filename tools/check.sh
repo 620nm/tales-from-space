@@ -812,7 +812,7 @@ if want lobby-live; then
   if [ -n "$UI_BUILT" ]; then
     blocked lobby-live "$UI_BUILT"
   else
-    run lobby-live node "$PACK/tools/lobby-live.mjs" "$ENGINE" --web "$PACK_WEB"
+    run lobby-live node "$PACK/tools/live/lobby-live.mjs" "$ENGINE" --web "$PACK_WEB"
   fi
 fi
 
