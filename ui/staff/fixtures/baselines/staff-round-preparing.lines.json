@@ -1,0 +1,322 @@
+{
+  "version": 1,
+  "lines": {
+    "lunatic/tfs/staff/footer/audience": [
+      {
+        "start": 0,
+        "x": 5,
+        "y": 748,
+        "w": 158.171875,
+        "h": 13,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/footer/round": [
+      {
+        "start": 0,
+        "x": 297.171875,
+        "y": 748.5,
+        "w": 84,
+        "h": 12,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/footer/target": [
+      {
+        "start": 0,
+        "x": 167.171875,
+        "y": 748.5,
+        "w": 126,
+        "h": 12,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/header/brand": [
+      {
+        "start": 0,
+        "x": 16,
+        "y": 20.703125,
+        "w": 65.5,
+        "h": 19,
+        "slack": 23.765625,
+        "need": null
+      },
+      {
+        "start": 7,
+        "x": 16,
+        "y": 37.5,
+        "w": 89.265625,
+        "h": 19,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/header/exit": [
+      {
+        "start": 0,
+        "x": 1179.6875,
+        "y": 32.5,
+        "w": 75.3125,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/header/inspector": [
+      {
+        "start": 0,
+        "x": 1061.84375,
+        "y": 32.5,
+        "w": 83.84375,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/header/operator/avatar/fallback": [
+      {
+        "start": 0,
+        "x": 910.984375,
+        "y": 32,
+        "w": 14.359375,
+        "h": 15,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/header/operator/role": [
+      {
+        "start": 0,
+        "x": 941.15625,
+        "y": 41,
+        "w": 29.3125,
+        "h": 12,
+        "slack": 59.375,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/header/operator/username": [
+      {
+        "start": 0,
+        "x": 941.15625,
+        "y": 26,
+        "w": 88.6875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/header/perspective/label": [
+      {
+        "start": 0,
+        "x": 121.265625,
+        "y": 25,
+        "w": 70,
+        "h": 12,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/header/perspective/value": [
+      {
+        "start": 0,
+        "x": 121.265625,
+        "y": 39,
+        "w": 264.5,
+        "h": 15,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/live/clock": [
+      {
+        "start": 0,
+        "x": 871,
+        "y": 223.5,
+        "w": 42,
+        "h": 12,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/live/kicker": [
+      {
+        "start": 0,
+        "x": 17,
+        "y": 212,
+        "w": 105,
+        "h": 12,
+        "slack": 741,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/live/no-target": [
+      {
+        "start": 0,
+        "x": 937,
+        "y": 224,
+        "w": 95.3125,
+        "h": 13,
+        "slack": 218.6875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/live/spawn": [
+      {
+        "start": 0,
+        "x": 14,
+        "y": 274,
+        "w": 89.015625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/live/target-bar/access": [
+      {
+        "start": 0,
+        "x": 6,
+        "y": 333,
+        "w": 198,
+        "h": 12,
+        "slack": 703,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/live/target-bar/empty": [
+      {
+        "start": 0,
+        "x": 6,
+        "y": 316,
+        "w": 335.203125,
+        "h": 13,
+        "slack": 565.796875,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/live/title": [
+      {
+        "start": 0,
+        "x": 17,
+        "y": 226,
+        "w": 102.6875,
+        "h": 21,
+        "slack": 743.3125,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/navigation/round": [
+      {
+        "start": 0,
+        "x": 72.78125,
+        "y": 91.5,
+        "w": 84,
+        "h": 12,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/navigation/status": [
+      {
+        "start": 0,
+        "x": 16,
+        "y": 90,
+        "w": 48.78125,
+        "h": 15,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/round/cohort": [
+      {
+        "start": 0,
+        "x": 240,
+        "y": 132.5,
+        "w": 46.921875,
+        "h": 13,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/round/pause": [
+      {
+        "start": 0,
+        "x": 1079.265625,
+        "y": 132,
+        "w": 32.328125,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/round/resume": [
+      {
+        "start": 0,
+        "x": 1135.59375,
+        "y": 132,
+        "w": 43.21875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/round/start_now": [
+      {
+        "start": 0,
+        "x": 1202.8125,
+        "y": 132,
+        "w": 52.1875,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/round/status": [
+      {
+        "start": 0,
+        "x": 16,
+        "y": 133,
+        "w": 216,
+        "h": 12,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/workspace-nav/cases": [
+      {
+        "start": 0,
+        "x": 111.140625,
+        "y": 178,
+        "w": 31.0625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/workspace-nav/economy": [
+      {
+        "start": 0,
+        "x": 174.203125,
+        "y": 178,
+        "w": 49.15625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ],
+    "lunatic/tfs/staff/workspace-nav/live": [
+      {
+        "start": 0,
+        "x": 16,
+        "y": 178,
+        "w": 63.140625,
+        "h": 14,
+        "slack": 0,
+        "need": null
+      }
+    ]
+  }
+}

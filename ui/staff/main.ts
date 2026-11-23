@@ -14,6 +14,7 @@ import { cursorReopenQuery } from "./cases/records";
 import { staffRequest } from "./shared/actions";
 import { beginProfileRender, profileViewAction } from "./profile/flows";
 import { observeFreezeReply } from "./live/state";
+import { roundOperatorBar } from "./round";
 
 /** Staff package entry; the ordinary gameplay package never renders this. */
 export function staffScreen(view: GameplayView): UiNode | null {
@@ -30,6 +31,7 @@ export function staffScreen(view: GameplayView): UiNode | null {
     ? economyWorkspace(session)
     : liveWorkspace(session);
   const notice = staffNotice(session);
+  const roundBar = roundOperatorBar(session, view.state.round);
   const overlay = state.workspace === "live" ? liveOverlay(session) : null;
   const root = screen("staff/shell", {
     toolbar: [
@@ -50,8 +52,9 @@ export function staffScreen(view: GameplayView): UiNode | null {
         text("staff/navigation/round", `${session.roundId} · ${S.REVISION(session.revision)}`, ["staff-mono", "staff-muted"]),
         session.hold ? text("staff/navigation/hold", S.HOLD, ["staff-warning"]) : null,
       ].filter(Boolean) as UiNode[], { cls: ["staff-status-bar"], gap: 8, align: "center" }),
+      roundBar,
       { id: "staff/body/workspaces", type: "panel", class: ["staff-workspace-tabs"], children: [workspaceTabs(session)] },
-    ],
+    ].filter(Boolean) as UiNode[],
     body: [
       body,
     ],

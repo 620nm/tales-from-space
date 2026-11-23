@@ -1,0 +1,269 @@
+{
+  "audience": "staff",
+  "note": "Captured live from dev server after pressing Start now with nobody ready (keyed refusal staff.round_no_ready_players).",
+  "viewport": {
+    "width": 1280,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 11,
+    "revision": 19,
+    "body": true,
+    "log": [],
+    "documents": {},
+    "viewport": {
+      "width": 1280,
+      "height": 681,
+      "reducedMotion": false
+    },
+    "state": {
+      "armed": null,
+      "currentTarget": null,
+      "identity": {
+        "you": null,
+        "name": ""
+      },
+      "jobs": {
+        "jobs": [
+          {
+            "key": "assistant",
+            "name": "Assistant",
+            "taken": 0,
+            "slots": null
+          },
+          {
+            "key": "captain",
+            "name": "Captain",
+            "taken": 0,
+            "slots": 1
+          },
+          {
+            "key": "engineer",
+            "name": "Station Engineer",
+            "taken": 0,
+            "slots": null
+          },
+          {
+            "key": "medic",
+            "name": "Medical Doctor",
+            "taken": 0,
+            "slots": 1
+          },
+          {
+            "key": "security",
+            "name": "Security Officer",
+            "taken": 0,
+            "slots": 1
+          }
+        ]
+      },
+      "preparation": {
+        "round": 1,
+        "revision": 0,
+        "draft": {
+          "name": "",
+          "ranked_jobs": [],
+          "fallback": false
+        },
+        "ready": false,
+        "can_edit": true,
+        "can_ready": false,
+        "fallback_job": "assistant",
+        "issue": null
+      },
+      "round": {
+        "round": 1,
+        "phase": "preparing",
+        "remaining_seconds": 120,
+        "ready": 0,
+        "connected": 1,
+        "paused": true,
+        "waiting": true,
+        "fault": null
+      },
+      "staff_contact": {
+        "revision": "0",
+        "available": true,
+        "conversations": [],
+        "unread": 0,
+        "cursor": null,
+        "denial": null
+      },
+      "throwing": false,
+      "staff_view": true,
+      "effectiveBindings": {
+        "north": [
+          "W"
+        ],
+        "south": [
+          "S"
+        ],
+        "west": [
+          "A"
+        ],
+        "east": [
+          "D"
+        ],
+        "north-arrow": [
+          "↑"
+        ],
+        "south-arrow": [
+          "↓"
+        ],
+        "west-arrow": [
+          "←"
+        ],
+        "east-arrow": [
+          "→"
+        ],
+        "focus.chat": [
+          "Enter"
+        ],
+        "drop": [
+          "Q"
+        ],
+        "swap": [
+          "X"
+        ],
+        "use_self": [
+          "Z"
+        ],
+        "use_other": [
+          "Shift",
+          "Z"
+        ],
+        "stop_pull": [
+          "H"
+        ],
+        "throw_mode": [
+          "R"
+        ],
+        "equip": [
+          "E"
+        ],
+        "quick_store": [
+          "B"
+        ],
+        "open_build": [
+          "C"
+        ],
+        "target.1": [
+          "Num 1"
+        ],
+        "target.2": [
+          "Num 2"
+        ],
+        "target.3": [
+          "Num 3"
+        ],
+        "target.4": [
+          "Num 4"
+        ],
+        "target.5": [
+          "Num 5"
+        ],
+        "target.6": [
+          "Num 6"
+        ],
+        "target.7": [
+          "Num 7"
+        ],
+        "target.8": [
+          "Num 8"
+        ],
+        "target.9": [
+          "Num 9"
+        ]
+      },
+      "settings": {},
+      "client": {
+        "lines": [
+          {
+            "seq": 1,
+            "kind": "connection",
+            "key": "engine.client.authenticating",
+            "text": "Authenticating with the trusted gateway…",
+            "repeats": 1
+          },
+          {
+            "seq": 2,
+            "kind": "connection",
+            "key": "engine.client.connecting",
+            "text": "connecting…",
+            "repeats": 1
+          },
+          {
+            "seq": 3,
+            "kind": "connection",
+            "key": "engine.client.connected",
+            "text": "connected",
+            "repeats": 1
+          },
+          {
+            "seq": 4,
+            "kind": "notice",
+            "key": "engine.client.scene_entered",
+            "text": "Entered a new map.",
+            "repeats": 1
+          }
+        ],
+        "time": {
+          "rate": 1
+        },
+        "connection": {
+          "delayed": false
+        },
+        "hold": {
+          "frozen": false,
+          "control_held": false
+        },
+        "presentation": {
+          "assets": null,
+          "drawing": {
+            "stalled": false,
+            "device_lost": false
+          }
+        }
+      },
+      "staff": {
+        "allowed": true,
+        "active": true,
+        "revision": "1",
+        "round_id": "1",
+        "frozen": false,
+        "control_held": false,
+        "operator": {
+          "id": "624afb4a8b562cb1a99c995cd26c76db171224a393f4cff3075c319bae09bd0b",
+          "username": "Player 624afb4a",
+          "avatar": "unknown",
+          "role": "owner"
+        },
+        "payload": {
+          "error": "staff.rejected",
+          "records": {
+            "cases": [],
+            "response": {
+              "cursor": null,
+              "error": "staff.round_no_ready_players",
+              "query": {
+                "RoundControl": {
+                  "action": "start_now"
+                }
+              },
+              "refs": [],
+              "request_id": "session-2-2",
+              "result": null
+            }
+          }
+        }
+      },
+      "packageRecord": {
+        "value": null,
+        "persistent": true,
+        "fault": null
+      }
+    }
+  }
+}

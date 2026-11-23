@@ -1,4 +1,5 @@
 import type { StaffSession } from "./model";
+import { knownRoundRefusalText } from "./round";
 import * as S from "./strings";
 
 /** Applied effects stay applied even when revival cannot complete. */
@@ -7,6 +8,8 @@ export function staffNotice(session: Pick<StaffSession, "records" | "error">): {
   const error = response?.error ?? session.error;
   if (error === "staff.history_not_recorded") return { message: S.HISTORY_NOT_RECORDED, tone: "staff-warning" };
   if (error === "staff.storage_failed") return { message: S.STORAGE_FAILED, tone: "staff-warning" };
+  const keyed = typeof error === "string" ? knownRoundRefusalText(error) : null;
+  if (keyed) return { message: keyed, tone: "staff-warning" };
   if (error) return { message: S.REQUEST_FAILED(error), tone: "staff-warning" };
   const result = response?.result;
   if (result?.action !== "restore" || result.applied !== true) return null;
