@@ -139,13 +139,17 @@ export function documents(view: GameplayView): UiNode[] {
     const tool = programmingTool(module?.script?.data);
     const titleAsset = tool?.sprite ?? doc.owner_sprite ?? module?.owner_sprite;
     const save = `doc/${doc.id}/${doc.generation}/editor/save`;
+    const script = (doc.state ?? {}) as Partial<ScriptState>;
+    const plainScript = script.document === "script"
+      && !writingScript(script.data) && !turbineScript(script.data) && !isDesktop(script.data);
     return { ...node, ...(module.editor?.bound === true && mountedSave(node, save)
       ? { primarySave: save }
       : {}), window: {
       ...(node.class?.includes("computer-screen") ? { contentAspectRatio: 16 / 9, minWidth: 740, maximizable: true, titleAsset } : {}),
       key: `document/${doc.id}/${doc.generation}`, title: tool?.name || doc.title || scriptTitle(doc.state ?? {}), source: "status",
       close: `doc/${doc.id}/${doc.generation}/close`,
-      document: doc.id, generation: doc.generation, height: 520, width: Number(node.style?.width) || 520 } };
+      document: doc.id, generation: doc.generation,
+      height: plainScript ? scriptHeight(script) : 520, width: Number(node.style?.width) || 520 } };
   });
 }
 
@@ -190,6 +194,26 @@ function buildRows(
   return rows.length
     ? [Table(`${id}/recipes`, [32, "1fr", "auto", "auto"], rows)]
     : [];
+}
+
+/** Rows a plain script body will draw, counted as `dataRows` walks. */
+function scriptRowCount(value: Json | undefined, depth = 0): number {
+  if (depth > 4 || value == null) return 0;
+  if (typeof value !== "object") return 1;
+  let rows = 0;
+  for (const held of Object.values(value).slice(0, 32)) {
+    const sentence = held && typeof held === "object" ? readoutText(held) : "";
+    rows += sentence ? 1 : held && typeof held === "object" ? 1 + scriptRowCount(held, depth + 1) : 1;
+  }
+  return rows;
+}
+
+/** A plain script window opens as tall as its rows: a one-press
+ *  panel must not cover the world at the full document height. */
+function scriptHeight(state: Partial<ScriptState>): number {
+  const { readings } = splitLabels(state.data);
+  const rows = scriptRowCount(readings) + (state.actions?.length ?? 0);
+  return Math.min(520, Math.max(190, 150 + rows * 34));
 }
 
 /** A script data record's top-level `labels`: typed labels by action id.

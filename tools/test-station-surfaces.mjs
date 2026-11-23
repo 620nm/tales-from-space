@@ -57,6 +57,23 @@ test("unavailable construction follows document status even with enough material
   assert.equal(nodes.find((node) => node.id === "doc/1/1/recipe/1/arm").disabled, true);
   assert.match(nodes.find((node) => node.id === "doc/1/1/status").text, /Unavailable/);
 });
+test("a plain script window sizes to its rows, capped at the tall default", async () => {
+  const view = await fixture("document/document-empty");
+  const scriptDoc = (id, data, actions) => ({
+    id, generation: 1, title: "Panel",
+    state: { document: "script", status: 2, data, actions },
+  });
+  view.documents = {
+    7: scriptDoc(7, { labels: { leave: { plain: "Leave" } } }, [{ id: "leave", input: 0 }]),
+    8: scriptDoc(8, { Readings: Object.fromEntries(Array.from({ length: 20 }, (_, i) => [`k${i}`, i])) },
+      Array.from({ length: 6 }, (_, i) => ({ id: `a${i}`, input: 0 }))),
+  };
+  const nodes = flatten(ui.render(view));
+  assert.equal(nodes.find((node) => node.window?.key === "document/7/1").window.height, 190,
+    "a one-press panel opens short instead of covering the world");
+  assert.equal(nodes.find((node) => node.window?.key === "document/8/1").window.height, 520,
+    "a full script document keeps the tall default and scrolls");
+});
 test("empty documents retain a labeled body and status", async () => {
   const nodes = flatten(ui.render(await fixture("document/document-empty")));
   assert.equal(nodes.find((node) => node.id === "doc/1/1/empty").text, "No entries are available.");
