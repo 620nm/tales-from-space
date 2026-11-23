@@ -67,10 +67,27 @@ local function waiting(): { any }
     return (sim.var("mod", observe.WAITING) :: { any }?) or {}
 end
 
+-- What the document offers once a trip is over: the way out to those who
+-- may take it, nothing (closed) to those who may not.
+local function settle(player: Player, status: string?): ()
+    if may(player) then
+        offer(player, "leave", status, false)
+    else
+        ui.close_participant({ participant = player, channel = CHANNEL })
+    end
+end
+
+-- A body one may step out of: a live, animate body that is no observer.
+-- A bodiless viewpoint (the reconnect observer) and a corpse are not.
+local function steppable(body: Handle): boolean
+    local read = sim.body.read(body)
+    return read ~= nil and read.animate and read.plan ~= observe.PLAN
+end
+
 local function leave(player: Player): ()
     local body = player.body
     local mind = if body ~= nil then body.mind else nil
-    if body == nil or mind == nil or observing(body) or mind.vars[observe.LEFT] ~= nil then
+    if body == nil or mind == nil or not steppable(body) or mind.vars[observe.LEFT] ~= nil then
         return
     end
     mind.vars[observe.LEFT] = body:ref()
@@ -92,66 +109,77 @@ local function come_back(player: Player): ()
         offer(player, "return", "stranded", false)
         return
     end
-    mind.vars[observe.LEFT] = nil
-    -- The observer is ridden until the seat applies, so it goes a tick on.
+    -- LEFT holds until the observer is confirmed empty; until then the
+    -- document still offers the way back.
     sim.spawn_task(observer, function()
         sim.sleep(sim.ticks(1 / sim.tick_hz()))
-        if observer.mind == nil then
-            sim.entity.despawn({ entity = observer })
+        if observer.mind ~= nil then
+            -- Refused when the batch applied: still observing.
+            offer(mind.player, "return", "stranded", false)
+            return
         end
+        mind.vars[observe.LEFT] = nil
+        sim.entity.despawn({ entity = observer })
+        settle(mind.player, nil)
     end)
-    offer(player, "leave", nil, false)
 end
 
 -- The observer plan's spawn answer: seat the Mind that asked first, or
--- clear its request and remove a body nobody can ride.
+-- remove a body nobody can ride. A spawn whose asker already observes,
+-- or whose request was cleared or replaced, is removed unridden.
 function observe.on_spawned(ev: EntitySpawnDonePayload): ()
     local queue = waiting()
     local asked = table.remove(queue, 1)
     sim.script_var.set({ scope = "mod", key = observe.WAITING, value = queue })
     local left = if asked ~= nil then sim.resolve(asked) else nil
     local mind = if left ~= nil then left.mind else nil
+    local current = mind ~= nil and mind.vars[observe.LEFT] == asked
     local observer = ev.entity
-    if mind ~= nil and observer ~= nil and ev.outcome == "completed" and sim.control.seat(mind, observer) then
+    if current and mind ~= nil and observer ~= nil and ev.outcome == "completed" and sim.control.seat(mind, observer) then
         offer(mind.player, "return", nil, false)
         return
     end
     if observer ~= nil then
         sim.entity.despawn({ entity = observer })
     end
-    if mind ~= nil then
+    if current and mind ~= nil then
         mind.vars[observe.LEFT] = nil
-        offer(mind.player, "leave", "refused", false)
+        settle(mind.player, "refused")
     end
 end
 
 -- Opened on every connect: what the player rides decides the offer. A
 -- player still choosing a job is offered the way out for when they have
--- a body; pressed before then, it does nothing.
+-- a body; pressed before then, it does nothing. An observer whose grant
+-- is gone is sent back at once; the way back never needs the grant.
 local function on_join(ev: ParticipantJoinDonePayload): ()
     local player = ev.participant
+    local body = player.body
+    if observing(body) then
+        offer(player, "return", nil, true)
+        if not may(player) then
+            come_back(player)
+        end
+        return
+    end
     if not may(player) then
         return
     end
-    local body = player.body
     local mind = if body ~= nil then body.mind else nil
-    local choice: Offer = "leave"
-    if observing(body) then
-        choice = "return"
-    elseif mind ~= nil and mind.vars[observe.LEFT] ~= nil then
-        choice = "none"
-    end
+    local choice: Offer = if mind ~= nil and mind.vars[observe.LEFT] ~= nil then "none" else "leave"
     offer(player, choice, nil, true)
 end
 
+-- Any press without the grant is a press of the way back.
 local function on_action(ev: UiActionPayload): ()
-    if ev.channel ~= CHANNEL or not may(ev.participant) then
+    if ev.channel ~= CHANNEL then
         return
     end
-    if ev.action == "leave" then
-        leave(ev.participant)
-    elseif ev.action == "return" then
-        come_back(ev.participant)
+    local player = ev.participant
+    if ev.action == "return" or not may(player) then
+        come_back(player)
+    elseif ev.action == "leave" then
+        leave(player)
     end
 end
 
