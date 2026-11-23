@@ -203,8 +203,7 @@ local function retire(player: Player, mind: Mind, observer: Handle): ()
 end
 
 -- Remove stopped observers their rider has left (a respawn, a reconnect).
-local function clear_spent(): ()
-    local list = spent()
+local function clear_spent(list: { any }): ()
     if #list == 0 then
         return
     end
@@ -229,6 +228,12 @@ function observe.on_second(ev: ClockSecondPayload): ()
     if math.floor(ev.elapsed_seconds) % SWEEP_SECONDS ~= 0 then
         return
     end
+    -- Past `round.end` the round's vars are closed and its seconds still
+    -- tick: the first read says so, and there is nothing left to sweep.
+    local open, list = pcall(spent)
+    if not open then
+        return
+    end
     for _, mind in sim.query.minds() do
         -- An earlier life of a player is listed too, and raises on `.player`.
         local live, player = pcall(function(): Player?
@@ -243,7 +248,7 @@ function observe.on_second(ev: ClockSecondPayload): ()
             end
         end
     end
-    clear_spent()
+    clear_spent(list)
 end
 
 function observe.install(behavior: Definition): ()
