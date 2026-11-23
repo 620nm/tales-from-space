@@ -37,6 +37,7 @@ local function offer(player: Player, choice: Offer, status: string?, opening: bo
         actions[choice] = 0
     end
     local view: { [string]: any } = {
+        title = ui_label.pack("lunatic/tfs:observe.title"),
         labels = {
             leave = ui_label.pack("lunatic/tfs:observe.leave"),
             ["return"] = ui_label.pack("lunatic/tfs:observe.return"),

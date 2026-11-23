@@ -120,7 +120,7 @@ export function documents(view: GameplayView): UiNode[] {
     // belongs to the document, not to every surface the pack opens.
     const module = state as Partial<ModuleState>;
     const footer = module.notice ? renderLabel(module.notice) : S.tfs(active ? "ui.document.available" : "ui.document.unavailable");
-    const heading = text(`${id}/heading`, module.name ?? doc.title, ["doc-heading"]);
+    const heading = text(`${id}/heading`, module.name || doc.title || scriptTitle(state), ["doc-heading"]);
     const refusal = refusalDialog(id, doc, module);
     return screen(id, {
       toolbar: [module.link ? row(`${id}/head`, some(heading, linkMeta(id, module, ["doc-heading-meta"], ["doc-heading-state"])), { cls: ["doc-head"] }) : heading],
@@ -143,7 +143,7 @@ export function documents(view: GameplayView): UiNode[] {
       ? { primarySave: save }
       : {}), window: {
       ...(node.class?.includes("computer-screen") ? { contentAspectRatio: 16 / 9, minWidth: 740, maximizable: true, titleAsset } : {}),
-      key: `document/${doc.id}/${doc.generation}`, title: tool?.name ?? doc.title, source: "status",
+      key: `document/${doc.id}/${doc.generation}`, title: tool?.name || doc.title || scriptTitle(doc.state ?? {}), source: "status",
       close: `doc/${doc.id}/${doc.generation}/close`,
       document: doc.id, generation: doc.generation, height: 520, width: Number(node.style?.width) || 520 } };
   });
@@ -192,14 +192,26 @@ function buildRows(
     : [];
 }
 
-/** A script data record's top-level `labels`: typed labels by action id. */
+/** A script data record's top-level `labels`: typed labels by action id.
+ *  Its `title` names the window instead of reading as a data row. */
 function splitLabels(data: Json | undefined): { readings: Json | undefined; labels: Record<string, string> } {
   if (!data || typeof data !== "object" || Array.isArray(data)) return { readings: data, labels: {} };
-  const { labels, ...readings } = data as Record<string, Json>;
+  const { labels, title: _title, ...readings } = data as Record<string, Json>;
   const named: Record<string, string> = {};
   if (labels && typeof labels === "object" && !Array.isArray(labels))
     for (const [action, label] of Object.entries(labels)) named[action] = readoutText(label);
   return { readings, labels: named };
+}
+
+/** The title a script view declares for its own window: participant
+ *  documents arrive with no engine title, so the view's word is the
+ *  only one the frame can wear. */
+function scriptTitle(state: Partial<DocumentState>): string {
+  const data = state.document === "script"
+    ? (state as Partial<ScriptState>).data
+    : (state as Partial<ModuleState>).script?.data;
+  if (!data || typeof data !== "object" || Array.isArray(data)) return "";
+  return readoutText((data as Record<string, Json>).title);
 }
 
 /** A script view model: its data as readings, its offers as presses. */

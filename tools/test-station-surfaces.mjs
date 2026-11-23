@@ -62,6 +62,24 @@ test("empty documents retain a labeled body and status", async () => {
   assert.equal(nodes.find((node) => node.id === "doc/1/1/empty").text, "No entries are available.");
   assert.equal(nodes.find((node) => node.id === "doc/1/1/status").text, "Ready");
 });
+test("a participant script window wears the title its view declares", async () => {
+  const packLabel = (pack) => ({ keyed: { reference: { pack }, args: [] } });
+  const view = await fixture("document/document-empty");
+  view.documents = { 7: { id: 7, generation: 1, title: "", state: {
+    document: "script", status: 2,
+    data: {
+      title: packLabel("lunatic/tfs:observe.title"),
+      labels: { leave: packLabel("lunatic/tfs:observe.leave") },
+    },
+    actions: [{ id: "leave", input: 0 }],
+  } } };
+  const nodes = flatten(ui.render(view));
+  assert.equal(nodes.find((node) => node.window?.key === "document/7/1").window.title, "Observe");
+  assert.equal(nodes.find((node) => node.id === "doc/7/1/heading").text, "Observe");
+  assert.equal(nodes.find((node) => node.id === "doc/7/1/action/0").text, "Leave body to observe");
+  assert.equal(nodes.filter((node) => node.text === "Observe").length, 1,
+    "the title names the frame once, never a data row of its own");
+});
 test("device cards say each node's state, and gone once forgotten", async () => {
   const view = await fixture("document/document-link-refused");
   const state = view.documents[1].state;
