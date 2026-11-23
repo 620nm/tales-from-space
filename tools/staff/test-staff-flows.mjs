@@ -15,7 +15,7 @@ const output = await build({
       "export { readStaff } from './staff/model';",
       "export { cachedCase, contextFullRows, contextPageFor, MAX_CASE_ENTRIES, MAX_CASE_NESTED_ROWS, MAX_CONTEXT_ENTRIES, MAX_CONTEXT_PAGES, MAX_CONTEXT_PROFILES, MAX_CONTEXT_ROWS, rememberRecordResponse, resetRecordCaches, responseProfileFor } from './staff/cases/records';",
     ].join("\n"),
-    resolveDir: fileURLToPath(new URL("../ui", import.meta.url)),
+    resolveDir: fileURLToPath(new URL("../../ui", import.meta.url)),
     loader: "ts",
   },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
@@ -29,10 +29,10 @@ const { ui, cachedCase, createCaseRequest, readStaff, resetStaffFlows, contextFu
 );
 globalThis.__lunaticLocale = {
   tag: "en",
-  catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))),
+  catalog: JSON.parse(await readFile(new URL("../../locale/en.json", import.meta.url))),
 };
 
-const fixture = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-live.json", import.meta.url))).view;
+const fixture = JSON.parse(await readFile(new URL("../../ui/staff/fixtures/staff-live.json", import.meta.url))).view;
 const anchor = { round: "84", kind: "body", id: "4294967297" };
 const secondAnchor = { round: "84", kind: "item", id: "4294967300" };
 const account = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
@@ -218,7 +218,7 @@ test("opening a case does not trap navigation and profile drill remains an input
   assert.equal(nodes(tree).some((node) => node.id === "staff/live/layout"), true);
   assert.equal(nodes(tree).some((node) => node.id === "staff/live/inspector"), false);
 
-  const casesFixture = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-cases.json", import.meta.url))).view;
+  const casesFixture = JSON.parse(await readFile(new URL("../../ui/staff/fixtures/staff-cases.json", import.meta.url))).view;
   resetStaffFlows();
   ui.onEvent({ id: "staff/workspace/cases", type: "activate" }, casesFixture);
   ui.render(casesFixture);

@@ -7,11 +7,11 @@ const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw Error("Pass the engine checkout path.");
 const { build } = await import(pathToFileURL(resolve(engine, "web/node_modules/esbuild/lib/main.js")));
 const output = await build({
-  entryPoints: [fileURLToPath(new URL("../ui/staff/cases/records.ts", import.meta.url))],
+  entryPoints: [fileURLToPath(new URL("../../ui/staff/cases/records.ts", import.meta.url))],
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
   bundle: true, format: "esm", platform: "node", write: false,
 });
-globalThis.__lunaticLocale = { tag: "en", catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))) };
+globalThis.__lunaticLocale = { tag: "en", catalog: JSON.parse(await readFile(new URL("../../locale/en.json", import.meta.url))) };
 const { cursorReopenQuery } = await import(`data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString("base64")}`);
 
 const anchor = { round: "4", kind: "entity", id: "9" };

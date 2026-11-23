@@ -13,7 +13,7 @@ const output = await build({
       "export { staffNotice } from './staff/notice';",
       "export { HISTORY_NOT_RECORDED, STORAGE_FAILED, NO_HISTORY } from './staff/strings';",
     ].join("\n"),
-    resolveDir: fileURLToPath(new URL("../ui", import.meta.url)),
+    resolveDir: fileURLToPath(new URL("../../ui", import.meta.url)),
     loader: "ts",
   },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },

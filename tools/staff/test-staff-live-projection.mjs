@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test } from "node:test";
-import "./node/sdk-preamble.mjs";
+import "../node/sdk-preamble.mjs";
 
 const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw new Error("Pass the engine checkout path.");
@@ -15,7 +15,7 @@ const output = await build({
       "export { readStaff } from './staff/model';",
       "export { selectedEntity } from './staff/live';",
     ].join("\n"),
-    resolveDir: fileURLToPath(new URL("../ui", import.meta.url)),
+    resolveDir: fileURLToPath(new URL("../../ui", import.meta.url)),
     loader: "ts",
   },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
@@ -38,7 +38,7 @@ const { validateTree } = await import(
   `data:text/javascript;base64,${Buffer.from(contractOutput.outputFiles[0].text).toString("base64")}`,
 );
 
-const source = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-live.json", import.meta.url)));
+const source = JSON.parse(await readFile(new URL("../../ui/staff/fixtures/staff-live.json", import.meta.url)));
 
 function cloneView() {
   return structuredClone(source.view);

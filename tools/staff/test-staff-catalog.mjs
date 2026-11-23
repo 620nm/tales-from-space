@@ -3,13 +3,13 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test } from "node:test";
-import "./node/sdk-preamble.mjs";
+import "../node/sdk-preamble.mjs";
 
 const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw Error("Pass the engine checkout path.");
 const { build } = await import(pathToFileURL(resolve(engine, "web/node_modules/esbuild/lib/main.js")));
 const output = await build({
-  stdin: { contents: "export { default as ui } from './staff/main';", resolveDir: fileURLToPath(new URL("../ui", import.meta.url)), loader: "ts" },
+  stdin: { contents: "export { default as ui } from './staff/main';", resolveDir: fileURLToPath(new URL("../../ui", import.meta.url)), loader: "ts" },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
   bundle: true, format: "esm", platform: "node", write: false,
 });
@@ -19,7 +19,7 @@ const contractOutput = await build({
 });
 const { ui } = await import(`data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString("base64")}`);
 const { validateTree } = await import(`data:text/javascript;base64,${Buffer.from(contractOutput.outputFiles[0].text).toString("base64")}`);
-const fixture = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-live.json", import.meta.url)));
+const fixture = JSON.parse(await readFile(new URL("../../ui/staff/fixtures/staff-live.json", import.meta.url)));
 const view = structuredClone(fixture.view);
 view.state.staff.payload.roster = {
   items: [{ kind: "item", prototype: "ambient", name: "Ambient", default_properties: {}, properties: [] }],

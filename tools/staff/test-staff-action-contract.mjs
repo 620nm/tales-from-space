@@ -10,7 +10,7 @@ const { build } = await import(pathToFileURL(resolve(engine, "web/node_modules/e
 const output = await build({
   stdin: {
     contents: "export { staffRequest } from './staff/shared/actions';",
-    resolveDir: fileURLToPath(new URL("../ui", import.meta.url)),
+    resolveDir: fileURLToPath(new URL("../../ui", import.meta.url)),
     loader: "ts",
   },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },

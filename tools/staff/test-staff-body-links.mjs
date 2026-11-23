@@ -14,7 +14,7 @@ const output = await build({
       "export { entitiesForRef } from './staff/cases/records';",
       "export { profileDrill } from './staff/profile';",
     ].join("\n"),
-    resolveDir: fileURLToPath(new URL("../ui", import.meta.url)),
+    resolveDir: fileURLToPath(new URL("../../ui", import.meta.url)),
     loader: "ts",
   },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
@@ -28,10 +28,10 @@ const { readStaff, entitiesForRef, profileDrill } = await import(
 );
 globalThis.__lunaticLocale = {
   tag: "en",
-  catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))),
+  catalog: JSON.parse(await readFile(new URL("../../locale/en.json", import.meta.url))),
 };
 
-const fixture = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-live.json", import.meta.url))).view;
+const fixture = JSON.parse(await readFile(new URL("../../ui/staff/fixtures/staff-live.json", import.meta.url))).view;
 const round = "84";
 const accountA = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 const accountB = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";

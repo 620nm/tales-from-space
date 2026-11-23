@@ -14,7 +14,7 @@ const output = await build({
       "export { profileView, resetProfileCaches, messageCount } from './staff/profile/data';",
       "export { resetActionScope, staffRequest } from './staff/shared/actions';",
     ].join("\n"),
-    resolveDir: fileURLToPath(new URL("../ui", import.meta.url)),
+    resolveDir: fileURLToPath(new URL("../../ui", import.meta.url)),
     loader: "ts",
   },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
@@ -24,8 +24,8 @@ const { readStaff, profileView, resetProfileCaches, messageCount, resetActionSco
   `data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString("base64")}`,
 );
 
-globalThis.__lunaticLocale = { tag: "en", catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))) };
-const fixture = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-profile.json", import.meta.url))).view;
+globalThis.__lunaticLocale = { tag: "en", catalog: JSON.parse(await readFile(new URL("../../locale/en.json", import.meta.url))) };
+const fixture = JSON.parse(await readFile(new URL("../../ui/staff/fixtures/staff-profile.json", import.meta.url))).view;
 const accountId = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 const account = { round: "", kind: "account", id: accountId };
 const conversation = { round: "84", kind: "conversation", id: "7001" };

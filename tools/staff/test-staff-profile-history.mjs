@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test } from "node:test";
-import { createGuest } from "./ui-runtime-harness.mjs";
+import { createGuest } from "../ui-runtime-harness.mjs";
 
 const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw new Error("Pass the engine checkout path.");
@@ -19,7 +19,7 @@ const output = await build({
       "export { identityCard } from './staff/shared/identity-card';",
       "export { historicalEventTime } from './staff/shared/presentation';",
     ].join("\n"),
-    resolveDir: fileURLToPath(new URL("../ui", import.meta.url)),
+    resolveDir: fileURLToPath(new URL("../../ui", import.meta.url)),
     loader: "ts",
   },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
@@ -31,7 +31,7 @@ const formatterBundle = await build({
       "import { historicalEventTime } from './staff/shared/presentation';",
       "export default { render(view) { return { id: 'timestamp', type: 'text', text: historicalEventTime(undefined, view.timestamp) }; } };",
     ].join("\n"),
-    resolveDir: fileURLToPath(new URL("../ui", import.meta.url)),
+    resolveDir: fileURLToPath(new URL("../../ui", import.meta.url)),
     loader: "ts",
   },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
@@ -42,11 +42,11 @@ const { ui, readStaff, conversationFor, eventFrom, profileView, readRef, identit
 );
 globalThis.__lunaticLocale = {
   tag: "en",
-  catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))),
+  catalog: JSON.parse(await readFile(new URL("../../locale/en.json", import.meta.url))),
 };
 
-const fixture = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-profile.json", import.meta.url)));
-const liveFixture = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-live.json", import.meta.url)));
+const fixture = JSON.parse(await readFile(new URL("../../ui/staff/fixtures/staff-profile.json", import.meta.url)));
+const liveFixture = JSON.parse(await readFile(new URL("../../ui/staff/fixtures/staff-live.json", import.meta.url)));
 const view = fixture.view;
 const payload = view.state.staff.payload;
 const accountId = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";

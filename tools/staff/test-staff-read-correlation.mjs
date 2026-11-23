@@ -16,15 +16,15 @@ const output = await build({
     "export { resetRoundPanel, roundControlDisabled, roundRefusalText } from './staff/round';",
     "export { conversationFor, profileView, resetProfileCaches, warningCount, messageCount } from './staff/profile/data';",
     "export { staffRequest, resetActionScope } from './staff/shared/actions';",
-  ].join("\n"), resolveDir: fileURLToPath(new URL("../ui", import.meta.url)), loader: "ts" },
+  ].join("\n"), resolveDir: fileURLToPath(new URL("../../ui", import.meta.url)), loader: "ts" },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") }, bundle: true, format: "esm", platform: "node", write: false,
 });
 const { begin, event, readStaff, profileCard, resetStaffLocal, staffScreen, resetRoundPanel, roundControlDisabled, roundRefusalText, conversationFor, profileView, resetProfileCaches, warningCount, messageCount, staffRequest, resetActionScope } = await import(
   `data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString("base64")}`,
 );
 
-globalThis.__lunaticLocale = { tag: "en", catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))) };
-const fixture = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-profile.json", import.meta.url))).view;
+globalThis.__lunaticLocale = { tag: "en", catalog: JSON.parse(await readFile(new URL("../../locale/en.json", import.meta.url))) };
+const fixture = JSON.parse(await readFile(new URL("../../ui/staff/fixtures/staff-profile.json", import.meta.url))).view;
 const accountId = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 const account = { round: "", kind: "account", id: accountId };
 

@@ -9,7 +9,7 @@ const { build } = await import(pathToFileURL(resolve(engine, "web/node_modules/e
 const output = await build({
   stdin: {
     contents: "export { refKey as recordsRefKey, uniqueRefs } from './staff/cases/records';\nexport { refKey as modelRefKey } from './staff/model';",
-    resolveDir: fileURLToPath(new URL("../ui", import.meta.url)),
+    resolveDir: fileURLToPath(new URL("../../ui", import.meta.url)),
     loader: "ts",
   },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },

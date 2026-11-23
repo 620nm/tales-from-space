@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test } from "node:test";
-import "./node/sdk-preamble.mjs";
+import "../node/sdk-preamble.mjs";
 
 const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw Error("Pass the engine checkout path.");
@@ -16,7 +16,7 @@ const output = await build({
     "export { beginProfileRender, observeDisplayedConversation, observeDisplayedProfile, profileViewAction, resetProfileFlows, warningRequest, profileNoteRequest, conversationRequest, messageRequest } from './staff/profile/flows';",
     "export { profileDrill } from './staff/profile';",
     "export { MAX_CONVERSATION_MESSAGES, MAX_PROFILE_ROWS, conversationFor, profileView, resetProfileCaches } from './staff/profile/data';",
-  ].join("\n"), resolveDir: fileURLToPath(new URL("../ui", import.meta.url)), loader: "ts",
+  ].join("\n"), resolveDir: fileURLToPath(new URL("../../ui", import.meta.url)), loader: "ts",
   },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") }, bundle: true, format: "esm", platform: "node", write: false,
 });
@@ -24,7 +24,7 @@ const { ui, readStaff, resetStaffFlows, beginProfileRender, observeDisplayedConv
   `data:text/javascript;base64,${Buffer.from(output.outputFiles[0].text).toString("base64")}`,
 );
 
-const fixture = JSON.parse(await readFile(new URL("../ui/staff/fixtures/staff-profile.json", import.meta.url))).view;
+const fixture = JSON.parse(await readFile(new URL("../../ui/staff/fixtures/staff-profile.json", import.meta.url))).view;
 const accountId = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 const otherAccount = "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
 const account = { round: "", kind: "account", id: accountId };
