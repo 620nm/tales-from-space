@@ -175,6 +175,59 @@ test("native selected payload keeps identity, profile card and capability array"
   assert.equal(node(view, "staff/live/edit/duplicate")?.disabled, undefined);
 });
 
+test("successful Freeze reply updates the caption and next press sends the inverse", () => {
+  const view = cloneView();
+  const { selected, records } = view.state.staff.payload;
+  const target = selected.target;
+  const button = "staff/live/freeze";
+  const caption = () => node(view, button)?.text;
+  const tap = () => ui.onEvent({ id: button, type: "activate" }, view).action.request;
+  const reply = (request_id, query, result, error = null) => {
+    records.response = { request_id, query, result, error, refs: [] };
+    return caption();
+  };
+  const echo = (on, id = Number(target.id)) => ({ Freeze: { target: id, on } });
+  const inspect = (id) => reply(id, { Inspect: { target } }, selected);
+  const success = { action: "freeze" };
+
+  ui.render(view);
+  ui.onEvent({ id: "staff/live/tab/read", type: "activate" }, view);
+  assert.equal(inspect("world-inspect-before"), "Freeze");
+  const first = tap();
+  const repeated = tap();
+  assert.deepEqual(first.action.Freeze, { target: target.id, on: true });
+  assert.equal(caption(), "Freeze", "sending the request leaves the inspected state in force");
+  assert.equal(reply("another-request", echo(true), success), "Freeze");
+  assert.equal(reply(first.request_id, echo(true), success), "Unfreeze");
+  assert.equal(repeated.request_id, first.request_id, "a pending tap reuses the same request");
+  assert.equal(selected.payload.frozen, false, "the selected inspection stayed unchanged");
+  assert.equal(reply("records-query", { op: "cases" }, { kind: "cases" }), "Unfreeze");
+
+  const second = tap();
+  assert.deepEqual(second.action.Freeze, { target: target.id, on: false });
+  assert.equal(reply(second.request_id, echo(false, 23), success), "Unfreeze", "wrong target");
+  const retry = tap();
+  assert.notEqual(retry.request_id, second.request_id);
+  assert.equal(reply(retry.request_id, echo(false), null, "refused"), "Unfreeze");
+  assert.equal(inspect("world-inspect-after"), "Freeze", "a fresh world inspection supersedes the receipt");
+
+  const selectBody = (id) => {
+    selected.target.id = id;
+    selected.payload.reference.id = id;
+    selected.payload.entity_id = id;
+    records.response = null;
+    assert.equal(caption(), "Freeze");
+    return tap();
+  };
+  const left = selectBody("9007199254740992");
+  const right = selectBody("9007199254740993");
+  const rounded = Number(left.action.Freeze.target);
+  assert.equal(rounded, Number(right.action.Freeze.target));
+  assert.notEqual(left.request_id, right.request_id);
+  assert.equal(reply(left.request_id, echo(true, rounded), success), "Freeze", "late receipt for the previous body");
+  assert.equal(reply(right.request_id, echo(true, rounded), success), "Unfreeze");
+});
+
 test("cached authoritative identity role overrides ambient profile and card", () => {
   const view = cloneView();
   const accountId = "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd";

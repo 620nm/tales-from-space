@@ -59,9 +59,10 @@ function intervention(session: StaffSession, entity: StaffEntity): UiNode {
   const reason = (action: string): UiNode | null => capability(entity, action)
     ? null
     : textNode(`staff/live/intervene/reason/${action}`, entity.capabilityReasons?.[action] ?? S.NO_CONTROLS, "staff-muted");
+  const frozen = state.freeze?.acknowledged ?? entity.frozen;
   return Section("staff/live/intervene", S.INTERVENE, [
     Stack("staff/live/intervene/primary", [
-      nativePress("staff/live/freeze", entity.frozen ? S.UNFREEZE : S.FREEZE, session, { kind: "freeze", target: entity.id, on: !entity.frozen }, { variant: entity.frozen ? "selected" : "primary", disabled: !capability(entity, "freeze") }),
+      nativePress("staff/live/freeze", frozen ? S.UNFREEZE : S.FREEZE, session, { kind: "freeze", target: entity.id, on: !frozen }, { variant: frozen ? "selected" : "primary", disabled: !capability(entity, "freeze") }),
       nativePress("staff/live/restore", S.RESTORE, session, { kind: "edit", edit: { kind: "restore", target: entity.id } }, { variant: "default", disabled: !capability(entity, "restore") }),
       nativePress("staff/live/drive", session.driving === entity.id ? S.RELEASE : S.DRIVE, session, { kind: session.driving === entity.id ? "release" : "drive", target: entity.id }, { variant: "ghost", disabled: !capability(entity, "drive") }),
     ], { cls: ["staff-action-row"], gap: 5, wrap: true }),

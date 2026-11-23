@@ -1,7 +1,8 @@
 import type { Json, UiNode } from "@lunatic/ui";
 import { Button } from "@lunatic/ui";
 import { bind, press } from "../../view";
-import type { StaffRef, StaffSession } from "../model";
+import { refKey, type StaffRef, type StaffSession } from "../model";
+import { liveState } from "../live/state";
 import { rememberStaffRead, resetReadIntents } from "../profile/read-intents";
 
 export type StaffAction = Record<string, Json>;
@@ -38,10 +39,14 @@ export function resetActionScope(): void {
 
 /** Encode one pack action into the exact native StaffRequest envelope. */
 export function staffRequest(session: StaffSession, action: StaffAction): Json {
+  const target = session.inspector?.target;
+  const selection = action.kind === "freeze" ? liveState(session).freeze : null;
+  const freeze = selection && target?.id === action.target && selection.target === refKey(target) ? selection : null;
+  if (freeze?.pending) return freeze.pending.command;
   counter += 1;
   const requestId = `${prefix}-${counter}`;
   rememberStaffRead(session.roundId, requestId, action);
-  return {
+  const command = {
     kind: "staff",
     request: {
       request_id: requestId,
@@ -50,6 +55,8 @@ export function staffRequest(session: StaffSession, action: StaffAction): Json {
       action: encodeAction(action),
     },
   };
+  if (freeze && typeof action.on === "boolean") freeze.pending = { id: requestId, on: action.on, command };
+  return command;
 }
 
 /** Records requests stay JSON text because the engine owns their schema. */

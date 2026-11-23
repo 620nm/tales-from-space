@@ -1,3 +1,6 @@
+import type { Json } from "@lunatic/ui";
+import { refKey } from "../../refs";
+import { objectValue, readRef } from "../cases/records";
 import type { StaffCatalogEntry, StaffRef, StaffSession } from "../model";
 
 export type SpawnKind = "item" | "structure" | "machine" | "mob" | "body";
@@ -23,7 +26,15 @@ export interface SpawnCatalogState {
   pages: Record<string, CatalogPage>;
 }
 
+interface FreezeSelection {
+  target: string;
+  acknowledged?: boolean;
+  pending?: { id: string; on: boolean; command: Json };
+  lastInspect?: string;
+}
+
 export interface LiveLocalState {
+  freeze: FreezeSelection | null;
   roundId: string;
   inspector: "read" | "edit" | "audit";
   query: string;
@@ -44,6 +55,7 @@ export interface LiveLocalState {
 }
 
 const fresh = (roundId: string): LiveLocalState => ({
+  freeze: null,
   roundId,
   inspector: "read",
   query: "",
@@ -72,6 +84,42 @@ let local = fresh("");
 export function liveState(session: StaffSession): LiveLocalState {
   if (local.roundId !== session.roundId) local = fresh(session.roundId);
   return local;
+}
+
+/** A Freeze receipt sets the caption until a fresh Inspect supplies the selected entity again. */
+export function observeFreezeReply(session: StaffSession | null): void {
+  if (!session) {
+    local.freeze = null;
+    return;
+  }
+  const state = liveState(session);
+  const selected = session.inspector;
+  if (!session.active || !selected?.found || selected.tombstone || selected.target.round !== session.roundId) {
+    state.freeze = null;
+    return;
+  }
+  const target = refKey(selected.target);
+  if (state.freeze?.target !== target) state.freeze = { target };
+  const freeze = state.freeze;
+  const reply = session.records?.response;
+  if (!reply) return;
+
+  const query = objectValue(reply.query);
+  if (freeze.pending && reply.request_id === freeze.pending.id) {
+    const { on } = freeze.pending;
+    delete freeze.pending;
+    const echo = objectValue(query?.Freeze);
+    // Large numeric echoes round in JS. The request id and selected reference retain exact identity.
+    if (reply.error == null && reply.result?.action === "freeze" && echo?.on === on
+      && (echo.target === selected.target.id || echo.target === Number(selected.target.id))) {
+      freeze.acknowledged = on;
+    }
+  } else if (reply.error == null && query?.Inspect && reply.result?.found === true && reply.request_id !== freeze.lastInspect
+    && refKey(readRef(objectValue(query.Inspect)?.target, session.roundId)) === target
+    && refKey(readRef(reply.result.target, session.roundId)) === target) {
+    freeze.lastInspect = reply.request_id;
+    delete freeze.acknowledged;
+  }
 }
 
 export function selectedRef(session: StaffSession): StaffRef | null {

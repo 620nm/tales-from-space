@@ -13,10 +13,12 @@ import { applyFlowLocal, caseFlowPending, staffViewAction } from "./flows";
 import { cursorReopenQuery } from "./cases/records";
 import { staffRequest } from "./shared/actions";
 import { beginProfileRender, profileViewAction } from "./profile/flows";
+import { observeFreezeReply } from "./live/state";
 
 /** Staff package entry; the ordinary gameplay package never renders this. */
 export function staffScreen(view: GameplayView): UiNode | null {
   const session = readStaff(view);
+  observeFreezeReply(session);
   if (!session || !session.allowed) return null;
   beginProfileRender(session);
   const state = staffLocal(session);
@@ -94,6 +96,7 @@ const ui: GuestUi = {
   onView(raw) {
     const view = raw as unknown as GameplayView;
     const session = readStaff(view);
+    observeFreezeReply(session);
     // Case opening owns the first response-chain turn. The profile observer
     // still records its own response while that chain is queued, but it never
     // gets to overtake a case read.
