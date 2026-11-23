@@ -71,6 +71,11 @@ test("the shared title screen resolves its pack words", () => {
   assert.equal(UI.renderLabel(packLabel("lunatic/tfs:title.language")), "Language");
 });
 
+test("the browser playtest refusal resolves its pack-worded reason", () => {
+  assert.equal(UI.renderLabel(packLabel("lunatic/tfs:editor.playtest_unavailable")),
+    "Playtest requires the desktop app.");
+});
+
 test("structural labels use the pack's fully-qualified catalog key", () => {
   assert.equal(UI.renderLabel(structuralLabel("link.state.online")), catalog["lunatic/tfs:module.link.state.online"]);
 });

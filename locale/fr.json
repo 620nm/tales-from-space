@@ -168,5 +168,6 @@
   "lunatic/tfs:title.heading": "Tales from Space",
   "lunatic/tfs:title.editor": "Éditeur de carte",
   "lunatic/tfs:title.connect": "Se connecter à un serveur",
-  "lunatic/tfs:title.language": "Langue"
+  "lunatic/tfs:title.language": "Langue",
+  "lunatic/tfs:editor.playtest_unavailable": "Le test de jeu nécessite l'application de bureau."
 }

@@ -1907,5 +1907,6 @@
   "lunatic/tfs:title.heading": "Tales from Space",
   "lunatic/tfs:title.editor": "Map editor",
   "lunatic/tfs:title.connect": "Connect to a server",
-  "lunatic/tfs:title.language": "Language"
+  "lunatic/tfs:title.language": "Language",
+  "lunatic/tfs:editor.playtest_unavailable": "Playtest requires the desktop app."
 }

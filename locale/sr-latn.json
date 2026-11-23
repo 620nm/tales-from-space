@@ -77,5 +77,6 @@
   "lunatic/tfs:title.heading": "Tales from Space",
   "lunatic/tfs:title.editor": "Uređivač mape",
   "lunatic/tfs:title.connect": "Poveži se na server",
-  "lunatic/tfs:title.language": "Jezik"
+  "lunatic/tfs:title.language": "Jezik",
+  "lunatic/tfs:editor.playtest_unavailable": "Testiranje zahteva desktop aplikaciju."
 }
