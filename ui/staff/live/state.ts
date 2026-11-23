@@ -27,7 +27,7 @@ export interface SpawnCatalogState {
 }
 
 interface FreezeSelection {
-  target: string;
+  target: StaffRef;
   acknowledged?: boolean;
   pending?: { id: string; on: boolean; command: Json };
   lastInspect?: string;
@@ -88,21 +88,25 @@ export function liveState(session: StaffSession): LiveLocalState {
 
 /** A Freeze receipt sets the caption until a fresh Inspect supplies the selected entity again. */
 export function observeFreezeReply(session: StaffSession | null): void {
-  if (!session) {
+  if (!session?.active) {
     local.freeze = null;
     return;
   }
   const state = liveState(session);
   const selected = session.inspector;
-  if (!session.active || !selected?.found || selected.tombstone || selected.target.round !== session.roundId) {
-    state.freeze = null;
-    return;
+  // The active view can omit the inspection between the edit and its receipt.
+  if (selected) {
+    if (!selected.found || selected.tombstone || selected.target.round !== session.roundId) {
+      state.freeze = null;
+      return;
+    }
+    if (!state.freeze || refKey(state.freeze.target) !== refKey(selected.target)) {
+      state.freeze = { target: { ...selected.target } };
+    }
   }
-  const target = refKey(selected.target);
-  if (state.freeze?.target !== target) state.freeze = { target };
   const freeze = state.freeze;
   const reply = session.records?.response;
-  if (!reply) return;
+  if (!freeze || !reply) return;
 
   const query = objectValue(reply.query);
   if (freeze.pending && reply.request_id === freeze.pending.id) {
@@ -111,12 +115,12 @@ export function observeFreezeReply(session: StaffSession | null): void {
     const echo = objectValue(query?.Freeze);
     // Large numeric echoes round in JS. The request id and selected reference retain exact identity.
     if (reply.error == null && reply.result?.action === "freeze" && echo?.on === on
-      && (echo.target === selected.target.id || echo.target === Number(selected.target.id))) {
+      && (echo.target === freeze.target.id || echo.target === Number(freeze.target.id))) {
       freeze.acknowledged = on;
     }
   } else if (reply.error == null && query?.Inspect && reply.result?.found === true && reply.request_id !== freeze.lastInspect
-    && refKey(readRef(objectValue(query.Inspect)?.target, session.roundId)) === target
-    && refKey(readRef(reply.result.target, session.roundId)) === target) {
+    && refKey(readRef(objectValue(query.Inspect)?.target, session.roundId)) === refKey(freeze.target)
+    && refKey(readRef(reply.result.target, session.roundId)) === refKey(freeze.target)) {
     freeze.lastInspect = reply.request_id;
     delete freeze.acknowledged;
   }

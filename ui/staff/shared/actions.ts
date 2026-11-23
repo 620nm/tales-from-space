@@ -41,7 +41,7 @@ export function resetActionScope(): void {
 export function staffRequest(session: StaffSession, action: StaffAction): Json {
   const target = session.inspector?.target;
   const selection = action.kind === "freeze" ? liveState(session).freeze : null;
-  const freeze = selection && target?.id === action.target && selection.target === refKey(target) ? selection : null;
+  const freeze = selection && target?.id === action.target && refKey(selection.target) === refKey(target) ? selection : null;
   if (freeze?.pending) return freeze.pending.command;
   counter += 1;
   const requestId = `${prefix}-${counter}`;

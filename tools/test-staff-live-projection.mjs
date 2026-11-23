@@ -198,6 +198,9 @@ test("successful Freeze reply updates the caption and next press sends the inver
   assert.deepEqual(first.action.Freeze, { target: target.id, on: true });
   assert.equal(caption(), "Freeze", "sending the request leaves the inspected state in force");
   assert.equal(reply("another-request", echo(true), success), "Freeze");
+  view.state.staff.payload.selected = null;
+  assert.equal(caption(), undefined, "the native update can omit the inspected target");
+  view.state.staff.payload.selected = selected;
   assert.equal(reply(first.request_id, echo(true), success), "Unfreeze");
   assert.equal(repeated.request_id, first.request_id, "a pending tap reuses the same request");
   assert.equal(selected.payload.frozen, false, "the selected inspection stayed unchanged");
@@ -226,6 +229,13 @@ test("successful Freeze reply updates the caption and next press sends the inver
   assert.notEqual(left.request_id, right.request_id);
   assert.equal(reply(left.request_id, echo(true, rounded), success), "Freeze", "late receipt for the previous body");
   assert.equal(reply(right.request_id, echo(true, rounded), success), "Unfreeze");
+  const unfreeze = tap();
+  view.state.staff.payload.selected = null;
+  assert.equal(reply(unfreeze.request_id, echo(false, rounded), success), undefined);
+  records.response = null;
+  selected.payload.frozen = true;
+  view.state.staff.payload.selected = selected;
+  assert.equal(caption(), "Freeze", "a receipt delivered during the gap belongs to its target");
 });
 
 test("cached authoritative identity role overrides ambient profile and card", () => {
