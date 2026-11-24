@@ -16,7 +16,7 @@ local FILTERED = [==[(
             structures: [
                 (1, 1, "player_spawn", { "jobs": "medic", "roles": "builder" }),
                 (2, 1, "player_spawn", { "jobs": "medic", "roles": "crew" }),
-                (3, 1, "player_spawn", { "jobs": "engineer" }),
+                (3, 1, "player_spawn", { "jobs": "engineer", "fallback": true }),
                 (4, 1, "threat_spawn", { "weight": 0 }),
             ],
         ),
@@ -37,14 +37,12 @@ local engineer = t.join("engineer")
 x, y = t.pos(engineer)
 assert(x == 3 and y == 1, "the engineer uses its job marker")
 
--- A job with no matching marker is not refused: the fallback tier
--- always answers, landing the joiner on some marker the map has.
+-- A job with no matching marker is not refused when the map
+-- authors a fallback: the fallback tier answers last, on the
+-- one marker marked for anyone.
 local assistant = t.join("assistant")
 x, y = t.pos(assistant)
-assert(
-    y == 1 and (x == 1 or x == 2 or x == 3),
-    "a job with no matching marker falls back to any marker"
-)
+assert(x == 3 and y == 1, "a job with no matching marker lands on the fallback")
 
 -- Free Build supplies its own default role. This exercises the same
 -- marker schema with a different mode policy.
