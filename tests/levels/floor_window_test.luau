@@ -53,7 +53,7 @@ t.world(
     ],
 )]==],
     0,
-    "free_build"
+    "space_station"
 )
 -- Nobody breathes: lungs would be a source and a sink in the tracer books.
 t.set_breathing(false)
@@ -241,7 +241,7 @@ t.world(
     ],
 )]==],
     0,
-    "free_build"
+    "space_station"
 )
 local looker = t.join()
 t.run_ticks(4)

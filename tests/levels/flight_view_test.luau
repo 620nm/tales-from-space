@@ -90,7 +90,7 @@ t.world(
     ],
 )]==],
     0,
-    "free_build"
+    "space_station"
 )
 local climber = t.join("engineer")
 local leaner = t.join("medic")

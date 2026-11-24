@@ -78,7 +78,7 @@ t.world(
     ],
 )]==],
     0,
-    "free_build"
+    "space_station"
 )
 
 local below_hole = t.join("medic")
@@ -175,7 +175,7 @@ local GLASS_ABOVE_STAND = [==[        (
 -- Starts the needle on the stand at (2,1) and reports whether the watcher
 -- and the starter were told.
 local function needle_seen(world: string): (boolean, boolean)
-    t.world(world, 0, "free_build")
+    t.world(world, 0, "space_station")
     local starter = t.join("medic")
     local patient = t.join("assistant")
     local watcher = t.join("engineer")
