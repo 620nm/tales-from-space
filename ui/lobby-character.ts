@@ -242,6 +242,35 @@ function normalDraft(value: unknown): CharacterDraft | null {
 const emptyDraft = (draft: CharacterDraft): boolean =>
   !draft.name && !draft.ranked_jobs.length && !draft.fallback;
 
+/** The server's trim (Rust `str::trim`), not JavaScript's: the two
+ *  differ at U+FEFF, which JS strips and the server keeps, and at
+ *  U+0085, which the server strips and JS keeps. Trimming our way
+ *  would silently change a name the server accepts, or refuse one
+ *  it would accept trimmed. */
+function serverSpace(cp: number): boolean {
+  return (
+    (cp >= 0x09 && cp <= 0x0d) ||
+    cp === 0x20 ||
+    cp === 0x85 ||
+    cp === 0xa0 ||
+    cp === 0x1680 ||
+    (cp >= 0x2000 && cp <= 0x200a) ||
+    cp === 0x2028 ||
+    cp === 0x2029 ||
+    cp === 0x202f ||
+    cp === 0x205f ||
+    cp === 0x3000
+  );
+}
+function serverTrim(name: string): string {
+  const chars = [...name];
+  let lo = 0;
+  let hi = chars.length;
+  while (lo < hi && serverSpace(chars[lo]!.codePointAt(0)!)) lo++;
+  while (hi > lo && serverSpace(chars[hi - 1]!.codePointAt(0)!)) hi--;
+  return chars.slice(lo, hi).join("");
+}
+
 /** The server's name rule, mirrored so a restore it would refuse is
  *  never sent: at most 64 scalars and 256 UTF-8 bytes, no control
  *  characters (engine `sim/preparation_validation.rs`). */
@@ -265,7 +294,7 @@ function restorableDraft(view: LobbyView): CharacterDraft | null {
   const stored = normalDraft(packageRecord(view)?.value?.draft);
   const roster = view.state.jobs?.jobs;
   if (!prep || !stored || !roster) return null;
-  const name = stored.name.trim();
+  const name = serverTrim(stored.name);
   if (!draftNameFits(name)) return null;
   const known = new Set(roster.map((job) => job.key));
   const ranked = [...new Set(stored.ranked_jobs.filter((job) => known.has(job)))];

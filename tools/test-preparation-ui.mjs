@@ -166,6 +166,19 @@ test("a stored draft the server would refuse is never restored", () => {
   assert.equal(act(draftView(122, 0, EMPTY, long)), undefined);
   const control = { name: "Ada" + String.fromCharCode(7), ranked_jobs: [], fallback: true };
   assert.equal(act(draftView(123, 0, EMPTY, control)), undefined);
+  // The restore trims like the server (Rust str::trim), not like
+  // JavaScript: a leading U+0085 is server whitespace, so the name
+  // restores trimmed, while a trailing U+FEFF is kept verbatim.
+  const nel = { name: "\u0085Ada", ranked_jobs: ["engineer"], fallback: false };
+  assert.deepEqual(act(draftView(126, 0, EMPTY, nel)), {
+    kind: "character_draft", round: 126, revision: 0,
+    draft: { name: "Ada", ranked_jobs: ["engineer"], fallback: false },
+  });
+  const feff = { name: "Ada\uFEFF", ranked_jobs: ["engineer"], fallback: false };
+  assert.deepEqual(act(draftView(127, 0, EMPTY, feff)), {
+    kind: "character_draft", round: 127, revision: 0,
+    draft: { name: "Ada\uFEFF", ranked_jobs: ["engineer"], fallback: false },
+  });
   const capped = draftView(124, 0, EMPTY, SAVED);
   const jobs = Array.from({ length: 130 }, (_, i) => ({ key: `job${i}`, name: `Job ${i}` }));
   capped.state.jobs.jobs = jobs;
