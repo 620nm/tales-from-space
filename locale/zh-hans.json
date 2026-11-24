@@ -80,5 +80,5 @@
   "lunatic/tfs:title.connect": "连接到服务器",
   "lunatic/tfs:title.language": "语言",
   "lunatic/tfs:editor.playtest_unavailable": "试玩需要桌面应用。",
-  "lunatic/tfs:lib.playtest_entry.no_spawn_point": "这张地图没有出生点，因此你无处进入。"
+  "lunatic/tfs:lib.playtest_entry.no_spawn_point": "这张地图上没有适合你的出生点，也没有标记为通用备用的出生点。"
 }

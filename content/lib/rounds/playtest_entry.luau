@@ -11,8 +11,8 @@ local STREAM = "playtest_entry.name"
 local NO_SPAWN_POINT = "lunatic/tfs:lib.playtest_entry.no_spawn_point"
 
 -- Participants an assignment was answered for this round, by player
--- key: at join-done, one still bodiless on a map with no spawn point
--- gets the words for it instead of silence.
+-- key: at join-done, one still bodiless whose spawn ask answered
+-- empty gets the words for it instead of silence.
 local attempted: { [string]: boolean } = {}
 
 local function roll(count: number): number
@@ -28,7 +28,7 @@ local function on_join(ev: ParticipantJoinDonePayload): ()
     local player = ev.participant
     local was_attempted = attempted[player.key] == true
     attempted[player.key] = nil
-    if not was_attempted or player.body ~= nil or map_markers.any_player_spawn() then
+    if not was_attempted or player.body ~= nil or not map_markers.take_spawn_refusal(player.key) then
         return
     end
     for _, mind in ipairs(sim.query.minds()) do

@@ -136,16 +136,16 @@ function map_markers.is_fallback(marker: Handle): boolean
     return marker.vars["marker_fallback"] == true
 end
 
--- Whether any player_spawn marker on the join instance can answer:
--- what a joiner with no body was missing, in the pack's own terms.
-function map_markers.any_player_spawn(): boolean
-    local join = sim.join_instance()
-    for _, marker in ipairs(sim.query.all("player_spawn")) do
-        if weight(marker) > 0 and on_join(marker, join) then
-            return true
-        end
-    end
-    return false
+-- Asks that answered empty this round, by player key: the joiner
+-- is bodiless because no marker fit and none was authored fallback,
+-- which is the mapper's fact to hear, not silence.
+local refused: { [string]: boolean } = {}
+
+-- Take (and clear) whether this player's spawn ask answered empty.
+function map_markers.take_spawn_refusal(player_key: string): boolean
+    local was = refused[player_key] == true
+    refused[player_key] = nil
+    return was
 end
 
 -- Tiles already given out this round, by absolute address: an
@@ -243,6 +243,9 @@ function map_markers.player_spawn(ev: RoundSpawnPayload, default_role: string): 
         chosen = draw(fallbacks, "map_markers.player_spawn")
     end
     if chosen == nil then
+        if ev.mind ~= nil then
+            refused[ev.mind.player.key] = true
+        end
         return {}
     end
     ev.at = chosen

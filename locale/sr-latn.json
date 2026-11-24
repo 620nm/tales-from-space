@@ -80,5 +80,5 @@
   "lunatic/tfs:title.connect": "Poveži se na server",
   "lunatic/tfs:title.language": "Jezik",
   "lunatic/tfs:editor.playtest_unavailable": "Testiranje zahteva desktop aplikaciju.",
-  "lunatic/tfs:lib.playtest_entry.no_spawn_point": "Ova mapa nema tačku pojavljivanja, pa nemate gde da uđete."
+  "lunatic/tfs:lib.playtest_entry.no_spawn_point": "Nijedna tačka pojavljivanja na ovoj mapi vam ne odgovara, i nijedna nije označena kao opšta rezerva."
 }

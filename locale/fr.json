@@ -171,5 +171,5 @@
   "lunatic/tfs:title.connect": "Se connecter à un serveur",
   "lunatic/tfs:title.language": "Langue",
   "lunatic/tfs:editor.playtest_unavailable": "Le test de jeu nécessite l'application de bureau.",
-  "lunatic/tfs:lib.playtest_entry.no_spawn_point": "Cette carte n'a aucun point d'apparition, vous ne pouvez donc pas y entrer."
+  "lunatic/tfs:lib.playtest_entry.no_spawn_point": "Aucun point d'apparition de cette carte ne vous convient, et aucun n'est marqué comme repli général."
 }

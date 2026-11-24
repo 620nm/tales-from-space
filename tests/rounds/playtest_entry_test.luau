@@ -86,8 +86,37 @@ assert(not seated, "no marker, no body: the joiner stays bodiless")
 assert(#t.ledger_rows("joined_job") == 0, "and no job admission is rowed")
 local heard = table.concat(t.messages(unseated), " | ")
 assert(
-    heard:find("no spawn point", 1, true) ~= nil,
+    heard:find("fits you", 1, true) ~= nil,
     "and the joiner is told why, in words: " .. heard
+)
+
+-- The same words when markers exist but none fits this ask and none
+-- is authored fallback: silence here was the defect.
+local MEDIC_ONLY = [==[(
+    name: "playtest medic only",
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+    },
+    levels: [
+        (
+            rows: ["#####", "#...#", "#####"],
+            structures: [(1, 1, "player_spawn", { "jobs": "medic" })],
+        ),
+    ],
+)]==]
+
+t.world(MEDIC_ONLY, 7, "free_build", { playtest = true })
+local unfit = t.connect()
+t.run_ticks(10)
+local fit_seated = pcall(function()
+    return t.body(unfit)
+end)
+assert(not fit_seated, "no fitting marker and no fallback: bodiless")
+local fit_heard = table.concat(t.messages(unfit), " | ")
+assert(
+    fit_heard:find("fits you", 1, true) ~= nil,
+    "and the joiner is told why, in words: " .. fit_heard
 )
 
 -- The fallback tier: the only marker names another job and role but
