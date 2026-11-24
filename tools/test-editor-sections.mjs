@@ -56,10 +56,8 @@ const SECTIONS = {
     "crate",
     "freezer",
     "rack",
-    "cadaver_chamber",
-    "optable",
-    "iv_drip",
   ],
+  Medical: ["cadaver_chamber", "optable", "iv_drip"],
 };
 
 test("station staples declare their palette sections", { skip }, () => {

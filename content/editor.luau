@@ -174,6 +174,10 @@ for _, row in ipairs(staples("Furniture", {
     "crate",
     "freezer",
     "rack",
+})) do
+    table.insert(prototypes, row)
+end
+for _, row in ipairs(staples("Medical", {
     "cadaver_chamber",
     "optable",
     "iv_drip",
