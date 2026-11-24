@@ -3,6 +3,7 @@ local level_crossing = require("@lib/level_crossing")
 local map_boot = require("@lib/map_boot")
 local map_markers = require("@lib/map_markers")
 local observe = require("@lib/observe")
+local playtest_entry = require("@lib/rounds/playtest_entry")
 local preparation = require("@lib/preparation")
 local shift = require("@lib/shift")
 
@@ -75,6 +76,9 @@ if sim ~= nil then
     brace.install(behavior)
     -- Staff with Control step out into an observer and back.
     observe.install(behavior)
+    -- A playtester drops in as an assistant under a generated name:
+    -- a playtest has no draft or ranked jobs to honor.
+    playtest_entry.install(behavior, "assistant")
 
     local function spawn_player(ev)
         return map_markers.player_spawn(ev, "crew")

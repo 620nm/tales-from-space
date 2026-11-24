@@ -29,6 +29,7 @@ native_edges = [
     "lifecycle.entity_despawn",
     "lifecycle.entity_spawn",
     "lifecycle.round_spawn",
+    "lifecycle.round_playtest_assign",
     "lifecycle.level_crossing",
     "lifecycle.body_spawn",
     "lifecycle.participant_join",

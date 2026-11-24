@@ -3,6 +3,7 @@ local level_crossing = require("@lib/level_crossing")
 local map_boot = require("@lib/map_boot")
 local map_markers = require("@lib/map_markers")
 local observe = require("@lib/observe")
+local playtest_entry = require("@lib/rounds/playtest_entry")
 local shift = require("@lib/shift")
 
 -- Development construction playground: a connection owns one disposable
@@ -76,6 +77,9 @@ if sim ~= nil then
     brace.install(behavior)
     -- Staff with Control step out into an observer and back.
     observe.install(behavior)
+    -- A playtester drops in jobless: the mode's outfit above issues
+    -- the engineer kit, which is the gear, not the job.
+    playtest_entry.install(behavior, nil)
 
     local function spawn_player(ev)
         return map_markers.player_spawn(ev, "builder")

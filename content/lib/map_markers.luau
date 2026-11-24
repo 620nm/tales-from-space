@@ -110,6 +110,16 @@ local function choose(
     return candidates[#candidates].marker.tile
 end
 
+-- Set once any playtest assignment is answered this round: from then
+-- on, a spawn whose filtered markers do not fit falls back to every
+-- player_spawn marker on the map, so a mapper testing their room is
+-- never locked out by a job or role filter they have not drawn yet.
+local playtest = false
+
+function map_markers.note_playtest(): ()
+    playtest = true
+end
+
 function map_markers.player_spawn(ev: RoundSpawnPayload, default_role: string): { at: TileAddress? }
     local role: unknown = default_role
     if ev.mind ~= nil then
@@ -120,6 +130,11 @@ function map_markers.player_spawn(ev: RoundSpawnPayload, default_role: string): 
         local marker_roles = parse_filter(marker.vars["marker_roles"] or "")
         return matches(marker_jobs, ev.job) and matches(marker_roles, role)
     end, "map_markers.player_spawn")
+    if chosen == nil and playtest then
+        chosen = choose("player_spawn", function(_marker)
+            return true
+        end, "map_markers.player_spawn")
+    end
     if chosen == nil then
         return {}
     end
