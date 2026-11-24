@@ -90,9 +90,9 @@ assert(
     "and the joiner is told why, in words: " .. heard
 )
 
--- The fallback tier: the only marker names another job and role, and
--- a playtester still lands on it. The fallback is every round's: the
--- same map in an ordinary Free Build round seats its joiner too.
+-- The fallback tier: the only marker names another job and role but
+-- is authored fallback, so a playtester still lands on it — and so
+-- does an ordinary Free Build joiner, through the same tier.
 local FOREIGN_MARKER = [==[(
     name: "playtest foreign marker",
     legend: {
@@ -102,7 +102,7 @@ local FOREIGN_MARKER = [==[(
     levels: [
         (
             rows: ["#####", "#...#", "#####"],
-            structures: [(2, 1, "player_spawn", { "jobs": "medic", "roles": "crew" })],
+            structures: [(2, 1, "player_spawn", { "jobs": "medic", "roles": "crew", "fallback": true })],
         ),
     ],
 )]==]

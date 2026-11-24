@@ -50,7 +50,7 @@ t.world(
     ],
 )]==],
     0,
-    "space_station"
+    "free_build"
 )
 
 local function heard(player: number, sound: string): boolean

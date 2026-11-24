@@ -79,7 +79,7 @@ t.world(
     ],
 )]==],
     0,
-    "space_station"
+    "free_build"
 )
 assert(t.environment().kind == "space", "the map rolls a space environment: " .. t.environment().id)
 assert(
@@ -179,8 +179,6 @@ t.world(
     ],
 )]==],
     0,
-    -- Nobody joins this world: Free Build keeps its clock running
-    -- for the mixing span, where preparation would freeze it.
     "free_build"
 )
 t.set_breathing(false)
