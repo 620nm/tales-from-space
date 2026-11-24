@@ -189,8 +189,8 @@ local function draw(candidates: { { marker: Handle, weight: number } }, stream: 
     return last.marker.tile
 end
 
--- Scored choice: a marker naming the ask's role outranks every job
--- tier (an antagonist is a role), then exact job, job category,
+-- Scored choice: a marker naming a non-default role outranks every
+-- job tier (an antagonist is a role), then exact job, job category,
 -- general; the fallback-attributed marker answers only when no
 -- tier fits. A marker whose filters do not parse never answers.
 function map_markers.player_spawn(ev: RoundSpawnPayload, default_role: string): { at: TileAddress? }
@@ -230,7 +230,9 @@ function map_markers.player_spawn(ev: RoundSpawnPayload, default_role: string): 
         if job_tier == nil then
             continue
         end
-        local score = job_tier + if #marker_roles > 0 then 10 else 0
+        -- A tag naming the mode's default role names everyone, so
+        -- it scores nothing; only a non-default role outranks jobs.
+        local score = job_tier + if #marker_roles > 0 and role ~= default_role then 10 else 0
         if score > best_score then
             best_score = score
             best = { { marker = marker, weight = marker_weight } }

@@ -37,9 +37,11 @@ local assistant = t.join("assistant")
 x, y = t.pos(assistant)
 assert(x == 1 and y == 1, "with neither, the general marker answers")
 
--- A named role outranks an unnamed one at the same job tier: in
--- Free Build the builder-roled marker beats the bare one. The
--- antagonist role rides this same tier when something stamps it.
+-- A role tag scores only when it is not the mode's default role:
+-- roles=crew on a general marker does not outrank an exact-job
+-- marker in the station round, where crew is everyone's role. A
+-- non-default role (an antagonist) rides the same tier when
+-- something stamps it.
 local ROLED = string.format(
     [==[(
     name: "spawn choice role",
@@ -48,8 +50,8 @@ local ROLED = string.format(
         (
             rows: ["##############", "#............#", "##############"],
             structures: [
-                (1, 1, "player_spawn"),
-                (2, 1, "player_spawn", { "roles": "builder" }),
+                (1, 1, "player_spawn", { "roles": "crew" }),
+                (2, 1, "player_spawn", { "jobs": "engineer" }),
             ],
         ),
     ],
@@ -57,10 +59,10 @@ local ROLED = string.format(
     LEGEND
 )
 
-t.world(ROLED, 0, "free_build")
-local builder = t.join()
-x, y = t.pos(builder)
-assert(x == 2 and y == 1, "the role-named marker beats the bare one")
+t.world(ROLED, 0, "space_station")
+local station_engineer = t.join("engineer")
+x, y = t.pos(station_engineer)
+assert(x == 2 and y == 1, "the exact job beats a default-role-tagged general marker")
 
 -- Unused first: two joins at one tier land on two different points
 -- while unused points remain.
