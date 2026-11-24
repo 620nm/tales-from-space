@@ -110,14 +110,16 @@ local function choose(
     return candidates[#candidates].marker.tile
 end
 
--- Set once any playtest assignment is answered this round: from then
--- on, a spawn whose filtered markers do not fit falls back to every
--- player_spawn marker on the map, so a mapper testing their room is
--- never locked out by a job or role filter they have not drawn yet.
-local playtest = false
-
-function map_markers.note_playtest(): ()
-    playtest = true
+-- Whether any player_spawn marker on the join instance can answer:
+-- what a joiner with no body was missing, in the pack's own terms.
+function map_markers.any_player_spawn(): boolean
+    local join = sim.join_instance()
+    for _, marker in ipairs(sim.query.all("player_spawn")) do
+        if weight(marker) > 0 and on_join(marker, join) then
+            return true
+        end
+    end
+    return false
 end
 
 function map_markers.player_spawn(ev: RoundSpawnPayload, default_role: string): { at: TileAddress? }
@@ -130,7 +132,10 @@ function map_markers.player_spawn(ev: RoundSpawnPayload, default_role: string): 
         local marker_roles = parse_filter(marker.vars["marker_roles"] or "")
         return matches(marker_jobs, ev.job) and matches(marker_roles, role)
     end, "map_markers.player_spawn")
-    if chosen == nil and playtest then
+    -- There is always a fallback spawn with no discriminators: a
+    -- joiner no filtered marker fits lands on any marker the map has
+    -- rather than nowhere.
+    if chosen == nil then
         chosen = choose("player_spawn", function(_marker)
             return true
         end, "map_markers.player_spawn")

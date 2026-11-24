@@ -37,10 +37,14 @@ local engineer = t.join("engineer")
 x, y = t.pos(engineer)
 assert(x == 3 and y == 1, "the engineer uses its job marker")
 
-local ok = pcall(function()
-    t.join("assistant")
-end)
-assert(not ok, "a job with no matching marker is refused")
+-- A job with no matching marker is not refused: the fallback tier
+-- always answers, landing the joiner on some marker the map has.
+local assistant = t.join("assistant")
+x, y = t.pos(assistant)
+assert(
+    y == 1 and (x == 1 or x == 2 or x == 3),
+    "a job with no matching marker falls back to any marker"
+)
 
 -- Free Build supplies its own default role. This exercises the same
 -- marker schema with a different mode policy.

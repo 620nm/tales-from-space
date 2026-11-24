@@ -8,6 +8,12 @@ local map_markers = require("@lib/map_markers")
 local playtest_entry = {}
 
 local STREAM = "playtest_entry.name"
+local NO_SPAWN_POINT = "lunatic/tfs:lib.playtest_entry.no_spawn_point"
+
+-- Participants an assignment was answered for this round, by player
+-- key: at join-done, one still bodiless on a map with no spawn point
+-- gets the words for it instead of silence.
+local attempted: { [string]: boolean } = {}
 
 local function roll(count: number): number
     return math.min(count, math.floor(sim.random(STREAM) * count) + 1)
@@ -16,6 +22,21 @@ end
 local function generated_name(): string
     local given = crew_names.given[roll(#crew_names.given)]
     return given .. " " .. crew_names.family[roll(#crew_names.family)]
+end
+
+local function on_join(ev: ParticipantJoinDonePayload): ()
+    local player = ev.participant
+    local was_attempted = attempted[player.key] == true
+    attempted[player.key] = nil
+    if not was_attempted or player.body ~= nil or map_markers.any_player_spawn() then
+        return
+    end
+    for _, mind in ipairs(sim.query.minds()) do
+        if mind.player == player then
+            sim.message.notify({ audience = mind, message = sim.msg(NO_SPAWN_POINT, {}) })
+            return
+        end
+    end
 end
 
 -- Binds the assign handler on `behavior`. `job` is the role a
@@ -27,7 +48,7 @@ function playtest_entry.install(behavior: Definition, job: string?): ()
         "round.playtest_assign",
         { kind = "transform", route = "lifecycle" },
         function(ev: RoundPlaytestAssignPayload): { assignments: { PlaytestAssignment } }
-            map_markers.note_playtest()
+            attempted[ev.participant.key] = true
             return {
                 assignments = {
                     {
@@ -39,6 +60,7 @@ function playtest_entry.install(behavior: Definition, job: string?): ()
             }
         end
     )
+    behavior:handle("participant.join.done", { kind = "react" }, on_join)
 end
 
 return playtest_entry

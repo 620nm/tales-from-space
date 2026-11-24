@@ -62,10 +62,15 @@ local seated = pcall(function()
 end)
 assert(not seated, "no marker, no body: the joiner stays bodiless")
 assert(#t.ledger_rows("joined_job") == 0, "and no job admission is rowed")
+local heard = table.concat(t.messages(unseated), " | ")
+assert(
+    heard:find("no spawn point", 1, true) ~= nil,
+    "and the joiner is told why, in words: " .. heard
+)
 
--- The fallback tier: the only marker names another job and role, and a
--- playtester still lands on it. The same map in an ordinary Free
--- Build round seats nobody, so the fallback is the playtest's alone.
+-- The fallback tier: the only marker names another job and role, and
+-- a playtester still lands on it. The fallback is every round's: the
+-- same map in an ordinary Free Build round seats its joiner too.
 local FOREIGN_MARKER = [==[(
     name: "playtest foreign marker",
     legend: {
@@ -83,10 +88,9 @@ local FOREIGN_MARKER = [==[(
 t.world(FOREIGN_MARKER, 7, "free_build")
 local ordinary = t.connect()
 t.run_ticks(10)
-local ordinary_seated = pcall(function()
-    return t.body(ordinary)
-end)
-assert(not ordinary_seated, "an ordinary round honors the marker filters")
+assert(t.body(ordinary) ~= nil, "an ordinary round falls back too")
+x, y = t.pos(ordinary)
+assert(x == 2 and y == 1, "on the only marker the map has")
 
 t.world(FOREIGN_MARKER, 7, "free_build", { playtest = true })
 local builder = t.connect()

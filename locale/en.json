@@ -1908,5 +1908,6 @@
   "lunatic/tfs:title.editor": "Map editor",
   "lunatic/tfs:title.connect": "Connect to a server",
   "lunatic/tfs:title.language": "Language",
-  "lunatic/tfs:editor.playtest_unavailable": "Playtest requires the desktop app."
+  "lunatic/tfs:editor.playtest_unavailable": "Playtest requires the desktop app.",
+  "lunatic/tfs:lib.playtest_entry.no_spawn_point": "This map has no spawn point, so there is nowhere for you to drop in."
 }

@@ -78,5 +78,6 @@
   "lunatic/tfs:title.editor": "Уређивач мапе",
   "lunatic/tfs:title.connect": "Повежи се на сервер",
   "lunatic/tfs:title.language": "Језик",
-  "lunatic/tfs:editor.playtest_unavailable": "Тестирање захтева десктоп апликацију."
+  "lunatic/tfs:editor.playtest_unavailable": "Тестирање захтева десктоп апликацију.",
+  "lunatic/tfs:lib.playtest_entry.no_spawn_point": "Ова мапа нема тачку појављивања, па немате где да уђете."
 }
