@@ -16,6 +16,28 @@ local ROOM = [==[(
     ],
 )]==]
 
+-- Free Build is the local playtest drop-in: a playtest boot of the
+-- real mode seats the mapper at connect by the pack's assignment
+-- alone — jobless, under a generated name, at the spawn point.
+-- Without the mode's assign handler this connect stays bodiless:
+-- a playtest round runs no connection spawn of its own.
+t.world(ROOM, 7, "free_build", { playtest = true })
+assert(t.round_status().phase == "playing", "the Free Build playtest plays at once")
+local builder = t.connect()
+t.run_ticks(10)
+local builder_body = assert(t.body(builder), "the assignment seats the mapper at connect")
+assert(builder_body.animate, "and the body stands")
+local bx, by = t.pos(builder)
+assert(bx == 1 and by == 1, "at the map's spawn point")
+assert(#t.ledger_rows("joined_job") == 0, "jobless: the kit is gear, not a job")
+local builder_named = t.ledger_rows("mind_named")
+assert(#builder_named == 1, "one mind is named by the assignment")
+local builder_name = builder_named[1].name
+assert(
+    type(builder_name) == "string" and builder_name:match("^%a+ %a+$") ~= nil,
+    "under a generated crew name: " .. tostring(builder_name)
+)
+
 -- Space Station: the round is already playing before anyone connects,
 -- and the first connect is admitted as an assistant under a generated
 -- crew name without any preparation step.
@@ -93,9 +115,9 @@ x, y = t.pos(ordinary)
 assert(x == 2 and y == 1, "on the only marker the map has")
 
 t.world(FOREIGN_MARKER, 7, "free_build", { playtest = true })
-local builder = t.connect()
+local fallback_builder = t.connect()
 t.run_ticks(10)
-assert(t.body(builder) ~= nil, "the playtest fallback seats the builder anyway")
-x, y = t.pos(builder)
+assert(t.body(fallback_builder) ~= nil, "the playtest fallback seats the builder anyway")
+x, y = t.pos(fallback_builder)
 assert(x == 2 and y == 1, "on the only marker the map has")
 assert(#t.ledger_rows("joined_job") == 0, "jobless: the kit is gear, not a job")
