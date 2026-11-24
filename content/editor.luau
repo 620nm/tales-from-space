@@ -42,7 +42,18 @@ local function airlock_previews()
 end
 
 local function airlock(id: string)
-    return { kind = "structure", id = id, previews = airlock_previews() }
+    return { kind = "structure", id = id, section = "Doors", previews = airlock_previews() }
+end
+
+-- Station staples file under task headings, not their simulation
+-- domains: a mapper building a room thinks doors, power, air and
+-- furniture, whatever graph the engine files them under.
+local function staples(section: string, ids: { string }): { any }
+    local rows: { any } = {}
+    for _, id in ipairs(ids) do
+        table.insert(rows, { kind = "structure", id = id, section = section })
+    end
+    return rows
 end
 
 local prototypes = {
@@ -105,6 +116,55 @@ local prototypes = {
     { kind = "structure", id = "outcrop.cluster", section = "terrain", category = "Natural" },
 }
 
+for _, row in ipairs(staples("Doors", { "airlock_wide", "airlock_button" })) do
+    table.insert(prototypes, row)
+end
+for _, row in ipairs(staples("Power", {
+    "apc",
+    "generator",
+    "light",
+    "smes",
+    "solar",
+    "steam_generator",
+    "utility_outlet_port",
+    "core_rotor",
+})) do
+    table.insert(prototypes, row)
+end
+for _, row in ipairs(staples("Atmos", {
+    "air_alarm",
+    "air_injector",
+    "air_scrubber",
+    "air_sensor",
+    "canister",
+    "passive_vent",
+    "bidirectional_vent",
+    "vent",
+    "pump",
+    "volume_pump",
+    "manual_valve",
+    "digital_valve",
+    "stationary_tank",
+    "floor_drain",
+    "connector_port",
+})) do
+    table.insert(prototypes, row)
+end
+for _, row in ipairs(staples("Furniture", {
+    "table",
+    "wood_table",
+    "reinforced_table",
+    "locker",
+    "crate",
+    "freezer",
+    "rack",
+    "cadaver_chamber",
+    "optable",
+    "iv_drip",
+})) do
+    table.insert(prototypes, row)
+end
+
 -- One click lays a tiled floor here and the plating that roofs it on the
 -- level above (`dz = 1`); refused whole on the top level.
 local composed_tools = {
@@ -121,7 +181,7 @@ local composed_tools = {
 return {
     version = 1,
     pack = "lunatic/tfs",
-    revision = "11",
+    revision = "12",
     tools = { "select", "paint", "fill", "erase", "clone", "link", "area" },
     lenses = { "surface", "subfloor", "blend", "networking" },
     prototypes = prototypes,
