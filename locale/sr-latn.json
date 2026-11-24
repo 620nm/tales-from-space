@@ -48,6 +48,7 @@
   "lunatic/tfs:editor.player_spawn.weight": "Relativna težina",
   "lunatic/tfs:editor.player_spawn.jobs": "Dozvoljeni poslovi",
   "lunatic/tfs:editor.player_spawn.roles": "Dozvoljene uloge",
+  "lunatic/tfs:editor.player_spawn.fallback": "Rezervna tačka pojavljivanja",
   "lunatic/tfs:editor.threat_spawn.weight": "Relativna težina",
   "lunatic/tfs:action.climb": "Penjanje",
   "lunatic/tfs:lib.body_drag.hide_start": "Počinješ da se sakrivaš u kontejner.",

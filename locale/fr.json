@@ -139,6 +139,7 @@
   "lunatic/tfs:editor.player_spawn.weight": "Poids relatif",
   "lunatic/tfs:editor.player_spawn.jobs": "Postes autorisés",
   "lunatic/tfs:editor.player_spawn.roles": "Rôles autorisés",
+  "lunatic/tfs:editor.player_spawn.fallback": "Point d'apparition de repli",
   "lunatic/tfs:editor.threat_spawn.weight": "Poids relatif",
   "lunatic/tfs:action.climb": "Escalader",
   "lunatic/tfs:lib.body_drag.hide_start": "Vous commencez à vous cacher dans le conteneur.",

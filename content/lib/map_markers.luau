@@ -110,6 +110,12 @@ local function choose(
     return candidates[#candidates].marker.tile
 end
 
+-- Whether the mapper marked this spawn as the general fallback:
+-- the point a joiner lands on when nothing better fits.
+function map_markers.is_fallback(marker: Handle): boolean
+    return marker.vars["marker_fallback"] == true
+end
+
 -- Whether any player_spawn marker on the join instance can answer:
 -- what a joiner with no body was missing, in the pack's own terms.
 function map_markers.any_player_spawn(): boolean

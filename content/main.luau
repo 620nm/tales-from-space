@@ -62,6 +62,7 @@ sim.define("script_var", "lunatic/tfs:fires_out", { replicate = "server" })
 sim.define("script_var", "lunatic/tfs:marker_weight", { replicate = "server" })
 sim.define("script_var", "lunatic/tfs:marker_jobs", { replicate = "server" })
 sim.define("script_var", "lunatic/tfs:marker_roles", { replicate = "server" })
+sim.define("script_var", "lunatic/tfs:marker_fallback", { replicate = "server" })
 sim.define("script_var", "lunatic/tfs:spawn_role", { replicate = "server" })
 
 local function tally(key)

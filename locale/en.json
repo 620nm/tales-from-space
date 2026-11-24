@@ -1301,6 +1301,7 @@
   "lunatic/tfs:editor.player_spawn.weight": "Relative weight",
   "lunatic/tfs:editor.player_spawn.jobs": "Allowed jobs",
   "lunatic/tfs:editor.player_spawn.roles": "Allowed roles",
+  "lunatic/tfs:editor.player_spawn.fallback": "Fallback spawn",
   "lunatic/tfs:editor.threat_spawn.weight": "Relative weight",
   "lunatic/tfs:entity.paper.name": "Paper",
   "lunatic/tfs:entity.paper.blood_types.name": "Blood type compatibility reference",

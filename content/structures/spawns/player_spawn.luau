@@ -34,6 +34,12 @@ return {
             label = "lunatic/tfs:editor.player_spawn.roles",
             options = { "builder", "crew" },
         },
+        fallback = {
+            var = "lunatic/tfs:marker_fallback",
+            kind = "flag",
+            default = false,
+            label = "lunatic/tfs:editor.player_spawn.fallback",
+        },
     },
     script = "player_spawn",
 }

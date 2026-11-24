@@ -90,6 +90,12 @@ local prototypes = {
                 default = "",
                 options = { "builder", "crew" },
             },
+            {
+                key = "fallback",
+                kind = "bool",
+                label = "lunatic/tfs:editor.player_spawn.fallback",
+                default = false,
+            },
         },
     },
     {
@@ -181,7 +187,7 @@ local composed_tools = {
 return {
     version = 1,
     pack = "lunatic/tfs",
-    revision = "12",
+    revision = "13",
     tools = { "select", "paint", "fill", "erase", "clone", "link", "area" },
     lenses = { "surface", "subfloor", "blend", "networking" },
     prototypes = prototypes,
